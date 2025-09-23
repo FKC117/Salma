@@ -1,0 +1,76 @@
+# Django Log File
+# This file will be used by Django for logging application events
+INFO 2025-09-23 20:48:14,061 autoreload 27900 33788 Watching for file changes with StatReloader
+INFO 2025-09-23 20:48:18,257 basehttp 27900 33380 "GET / HTTP/1.1" 200 10664
+WARNING 2025-09-23 20:48:19,234 log 27900 33380 Not Found: /favicon.ico
+INFO 2025-09-23 20:48:19,242 basehttp 27900 33380 - Broken pipe from ('127.0.0.1', 53085)
+INFO 2025-09-23 20:50:06,215 basehttp 27900 10908 "GET / HTTP/1.1" 200 10664
+WARNING 2025-09-23 20:50:06,566 log 27900 10908 Not Found: /favicon.ico
+INFO 2025-09-23 20:50:06,625 basehttp 27900 10908 - Broken pipe from ('127.0.0.1', 53104)
+INFO 2025-09-23 20:52:42,321 autoreload 27900 33788 E:\analytical\analytical\analytical\settings.py changed, reloading.
+INFO 2025-09-23 20:52:44,170 autoreload 3764 29600 Watching for file changes with StatReloader
+INFO 2025-09-23 20:57:36,111 autoreload 3764 29600 E:\analytical\analytical\analytical\settings.py changed, reloading.
+INFO 2025-09-23 20:57:51,478 autoreload 29304 33212 Watching for file changes with StatReloader
+INFO 2025-09-23 20:58:00,268 autoreload 29304 33212 E:\analytical\analytical\analytical\settings.py changed, reloading.
+INFO 2025-09-23 20:58:04,952 autoreload 11384 32964 Watching for file changes with StatReloader
+INFO 2025-09-23 20:59:16,411 logging_service 11384 25516 {"timestamp": "2025-09-23T14:59:16.411032+00:00", "level": "INFO", "message": "Request: GET /", "correlation_id": "2501db41-f73e-45ed-92ee-9c77273bb54b", "request_id": "b93af926-409e-4d02-9cb2-6e9b0cac28d7", "user_id": null, "session_id": null, "service": "analytics", "method": "GET", "path": "/", "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0", "ip_address": "127.0.0.1", "referer": ""}
+ERROR 2025-09-23 20:59:18,677 log 11384 25516 Internal Server Error: /
+Traceback (most recent call last):
+  File "E:\analytical\venv\Lib\site-packages\django_redis\cache.py", line 29, in _decorator
+    return method(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\venv\Lib\site-packages\django_redis\cache.py", line 99, in _get
+    return self.client.get(key, default=default, version=version, client=client)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\venv\Lib\site-packages\django_redis\client\default.py", line 260, in get
+    raise ConnectionInterrupted(connection=client) from e
+django_redis.exceptions.ConnectionInterrupted: Redis ConnectionError: Error 10061 connecting to 127.0.0.1:6379. No connection could be made because the target machine actively refused it.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "E:\analytical\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\venv\Lib\site-packages\django\utils\deprecation.py", line 133, in __call__
+    response = self.process_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\analytical\analytics\middleware\security_middleware.py", line 56, in process_request
+    if not self.check_rate_limit(request):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\analytical\analytics\middleware\security_middleware.py", line 120, in check_rate_limit
+    current_count = cache.get(limit_key, 0)
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\venv\Lib\site-packages\django_redis\cache.py", line 92, in get
+    value = self._get(key, default, version, client)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\venv\Lib\site-packages\django_redis\cache.py", line 36, in _decorator
+    raise e.__cause__
+  File "E:\analytical\venv\Lib\site-packages\django_redis\client\default.py", line 258, in get
+    value = client.get(key)
+            ^^^^^^^^^^^^^^^
+  File "E:\analytical\venv\Lib\site-packages\redis\commands\core.py", line 1829, in get
+    return self.execute_command("GET", name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\venv\Lib\site-packages\redis\client.py", line 533, in execute_command
+    conn = self.connection or pool.get_connection(command_name, **options)
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\venv\Lib\site-packages\redis\connection.py", line 1086, in get_connection
+    connection.connect()
+  File "E:\analytical\venv\Lib\site-packages\redis\connection.py", line 270, in connect
+    raise ConnectionError(self._error_message(e))
+redis.exceptions.ConnectionError: Error 10061 connecting to 127.0.0.1:6379. No connection could be made because the target machine actively refused it.
+ERROR 2025-09-23 20:59:18,683 basehttp 11384 25516 "GET / HTTP/1.1" 500 122990
+INFO 2025-09-23 21:01:17,504 logging_service 11384 33872 {"timestamp": "2025-09-23T15:01:17.504890+00:00", "level": "INFO", "message": "Request: GET /", "correlation_id": "d3e4a5fb-c192-49f0-a754-387105a8b0c9", "request_id": "d43a55c6-b89f-4686-950b-e0fc78737ee9", "user_id": null, "session_id": null, "service": "analytics", "method": "GET", "path": "/", "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0", "ip_address": "127.0.0.1", "referer": ""}
+INFO 2025-09-23 21:01:17,522 logging_service 11384 33872 {"timestamp": "2025-09-23T15:01:17.522241+00:00", "level": "INFO", "message": "Response: 200", "correlation_id": "d3e4a5fb-c192-49f0-a754-387105a8b0c9", "request_id": "d43a55c6-b89f-4686-950b-e0fc78737ee9", "user_id": null, "session_id": null, "service": "analytics", "status_code": 200, "content_type": "text/html; charset=utf-8"}
+INFO 2025-09-23 21:01:17,532 basehttp 11384 33872 "GET / HTTP/1.1" 200 10664
+INFO 2025-09-23 21:02:47,832 autoreload 11384 32964 E:\analytical\analytical\analytical\settings.py changed, reloading.
+INFO 2025-09-23 21:02:55,125 autoreload 33460 7560 Watching for file changes with StatReloader
+INFO 2025-09-23 21:03:17,776 autoreload 33460 7560 E:\analytical\analytical\analytical\settings.py changed, reloading.
+INFO 2025-09-23 21:03:35,401 autoreload 32492 33640 Watching for file changes with StatReloader
+INFO 2025-09-23 21:04:04,314 autoreload 32492 33640 E:\analytical\analytical\analytical\settings.py changed, reloading.
+INFO 2025-09-23 21:04:06,694 autoreload 33584 16172 Watching for file changes with StatReloader
+INFO 2025-09-23 21:04:52,290 autoreload 33584 16172 E:\analytical\analytical\analytical\settings.py changed, reloading.
+INFO 2025-09-23 21:04:55,299 autoreload 33896 1692 Watching for file changes with StatReloader
+INFO 2025-09-23 21:06:35,933 autoreload 33896 1692 E:\analytical\analytical\analytical\settings.py changed, reloading.
+INFO 2025-09-23 21:06:38,324 autoreload 9604 23892 Watching for file changes with StatReloader

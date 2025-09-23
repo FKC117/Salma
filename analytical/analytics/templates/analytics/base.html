@@ -1,0 +1,126 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Data Analysis System{% endblock %}</title>
+    
+    <!-- Bootstrap 5+ with Dark Theme -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="{% static 'analytics/js/htmx-config.js' %}"></script>
+    
+    <!-- Custom Dark Theme CSS Variables (T008) -->
+    <style>
+        :root {
+            /* Dark Theme Color Palette */
+            --bs-body-bg: #1a1a1a;
+            --bs-body-color: #e9ecef;
+            --bs-primary: #0d6efd;
+            --bs-secondary: #6c757d;
+            --bs-success: #198754;
+            --bs-info: #0dcaf0;
+            --bs-warning: #ffc107;
+            --bs-danger: #dc3545;
+            --bs-light: #f8f9fa;
+            --bs-dark: #212529;
+            
+            /* Custom Dark Theme Variables */
+            --analytical-bg-primary: #1a1a1a;
+            --analytical-bg-secondary: #2d2d2d;
+            --analytical-bg-tertiary: #343a40;
+            --analytical-border-color: #495057;
+            --analytical-text-primary: #e9ecef;
+            --analytical-text-secondary: #adb5bd;
+            --analytical-text-muted: #6c757d;
+            --analytical-accent-blue: #0d6efd;
+            --analytical-accent-green: #198754;
+            --analytical-accent-orange: #fd7e14;
+            --analytical-accent-purple: #6f42c1;
+            --analytical-shadow: rgba(0, 0, 0, 0.3);
+            --analytical-shadow-lg: rgba(0, 0, 0, 0.5);
+            
+            /* Panel Layout Variables */
+            --panel-header-height: 60px;
+            --panel-border-radius: 0.5rem;
+            --panel-padding: 1rem;
+            --panel-gap: 1rem;
+            
+            /* Animation Variables */
+            --transition-fast: 0.15s ease-in-out;
+            --transition-normal: 0.3s ease-in-out;
+            --transition-slow: 0.5s ease-in-out;
+        }
+        
+        body {
+            background-color: var(--bs-body-bg);
+            color: var(--bs-body-color);
+        }
+        
+        .card {
+            background-color: #2d2d2d;
+            border: 1px solid #495057;
+        }
+        
+        .card-header {
+            background-color: #343a40;
+            border-bottom: 1px solid #495057;
+        }
+        
+        .btn-primary {
+            background-color: var(--bs-primary);
+            border-color: var(--bs-primary);
+        }
+        
+        .form-control {
+            background-color: #495057;
+            border: 1px solid #6c757d;
+            color: var(--bs-body-color);
+        }
+        
+        .form-control:focus {
+            background-color: #495057;
+            border-color: var(--bs-primary);
+            color: var(--bs-body-color);
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'dashboard' %}">
+                <i class="bi bi-graph-up"></i> Data Analysis System
+            </a>
+            
+            <div class="navbar-nav ms-auto">
+                {% if user.is_authenticated %}
+                    <span class="navbar-text me-3">
+                        Welcome, {{ user.username }}
+                    </span>
+                    <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                {% else %}
+                    <a class="nav-link" href="{% url 'login' %}">Login</a>
+                    <a class="nav-link" href="{% url 'register' %}">Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-fluid mt-3">
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

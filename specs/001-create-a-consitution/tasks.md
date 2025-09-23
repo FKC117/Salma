@@ -37,22 +37,27 @@
 - Include exact file paths in descriptions
 
 ## Path Conventions
-- **Web app**: `backend/src/`, `frontend/src/` (per plan.md structure decision)
-- Paths shown below assume web app structure - adjust based on plan.md structure
+- **Django Single Project**: `analytics/` (Django app directory)
+- Paths shown below assume Django single project structure
+- All models go in `analytics/models.py`
+- All templates go in `analytics/templates/`
+- All static files go in `analytics/static/`
+- All services go in `analytics/services/`
+- All tools go in `analytics/tools/`
 
 ## Phase 3.1: Setup & Environment
-- [ ] T001 Create Django project structure with backend/frontend separation
-- [ ] T002 Generate comprehensive requirements.txt with pinned versions
-- [ ] T003 [P] Configure PostgreSQL database connection (analytical/postgres/Afroafri117!@)
-- [ ] T004 [P] Configure Redis cache with 'analytical' key prefix
-- [ ] T005 [P] Configure Celery with Redis broker and 'analytical' queue
-- [ ] T006 [P] Setup virtual environment activation verification (NON-NEGOTIABLE)
-- [ ] T007 [P] Configure Django settings.py for production-ready setup
-- [ ] T008 [P] Setup Bootstrap 5+ with custom dark theme CSS variables
-- [ ] T009 [P] Configure HTMX integration and error prevention
-- [ ] T010 [P] Setup Google AI API integration with token tracking
-- [ ] T011 [P] Configure structured logging with correlation IDs
-- [ ] T012 [P] Setup security middleware and CSRF protection
+- [x] T001 Create Django project structure with single project layout
+- [x] T002 Generate comprehensive requirements.txt with pinned versions
+- [x] T003 [P] Configure PostgreSQL database connection (analytical/postgres/Afroafri117!@)
+- [x] T004 [P] Configure Redis cache with 'analytical' key prefix
+- [x] T005 [P] Configure Celery with Redis broker and 'analytical' queue
+- [x] T006 [P] Setup virtual environment activation verification (NON-NEGOTIABLE)
+- [x] T007 [P] Configure Django settings.py for production-ready setup
+- [x] T008 [P] Setup Bootstrap 5+ with custom dark theme CSS variables
+- [x] T009 [P] Configure HTMX integration and error prevention
+- [x] T010 [P] Setup Google AI API integration with token tracking
+- [x] T011 [P] Configure structured logging with correlation IDs
+- [x] T012 [P] Setup security middleware and CSRF protection
 
 ## Phase 3.2: Tests First (TDD) ⚠️ MUST COMPLETE BEFORE 3.3
 **CRITICAL: These tests MUST be written and MUST FAIL before ANY implementation**
@@ -77,19 +82,19 @@
 ## Phase 3.3: Core Implementation (ONLY after tests are failing)
 
 ### Data Models (PostgreSQL)
-- [ ] T026 [P] User model with token/storage limits in backend/src/models/user.py
-- [ ] T027 [P] Dataset model with Parquet integration in backend/src/models/dataset.py
-- [ ] T028 [P] DatasetColumn model with type categorization in backend/src/models/dataset_column.py
-- [ ] T029 [P] AnalysisTool model with LangChain integration in backend/src/models/analysis_tool.py
-- [ ] T030 [P] AnalysisSession model with dataset tagging in backend/src/models/analysis_session.py
-- [ ] T031 [P] AnalysisResult model with caching in backend/src/models/analysis_result.py
-- [ ] T032 [P] ChatMessage model with LLM context in backend/src/models/chat_message.py
-- [ ] T033 [P] AuditTrail model with comprehensive logging in backend/src/models/audit_trail.py
-- [ ] T034 [P] AgentRun model for autonomous AI in backend/src/models/agent_run.py
-- [ ] T035 [P] AgentStep model for agent actions in backend/src/models/agent_step.py
-- [ ] T036 [P] GeneratedImage model for visualization storage in backend/src/models/generated_image.py
-- [ ] T037 [P] SandboxExecution model for secure code execution in backend/src/models/sandbox_execution.py
-- [ ] T038 [P] ReportGeneration model for document export in backend/src/models/report_generation.py
+- [ ] T026 [P] User model with token/storage limits in analytics/models.py
+- [ ] T027 [P] Dataset model with Parquet integration in analytics/models.py
+- [ ] T028 [P] DatasetColumn model with type categorization in analytics/models.py
+- [ ] T029 [P] AnalysisTool model with LangChain integration in analytics/models.py
+- [ ] T030 [P] AnalysisSession model with dataset tagging in analytics/models.py
+- [ ] T031 [P] AnalysisResult model with caching in analytics/models.py
+- [ ] T032 [P] ChatMessage model with LLM context in analytics/models.py
+- [ ] T033 [P] AuditTrail model with comprehensive logging in analytics/models.py
+- [ ] T034 [P] AgentRun model for autonomous AI in analytics/models.py
+- [ ] T035 [P] AgentStep model for agent actions in analytics/models.py
+- [ ] T036 [P] GeneratedImage model for visualization storage in analytics/models.py
+- [ ] T037 [P] SandboxExecution model for secure code execution in analytics/models.py
+- [ ] T038 [P] ReportGeneration model for document export in analytics/models.py
 
 ### Database Migrations
 - [ ] T039 Create initial migration for all models
@@ -97,23 +102,23 @@
 - [ ] T041 Create constraints and validation rules
 
 ### Services Layer
-- [ ] T042 [P] FileProcessingService with security sanitization in backend/src/services/file_processing.py
-- [ ] T043 [P] ColumnTypeManager for automatic categorization in backend/src/services/column_type_manager.py
-- [ ] T044 [P] AnalysisExecutor for tool execution in backend/src/services/analysis_executor.py
-- [ ] T045 [P] SessionManager for dataset-tagged sessions in backend/src/services/session_manager.py
-- [ ] T046 [P] LLMProcessor with Google AI integration in backend/src/services/llm_processor.py
-- [ ] T047 [P] AuditTrailManager for comprehensive logging in backend/src/services/audit_trail_manager.py
-- [ ] T048 [P] AgenticAIController for autonomous analysis in backend/src/services/agentic_ai_controller.py
-- [ ] T049 [P] ImageManager for visualization handling in backend/src/services/image_manager.py
-- [ ] T050 [P] SandboxExecutor for secure code execution in backend/src/services/sandbox_executor.py
-- [ ] T051 [P] ReportGenerator for Word document creation in backend/src/services/report_generator.py
+- [ ] T042 [P] FileProcessingService with security sanitization in analytics/services/file_processing.py
+- [ ] T043 [P] ColumnTypeManager for automatic categorization in analytics/services/column_type_manager.py
+- [ ] T044 [P] AnalysisExecutor for tool execution in analytics/services/analysis_executor.py
+- [ ] T045 [P] SessionManager for dataset-tagged sessions in analytics/services/session_manager.py
+- [ ] T046 [P] LLMProcessor with Google AI integration in analytics/services/llm_processor.py
+- [ ] T047 [P] AuditTrailManager for comprehensive logging in analytics/services/audit_trail_manager.py
+- [ ] T048 [P] AgenticAIController for autonomous analysis in analytics/services/agentic_ai_controller.py
+- [ ] T049 [P] ImageManager for visualization handling in analytics/services/image_manager.py
+- [ ] T050 [P] SandboxExecutor for secure code execution in analytics/services/sandbox_executor.py
+- [ ] T051 [P] ReportGenerator for Word document creation in analytics/services/report_generator.py
 
 ### Tools Registry (LangChain Integration)
-- [ ] T052 [P] Statistical analysis tools in backend/src/tools/statistical_tools.py
-- [ ] T053 [P] Visualization tools in backend/src/tools/visualization_tools.py
-- [ ] T054 [P] Machine learning tools in backend/src/tools/ml_tools.py
-- [ ] T055 [P] Survival analysis tools in backend/src/tools/survival_tools.py
-- [ ] T056 [P] Tool registry manager in backend/src/tools/tool_registry.py
+- [ ] T052 [P] Statistical analysis tools in analytics/tools/statistical_tools.py
+- [ ] T053 [P] Visualization tools in analytics/tools/visualization_tools.py
+- [ ] T054 [P] Machine learning tools in analytics/tools/ml_tools.py
+- [ ] T055 [P] Survival analysis tools in analytics/tools/survival_tools.py
+- [ ] T056 [P] Tool registry manager in analytics/tools/tool_registry.py
 
 ### API Endpoints (Django REST Framework)
 - [ ] T057 POST /api/upload/ endpoint implementation
@@ -129,48 +134,48 @@
 ## Phase 3.4: Frontend Implementation (HTMX + Bootstrap)
 
 ### Three-Panel UI Layout
-- [ ] T066 [P] Base template with dark theme in frontend/src/templates/base.html
-- [ ] T067 [P] Three-panel layout with CSS Grid in frontend/src/templates/dashboard.html
-- [ ] T068 [P] Statistical tools panel in frontend/src/templates/tools_panel.html
-- [ ] T069 [P] Analytical dashboard panel in frontend/src/templates/dashboard_panel.html
-- [ ] T070 [P] AI chat panel in frontend/src/templates/chat_panel.html
-- [ ] T071 [P] Draggable resizing functionality with HTMX in frontend/src/templates/panel_resize.html
+- [ ] T066 [P] Base template with dark theme in analytics/templates/base.html
+- [ ] T067 [P] Three-panel layout with CSS Grid in analytics/templates/dashboard.html
+- [ ] T068 [P] Statistical tools panel in analytics/templates/tools_panel.html
+- [ ] T069 [P] Analytical dashboard panel in analytics/templates/dashboard_panel.html
+- [ ] T070 [P] AI chat panel in analytics/templates/chat_panel.html
+- [ ] T071 [P] Draggable resizing functionality with HTMX in analytics/templates/panel_resize.html
 
 ### File Upload Interface
-- [ ] T072 [P] File upload form with HTMX in frontend/src/templates/upload_form.html
-- [ ] T073 [P] Upload progress indicator in frontend/src/templates/upload_progress.html
-- [ ] T074 [P] File validation error display in frontend/src/templates/upload_errors.html
-- [ ] T075 [P] Dataset list with column information in frontend/src/templates/dataset_list.html
+- [ ] T072 [P] File upload form with HTMX in analytics/templates/upload_form.html
+- [ ] T073 [P] Upload progress indicator in analytics/templates/upload_progress.html
+- [ ] T074 [P] File validation error display in analytics/templates/upload_errors.html
+- [ ] T075 [P] Dataset list with column information in analytics/templates/dataset_list.html
 
 ### Analysis Interface
-- [ ] T076 [P] Dynamic parameter modal in frontend/src/templates/parameter_modal.html
-- [ ] T077 [P] Analysis results display in frontend/src/templates/analysis_results.html
-- [ ] T078 [P] Chart and table rendering in frontend/src/templates/visualization.html
-- [ ] T079 [P] Analysis history cards in frontend/src/templates/analysis_history.html
+- [ ] T076 [P] Dynamic parameter modal in analytics/templates/parameter_modal.html
+- [ ] T077 [P] Analysis results display in analytics/templates/analysis_results.html
+- [ ] T078 [P] Chart and table rendering in analytics/templates/visualization.html
+- [ ] T079 [P] Analysis history cards in analytics/templates/analysis_history.html
 
 ### AI Chat Interface
-- [ ] T080 [P] Chat message display in frontend/src/templates/chat_messages.html
-- [ ] T081 [P] Message input form with HTMX in frontend/src/templates/chat_input.html
-- [ ] T082 [P] LLM response formatting in frontend/src/templates/llm_response.html
-- [ ] T083 [P] Image and table display in chat in frontend/src/templates/chat_content.html
+- [ ] T080 [P] Chat message display in analytics/templates/chat_messages.html
+- [ ] T081 [P] Message input form with HTMX in analytics/templates/chat_input.html
+- [ ] T082 [P] LLM response formatting in analytics/templates/llm_response.html
+- [ ] T083 [P] Image and table display in chat in analytics/templates/chat_content.html
 
 ### Agentic AI Interface
-- [ ] T084 [P] "Analyze" button integration in frontend/src/templates/analyze_button.html
-- [ ] T085 [P] Agent progress display in frontend/src/templates/agent_progress.html
-- [ ] T086 [P] Agent control buttons (pause/resume/cancel) in frontend/src/templates/agent_controls.html
-- [ ] T087 [P] Real-time agent status updates in frontend/src/templates/agent_status.html
+- [ ] T084 [P] "Analyze" button integration in analytics/templates/analyze_button.html
+- [ ] T085 [P] Agent progress display in analytics/templates/agent_progress.html
+- [ ] T086 [P] Agent control buttons (pause/resume/cancel) in analytics/templates/agent_controls.html
+- [ ] T087 [P] Real-time agent status updates in analytics/templates/agent_status.html
 
 ## Phase 3.5: Celery Integration & Background Tasks
 
 ### Celery Task Implementation
-- [ ] T088 [P] File processing tasks in backend/src/tasks/file_processing_tasks.py
-- [ ] T089 [P] Analysis execution tasks in backend/src/tasks/analysis_tasks.py
-- [ ] T090 [P] LLM processing tasks in backend/src/tasks/llm_tasks.py
-- [ ] T091 [P] Agent execution tasks in backend/src/tasks/agent_tasks.py
-- [ ] T092 [P] Report generation tasks in backend/src/tasks/report_tasks.py
-- [ ] T093 [P] Image processing tasks in backend/src/tasks/image_tasks.py
-- [ ] T094 [P] Sandbox execution tasks in backend/src/tasks/sandbox_tasks.py
-- [ ] T095 [P] Backup and cleanup tasks in backend/src/tasks/maintenance_tasks.py
+- [ ] T088 [P] File processing tasks in analytics/tasks/file_processing_tasks.py
+- [ ] T089 [P] Analysis execution tasks in analytics/tasks/analysis_tasks.py
+- [ ] T090 [P] LLM processing tasks in analytics/tasks/llm_tasks.py
+- [ ] T091 [P] Agent execution tasks in analytics/tasks/agent_tasks.py
+- [ ] T092 [P] Report generation tasks in analytics/tasks/report_tasks.py
+- [ ] T093 [P] Image processing tasks in analytics/tasks/image_tasks.py
+- [ ] T094 [P] Sandbox execution tasks in analytics/tasks/sandbox_tasks.py
+- [ ] T095 [P] Backup and cleanup tasks in analytics/tasks/maintenance_tasks.py
 
 ### Celery Configuration
 - [ ] T096 Configure Celery worker processes
@@ -187,15 +192,15 @@
 - [ ] T103 Setup database backup procedures
 
 ### Security Implementation
-- [ ] T104 [P] File sanitization pipeline in backend/src/security/file_sanitizer.py
-- [ ] T105 [P] Input validation middleware in backend/src/middleware/validation.py
-- [ ] T106 [P] Rate limiting middleware in backend/src/middleware/rate_limiting.py
-- [ ] T107 [P] Audit logging middleware in backend/src/middleware/audit_logging.py
+- [ ] T104 [P] File sanitization pipeline in analytics/security/file_sanitizer.py
+- [ ] T105 [P] Input validation middleware in analytics/middleware/validation.py
+- [ ] T106 [P] Rate limiting middleware in analytics/middleware/rate_limiting.py
+- [ ] T107 [P] Audit logging middleware in analytics/middleware/audit_logging.py
 - [ ] T108 [P] CSRF protection configuration
-- [ ] T109 [P] Sensitive data masking in backend/src/security/data_masking.py
+- [ ] T109 [P] Sensitive data masking in analytics/security/data_masking.py
 
 ### Performance Optimization
-- [ ] T110 [P] Memory optimization service in backend/src/services/memory_optimizer.py
+- [ ] T110 [P] Memory optimization service in analytics/services/memory_optimizer.py
 - [ ] T111 [P] Query optimization with select_related/prefetch_related
 - [ ] T112 [P] Image compression and optimization
 - [ ] T113 [P] Caching strategy implementation
@@ -282,102 +287,102 @@ Task: "Contract test GET /api/audit/trail/"
 
 ### Phase 3.3 Data Models (T026-T038)
 ```bash
-# Launch T026-T038 together (all independent model files):
-Task: "User model with token/storage limits"
-Task: "Dataset model with Parquet integration"
-Task: "DatasetColumn model with type categorization"
-Task: "AnalysisTool model with LangChain integration"
-Task: "AnalysisSession model with dataset tagging"
-Task: "AnalysisResult model with caching"
-Task: "ChatMessage model with LLM context"
-Task: "AuditTrail model with comprehensive logging"
-Task: "AgentRun model for autonomous AI"
-Task: "AgentStep model for agent actions"
-Task: "GeneratedImage model for visualization storage"
-Task: "SandboxExecution model for secure code execution"
-Task: "ReportGeneration model for document export"
+# Launch T026-T038 together (all models go in analytics/models.py):
+Task: "User model with token/storage limits in analytics/models.py"
+Task: "Dataset model with Parquet integration in analytics/models.py"
+Task: "DatasetColumn model with type categorization in analytics/models.py"
+Task: "AnalysisTool model with LangChain integration in analytics/models.py"
+Task: "AnalysisSession model with dataset tagging in analytics/models.py"
+Task: "AnalysisResult model with caching in analytics/models.py"
+Task: "ChatMessage model with LLM context in analytics/models.py"
+Task: "AuditTrail model with comprehensive logging in analytics/models.py"
+Task: "AgentRun model for autonomous AI in analytics/models.py"
+Task: "AgentStep model for agent actions in analytics/models.py"
+Task: "GeneratedImage model for visualization storage in analytics/models.py"
+Task: "SandboxExecution model for secure code execution in analytics/models.py"
+Task: "ReportGeneration model for document export in analytics/models.py"
 ```
 
 ### Phase 3.4 Services Layer (T042-T051)
 ```bash
 # Launch T042-T051 together (all independent service files):
-Task: "FileProcessingService with security sanitization"
-Task: "ColumnTypeManager for automatic categorization"
-Task: "AnalysisExecutor for tool execution"
-Task: "SessionManager for dataset-tagged sessions"
-Task: "LLMProcessor with Google AI integration"
-Task: "AuditTrailManager for comprehensive logging"
-Task: "AgenticAIController for autonomous analysis"
-Task: "ImageManager for visualization handling"
-Task: "SandboxExecutor for secure code execution"
-Task: "ReportGenerator for Word document creation"
+Task: "FileProcessingService with security sanitization in analytics/services/file_processing.py"
+Task: "ColumnTypeManager for automatic categorization in analytics/services/column_type_manager.py"
+Task: "AnalysisExecutor for tool execution in analytics/services/analysis_executor.py"
+Task: "SessionManager for dataset-tagged sessions in analytics/services/session_manager.py"
+Task: "LLMProcessor with Google AI integration in analytics/services/llm_processor.py"
+Task: "AuditTrailManager for comprehensive logging in analytics/services/audit_trail_manager.py"
+Task: "AgenticAIController for autonomous analysis in analytics/services/agentic_ai_controller.py"
+Task: "ImageManager for visualization handling in analytics/services/image_manager.py"
+Task: "SandboxExecutor for secure code execution in analytics/services/sandbox_executor.py"
+Task: "ReportGenerator for Word document creation in analytics/services/report_generator.py"
 ```
 
 ### Phase 3.5 Tools Registry (T052-T056)
 ```bash
 # Launch T052-T056 together (all independent tool files):
-Task: "Statistical analysis tools"
-Task: "Visualization tools"
-Task: "Machine learning tools"
-Task: "Survival analysis tools"
-Task: "Tool registry manager"
+Task: "Statistical analysis tools in analytics/tools/statistical_tools.py"
+Task: "Visualization tools in analytics/tools/visualization_tools.py"
+Task: "Machine learning tools in analytics/tools/ml_tools.py"
+Task: "Survival analysis tools in analytics/tools/survival_tools.py"
+Task: "Tool registry manager in analytics/tools/tool_registry.py"
 ```
 
 ### Phase 3.6 Frontend Templates (T066-T087)
 ```bash
 # Launch T066-T087 together (all independent template files):
-Task: "Base template with dark theme"
-Task: "Three-panel layout with CSS Grid"
-Task: "Statistical tools panel"
-Task: "Analytical dashboard panel"
-Task: "AI chat panel"
-Task: "Draggable resizing functionality"
-Task: "File upload form with HTMX"
-Task: "Upload progress indicator"
-Task: "File validation error display"
-Task: "Dataset list with column information"
-Task: "Dynamic parameter modal"
-Task: "Analysis results display"
-Task: "Chart and table rendering"
-Task: "Analysis history cards"
-Task: "Chat message display"
-Task: "Message input form with HTMX"
-Task: "LLM response formatting"
-Task: "Image and table display in chat"
-Task: "Analyze button integration"
-Task: "Agent progress display"
-Task: "Agent control buttons"
-Task: "Real-time agent status updates"
+Task: "Base template with dark theme in analytics/templates/base.html"
+Task: "Three-panel layout with CSS Grid in analytics/templates/dashboard.html"
+Task: "Statistical tools panel in analytics/templates/tools_panel.html"
+Task: "Analytical dashboard panel in analytics/templates/dashboard_panel.html"
+Task: "AI chat panel in analytics/templates/chat_panel.html"
+Task: "Draggable resizing functionality in analytics/templates/panel_resize.html"
+Task: "File upload form with HTMX in analytics/templates/upload_form.html"
+Task: "Upload progress indicator in analytics/templates/upload_progress.html"
+Task: "File validation error display in analytics/templates/upload_errors.html"
+Task: "Dataset list with column information in analytics/templates/dataset_list.html"
+Task: "Dynamic parameter modal in analytics/templates/parameter_modal.html"
+Task: "Analysis results display in analytics/templates/analysis_results.html"
+Task: "Chart and table rendering in analytics/templates/visualization.html"
+Task: "Analysis history cards in analytics/templates/analysis_history.html"
+Task: "Chat message display in analytics/templates/chat_messages.html"
+Task: "Message input form with HTMX in analytics/templates/chat_input.html"
+Task: "LLM response formatting in analytics/templates/llm_response.html"
+Task: "Image and table display in chat in analytics/templates/chat_content.html"
+Task: "Analyze button integration in analytics/templates/analyze_button.html"
+Task: "Agent progress display in analytics/templates/agent_progress.html"
+Task: "Agent control buttons in analytics/templates/agent_controls.html"
+Task: "Real-time agent status updates in analytics/templates/agent_status.html"
 ```
 
 ### Phase 3.7 Celery Tasks (T088-T095)
 ```bash
 # Launch T088-T095 together (all independent task files):
-Task: "File processing tasks"
-Task: "Analysis execution tasks"
-Task: "LLM processing tasks"
-Task: "Agent execution tasks"
-Task: "Report generation tasks"
-Task: "Image processing tasks"
-Task: "Sandbox execution tasks"
-Task: "Backup and cleanup tasks"
+Task: "File processing tasks in analytics/tasks/file_processing_tasks.py"
+Task: "Analysis execution tasks in analytics/tasks/analysis_tasks.py"
+Task: "LLM processing tasks in analytics/tasks/llm_tasks.py"
+Task: "Agent execution tasks in analytics/tasks/agent_tasks.py"
+Task: "Report generation tasks in analytics/tasks/report_tasks.py"
+Task: "Image processing tasks in analytics/tasks/image_tasks.py"
+Task: "Sandbox execution tasks in analytics/tasks/sandbox_tasks.py"
+Task: "Backup and cleanup tasks in analytics/tasks/maintenance_tasks.py"
 ```
 
 ### Phase 3.8 Security Components (T104-T109)
 ```bash
 # Launch T104-T109 together (all independent security files):
-Task: "File sanitization pipeline"
-Task: "Input validation middleware"
-Task: "Rate limiting middleware"
-Task: "Audit logging middleware"
+Task: "File sanitization pipeline in analytics/security/file_sanitizer.py"
+Task: "Input validation middleware in analytics/middleware/validation.py"
+Task: "Rate limiting middleware in analytics/middleware/rate_limiting.py"
+Task: "Audit logging middleware in analytics/middleware/audit_logging.py"
 Task: "CSRF protection configuration"
-Task: "Sensitive data masking"
+Task: "Sensitive data masking in analytics/security/data_masking.py"
 ```
 
 ### Phase 3.9 Performance Optimization (T110-T114)
 ```bash
 # Launch T110-T114 together (all independent optimization files):
-Task: "Memory optimization service"
+Task: "Memory optimization service in analytics/services/memory_optimizer.py"
 Task: "Query optimization with select_related/prefetch_related"
 Task: "Image compression and optimization"
 Task: "Caching strategy implementation"
@@ -387,11 +392,11 @@ Task: "Background monitoring and cleanup"
 ### Phase 3.10 Unit Tests (T115-T119)
 ```bash
 # Launch T115-T119 together (all independent test files):
-Task: "Unit tests for all models"
-Task: "Unit tests for all services"
-Task: "Unit tests for all tools"
-Task: "Unit tests for security components"
-Task: "Unit tests for Celery tasks"
+Task: "Unit tests for all models in tests/unit/test_models.py"
+Task: "Unit tests for all services in tests/unit/test_services.py"
+Task: "Unit tests for all tools in tests/unit/test_tools.py"
+Task: "Unit tests for security components in tests/unit/test_security.py"
+Task: "Unit tests for Celery tasks in tests/unit/test_tasks.py"
 ```
 
 ## Notes
