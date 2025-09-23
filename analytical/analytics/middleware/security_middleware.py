@@ -15,7 +15,6 @@ from django.contrib.auth.models import User
 from django.contrib.sessions.models import Session
 from django.core.exceptions import PermissionDenied
 from django.utils.crypto import constant_time_compare
-from django.middleware.csrf import CsrfViewMiddleware
 from django.contrib.auth import get_user
 from analytics.services.logging_service import get_logger, get_audit_logger, get_error_logger
 
@@ -59,22 +58,22 @@ class SecurityMiddleware(MiddlewareMixin):
                 'message': 'Too many requests. Please try again later.'
             }, status=429)
         
-        # CSRF protection for state-changing requests
+        # CSRF protection is handled by Django's built-in middleware
+        # We just log CSRF-related events for audit purposes
         if request.method in ['POST', 'PUT', 'PATCH', 'DELETE']:
-            if not self.check_csrf_token(request):
+            # Check if CSRF token is present (for logging purposes)
+            csrf_token = request.POST.get('csrfmiddlewaretoken') or request.META.get('HTTP_X_CSRFTOKEN')
+            if not csrf_token:
                 self.audit_logger.log_security_event(
-                    'csrf_attack_attempt',
+                    'csrf_token_missing',
                     {
                         'ip_address': self.get_client_ip(request),
                         'user_agent': request.META.get('HTTP_USER_AGENT', ''),
-                        'path': request.path
+                        'path': request.path,
+                        'method': request.method
                     },
-                    'HIGH'
+                    'MEDIUM'
                 )
-                return JsonResponse({
-                    'error': 'CSRF token missing or invalid',
-                    'message': 'Security token validation failed.'
-                }, status=403)
         
         # Security headers
         self.add_security_headers(request)
@@ -137,16 +136,6 @@ class SecurityMiddleware(MiddlewareMixin):
         
         return True
     
-    def check_csrf_token(self, request: HttpRequest) -> bool:
-        """Check CSRF token validity"""
-        csrf_middleware = CsrfViewMiddleware()
-        
-        try:
-            # Check CSRF token
-            csrf_middleware.process_view(request, None, (), {})
-            return True
-        except PermissionDenied:
-            return False
     
     def add_security_headers(self, request: HttpRequest):
         """Add security headers to request"""

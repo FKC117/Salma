@@ -74,3 +74,75 @@ INFO 2025-09-23 21:04:52,290 autoreload 33584 16172 E:\analytical\analytical\ana
 INFO 2025-09-23 21:04:55,299 autoreload 33896 1692 Watching for file changes with StatReloader
 INFO 2025-09-23 21:06:35,933 autoreload 33896 1692 E:\analytical\analytical\analytical\settings.py changed, reloading.
 INFO 2025-09-23 21:06:38,324 autoreload 9604 23892 Watching for file changes with StatReloader
+INFO 2025-09-23 21:09:35,926 logging_service 9604 26964 {"timestamp": "2025-09-23T15:09:35.926060+00:00", "level": "INFO", "message": "Request: GET /", "correlation_id": "fc0e3429-151d-453c-8a4b-19f291793e50", "request_id": "25ece88a-b22a-4d5a-82e3-56ef4e792e16", "user_id": null, "session_id": null, "service": "analytics", "method": "GET", "path": "/", "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0", "ip_address": "127.0.0.1", "referer": ""}
+INFO 2025-09-23 21:09:35,969 logging_service 9604 26964 {"timestamp": "2025-09-23T15:09:35.969842+00:00", "level": "INFO", "message": "Response: 200", "correlation_id": "fc0e3429-151d-453c-8a4b-19f291793e50", "request_id": "25ece88a-b22a-4d5a-82e3-56ef4e792e16", "user_id": null, "session_id": null, "service": "analytics", "status_code": 200, "content_type": "text/html; charset=utf-8"}
+INFO 2025-09-23 21:09:35,980 basehttp 9604 26964 "GET / HTTP/1.1" 200 10664
+INFO 2025-09-23 21:09:40,588 logging_service 9604 26964 {"timestamp": "2025-09-23T15:09:40.588271+00:00", "level": "INFO", "message": "Request: GET /admin/", "correlation_id": "a4ca2628-11bf-4777-bddb-bb8de5c7d221", "request_id": "09f3a532-22f1-488d-be5d-d768410486d3", "user_id": null, "session_id": null, "service": "analytics", "method": "GET", "path": "/admin/", "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0", "ip_address": "127.0.0.1", "referer": ""}
+INFO 2025-09-23 21:09:40,607 logging_service 9604 26964 {"timestamp": "2025-09-23T15:09:40.607873+00:00", "level": "INFO", "message": "Response: 302", "correlation_id": "a4ca2628-11bf-4777-bddb-bb8de5c7d221", "request_id": "09f3a532-22f1-488d-be5d-d768410486d3", "user_id": null, "session_id": null, "service": "analytics", "status_code": 302, "content_type": "text/html; charset=utf-8"}
+INFO 2025-09-23 21:09:40,607 basehttp 9604 26964 "GET /admin/ HTTP/1.1" 302 0
+INFO 2025-09-23 21:09:40,619 logging_service 9604 26964 {"timestamp": "2025-09-23T15:09:40.619306+00:00", "level": "INFO", "message": "Request: GET /admin/login/", "correlation_id": "c1fa81a3-3bbf-4f41-a161-49777eb71ee5", "request_id": "f8442e01-9107-4919-83dc-4d4f87e579ba", "user_id": null, "session_id": null, "service": "analytics", "method": "GET", "path": "/admin/login/", "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0", "ip_address": "127.0.0.1", "referer": ""}
+INFO 2025-09-23 21:09:40,850 logging_service 9604 26964 {"timestamp": "2025-09-23T15:09:40.850319+00:00", "level": "INFO", "message": "Response: 200", "correlation_id": "c1fa81a3-3bbf-4f41-a161-49777eb71ee5", "request_id": "f8442e01-9107-4919-83dc-4d4f87e579ba", "user_id": null, "session_id": null, "service": "analytics", "status_code": 200, "content_type": "text/html; charset=utf-8"}
+INFO 2025-09-23 21:09:40,850 basehttp 9604 26964 "GET /admin/login/?next=/admin/ HTTP/1.1" 200 4181
+INFO 2025-09-23 21:09:41,285 basehttp 9604 17100 "GET /static/admin/css/responsive.css HTTP/1.1" 200 18533
+INFO 2025-09-23 21:09:41,290 basehttp 9604 23808 "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 200 2694
+INFO 2025-09-23 21:09:41,292 basehttp 9604 9900 "GET /static/admin/css/dark_mode.css HTTP/1.1" 200 2929
+INFO 2025-09-23 21:09:41,312 basehttp 9604 26964 "GET /static/admin/css/base.css HTTP/1.1" 200 21207
+INFO 2025-09-23 21:09:41,321 basehttp 9604 13768 "GET /static/admin/css/login.css HTTP/1.1" 200 958
+INFO 2025-09-23 21:09:41,330 basehttp 9604 17100 "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 200 3063
+INFO 2025-09-23 21:09:41,344 basehttp 9604 18536 "GET /static/admin/js/theme.js HTTP/1.1" 200 1943
+INFO 2025-09-23 21:09:43,948 logging_service 9604 26964 {"timestamp": "2025-09-23T15:09:43.948037+00:00", "level": "INFO", "message": "Request: POST /admin/login/", "correlation_id": "30b9ab5b-5393-4eb7-a8c5-daabf11d2fa0", "request_id": "a7045407-0d4b-4f85-aa56-f84939a3bf57", "user_id": null, "session_id": null, "service": "analytics", "method": "POST", "path": "/admin/login/", "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0", "ip_address": "127.0.0.1", "referer": "http://127.0.0.1:8000/admin/login/?next=/admin/"}
+ERROR 2025-09-23 21:09:44,008 log 9604 26964 Internal Server Error: /admin/login/
+Traceback (most recent call last):
+  File "E:\analytical\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\venv\Lib\site-packages\django\utils\deprecation.py", line 133, in __call__
+    response = self.process_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\analytical\analytics\middleware\security_middleware.py", line 64, in process_request
+    if not self.check_csrf_token(request):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\analytical\analytics\middleware\security_middleware.py", line 142, in check_csrf_token
+    csrf_middleware = CsrfViewMiddleware()
+                      ^^^^^^^^^^^^^^^^^^^^
+TypeError: MiddlewareMixin.__init__() missing 1 required positional argument: 'get_response'
+ERROR 2025-09-23 21:09:44,009 basehttp 9604 26964 "POST /admin/login/?next=/admin/ HTTP/1.1" 500 81062
+INFO 2025-09-23 21:10:17,206 autoreload 9604 23892 E:\analytical\analytical\analytics\middleware\security_middleware.py changed, reloading.
+INFO 2025-09-23 21:10:29,199 autoreload 30864 13520 Watching for file changes with StatReloader
+INFO 2025-09-23 21:10:55,982 autoreload 30864 13520 E:\analytical\analytical\analytics\middleware\security_middleware.py changed, reloading.
+INFO 2025-09-23 21:11:15,718 autoreload 32168 34124 Watching for file changes with StatReloader
+INFO 2025-09-23 21:11:27,116 autoreload 32168 34124 E:\analytical\analytical\analytics\middleware\security_middleware.py changed, reloading.
+INFO 2025-09-23 21:11:31,317 autoreload 32344 30964 Watching for file changes with StatReloader
+INFO 2025-09-23 21:11:37,922 logging_service 32344 14888 {"timestamp": "2025-09-23T15:11:37.922808+00:00", "level": "INFO", "message": "Request: POST /admin/login/", "correlation_id": "523fa01d-b204-4137-993a-e0df04d4bf48", "request_id": "7842a5e9-2250-44ff-8163-87e16044f95b", "user_id": null, "session_id": null, "service": "analytics", "method": "POST", "path": "/admin/login/", "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0", "ip_address": "127.0.0.1", "referer": "http://127.0.0.1:8000/admin/login/?next=/admin/"}
+INFO 2025-09-23 21:11:38,622 logging_service 32344 14888 {"timestamp": "2025-09-23T15:11:38.622000+00:00", "level": "INFO", "message": "User action: HTTP_POST_RESPONSE", "correlation_id": null, "request_id": null, "user_id": 1, "session_id": null, "service": "analytics", "action_type": "user_action", "action": "HTTP_POST_RESPONSE", "resource": "/admin/login/", "success": true, "details": {"status_code": 302, "content_type": "text/html; charset=utf-8", "correlation_id": "523fa01d-b204-4137-993a-e0df04d4bf48"}}
+INFO 2025-09-23 21:11:38,622 logging_service 32344 14888 {"timestamp": "2025-09-23T15:11:38.622000+00:00", "level": "INFO", "message": "Response: 302", "correlation_id": "523fa01d-b204-4137-993a-e0df04d4bf48", "request_id": "7842a5e9-2250-44ff-8163-87e16044f95b", "user_id": null, "session_id": null, "service": "analytics", "status_code": 302, "content_type": "text/html; charset=utf-8"}
+INFO 2025-09-23 21:11:38,626 basehttp 32344 14888 "POST /admin/login/?next=/admin/ HTTP/1.1" 302 0
+INFO 2025-09-23 21:11:38,638 logging_service 32344 14888 {"timestamp": "2025-09-23T15:11:38.638683+00:00", "level": "INFO", "message": "Request: GET /admin/", "correlation_id": "ab4082dc-4e80-4466-abe4-feb62b020d13", "request_id": "238ad9ac-e1f5-4da9-b013-47718b946d58", "user_id": null, "session_id": null, "service": "analytics", "method": "GET", "path": "/admin/", "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0", "ip_address": "127.0.0.1", "referer": "http://127.0.0.1:8000/admin/login/?next=/admin/"}
+INFO 2025-09-23 21:11:38,749 logging_service 32344 14888 {"timestamp": "2025-09-23T15:11:38.749490+00:00", "level": "INFO", "message": "User action: HTTP_GET_RESPONSE", "correlation_id": null, "request_id": null, "user_id": 1, "session_id": null, "service": "analytics", "action_type": "user_action", "action": "HTTP_GET_RESPONSE", "resource": "/admin/", "success": true, "details": {"status_code": 200, "content_type": "text/html; charset=utf-8", "correlation_id": "ab4082dc-4e80-4466-abe4-feb62b020d13"}}
+INFO 2025-09-23 21:11:38,749 logging_service 32344 14888 {"timestamp": "2025-09-23T15:11:38.749490+00:00", "level": "INFO", "message": "Response: 200", "correlation_id": "ab4082dc-4e80-4466-abe4-feb62b020d13", "request_id": "238ad9ac-e1f5-4da9-b013-47718b946d58", "user_id": null, "session_id": null, "service": "analytics", "status_code": 200, "content_type": "text/html; charset=utf-8"}
+INFO 2025-09-23 21:11:38,750 basehttp 32344 14888 "GET /admin/ HTTP/1.1" 200 5557
+INFO 2025-09-23 21:11:39,037 basehttp 32344 14888 "GET /static/admin/css/dashboard.css HTTP/1.1" 200 441
+INFO 2025-09-23 21:11:39,082 basehttp 32344 14888 "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 200 331
+INFO 2025-09-23 21:11:39,120 basehttp 32344 33024 "GET /static/admin/img/icon-changelink.svg HTTP/1.1" 200 380
+INFO 2025-09-23 21:11:41,083 logging_service 32344 14888 {"timestamp": "2025-09-23T15:11:41.083061+00:00", "level": "INFO", "message": "Request: GET /admin/auth/user/", "correlation_id": "c336fa1a-bb11-4e21-83c8-f3d579d6ccc0", "request_id": "d3dff391-0b42-43fa-b0a8-908b79151b5a", "user_id": null, "session_id": null, "service": "analytics", "method": "GET", "path": "/admin/auth/user/", "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0", "ip_address": "127.0.0.1", "referer": "http://127.0.0.1:8000/admin/"}
+INFO 2025-09-23 21:11:41,514 logging_service 32344 14888 {"timestamp": "2025-09-23T15:11:41.514787+00:00", "level": "INFO", "message": "User action: HTTP_GET_RESPONSE", "correlation_id": null, "request_id": null, "user_id": 1, "session_id": null, "service": "analytics", "action_type": "user_action", "action": "HTTP_GET_RESPONSE", "resource": "/admin/auth/user/", "success": true, "details": {"status_code": 200, "content_type": "text/html; charset=utf-8", "correlation_id": "c336fa1a-bb11-4e21-83c8-f3d579d6ccc0"}}
+INFO 2025-09-23 21:11:41,515 logging_service 32344 14888 {"timestamp": "2025-09-23T15:11:41.515837+00:00", "level": "INFO", "message": "Response: 200", "correlation_id": "c336fa1a-bb11-4e21-83c8-f3d579d6ccc0", "request_id": "d3dff391-0b42-43fa-b0a8-908b79151b5a", "user_id": null, "session_id": null, "service": "analytics", "status_code": 200, "content_type": "text/html; charset=utf-8"}
+INFO 2025-09-23 21:11:41,516 basehttp 32344 14888 "GET /admin/auth/user/ HTTP/1.1" 200 10467
+INFO 2025-09-23 21:11:41,653 basehttp 32344 14888 "GET /static/admin/img/icon-yes.svg HTTP/1.1" 200 436
+INFO 2025-09-23 21:11:41,654 basehttp 32344 33024 "GET /static/admin/img/search.svg HTTP/1.1" 200 458
+INFO 2025-09-23 21:11:41,679 logging_service 32344 5568 {"timestamp": "2025-09-23T15:11:41.677970+00:00", "level": "INFO", "message": "Request: GET /admin/jsi18n/", "correlation_id": "9f4d8384-305f-451e-8874-0fc1a1f82a7e", "request_id": "cbc61920-8fd9-4d50-98bf-e04b38499f98", "user_id": null, "session_id": null, "service": "analytics", "method": "GET", "path": "/admin/jsi18n/", "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0", "ip_address": "127.0.0.1", "referer": "http://127.0.0.1:8000/admin/auth/user/"}
+INFO 2025-09-23 21:11:41,737 basehttp 32344 33024 "GET /static/admin/js/filters.js HTTP/1.1" 200 978
+INFO 2025-09-23 21:11:41,749 basehttp 32344 14888 "GET /static/admin/js/core.js HTTP/1.1" 200 5682
+INFO 2025-09-23 21:11:41,750 basehttp 32344 5544 "GET /static/admin/css/changelists.css HTTP/1.1" 200 6566
+INFO 2025-09-23 21:11:41,833 basehttp 32344 25624 "GET /static/admin/js/jquery.init.js HTTP/1.1" 200 347
+INFO 2025-09-23 21:11:41,849 basehttp 32344 14888 "GET /static/admin/js/urlify.js HTTP/1.1" 200 7887
+INFO 2025-09-23 21:11:41,867 basehttp 32344 33024 "GET /static/admin/js/admin/RelatedObjectLookups.js HTTP/1.1" 200 8943
+INFO 2025-09-23 21:11:41,950 basehttp 32344 25624 "GET /static/admin/js/prepopulate.js HTTP/1.1" 200 1531
+INFO 2025-09-23 21:11:42,105 basehttp 32344 14888 "GET /static/admin/js/vendor/xregexp/xregexp.js HTTP/1.1" 200 232381
+INFO 2025-09-23 21:11:42,217 logging_service 32344 5568 {"timestamp": "2025-09-23T15:11:42.217588+00:00", "level": "INFO", "message": "User action: HTTP_GET_RESPONSE", "correlation_id": null, "request_id": null, "user_id": 1, "session_id": null, "service": "analytics", "action_type": "user_action", "action": "HTTP_GET_RESPONSE", "resource": "/admin/jsi18n/", "success": true, "details": {"status_code": 200, "content_type": "text/javascript; charset=\"utf-8\"", "correlation_id": "9f4d8384-305f-451e-8874-0fc1a1f82a7e"}}
+INFO 2025-09-23 21:11:42,217 basehttp 32344 5544 "GET /static/admin/js/actions.js HTTP/1.1" 200 7872
+INFO 2025-09-23 21:11:42,223 logging_service 32344 5568 {"timestamp": "2025-09-23T15:11:42.223683+00:00", "level": "INFO", "message": "Response: 200", "correlation_id": "9f4d8384-305f-451e-8874-0fc1a1f82a7e", "request_id": "cbc61920-8fd9-4d50-98bf-e04b38499f98", "user_id": null, "session_id": null, "service": "analytics", "status_code": 200, "content_type": "text/javascript; charset=\"utf-8\""}
+INFO 2025-09-23 21:11:42,237 basehttp 32344 5568 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-09-23 21:11:42,461 basehttp 32344 14488 "GET /static/admin/js/vendor/jquery/jquery.js HTTP/1.1" 200 292458
+INFO 2025-09-23 21:11:42,581 basehttp 32344 14488 "GET /static/admin/img/tooltag-add.svg HTTP/1.1" 200 331
+INFO 2025-09-23 21:11:42,591 basehttp 32344 33024 "GET /static/admin/img/sorting-icons.svg HTTP/1.1" 200 1097
