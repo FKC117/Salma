@@ -72,7 +72,7 @@ class SecurityMiddleware(MiddlewareMixin):
                         'path': request.path,
                         'method': request.method
                     },
-                    'MEDIUM'
+                    'WARNING'
                 )
         
         # Security headers

@@ -63,13 +63,13 @@
 **CRITICAL: These tests MUST be written and MUST FAIL before ANY implementation**
 
 ### Contract Tests (API Schema)
-- [ ] T013 [P] Contract test POST /api/upload/ in tests/contract/test_upload_post.py
-- [ ] T014 [P] Contract test POST /api/sessions/ in tests/contract/test_sessions_post.py
-- [ ] T015 [P] Contract test POST /api/analysis/execute/ in tests/contract/test_analysis_execute.py
-- [ ] T016 [P] Contract test POST /api/chat/messages/ in tests/contract/test_chat_messages.py
-- [ ] T017 [P] Contract test GET /api/tools/ in tests/contract/test_tools_get.py
-- [ ] T018 [P] Contract test POST /api/agent/run/ in tests/contract/test_agent_run.py
-- [ ] T019 [P] Contract test GET /api/audit/trail/ in tests/contract/test_audit_trail.py
+- [x] T013 [P] Contract test POST /api/upload/ in tests/contract/test_upload_post.py
+- [x] T014 [P] Contract test POST /api/sessions/ in tests/contract/test_sessions_post.py
+- [x] T015 [P] Contract test POST /api/analysis/execute/ in tests/contract/test_analysis_execute.py
+- [x] T016 [P] Contract test POST /api/chat/messages/ in tests/contract/test_chat_messages.py
+- [x] T017 [P] Contract test GET /api/tools/ in tests/contract/test_tools_get.py
+- [x] T018 [P] Contract test POST /api/agent/run/ in tests/contract/test_agent_run.py
+- [x] T019 [P] Contract test GET /api/audit/trail/ in tests/contract/test_audit_trail.py
 
 ### Integration Tests (User Stories)
 - [ ] T020 [P] Integration test file upload workflow in tests/integration/test_file_upload.py
