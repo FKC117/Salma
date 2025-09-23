@@ -1,0 +1,3875 @@
+openapi: 3.0.3
+info:
+  title: Data Analysis System API
+  description: Django + HTMX Data Analysis System with AI Integration
+  version: 1.0.0
+  contact:
+    name: Development Team
+    email: dev@example.com
+
+servers:
+  - url: http://localhost:8000/api
+    description: Development server
+  - url: https://api.example.com
+    description: Production server
+
+security:
+  - SessionAuth: []
+  - CSRF: []
+
+paths:
+  # File Upload Endpoints
+  /upload/:
+    post:
+      summary: Upload dataset file
+      description: Upload and process dataset file (CSV, XLS, XLSX, JSON)
+      security:
+        - SessionAuth: []
+        - CSRF: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                name:
+                  type: string
+                  description: Dataset name
+              required:
+                - file
+                - name
+      responses:
+        '200':
+          description: File uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: true
+                  dataset_id:
+                    type: integer
+                  message:
+                    type: string
+                  columns:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        data_type:
+                          type: string
+                        is_numeric:
+                          type: boolean
+                        null_count:
+                          type: integer
+                        unique_count:
+                          type: integer
+        '400':
+          description: Invalid file or upload failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # Analysis Session Endpoints
+  /sessions/:
+    post:
+      summary: Create analysis session
+      description: Create new analysis session for dataset
+      security:
+        - SessionAuth: []
+        - CSRF: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                dataset_id:
+                  type: integer
+                settings:
+                  type: object
+                  additionalProperties: true
+              required:
+                - dataset_id
+      responses:
+        '201':
+          description: Session created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: true
+                  session_id:
+                    type: string
+                  dataset_id:
+                    type: integer
+        '400':
+          description: Invalid session parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # Analysis Execution Endpoints
+  /analysis/execute/:
+    post:
+      summary: Execute analysis tool
+      description: Execute analysis tool with parameters
+      security:
+        - SessionAuth: []
+        - CSRF: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tool_id:
+                  type: integer
+                dataset_id:
+                  type: integer
+                parameters:
+                  type: object
+                  additionalProperties: true
+                session_id:
+                  type: string
+              required:
+                - tool_id
+                - dataset_id
+                - parameters
+                - session_id
+      responses:
+        '200':
+          description: Analysis executed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: true
+                  result_id:
+                    type: integer
+                  execution_time:
+                    type: number
+                  result_data:
+                    type: object
+                    additionalProperties: true
+                  cached:
+                    type: boolean
+        '400':
+          description: Invalid analysis parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # Chat Endpoints
+  /chat/messages/:
+    post:
+      summary: Send chat message
+      description: Send message to AI chat
+      security:
+        - SessionAuth: []
+        - CSRF: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                session_id:
+                  type: string
+                message:
+                  type: string
+                analysis_result_id:
+                  type: integer
+                  nullable: true
+              required:
+                - session_id
+                - message
+      responses:
+        '200':
+          description: Message sent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: true
+                  message_id:
+                    type: integer
+                  response:
+                    type: string
+                  tokens_used:
+                    type: integer
+        '400':
+          description: Invalid message parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # Authentication Endpoints
+  /auth/login/:
+    post:
+      summary: User login
+      description: Authenticate user with Django's built-in authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  maxLength: 150
+                password:
+                  type: string
+              required:
+                - username
+                - password
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: true
+                  user:
+                    $ref: '#/components/schemas/User'
+                  session_id:
+                    type: string
+        '400':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/logout/:
+    post:
+      summary: User logout
+      description: Logout user and clear session
+      security:
+        - SessionAuth: []
+        - CSRF: []
+      responses:
+        '200':
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: true
+                  message:
+                    type: string
+
+  /auth/register/:
+    post:
+      summary: User registration
+      description: Register new user with Django's built-in authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  maxLength: 150
+                email:
+                  type: string
+                  format: email
+                password1:
+                  type: string
+                password2:
+                  type: string
+                first_name:
+                  type: string
+                  maxLength: 150
+                last_name:
+                  type: string
+                  maxLength: 150
+              required:
+                - username
+                - email
+                - password1
+                - password2
+      responses:
+        '201':
+          description: Registration successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: true
+                  user:
+                    $ref: '#/components/schemas/User'
+        '400':
+          description: Registration failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/user/:
+    get:
+      summary: Get current user
+      description: Get current authenticated user information
+      security:
+        - SessionAuth: []
+      responses:
+        '200':
+          description: User information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # Token Management Endpoints
+  /tokens/usage/:
+    get:
+      summary: Get user token usage
+      description: Get current user's token usage and limits
+      security:
+        - SessionAuth: []
+      responses:
+        '200':
+          description: Token usage information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token_limit:
+                    type: integer
+                  tokens_used:
+                    type: integer
+                  tokens_used_this_month:
+                    type: integer
+                  tokens_remaining:
+                    type: integer
+                  usage_percentage:
+                    type: number
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /tokens/usage/history/:
+    get:
+      summary: Get token usage history
+      description: Get user's token usage history
+      security:
+        - SessionAuth: []
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+            maximum: 100
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Token usage history
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  usage_history:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TokenUsage'
+                  total_count:
+                    type: integer
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /tokens/limits/:
+    post:
+      summary: Update user token limits
+      description: Update user's token limits (admin only)
+      security:
+        - SessionAuth: []
+        - CSRF: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token_limit:
+                  type: integer
+                  minimum: 1000
+              required:
+                - token_limit
+      responses:
+        '200':
+          description: Token limits updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: true
+                  new_token_limit:
+                    type: integer
+        '400':
+          description: Invalid token limit
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # File Upload Endpoints
+  /upload/:
+    post:
+      summary: Upload dataset file
+      description: Upload XLS, CSV, or JSON file for analysis
+      security:
+        - SessionAuth: []
+        - CSRF: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Dataset file (XLS, CSV, JSON)
+                name:
+                  type: string
+                  maxLength: 200
+                  description: Custom dataset name
+              required:
+                - file
+      responses:
+        '200':
+          description: File uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: true
+                  dataset_id: 
+                    type: integer
+                  message: 
+                    type: string
+                  columns:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ColumnInfo'
+        '400':
+          description: Invalid file or validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '413':
+          description: File too large
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # Dataset Management
+  /datasets/:
+    get:
+      summary: List user datasets
+      description: Get all datasets for current user
+      security:
+        - SessionAuth: []
+      responses:
+        '200':
+          description: List of datasets
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  datasets:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Dataset'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /datasets/{dataset_id}/:
+    get:
+      summary: Get dataset details
+      description: Get dataset information and column metadata
+      security:
+        - SessionAuth: []
+      parameters:
+        - name: dataset_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Dataset details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatasetDetail'
+        '404':
+          description: Dataset not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      summary: Delete dataset
+      description: Permanently delete dataset and all associated data
+      security:
+        - SessionAuth: []
+        - CSRF: []
+      parameters:
+        - name: dataset_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Dataset deleted successfully
+        '404':
+          description: Dataset not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # Analysis Tools
+  /tools/:
+    get:
+      summary: List available analysis tools
+      description: Get all registered analysis tools
+      security:
+        - SessionAuth: []
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: string
+            enum: [statistical, visualization, machine_learning, data_processing]
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of analysis tools
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tools:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AnalysisTool'
+
+  /tools/{tool_id}/parameters/:
+    get:
+      summary: Get tool parameters schema
+      description: Get parameter schema for specific analysis tool
+      security:
+        - SessionAuth: []
+      parameters:
+        - name: tool_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Tool parameters schema
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ToolParameters'
+        '404':
+          description: Tool not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # Analysis Execution
+  /analysis/execute/:
+    post:
+      summary: Execute analysis tool
+      description: Run analysis tool with specified parameters
+      security:
+        - SessionAuth: []
+        - CSRF: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tool_id:
+                  type: integer
+                dataset_id:
+                  type: integer
+                parameters:
+                  type: object
+                  description: Tool-specific parameters
+                session_id:
+                  type: string
+                  description: Analysis session ID
+              required:
+                - tool_id
+                - dataset_id
+                - parameters
+      responses:
+        '200':
+          description: Analysis completed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: true
+                  result_id:
+                    type: integer
+                  execution_time:
+                    type: number
+                    description: Execution time in milliseconds
+                  result_data:
+                    type: object
+                    description: Analysis results
+                  cached:
+                    type: boolean
+                    description: Whether result was from cache
+        '400':
+          description: Invalid parameters or tool error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Tool or dataset not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # Session Management
+  /sessions/:
+    post:
+      summary: Create analysis session
+      description: Create new analysis session for dataset
+      security:
+        - SessionAuth: []
+        - CSRF: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                dataset_id:
+                  type: integer
+                settings:
+                  type: object
+                  description: Session-specific settings
+              required:
+                - dataset_id
+      responses:
+        '201':
+          description: Session created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  session_id:
+                    type: string
+                  dataset_id:
+                    type: integer
+                  created_at:
+                    type: string
+                    format: date-time
+        '400':
+          description: Invalid dataset or settings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /sessions/{session_id}/:
+    get:
+      summary: Get session details
+      description: Get analysis session information
+      security:
+        - SessionAuth: []
+      parameters:
+        - name: session_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Session details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalysisSession'
+        '404':
+          description: Session not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # AI Chat
+  /chat/messages/:
+    post:
+      summary: Send chat message
+      description: Send message to AI chat for analysis interpretation
+      security:
+        - SessionAuth: []
+        - CSRF: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                session_id:
+                  type: string
+                message:
+                  type: string
+                  maxLength: 5000
+                analysis_result_id:
+                  type: integer
+                  description: Optional analysis result to discuss
+              required:
+                - session_id
+                - message
+      responses:
+        '200':
+          description: Message sent and response generated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message_id:
+                    type: integer
+                  response:
+                    type: string
+                  tokens_used:
+                    type: integer
+        '400':
+          description: Invalid message or session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /chat/history/{session_id}/:
+    get:
+      summary: Get chat history
+      description: Get chat message history for session
+      security:
+        - SessionAuth: []
+      parameters:
+        - name: session_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+            maximum: 100
+      responses:
+        '200':
+          description: Chat history
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  messages:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ChatMessage'
+        '404':
+          description: Session not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # UI Panel Management
+  /ui/panels/:
+    post:
+      summary: Update panel layout
+      description: Update three-panel layout configuration
+      security:
+        - SessionAuth: []
+        - CSRF: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                left_width:
+                  type: number
+                  minimum: 200
+                  maximum: 600
+                right_width:
+                  type: number
+                  minimum: 200
+                  maximum: 600
+                session_id:
+                  type: string
+              required:
+                - left_width
+                - right_width
+                - session_id
+      responses:
+        '200':
+          description: Panel layout updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: true
+                  layout:
+                    type: object
+                    properties:
+                      left_width:
+                        type: number
+                      right_width:
+                        type: number
+        '400':
+          description: Invalid layout parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # Analysis History Management
+  /analysis/history/{session_id}/:
+    get:
+      summary: Get analysis history for session
+      description: Get analysis history with card positions for dataset-tagged session
+      security:
+        - SessionAuth: []
+      parameters:
+        - name: session_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Analysis history with card information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  history:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AnalysisHistory'
+        '404':
+          description: Session not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /analysis/history/cards/:
+    post:
+      summary: Update card positions and visibility
+      description: Update card positions, sizes, and visibility in workspace
+      security:
+        - SessionAuth: []
+        - CSRF: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                session_id:
+                  type: string
+                card_updates:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      analysis_id:
+                        type: integer
+                      position:
+                        type: object
+                        properties:
+                          x:
+                            type: number
+                          y:
+                            type: number
+                      size:
+                        type: object
+                        properties:
+                          width:
+                            type: number
+                          height:
+                            type: number
+                      visible:
+                        type: boolean
+              required:
+                - session_id
+                - card_updates
+      responses:
+        '200':
+          description: Card positions updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: true
+                  updated_cards:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AnalysisHistory'
+        '400':
+          description: Invalid card update parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /sessions/switch-dataset/:
+    post:
+      summary: Switch dataset and restore analysis history
+      description: Switch to different dataset and restore previous analysis results
+      security:
+        - SessionAuth: []
+        - CSRF: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                current_session_id:
+                  type: string
+                new_dataset_id:
+                  type: integer
+              required:
+                - current_session_id
+                - new_dataset_id
+      responses:
+        '200':
+          description: Dataset switched and history restored
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: true
+                  new_session_id:
+                    type: string
+                  restored_analysis:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AnalysisHistory'
+        '400':
+          description: Invalid dataset or session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # Storage Management Endpoints
+  /storage/usage/:
+    get:
+      summary: Get user storage usage
+      description: Get current user's storage usage and limits
+      security:
+        - SessionAuth: []
+      responses:
+        '200':
+          description: Storage usage information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  storage_limit:
+                    type: integer
+                  storage_used:
+                    type: integer
+                  storage_remaining:
+                    type: integer
+                  usage_percentage:
+                    type: number
+                  warning_sent:
+                    type: boolean
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /storage/cleanup/:
+    post:
+      summary: Clean up user storage
+      description: Delete old analysis results to free up storage space
+      security:
+        - SessionAuth: []
+        - CSRF: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                keep_recent:
+                  type: integer
+                  description: Number of recent analysis results to keep
+                  default: 10
+                delete_archived:
+                  type: boolean
+                  description: Whether to delete archived results
+                  default: true
+              required:
+                - keep_recent
+      responses:
+        '200':
+          description: Storage cleanup completed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: true
+                  space_freed:
+                    type: integer
+                  items_deleted:
+                    type: integer
+        '400':
+          description: Invalid cleanup parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # System Health & Monitoring Endpoints
+  /health/:
+    get:
+      summary: Get system health status
+      description: Get current system health metrics and status
+      security:
+        - SessionAuth: []
+      responses:
+        '200':
+          description: System health information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [healthy, warning, critical]
+                  metrics:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SystemHealthMetric'
+                  last_updated:
+                    type: string
+                    format: date-time
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /health/metrics/:
+    get:
+      summary: Get detailed system metrics
+      description: Get detailed system performance metrics
+      security:
+        - SessionAuth: []
+      parameters:
+        - name: metric_name
+          in: query
+          schema:
+            type: string
+          description: Filter by specific metric name
+        - name: hours
+          in: query
+          schema:
+            type: integer
+            default: 24
+          description: Number of hours of data to retrieve
+      responses:
+        '200':
+          description: System metrics data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  metrics:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SystemHealthMetric'
+                  time_range:
+                    type: object
+                    properties:
+                      start:
+                        type: string
+                        format: date-time
+                      end:
+                        type: string
+                        format: date-time
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # Error Logging & Management Endpoints
+  /errors/:
+    get:
+      summary: Get user error logs
+      description: Get error logs for current user
+      security:
+        - SessionAuth: []
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+            maximum: 100
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: error_type
+          in: query
+          schema:
+            type: string
+          description: Filter by error type
+        - name: resolved
+          in: query
+          schema:
+            type: boolean
+          description: Filter by resolution status
+      responses:
+        '200':
+          description: Error logs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ErrorLog'
+                  total_count:
+                    type: integer
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /errors/{error_id}/resolve/:
+    post:
+      summary: Mark error as resolved
+      description: Mark a specific error as resolved
+      security:
+        - SessionAuth: []
+        - CSRF: []
+      parameters:
+        - name: error_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                resolution_notes:
+                  type: string
+                  description: Notes about how the error was resolved
+              required:
+                - resolution_notes
+      responses:
+        '200':
+          description: Error marked as resolved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: true
+                  resolved_at:
+                    type: string
+                    format: date-time
+        '400':
+          description: Invalid error ID or resolution data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Error not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # Audit Trail Endpoints
+  /audit/trail/:
+    get:
+      summary: Get audit trail
+      description: Get audit trail for current user or system events
+      security:
+        - SessionAuth: []
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+            maximum: 100
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: action_type
+          in: query
+          schema:
+            type: string
+          description: Filter by action type
+        - name: action_category
+          in: query
+          schema:
+            type: string
+          description: Filter by action category
+        - name: resource_type
+          in: query
+          schema:
+            type: string
+          description: Filter by resource type
+        - name: start_date
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: Filter by start date
+        - name: end_date
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: Filter by end date
+        - name: success
+          in: query
+          schema:
+            type: boolean
+          description: Filter by success status
+      responses:
+        '200':
+          description: Audit trail data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  audit_records:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AuditTrail'
+                  total_count:
+                    type: integer
+                  filters_applied:
+                    type: object
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /audit/export/:
+    post:
+      summary: Export audit trail
+      description: Export audit trail data for compliance reporting
+      security:
+        - SessionAuth: []
+        - CSRF: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                start_date:
+                  type: string
+                  format: date-time
+                end_date:
+                  type: string
+                  format: date-time
+                format:
+                  type: string
+                  enum: [csv, json, pdf]
+                  default: csv
+                include_system_events:
+                  type: boolean
+                  default: false
+              required:
+                - start_date
+                - end_date
+      responses:
+        '200':
+          description: Audit trail export
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Invalid export parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /audit/reports/compliance/:
+    get:
+      summary: Generate compliance report
+      description: Generate compliance report for audit trail data
+      security:
+        - SessionAuth: []
+      parameters:
+        - name: start_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+        - name: end_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+        - name: report_type
+          in: query
+          schema:
+            type: string
+            enum: [summary, detailed, security, data_access]
+            default: summary
+      responses:
+        '200':
+          description: Compliance report
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  report_type:
+                    type: string
+                  period:
+                    type: object
+                    properties:
+                      start_date:
+                        type: string
+                        format: date-time
+                      end_date:
+                        type: string
+                        format: date-time
+                  summary:
+                    type: object
+                    properties:
+                      total_actions:
+                        type: integer
+                      successful_actions:
+                        type: integer
+                      failed_actions:
+                        type: integer
+                      unique_users:
+                        type: integer
+                      data_access_events:
+                        type: integer
+                  details:
+                    type: array
+                    items:
+                      type: object
+        '400':
+          description: Invalid report parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # Report Generation & Document Export Endpoints
+  /reports/generate/:
+    post:
+      summary: Generate professional report from analysis session
+      description: Create a comprehensive Word document report from analysis session data
+      security:
+        - SessionAuth: []
+        - CSRF: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                session_id:
+                  type: string
+                report_title:
+                  type: string
+                  description: User-defined report title
+                report_type:
+                  type: string
+                  enum: [analysis_summary, detailed_report, executive_summary]
+                  default: detailed_report
+                content_selection:
+                  type: object
+                  properties:
+                    include_tools_results:
+                      type: boolean
+                      default: true
+                    include_chat_messages:
+                      type: boolean
+                      default: true
+                    include_sandbox_executions:
+                      type: boolean
+                      default: true
+                    include_analysis_results:
+                      type: boolean
+                      default: true
+                    include_images:
+                      type: boolean
+                      default: true
+                    include_tables:
+                      type: boolean
+                      default: true
+                    include_llm_interpretations:
+                      type: boolean
+                      default: true
+                    include_recommendations:
+                      type: boolean
+                      default: true
+                    custom_sections:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          title:
+                            type: string
+                          content:
+                            type: string
+                          position:
+                            type: integer
+                template_id:
+                  type: string
+                  default: default_professional
+                generation_settings:
+                  type: object
+                  properties:
+                    include_cover_page:
+                      type: boolean
+                      default: true
+                    include_table_of_contents:
+                      type: boolean
+                      default: true
+                    include_executive_summary:
+                      type: boolean
+                      default: true
+                    include_methodology:
+                      type: boolean
+                      default: true
+                    include_appendix:
+                      type: boolean
+                      default: true
+                    page_orientation:
+                      type: string
+                      enum: [portrait, landscape]
+                      default: portrait
+                    font_family:
+                      type: string
+                      default: Calibri
+                    font_size:
+                      type: integer
+                      default: 11
+                    color_scheme:
+                      type: string
+                      enum: [professional, corporate, academic, creative]
+                      default: professional
+              required:
+                - session_id
+                - report_title
+      responses:
+        '200':
+          description: Report generation initiated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: true
+                  report_id:
+                    type: string
+                    format: uuid
+                  report_status:
+                    type: string
+                    enum: [pending, generating]
+                  estimated_completion_time:
+                    type: integer
+                    description: Estimated completion time in seconds
+                  generation_progress:
+                    type: integer
+                    minimum: 0
+                    maximum: 100
+        '400':
+          description: Invalid report generation request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /reports/status/{report_id}/:
+    get:
+      summary: Get report generation status
+      description: Check the status and progress of report generation
+      security:
+        - SessionAuth: []
+      parameters:
+        - name: report_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Report status retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  report:
+                    $ref: '#/components/schemas/ReportGeneration'
+                  status:
+                    type: string
+                    enum: [pending, generating, completed, failed, expired]
+                  progress_percentage:
+                    type: integer
+                    minimum: 0
+                    maximum: 100
+                  estimated_remaining_time:
+                    type: integer
+                    description: Estimated remaining time in seconds
+        '404':
+          description: Report not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /reports/download/{report_id}/:
+    get:
+      summary: Download generated report
+      description: Download the generated Word document report
+      security:
+        - SessionAuth: []
+      parameters:
+        - name: report_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: format
+          in: query
+          schema:
+            type: string
+            enum: [docx, pdf]
+            default: docx
+      responses:
+        '200':
+          description: Report downloaded successfully
+          content:
+            application/vnd.openxmlformats-officedocument.wordprocessingml.document:
+              schema:
+                type: string
+                format: binary
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Report not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          description: Report not ready for download
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /reports/session/{session_id}/:
+    get:
+      summary: Get all reports for session
+      description: Retrieve all generated reports for a specific session
+      security:
+        - SessionAuth: []
+      parameters:
+        - name: session_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, generating, completed, failed, expired]
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+      responses:
+        '200':
+          description: Reports retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reports:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ReportGeneration'
+                  total_count:
+                    type: integer
+        '404':
+          description: Session not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /reports/templates/:
+    get:
+      summary: Get available report templates
+      description: Retrieve list of available report templates
+      security:
+        - SessionAuth: []
+      responses:
+        '200':
+          description: Templates retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  templates:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        template_id:
+                          type: string
+                        template_name:
+                          type: string
+                        template_description:
+                          type: string
+                        template_preview:
+                          type: string
+                        template_categories:
+                          type: array
+                          items:
+                            type: string
+                        is_customizable:
+                          type: boolean
+                        color_schemes:
+                          type: array
+                          items:
+                            type: string
+                        page_orientations:
+                          type: array
+                          items:
+                            type: string
+                        font_options:
+                          type: array
+                          items:
+                            type: string
+
+  # LangChain Sandbox & Code Execution Endpoints
+  /sandbox/execute/:
+    post:
+      summary: Execute user query in secure sandbox
+      description: Process user query, generate Python code, and execute in secure sandbox
+      security:
+        - SessionAuth: []
+        - CSRF: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                session_id:
+                  type: string
+                user_query:
+                  type: string
+                  description: User's analysis query
+                context_data:
+                  type: object
+                  additionalProperties: true
+                  description: Additional context for code generation
+                max_execution_time:
+                  type: integer
+                  default: 30
+                  description: Maximum execution time in seconds
+                max_memory_mb:
+                  type: integer
+                  default: 512
+                  description: Maximum memory usage in MB
+              required:
+                - session_id
+                - user_query
+      responses:
+        '200':
+          description: Code execution completed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: true
+                  execution_id:
+                    type: string
+                    format: uuid
+                  execution_status:
+                    type: string
+                    enum: [completed, failed, timeout]
+                  output_data:
+                    type: object
+                    additionalProperties: true
+                  images_generated:
+                    type: array
+                    items:
+                      type: integer
+                  tables_generated:
+                    type: array
+                    items:
+                      type: object
+                  execution_time_ms:
+                    type: integer
+                  memory_used_mb:
+                    type: number
+                  error_message:
+                    type: string
+                    nullable: true
+                  suggestions:
+                    type: array
+                    items:
+                      type: string
+                    description: LLM suggestions for fixing errors
+        '400':
+          description: Invalid execution request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /sandbox/status/{execution_id}/:
+    get:
+      summary: Get sandbox execution status
+      description: Check the status of a sandbox execution
+      security:
+        - SessionAuth: []
+      parameters:
+        - name: execution_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Execution status retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  execution:
+                    $ref: '#/components/schemas/SandboxExecution'
+                  status:
+                    type: string
+                    enum: [pending, running, completed, failed, timeout]
+        '404':
+          description: Execution not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /sandbox/retry/{execution_id}/:
+    post:
+      summary: Retry failed sandbox execution
+      description: Retry a failed sandbox execution with LLM corrections
+      security:
+        - SessionAuth: []
+        - CSRF: []
+      parameters:
+        - name: execution_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_feedback:
+                  type: string
+                  description: User feedback for code correction
+                max_retries:
+                  type: integer
+                  default: 3
+                  description: Maximum retry attempts
+      responses:
+        '200':
+          description: Retry initiated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: true
+                  new_execution_id:
+                    type: string
+                    format: uuid
+                  retry_count:
+                    type: integer
+        '400':
+          description: Retry not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /sandbox/history/{session_id}/:
+    get:
+      summary: Get sandbox execution history
+      description: Get execution history for a session
+      security:
+        - SessionAuth: []
+      parameters:
+        - name: session_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, running, completed, failed, timeout]
+      responses:
+        '200':
+          description: Execution history retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  executions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SandboxExecution'
+                  total_count:
+                    type: integer
+        '404':
+          description: Session not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # LLM Batch Processing & Image Management Endpoints
+  /llm/batch/process/:
+    post:
+      summary: Process multiple analysis results with LLM
+      description: Process multiple analysis results in batch for efficient LLM processing
+      security:
+        - SessionAuth: []
+        - CSRF: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                session_id:
+                  type: string
+                analysis_results:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      result_id:
+                        type: integer
+                      result_type:
+                        type: string
+                        enum: [statistical, visualization, text]
+                      data:
+                        type: object
+                        additionalProperties: true
+                      images:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            image_id:
+                              type: integer
+                            image_type:
+                              type: string
+                            access_url:
+                              type: string
+                prompt_template:
+                  type: string
+                  default: "Analyze the following analysis results and provide insights:"
+              required:
+                - session_id
+                - analysis_results
+      responses:
+        '200':
+          description: Batch processing completed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: true
+                  batch_id:
+                    type: string
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        result_id:
+                          type: integer
+                        interpretation:
+                          type: string
+                        formatted_response:
+                          type: object
+                          properties:
+                            text:
+                              type: string
+                            tables:
+                              type: array
+                              items:
+                                type: object
+                            images:
+                              type: array
+                              items:
+                                type: object
+                        tokens_used:
+                          type: integer
+        '400':
+          description: Invalid batch processing request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /images/{image_id}/:
+    get:
+      summary: Get generated image
+      description: Retrieve a generated image by ID
+      security:
+        - SessionAuth: []
+      parameters:
+        - name: image_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: format
+          in: query
+          schema:
+            type: string
+            enum: [original, base64, url]
+            default: original
+      responses:
+        '200':
+          description: Image retrieved successfully
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+            application/json:
+              schema:
+                type: object
+                properties:
+                  image:
+                    $ref: '#/components/schemas/GeneratedImage'
+                  base64_data:
+                    type: string
+                  access_url:
+                    type: string
+        '404':
+          description: Image not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /images/session/{session_id}/:
+    get:
+      summary: Get all images for session
+      description: Retrieve all generated images for a specific session
+      security:
+        - SessionAuth: []
+      parameters:
+        - name: session_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: image_type
+          in: query
+          schema:
+            type: string
+            enum: [histogram, scatter_plot, correlation_matrix, survival_curve, box_plot, heatmap]
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+            maximum: 100
+      responses:
+        '200':
+          description: Images retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  images:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/GeneratedImage'
+                  total_count:
+                    type: integer
+        '404':
+          description: Session not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # LLM Context Management Endpoints
+  /llm/context/{session_id}/:
+    get:
+      summary: Get LLM context for session
+      description: Get the last 10 messages context for LLM processing
+      security:
+        - SessionAuth: []
+      parameters:
+        - name: session_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: context_type
+          in: query
+          schema:
+            type: string
+            enum: [chat_history, analysis_context, tool_context]
+            default: chat_history
+      responses:
+        '200':
+          description: LLM context data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  context:
+                    $ref: '#/components/schemas/LLMContextCache'
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        role:
+                          type: string
+                          enum: [user, assistant, system]
+                        content:
+                          type: string
+                        timestamp:
+                          type: string
+                          format: date-time
+        '404':
+          description: Session not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /llm/context/{session_id}/update/:
+    post:
+      summary: Update LLM context for session
+      description: Update the LLM context with new messages
+      security:
+        - SessionAuth: []
+        - CSRF: []
+      parameters:
+        - name: session_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                context_type:
+                  type: string
+                  enum: [chat_history, analysis_context, tool_context]
+                new_messages:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      role:
+                        type: string
+                        enum: [user, assistant, system]
+                      content:
+                        type: string
+                      timestamp:
+                        type: string
+                        format: date-time
+                  maxItems: 10
+              required:
+                - context_type
+                - new_messages
+      responses:
+        '200':
+          description: Context updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: true
+                  context_id:
+                    type: integer
+                  message_count:
+                    type: integer
+        '400':
+          description: Invalid context data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # Backup & Recovery Endpoints
+  /backup/status/:
+    get:
+      summary: Get backup status
+      description: Get current backup status and recent backup records
+      security:
+        - SessionAuth: []
+      responses:
+        '200':
+          description: Backup status information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  last_backup:
+                    type: string
+                    format: date-time
+                  backup_status:
+                    type: string
+                    enum: [in_progress, completed, failed]
+                  recent_backups:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BackupRecord'
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /backup/trigger/:
+    post:
+      summary: Trigger manual backup
+      description: Trigger a manual backup operation (admin only)
+      security:
+        - SessionAuth: []
+        - CSRF: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                backup_type:
+                  type: string
+                  enum: [full, incremental, user_data]
+                  default: user_data
+              required:
+                - backup_type
+      responses:
+        '200':
+          description: Backup triggered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: true
+                  backup_id:
+                    type: integer
+                  estimated_duration:
+                    type: string
+        '400':
+          description: Invalid backup parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # Audit Trail & Compliance Endpoints
+  /audit/trail/:
+    get:
+      summary: Get audit trail records
+      description: Retrieve audit trail records with filtering and pagination
+      security:
+        - SessionAuth: []
+      parameters:
+        - name: user_id
+          in: query
+          schema:
+            type: integer
+        - name: action_type
+          in: query
+          schema:
+            type: string
+            enum: [login, logout, upload, analysis, delete, export, admin_action, system_event]
+        - name: action_category
+          in: query
+          schema:
+            type: string
+            enum: [authentication, data_management, analysis, system, security, compliance]
+        - name: resource_type
+          in: query
+          schema:
+            type: string
+            enum: [user, dataset, analysis_result, report, image, session, system]
+        - name: success
+          in: query
+          schema:
+            type: boolean
+        - name: sensitive_data_accessed
+          in: query
+          schema:
+            type: boolean
+        - name: start_date
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: end_date
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: correlation_id
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            default: 50
+            minimum: 1
+            maximum: 100
+      responses:
+        '200':
+          description: Audit trail records retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  records:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AuditTrail'
+                  total_count:
+                    type: integer
+                  page:
+                    type: integer
+                  page_size:
+                    type: integer
+                  total_pages:
+                    type: integer
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /audit/trail/{audit_id}/:
+    get:
+      summary: Get specific audit trail record
+      description: Retrieve detailed information about a specific audit trail record
+      security:
+        - SessionAuth: []
+      parameters:
+        - name: audit_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: include_details
+          in: query
+          schema:
+            type: boolean
+            default: true
+      responses:
+        '200':
+          description: Audit trail record retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  audit_record:
+                    $ref: '#/components/schemas/AuditTrail'
+                  details:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AuditTrailDetail'
+        '404':
+          description: Audit record not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /audit/export/:
+    post:
+      summary: Export audit trail data
+      description: Export audit trail data for compliance reporting
+      security:
+        - SessionAuth: []
+        - CSRF: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                export_format:
+                  type: string
+                  enum: [csv, json, xlsx]
+                  default: csv
+                start_date:
+                  type: string
+                  format: date-time
+                end_date:
+                  type: string
+                  format: date-time
+                filters:
+                  type: object
+                  properties:
+                    user_ids:
+                      type: array
+                      items:
+                        type: integer
+                    action_types:
+                      type: array
+                      items:
+                        type: string
+                    action_categories:
+                      type: array
+                      items:
+                        type: string
+                    resource_types:
+                      type: array
+                      items:
+                        type: string
+                    success_only:
+                      type: boolean
+                    sensitive_data_only:
+                      type: boolean
+                    compliance_flags:
+                      type: array
+                      items:
+                        type: string
+                        enum: [gdpr, hipaa, sox, pci_dss]
+                include_details:
+                  type: boolean
+                  default: false
+                mask_sensitive_data:
+                  type: boolean
+                  default: true
+              required:
+                - start_date
+                - end_date
+      responses:
+        '200':
+          description: Audit data export initiated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  export_id:
+                    type: string
+                    format: uuid
+                  export_status:
+                    type: string
+                    enum: [pending, processing, completed, failed]
+                  estimated_completion_time:
+                    type: integer
+                    description: Estimated completion time in seconds
+                  download_url:
+                    type: string
+                    format: uri
+                    description: URL to download the exported file
+        '400':
+          description: Invalid export parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /audit/reports/compliance/:
+    get:
+      summary: Generate compliance reports
+      description: Generate compliance reports for various standards
+      security:
+        - SessionAuth: []
+      parameters:
+        - name: compliance_standard
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [gdpr, hipaa, sox, pci_dss, iso27001]
+        - name: report_type
+          in: query
+          schema:
+            type: string
+            enum: [summary, detailed, executive]
+            default: summary
+        - name: start_date
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: end_date
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: format
+          in: query
+          schema:
+            type: string
+            enum: [pdf, html, json]
+            default: pdf
+      responses:
+        '200':
+          description: Compliance report generated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  report_id:
+                    type: string
+                    format: uuid
+                  report_title:
+                    type: string
+                  compliance_standard:
+                    type: string
+                  report_type:
+                    type: string
+                  generated_at:
+                    type: string
+                    format: date-time
+                  report_summary:
+                    type: object
+                    properties:
+                      total_events:
+                        type: integer
+                      compliance_score:
+                        type: number
+                        minimum: 0
+                        maximum: 100
+                      violations_found:
+                        type: integer
+                      recommendations:
+                        type: array
+                        items:
+                          type: string
+                  download_url:
+                    type: string
+                    format: uri
+        '400':
+          description: Invalid report parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # Agentic AI System Endpoints
+  /agent/run/:
+    post:
+      summary: Start autonomous AI agent analysis
+      description: Start an autonomous AI agent to analyze data end-to-end
+      security:
+        - SessionAuth: []
+        - CSRF: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                dataset_id:
+                  type: integer
+                goal:
+                  type: string
+                  description: User-defined analysis goal or question
+                constraints:
+                  type: object
+                  properties:
+                    max_steps:
+                      type: integer
+                      default: 20
+                      minimum: 1
+                      maximum: 100
+                    max_cost:
+                      type: integer
+                      default: 10000
+                      minimum: 1000
+                      maximum: 100000
+                    max_time:
+                      type: integer
+                      default: 1800
+                      minimum: 60
+                      maximum: 3600
+                agent_config:
+                  type: object
+                  properties:
+                    agent_version:
+                      type: string
+                      default: "1.0"
+                    llm_model:
+                      type: string
+                      default: "gemini-pro"
+                    planning_mode:
+                      type: string
+                      enum: [conservative, balanced, aggressive]
+                      default: balanced
+                    auto_retry:
+                      type: boolean
+                      default: true
+                    human_feedback:
+                      type: boolean
+                      default: false
+              required:
+                - dataset_id
+                - goal
+      responses:
+        '200':
+          description: Agent run started successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  agent_run_id:
+                    type: integer
+                  status:
+                    type: string
+                    enum: [planning, running]
+                  correlation_id:
+                    type: string
+                  estimated_completion_time:
+                    type: integer
+                  progress_url:
+                    type: string
+                    format: uri
+        '400':
+          description: Invalid agent parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /agent/run/{agent_run_id}/:
+    get:
+      summary: Get agent run status and progress
+      description: Retrieve current status and progress of an agent run
+      security:
+        - SessionAuth: []
+      parameters:
+        - name: agent_run_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: include_steps
+          in: query
+          schema:
+            type: boolean
+            default: true
+      responses:
+        '200':
+          description: Agent run status retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  agent_run:
+                    $ref: '#/components/schemas/AgentRun'
+                  steps:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AgentStep'
+                  current_plan:
+                    type: object
+                    additionalProperties: true
+                  next_action:
+                    type: string
+                  estimated_remaining_time:
+                    type: integer
+        '404':
+          description: Agent run not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /agent/run/{agent_run_id}/pause/:
+    post:
+      summary: Pause agent run
+      description: Pause an active agent run
+      security:
+        - SessionAuth: []
+        - CSRF: []
+      parameters:
+        - name: agent_run_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Agent run paused successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: true
+                  status:
+                    type: string
+                    enum: [paused]
+                  paused_at:
+                    type: string
+                    format: date-time
+        '400':
+          description: Agent run cannot be paused
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /agent/run/{agent_run_id}/resume/:
+    post:
+      summary: Resume agent run
+      description: Resume a paused agent run
+      security:
+        - SessionAuth: []
+        - CSRF: []
+      parameters:
+        - name: agent_run_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Agent run resumed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: true
+                  status:
+                    type: string
+                    enum: [running]
+                  resumed_at:
+                    type: string
+                    format: date-time
+        '400':
+          description: Agent run cannot be resumed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /agent/run/{agent_run_id}/cancel/:
+    post:
+      summary: Cancel agent run
+      description: Cancel an active or paused agent run
+      security:
+        - SessionAuth: []
+        - CSRF: []
+      parameters:
+        - name: agent_run_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Agent run cancelled successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: true
+                  status:
+                    type: string
+                    enum: [cancelled]
+                  cancelled_at:
+                    type: string
+                    format: date-time
+        '400':
+          description: Agent run cannot be cancelled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /agent/run/{agent_run_id}/feedback/:
+    post:
+      summary: Provide human feedback to agent
+      description: Provide human feedback to guide agent behavior
+      security:
+        - SessionAuth: []
+        - CSRF: []
+      parameters:
+        - name: agent_run_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                feedback_type:
+                  type: string
+                  enum: [guidance, correction, approval, rejection]
+                message:
+                  type: string
+                  description: Human feedback message
+                step_id:
+                  type: integer
+                  description: Specific step to provide feedback on (optional)
+                suggested_action:
+                  type: string
+                  description: Suggested next action (optional)
+              required:
+                - feedback_type
+                - message
+      responses:
+        '200':
+          description: Feedback provided successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: true
+                  feedback_id:
+                    type: integer
+                  agent_response:
+                    type: string
+                  updated_plan:
+                    type: object
+                    additionalProperties: true
+        '400':
+          description: Invalid feedback
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /agent/runs/:
+    get:
+      summary: Get user's agent runs
+      description: Retrieve list of agent runs for the current user
+      security:
+        - SessionAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [planning, running, paused, completed, failed, cancelled]
+        - name: dataset_id
+          in: query
+          schema:
+            type: integer
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+      responses:
+        '200':
+          description: Agent runs retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  runs:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AgentRun'
+                  total_count:
+                    type: integer
+                  page:
+                    type: integer
+                  page_size:
+                    type: integer
+                  total_pages:
+                    type: integer
+
+components:
+  securitySchemes:
+    SessionAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
+    CSRF:
+      type: apiKey
+      in: header
+      name: X-CSRFToken
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        first_name:
+          type: string
+        last_name:
+          type: string
+        is_active:
+          type: boolean
+        is_staff:
+          type: boolean
+        is_superuser:
+          type: boolean
+        date_joined:
+          type: string
+          format: date-time
+        last_login:
+          type: string
+          format: date-time
+          nullable: true
+        token_limit:
+          type: integer
+        tokens_used:
+          type: integer
+        tokens_used_this_month:
+          type: integer
+        last_token_reset:
+          type: string
+          format: date-time
+
+    TokenUsage:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        session_id:
+          type: string
+          nullable: true
+        operation_type:
+          type: string
+          enum: [chat, analysis, interpretation]
+        input_tokens:
+          type: integer
+        output_tokens:
+          type: integer
+        total_tokens:
+          type: integer
+        model_used:
+          type: string
+        cost_estimate:
+          type: number
+        created_at:
+          type: string
+          format: date-time
+        analysis_result_id:
+          type: integer
+          nullable: true
+
+    Dataset:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        original_filename:
+          type: string
+        file_size:
+          type: integer
+        row_count:
+          type: integer
+        column_count:
+          type: integer
+        uploaded_at:
+          type: string
+          format: date-time
+        last_accessed:
+          type: string
+          format: date-time
+        is_active:
+          type: boolean
+
+    DatasetDetail:
+      allOf:
+        - $ref: '#/components/schemas/Dataset'
+        - type: object
+          properties:
+            columns:
+              type: array
+              items:
+                $ref: '#/components/schemas/ColumnInfo'
+
+    ColumnInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        data_type:
+          type: string
+          enum: [string, integer, float, boolean, datetime]
+        is_numeric:
+          type: boolean
+        is_categorical:
+          type: boolean
+        null_count:
+          type: integer
+        unique_count:
+          type: integer
+        sample_values:
+          type: array
+          items:
+            type: string
+
+    AnalysisTool:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+          enum: [statistical, visualization, machine_learning, data_processing]
+        is_active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+
+    ToolParameters:
+      type: object
+      properties:
+        tool_id:
+          type: integer
+        schema:
+          type: object
+          description: JSON schema for tool parameters
+        required_fields:
+          type: array
+          items:
+            type: string
+        optional_fields:
+          type: array
+          items:
+            type: string
+
+    AnalysisSession:
+      type: object
+      properties:
+        id:
+          type: integer
+        session_key:
+          type: string
+        dataset_id:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        last_activity:
+          type: string
+          format: date-time
+        is_active:
+          type: boolean
+        settings:
+          type: object
+
+    ChatMessage:
+      type: object
+      properties:
+        id:
+          type: integer
+        role:
+          type: string
+          enum: [user, assistant, system]
+        content:
+          type: string
+        analysis_result_id:
+          type: integer
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        tokens_used:
+          type: integer
+
+    AnalysisHistory:
+      type: object
+      properties:
+        id:
+          type: integer
+        analysis_result_id:
+          type: integer
+        tool_id:
+          type: integer
+        execution_order:
+          type: integer
+        card_position:
+          type: object
+          properties:
+            x:
+              type: number
+            y:
+              type: number
+        card_size:
+          type: object
+          properties:
+            width:
+              type: number
+            height:
+              type: number
+        card_visible:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        last_accessed:
+          type: string
+          format: date-time
+
+    SystemHealthMetric:
+      type: object
+      properties:
+        id:
+          type: integer
+        metric_name:
+          type: string
+        metric_value:
+          type: number
+        metric_unit:
+          type: string
+        threshold_warning:
+          type: number
+        threshold_critical:
+          type: number
+        status:
+          type: string
+          enum: [normal, warning, critical]
+        created_at:
+          type: string
+          format: date-time
+        server_instance:
+          type: string
+
+    ErrorLog:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+          nullable: true
+        session_id:
+          type: string
+          nullable: true
+        error_type:
+          type: string
+        error_message:
+          type: string
+        error_code:
+          type: string
+        stack_trace:
+          type: string
+        request_path:
+          type: string
+        request_method:
+          type: string
+        correlation_id:
+          type: string
+        resolved:
+          type: boolean
+        resolved_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+
+    BackupRecord:
+      type: object
+      properties:
+        id:
+          type: integer
+        backup_type:
+          type: string
+          enum: [full, incremental, user_data]
+        backup_size:
+          type: integer
+        backup_path:
+          type: string
+        status:
+          type: string
+          enum: [in_progress, completed, failed]
+        started_at:
+          type: string
+          format: date-time
+        completed_at:
+          type: string
+          format: date-time
+          nullable: true
+        verified:
+          type: boolean
+        retention_until:
+          type: string
+          format: date-time
+        error_message:
+          type: string
+          nullable: true
+
+    APIRateLimit:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        endpoint:
+          type: string
+        request_count:
+          type: integer
+        window_start:
+          type: string
+          format: date-time
+        window_duration:
+          type: integer
+        max_requests:
+          type: integer
+        blocked_until:
+          type: string
+          format: date-time
+          nullable: true
+        last_request_at:
+          type: string
+          format: date-time
+
+    AuditTrail:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+          nullable: true
+        session_id:
+          type: string
+          nullable: true
+        action_type:
+          type: string
+          enum: [login, logout, upload, analysis, delete, export, admin_action, system_event]
+        action_category:
+          type: string
+          enum: [authentication, data_management, analysis, system, security, compliance]
+        resource_type:
+          type: string
+          enum: [user, dataset, analysis_result, report, image, session, system]
+        resource_id:
+          type: integer
+          nullable: true
+        resource_name:
+          type: string
+          nullable: true
+        action_description:
+          type: string
+        before_snapshot:
+          type: object
+          additionalProperties: true
+          nullable: true
+          description: JSON snapshot of resource state before action (masked for sensitive data)
+        after_snapshot:
+          type: object
+          additionalProperties: true
+          nullable: true
+          description: JSON snapshot of resource state after action (masked for sensitive data)
+        ip_address:
+          type: string
+          description: IP address of the user (IPv4/IPv6)
+        user_agent:
+          type: string
+          description: User agent string from HTTP request
+        correlation_id:
+          type: string
+          description: Unique correlation ID for tracking related events
+        request_id:
+          type: string
+          format: uuid
+          description: Unique request identifier
+        session_id_http:
+          type: string
+          description: HTTP session identifier
+        success:
+          type: boolean
+          description: Whether the action was successful
+        error_message:
+          type: string
+          nullable: true
+          description: Error message if action failed
+        execution_time_ms:
+          type: integer
+          description: Time taken to perform the action
+        data_changed:
+          type: boolean
+          description: Whether any data was modified
+        sensitive_data_accessed:
+          type: boolean
+          description: Whether sensitive data was accessed
+        compliance_flags:
+          type: array
+          items:
+            type: string
+            enum: [gdpr, hipaa, sox, pci_dss]
+          description: Array of compliance flags
+        retention_status:
+          type: string
+          enum: [active, archived, purged]
+          description: Retention status
+        retention_expires_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: When the audit record expires
+        created_at:
+          type: string
+          format: date-time
+          description: Action timestamp
+        created_by:
+          type: string
+          description: Who created the record (user_id or 'system')
+
+    AuditTrailDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+        audit_trail_id:
+          type: integer
+        detail_type:
+          type: string
+          enum: [parameter, header, cookie, file_info, database_change, api_call]
+        detail_key:
+          type: string
+        detail_value:
+          type: string
+          description: Value of the detail (masked if sensitive)
+        is_sensitive:
+          type: boolean
+          description: Whether this detail contains sensitive information
+        masked_value:
+          type: string
+          nullable: true
+          description: Masked version of the value (if sensitive)
+        created_at:
+          type: string
+          format: date-time
+
+    LLMContextCache:
+      type: object
+      properties:
+        id:
+          type: integer
+        session_id:
+          type: string
+        context_type:
+          type: string
+          enum: [chat_history, analysis_context, tool_context]
+        context_data:
+          type: object
+          additionalProperties: true
+        message_count:
+          type: integer
+          minimum: 1
+          maximum: 10
+        last_updated:
+          type: string
+          format: date-time
+        is_active:
+          type: boolean
+        context_hash:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
+    GeneratedImage:
+      type: object
+      properties:
+        id:
+          type: integer
+        session_id:
+          type: string
+        analysis_result_id:
+          type: integer
+          nullable: true
+        tool_id:
+          type: integer
+        image_type:
+          type: string
+          enum: [histogram, scatter_plot, correlation_matrix, survival_curve, box_plot, heatmap]
+        file_path:
+          type: string
+        file_name:
+          type: string
+        file_size:
+          type: integer
+        image_format:
+          type: string
+          enum: [PNG, JPEG, SVG]
+        width:
+          type: integer
+        height:
+          type: integer
+        dpi:
+          type: number
+        base64_data:
+          type: string
+          description: Base64 encoded image data for LLM processing
+        access_url:
+          type: string
+          format: uri
+        created_at:
+          type: string
+          format: date-time
+        expires_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    SandboxExecution:
+      type: object
+      properties:
+        id:
+          type: integer
+        session_id:
+          type: string
+        user_id:
+          type: integer
+        execution_id:
+          type: string
+          format: uuid
+        user_query:
+          type: string
+        generated_code:
+          type: string
+        execution_status:
+          type: string
+          enum: [pending, running, completed, failed, timeout]
+        execution_result:
+          type: object
+          additionalProperties: true
+        error_message:
+          type: string
+          nullable: true
+        execution_time_ms:
+          type: integer
+        memory_used_mb:
+          type: number
+        cpu_time_ms:
+          type: integer
+        output_data:
+          type: object
+          additionalProperties: true
+        images_generated:
+          type: array
+          items:
+            type: integer
+        tables_generated:
+          type: array
+          items:
+            type: object
+        variables_created:
+          type: object
+          additionalProperties: true
+        libraries_used:
+          type: array
+          items:
+            type: string
+        security_violations:
+          type: array
+          items:
+            type: string
+        retry_count:
+          type: integer
+        max_retries:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        completed_at:
+          type: string
+          format: date-time
+          nullable: true
+        expires_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    ReportGeneration:
+      type: object
+      properties:
+        id:
+          type: integer
+        session_id:
+          type: string
+        user_id:
+          type: integer
+        report_id:
+          type: string
+          format: uuid
+        report_title:
+          type: string
+        report_type:
+          type: string
+          enum: [analysis_summary, detailed_report, executive_summary]
+        report_status:
+          type: string
+          enum: [pending, generating, completed, failed, expired]
+        content_selection:
+          type: object
+          additionalProperties: true
+        template_id:
+          type: string
+        file_path:
+          type: string
+        file_name:
+          type: string
+        file_size:
+          type: integer
+        generation_progress:
+          type: integer
+          minimum: 0
+          maximum: 100
+        sections_included:
+          type: array
+          items:
+            type: string
+        images_included:
+          type: array
+          items:
+            type: integer
+        tables_included:
+          type: array
+          items:
+            type: integer
+        chat_messages_included:
+          type: array
+          items:
+            type: integer
+        analysis_results_included:
+          type: array
+          items:
+            type: integer
+        sandbox_executions_included:
+          type: array
+          items:
+            type: integer
+        custom_sections:
+          type: object
+          additionalProperties: true
+        generation_settings:
+          type: object
+          additionalProperties: true
+        error_message:
+          type: string
+          nullable: true
+        generation_time_ms:
+          type: integer
+        download_count:
+          type: integer
+        last_downloaded_at:
+          type: string
+          format: date-time
+          nullable: true
+        expires_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        completed_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    AgentRun:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        dataset_id:
+          type: integer
+        session_id:
+          type: string
+          nullable: true
+        goal:
+          type: string
+          description: User-defined analysis goal or question
+        plan_json:
+          type: object
+          additionalProperties: true
+          description: JSON object containing the agent's analysis plan
+        status:
+          type: string
+          enum: [planning, running, paused, completed, failed, cancelled]
+        current_step:
+          type: integer
+        total_steps:
+          type: integer
+        max_steps:
+          type: integer
+          description: Maximum steps allowed (resource constraint)
+        max_cost:
+          type: integer
+          description: Maximum cost allowed in tokens (resource constraint)
+        max_time:
+          type: integer
+          description: Maximum time allowed in seconds (resource constraint)
+        total_cost:
+          type: integer
+          description: Total cost incurred so far in tokens
+        total_time:
+          type: integer
+          description: Total time elapsed in seconds
+        progress_percentage:
+          type: integer
+          minimum: 0
+          maximum: 100
+        agent_version:
+          type: string
+        llm_model:
+          type: string
+        started_at:
+          type: string
+          format: date-time
+        finished_at:
+          type: string
+          format: date-time
+          nullable: true
+        error_message:
+          type: string
+          nullable: true
+        correlation_id:
+          type: string
+        parent_run_id:
+          type: integer
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+
+    AgentStep:
+      type: object
+      properties:
+        id:
+          type: integer
+        agent_run_id:
+          type: integer
+        step_number:
+          type: integer
+        thought:
+          type: string
+          description: Agent's reasoning and thought process
+        tool_name:
+          type: string
+          description: Name of the tool/action to execute
+        parameters_json:
+          type: object
+          additionalProperties: true
+          description: JSON object containing tool parameters
+        observation_json:
+          type: object
+          additionalProperties: true
+          description: JSON object containing tool results/observations
+        status:
+          type: string
+          enum: [planned, running, completed, failed, skipped]
+        token_usage:
+          type: integer
+        execution_time_ms:
+          type: integer
+        memory_used_mb:
+          type: number
+        confidence_score:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: Agent's confidence in this step
+        reasoning:
+          type: string
+          description: Detailed reasoning for this step
+        next_action:
+          type: string
+          description: Suggested next action based on results
+        started_at:
+          type: string
+          format: date-time
+        finished_at:
+          type: string
+          format: date-time
+          nullable: true
+        error_message:
+          type: string
+          nullable: true
+        retry_count:
+          type: integer
+        max_retries:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          default: false
+        error:
+          type: string
+        details:
+          type: object
+          additionalProperties: true

@@ -1,0 +1,25 @@
+# analytical Development Guidelines
+
+Auto-generated from all feature plans. Last updated: 2025-09-23
+
+## Active Technologies
+- Python 3.11+ (Django backend) + Django, HTMX, Bootstrap 5+, pandas, pyarrow (Parquet), LangChain, pandas-ai, ollama (001-create-a-consitution)
+
+## Project Structure
+```
+backend/
+frontend/
+tests/
+```
+
+## Commands
+cd src; pytest; ruff check .
+
+## Code Style
+Python 3.11+ (Django backend): Follow standard conventions
+
+## Recent Changes
+- 001-create-a-consitution: Added Python 3.11+ (Django backend) + Django, HTMX, Bootstrap 5+, pandas, pyarrow (Parquet), LangChain, pandas-ai, ollama
+
+<!-- MANUAL ADDITIONS START -->
+<!-- MANUAL ADDITIONS END -->
