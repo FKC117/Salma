@@ -87,13 +87,16 @@ Celery MUST be implemented for all heavy operations; File processing MUST be han
 ### XXVIII. Agentic AI System (NON-NEGOTIABLE)
 Agentic AI MUST be implemented for end-to-end autonomous analysis; Agent controller layer MUST orchestrate analysis workflows; AgentRun model MUST track autonomous analysis sessions; AgentStep model MUST track individual agent actions; LLM MUST plan analysis strategies autonomously; Agent MUST execute analysis tools iteratively; Agent MUST adapt strategy based on results; Agent MUST respect resource constraints (max_steps, max_cost, max_time); Agent MUST provide human-readable explanations; Agent MUST handle errors and retry intelligently; This is CRITICAL for transforming the system into a truly autonomous AI platform.
 
+### XXIX. RAG (Retrieval-Augmented Generation) System with Redis Vector Database (NON-NEGOTIABLE)
+RAG system MUST be implemented using Redis as the vector database; Redis MUST store all vector embeddings with 'analytical:rag:' key prefix; Dataset-aware indexing MUST be implemented for per-dataset knowledge; Global knowledge indexing MUST be implemented for tool documentation and patterns; VectorNote model MUST store embeddings, metadata, and content; RAG retrieval MUST be integrated into agent planning and execution phases; All RAG queries MUST be logged in audit trail with correlation IDs; RAG token usage MUST be tracked in existing token management system; Multi-tenancy MUST be enforced with dataset_id filtering; PII masking MUST be implemented for all indexed content; RAG search results MUST be integrated into LLM context; This is CRITICAL for grounding agent outputs in real facts and reducing hallucinations.
+
 ## Technology Stack & Configuration
 
 ### Backend Requirements
 - **Framework**: Django (latest stable version)
 - **API Framework**: Django REST Framework (mandatory)
 - **Authentication**: Django's built-in authentication system (exclusive)
-- **Database**: PostgreSQL (metadata & results) + Parquet files (dataset content) + Redis (analytical key prefix)
+- **Database**: PostgreSQL (metadata & results) + Parquet files (dataset content) + Redis (analytical key prefix + vector database for RAG)
 - **Configuration**: All settings in settings.py (no .env files)
 - **Task Queue**: Celery with Redis broker (NON-NEGOTIABLE)
 - **Task Monitoring**: Celery Flower for task monitoring and management

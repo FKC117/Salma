@@ -41,12 +41,12 @@ Build a comprehensive data analysis system with:
 - Phase 3-4: Implementation execution (manual or via tools)
 
 ## Summary
-Build a Django + HTMX data analysis system with three-panel UI, file upload/processing, LangChain tool registry, and **agentic AI-powered analysis**. The system will provide statistical tools, analytical dashboards, and AI chat functionality with robust session management, caching, and **autonomous AI agent execution**. Users can upload datasets and click "Analyze" to trigger end-to-end autonomous analysis workflows.
+Build a Django + HTMX data analysis system with three-panel UI, file upload/processing, LangChain tool registry, **agentic AI-powered analysis**, and **RAG (Retrieval-Augmented Generation) system using Redis as vector database**. The system will provide statistical tools, analytical dashboards, and AI chat functionality with robust session management, caching, **autonomous AI agent execution**, and **grounded AI responses through RAG**. Users can upload datasets and click "Analyze" to trigger end-to-end autonomous analysis workflows with intelligent context retrieval.
 
 ## Technical Context
 **Language/Version**: Python 3.11+ (Django backend)  
-**Primary Dependencies**: Django, HTMX, Bootstrap 5+, pandas, pyarrow (Parquet), LangChain, lifelines, matplotlib, seaborn, Google AI API  
-**Storage**: PostgreSQL (metadata & results), Parquet files (dataset content), Redis (analytical key prefix for caching)  
+**Primary Dependencies**: Django, HTMX, Bootstrap 5+, pandas, pyarrow (Parquet), LangChain, lifelines, matplotlib, seaborn, Google AI API, sentence-transformers, redis  
+**Storage**: PostgreSQL (metadata & results), Parquet files (dataset content), Redis (analytical key prefix for caching + vector database for RAG)  
 **Testing**: Django TestCase, pytest, HTMX integration tests  
 **Requirements Management**: Comprehensive requirements.txt with pinned versions, mandatory installation before development  
 **Target Platform**: Web application (cross-browser)  
@@ -217,7 +217,7 @@ ios/ or android/
 - Security order: File validation → Input sanitization → CSRF protection
 - Mark [P] for parallel execution (independent files)
 
-**Estimated Output**: 40-45 numbered, ordered tasks in tasks.md covering:
+**Estimated Output**: 50-55 numbered, ordered tasks in tasks.md covering:
 - Requirements.txt generation and dependency installation
 - Django project setup and configuration
 - Celery setup and configuration with Redis broker
@@ -231,17 +231,50 @@ ios/ or android/
 - **Agentic AI runtime wiring (Celery loop + DRF endpoints)**
 - **AgentRun creation and execution workflow**
 - **Real-time agent progress updates via HTMX**
+- **RAG System Implementation with Redis Vector Database**
+- **VectorNote model and Redis vector storage**
+- **Dataset-aware indexing and global knowledge indexing**
+- **RAG API endpoints (upsert, search, clear)**
+- **Agent integration with RAG retrieval**
+- **PII masking and multi-tenancy for RAG**
 - File upload and processing pipeline
 - Analysis tool registry and execution
 - HTMX frontend components
 - Three-panel UI with draggable resizing
-- **"Analyze" button integration with agentic AI**
+- **"Analyze" button integration with agentic AI + RAG**
 - AI chat integration with context, images, and sandbox
 - Session management and caching
 - Security hardening
 - Testing and validation
 
 **IMPORTANT**: This phase is executed by the /tasks command, NOT by /plan
+
+## RAG Implementation Strategy
+*Redis-based Vector Database Integration*
+
+### RAG Architecture Overview
+The RAG system will use Redis as both cache and vector database, leveraging existing infrastructure:
+- **Vector Storage**: Redis with 'analytical:rag:' key prefix for all embeddings
+- **Embedding Model**: sentence-transformers/all-MiniLM-L6-v2 (lightweight, fast)
+- **Search Method**: Cosine similarity with Redis-based vector operations
+- **Indexing Strategy**: Automatic indexing on dataset upload and analysis completion
+
+### RAG Integration Points
+1. **File Processing Service**: Auto-index dataset metadata after upload
+2. **Analysis Executor**: Auto-index analysis results after completion
+3. **Agentic AI Controller**: RAG retrieval before planning and execution
+4. **LLM Processor**: Enhanced context with retrieved RAG content
+
+### RAG Data Flow
+1. **Indexing**: Dataset/analysis → Extract content → Generate embeddings → Store in Redis
+2. **Retrieval**: Agent query → Generate query embedding → Search Redis → Return top-k results
+3. **Integration**: Retrieved content → Add to LLM context → Enhanced agent responses
+
+### RAG Security & Privacy
+- **Multi-tenancy**: All queries filtered by dataset_id and user_id
+- **PII Masking**: Only summaries and metadata indexed, never raw data
+- **Audit Trail**: All RAG operations logged with correlation IDs
+- **Token Tracking**: RAG retrieval costs tracked in existing token system
 
 ## Phase 3+: Future Implementation
 *These phases are beyond the scope of the /plan command*

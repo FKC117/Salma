@@ -2367,3 +2367,150 @@ class ReportGeneration(models.Model):
     
     def __str__(self):
         return f"{self.name} ({self.template_type})"
+
+
+class VectorNote(models.Model):
+    """
+    VectorNote model for RAG (Retrieval-Augmented Generation) system
+    Stores embeddings, metadata, and content for semantic search using Redis
+    """
+    # Basic Information
+    title = models.CharField(
+        max_length=255,
+        help_text="Title or summary of the content"
+    )
+    text = models.TextField(
+        help_text="Main content text for embedding generation"
+    )
+    
+    # Scope and Filtering
+    scope = models.CharField(
+        max_length=20,
+        choices=[
+            ('dataset', 'Dataset-specific'),
+            ('global', 'Global knowledge'),
+        ],
+        help_text="Scope of the knowledge (dataset-specific or global)"
+    )
+    dataset = models.ForeignKey(
+        Dataset,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='vector_notes',
+        help_text="Dataset this note belongs to (null for global scope)"
+    )
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='vector_notes',
+        help_text="User who owns this note"
+    )
+    
+    # Vector Information
+    embedding = models.JSONField(
+        default=list,
+        help_text="Vector embedding stored as JSON array"
+    )
+    embedding_model = models.CharField(
+        max_length=100,
+        default='all-MiniLM-L6-v2',
+        help_text="Model used to generate the embedding"
+    )
+    embedding_dimension = models.PositiveIntegerField(
+        default=384,
+        help_text="Dimension of the embedding vector"
+    )
+    
+    # Metadata
+    metadata_json = models.JSONField(
+        default=dict,
+        help_text="Additional metadata for the note"
+    )
+    content_type = models.CharField(
+        max_length=50,
+        choices=[
+            ('dataset_metadata', 'Dataset Metadata'),
+            ('analysis_result', 'Analysis Result'),
+            ('tool_documentation', 'Tool Documentation'),
+            ('error_pattern', 'Error Pattern'),
+            ('best_practice', 'Best Practice'),
+            ('user_insight', 'User Insight'),
+        ],
+        help_text="Type of content stored in this note"
+    )
+    
+    # Quality and Usage
+    confidence_score = models.FloatField(
+        default=1.0,
+        validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],
+        help_text="Confidence score for the content quality"
+    )
+    usage_count = models.PositiveIntegerField(
+        default=0,
+        help_text="Number of times this note has been retrieved"
+    )
+    last_accessed = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="When this note was last retrieved"
+    )
+    
+    # Security and Privacy
+    is_pii_masked = models.BooleanField(
+        default=True,
+        help_text="Whether PII has been masked in this content"
+    )
+    sanitized = models.BooleanField(
+        default=True,
+        help_text="Whether content has been sanitized for security"
+    )
+    
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        db_table = 'analytics_vector_note'
+        verbose_name = 'Vector Note'
+        verbose_name_plural = 'Vector Notes'
+        indexes = [
+            models.Index(fields=['scope', 'dataset', 'created_at']),
+            models.Index(fields=['user', 'scope']),
+            models.Index(fields=['content_type']),
+            models.Index(fields=['created_at']),
+            models.Index(fields=['usage_count']),
+        ]
+        ordering = ['-created_at']
+        constraints = [
+            models.CheckConstraint(
+                check=models.Q(scope='global') | models.Q(dataset__isnull=False),
+                name='dataset_required_for_dataset_scope'
+            ),
+        ]
+    
+    def __str__(self):
+        return f"{self.title} ({self.scope})"
+    
+    def get_redis_key(self) -> str:
+        """Generate Redis key for this vector note"""
+        return f"analytical:rag:vector:{self.id}"
+    
+    def get_metadata_summary(self) -> dict:
+        """Get summary of metadata for display"""
+        return {
+            'id': self.id,
+            'title': self.title,
+            'scope': self.scope,
+            'content_type': self.content_type,
+            'confidence_score': self.confidence_score,
+            'usage_count': self.usage_count,
+            'created_at': self.created_at.isoformat(),
+            'dataset_id': self.dataset_id,
+        }
+    
+    def increment_usage(self):
+        """Increment usage count and update last accessed time"""
+        self.usage_count += 1
+        self.last_accessed = timezone.now()
+        self.save(update_fields=['usage_count', 'last_accessed'])

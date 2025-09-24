@@ -410,3 +410,9 @@ INFO 2025-09-24 10:34:06,665 basehttp 29072 13428 "GET /admin/ HTTP/1.1" 200 556
 INFO 2025-09-24 10:34:06,702 basehttp 29072 10124 "GET /static/admin/css/dashboard.css HTTP/1.1" 304 0
 INFO 2025-09-24 10:34:06,887 basehttp 29072 3104 "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 200 331
 INFO 2025-09-24 10:34:06,891 basehttp 29072 22752 "GET /static/admin/img/icon-changelink.svg HTTP/1.1" 200 380
+INFO 2025-09-24 11:28:37,812 autoreload 29072 31804 E:\analytical\analytical\analytics\models.py changed, reloading.
+INFO 2025-09-24 11:28:52,944 autoreload 9940 19556 Watching for file changes with StatReloader
+INFO 2025-09-24 11:30:03,996 autoreload 9940 19556 E:\analytical\analytical\analytics\models.py changed, reloading.
+INFO 2025-09-24 11:30:05,963 autoreload 34712 11108 Watching for file changes with StatReloader
+INFO 2025-09-24 11:30:09,219 autoreload 34712 11108 E:\analytical\analytical\analytics\models.py changed, reloading.
+INFO 2025-09-24 11:30:10,456 autoreload 8136 18856 Watching for file changes with StatReloader

@@ -1,0 +1,73 @@
+rag_txt = """# RAG Layer Design (Agentic AI System)
+
+## Why RAG
+- Grounds LLM outputs in real facts.
+- Reduces hallucination when explaining results or planning analysis steps.
+- Lets the agent reuse knowledge across datasets and sessions.
+
+## Indexes
+
+### A. Dataset-aware Index (per dataset_id)
+- Contents:
+  - Column dictionary (name, dtype, category, null/unique counts).
+  - Data-profiling summaries.
+  - AnalysisResult highlights (e.g. missing columns, correlations).
+  - Short human/LLM-readable summaries.
+- Always filter by dataset_id.
+
+### B. Project-knowledge Index (global)
+- Contents:
+  - Tool documentation & parameters.
+  - Quickstart snippets.
+  - Common error explanations.
+  - Sanitized AnalysisHistory cards (titles + summaries).
+- Helps agent choose tools and parameters safely.
+
+## Agent Loop Integration
+- **Planner step**: retrieve top-k from both indexes (goal + dataset schema → query).
+- **Tool execution step**: retrieve tool usage docs + recent dataset notes.
+- **Chat replies**: augment message context with retrieved passages.
+
+## API Endpoints
+- `POST /api/rag/upsert`
+  - Body: { scope: "dataset"|"global", dataset_id?, chunks: [...] }
+  - Used on dataset upload and after each AnalysisResult.
+- `GET /api/rag/search`
+  - Body: { scope, dataset_id?, query, k }
+  - Returns passages.
+
+## Data Model
+- Table: VectorNote
+  - id
+  - scope ("dataset"/"global")
+  - dataset_id (nullable)
+  - title
+  - text
+  - embedding
+  - metadata_json
+  - created_at
+- Indexes:
+  - (scope, dataset_id, created_at)
+  - Vector index on embedding
+
+## Safety & Governance
+- Multitenancy: always filter dataset-aware queries by dataset_id.
+- PII masking: only store summaries/snippets, never raw rows.
+- AuditTrail: log retrieval queries + document ids with correlation_id.
+- TokenUsage: count retrieval tokens per AgentStep.
+
+## Implementation Steps
+1. Extend spec.md with RAG user stories + acceptance criteria.
+2. Extend plan.md Phase 1 with RAG ingestion/search tasks.
+3. Add VectorNote model + migrations.
+4. Implement `/api/rag/upsert` and `/api/rag/search`.
+5. Hook upload + AnalysisResult signals to auto-upsert notes.
+6. Update agent Celery loop to call `/rag/search` before planning/executing.
+7. Update HTMX agent status card to show citations/notes.
+
+"""
+
+with open("/mnt/data/rag_layer.txt", "w") as f:
+    f.write(rag_txt)
+
+"/mnt/data/rag_layer.txt"
