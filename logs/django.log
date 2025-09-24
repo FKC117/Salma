@@ -341,3 +341,44 @@ INFO 2025-09-23 21:50:52,258 logging_service 16924 32912 {"timestamp": "2025-09-
 WARNING 2025-09-23 21:50:52,258 logging_service 16924 32912 {"timestamp": "2025-09-23T15:50:52.258779+00:00", "level": "WARNING", "message": "Security event: csrf_token_missing", "correlation_id": "970509ad-2da6-44d2-b46a-8fb8a98c1a9d", "request_id": "d6d954fa-7c45-47d6-b899-5db80171d2de", "user_id": null, "session_id": null, "service": "analytics", "event_type": "security_event", "event": "csrf_token_missing", "severity": "WARNING", "details": {"ip_address": "127.0.0.1", "user_agent": "", "path": "/api/upload/", "method": "POST"}}
 INFO 2025-09-23 21:50:52,272 logging_service 16924 32912 {"timestamp": "2025-09-23T15:50:52.272530+00:00", "level": "INFO", "message": "Response: 404", "correlation_id": "970509ad-2da6-44d2-b46a-8fb8a98c1a9d", "request_id": "d6d954fa-7c45-47d6-b899-5db80171d2de", "user_id": null, "session_id": null, "service": "analytics", "status_code": 404, "content_type": "text/html; charset=utf-8"}
 WARNING 2025-09-23 21:50:52,272 log 16924 32912 Not Found: /api/upload/
+INFO 2025-09-24 09:31:14,999 autoreload 29952 31528 Watching for file changes with StatReloader
+INFO 2025-09-24 09:31:25,638 logging_service 29952 34324 {"timestamp": "2025-09-24T03:31:25.638170+00:00", "level": "INFO", "message": "Request: GET /", "correlation_id": "ed19df8c-2c30-4c4d-b29b-aba587efa1e9", "request_id": "dcabe567-b0fe-458b-b723-20b11e9c8b34", "user_id": null, "session_id": null, "service": "analytics", "method": "GET", "path": "/", "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0", "ip_address": "127.0.0.1", "referer": ""}
+INFO 2025-09-24 09:31:25,719 logging_service 29952 34324 {"timestamp": "2025-09-24T03:31:25.719821+00:00", "level": "INFO", "message": "Response: 200", "correlation_id": "ed19df8c-2c30-4c4d-b29b-aba587efa1e9", "request_id": "dcabe567-b0fe-458b-b723-20b11e9c8b34", "user_id": null, "session_id": null, "service": "analytics", "status_code": 200, "content_type": "text/html; charset=utf-8"}
+INFO 2025-09-24 09:31:25,719 basehttp 29952 34324 "GET / HTTP/1.1" 200 10664
+INFO 2025-09-24 09:33:16,834 autoreload 29952 31528 E:\analytical\analytical\analytics\models.py changed, reloading.
+INFO 2025-09-24 09:33:29,490 autoreload 24224 14800 Watching for file changes with StatReloader
+INFO 2025-09-24 09:34:35,976 autoreload 24224 14800 E:\analytical\analytical\analytics\models.py changed, reloading.
+INFO 2025-09-24 09:34:46,597 autoreload 15232 19144 Watching for file changes with StatReloader
+INFO 2025-09-24 09:35:00,374 autoreload 15232 19144 E:\analytical\analytical\analytics\models.py changed, reloading.
+INFO 2025-09-24 09:35:06,769 autoreload 26576 3764 Watching for file changes with StatReloader
+INFO 2025-09-24 09:37:52,683 autoreload 26576 3764 E:\analytical\analytical\analytics\models.py changed, reloading.
+INFO 2025-09-24 09:37:59,444 autoreload 26128 1180 Watching for file changes with StatReloader
+INFO 2025-09-24 09:38:29,301 autoreload 26128 1180 E:\analytical\analytical\analytical\settings.py changed, reloading.
+INFO 2025-09-24 09:38:39,090 autoreload 30556 2128 Watching for file changes with StatReloader
+INFO 2025-09-24 09:38:53,949 autoreload 30556 2128 E:\analytical\analytical\analytics\models.py changed, reloading.
+INFO 2025-09-24 09:39:07,015 autoreload 13796 7616 Watching for file changes with StatReloader
+INFO 2025-09-24 09:42:16,114 autoreload 13796 7616 E:\analytical\analytical\analytics\models.py changed, reloading.
+INFO 2025-09-24 09:42:19,458 autoreload 30848 33916 Watching for file changes with StatReloader
+INFO 2025-09-24 09:43:19,214 autoreload 30848 33916 E:\analytical\analytical\analytics\models.py changed, reloading.
+INFO 2025-09-24 09:43:27,367 autoreload 1504 14508 Watching for file changes with StatReloader
+INFO 2025-09-24 09:44:53,061 autoreload 1504 14508 E:\analytical\analytical\analytics\models.py changed, reloading.
+INFO 2025-09-24 09:45:03,660 autoreload 29952 33884 Watching for file changes with StatReloader
+INFO 2025-09-24 09:47:08,325 autoreload 29952 33884 E:\analytical\analytical\analytics\models.py changed, reloading.
+INFO 2025-09-24 09:47:11,321 autoreload 14008 19616 Watching for file changes with StatReloader
+INFO 2025-09-24 09:48:09,089 autoreload 14008 19616 E:\analytical\analytical\analytics\models.py changed, reloading.
+INFO 2025-09-24 09:48:15,675 autoreload 33100 34704 Watching for file changes with StatReloader
+INFO 2025-09-24 09:48:27,160 autoreload 33100 34704 E:\analytical\analytical\analytics\models.py changed, reloading.
+INFO 2025-09-24 09:48:28,917 autoreload 18304 15832 Watching for file changes with StatReloader
+INFO 2025-09-24 09:48:32,979 autoreload 18304 15832 E:\analytical\analytical\analytics\models.py changed, reloading.
+INFO 2025-09-24 09:48:34,585 autoreload 12872 25036 Watching for file changes with StatReloader
+INFO 2025-09-24 09:51:09,047 autoreload 12872 25036 E:\analytical\analytical\analytics\models.py changed, reloading.
+INFO 2025-09-24 09:51:13,356 autoreload 33360 34704 Watching for file changes with StatReloader
+INFO 2025-09-24 09:51:20,994 autoreload 33360 34704 E:\analytical\analytical\analytics\models.py changed, reloading.
+INFO 2025-09-24 09:51:25,789 autoreload 23752 15324 Watching for file changes with StatReloader
+INFO 2025-09-24 09:51:29,886 autoreload 23752 15324 E:\analytical\analytical\analytics\models.py changed, reloading.
+INFO 2025-09-24 09:51:33,910 autoreload 7084 26424 Watching for file changes with StatReloader
+INFO 2025-09-24 09:52:49,669 autoreload 7084 26424 E:\analytical\analytical\analytics\models.py changed, reloading.
+INFO 2025-09-24 09:52:51,439 autoreload 29072 31804 Watching for file changes with StatReloader
+INFO 2025-09-24 09:58:36,268 logging_service 29072 19248 {"timestamp": "2025-09-24T03:58:36.268500+00:00", "level": "INFO", "message": "Request: GET /", "correlation_id": "6566ceed-c87d-4573-b38d-77b607afa745", "request_id": "dd96dfbf-6ce0-4002-865c-ae2a4adeca3f", "user_id": null, "session_id": null, "service": "analytics", "method": "GET", "path": "/", "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0", "ip_address": "127.0.0.1", "referer": ""}
+INFO 2025-09-24 09:58:36,283 logging_service 29072 19248 {"timestamp": "2025-09-24T03:58:36.283307+00:00", "level": "INFO", "message": "Response: 200", "correlation_id": "6566ceed-c87d-4573-b38d-77b607afa745", "request_id": "dd96dfbf-6ce0-4002-865c-ae2a4adeca3f", "user_id": null, "session_id": null, "service": "analytics", "status_code": 200, "content_type": "text/html; charset=utf-8"}
+INFO 2025-09-24 09:58:36,284 basehttp 29072 19248 "GET / HTTP/1.1" 200 10664
