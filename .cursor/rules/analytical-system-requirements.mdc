@@ -1,0 +1,62 @@
+---
+alwaysApply: true
+description: Analytical system requirements and constraints
+---
+
+# Analytical System Requirements (NON-NEGOTIABLE)
+
+## Core Architecture
+- **Framework**: Django (single project structure)
+- **Frontend**: HTMX + Bootstrap 5+ (Dark Theme)
+- **Database**: PostgreSQL (metadata) + Parquet files (data) + Redis (cache)
+- **AI**: Google AI API (gemini-1.5-flash)
+- **Task Queue**: Celery with Redis broker
+
+## Security Requirements
+- **NO .env files** - All configuration in settings.py
+- **Security sanitization** for all file uploads
+- **Formula/macro removal** from Excel files
+- **Comprehensive audit trail** for all actions
+- **Token usage tracking** and limits per user
+
+## Data Processing
+- **Parquet format** for all dataset storage
+- **Column type detection** with confidence scoring
+- **Data quality assessment** and validation
+- **PII masking** for sensitive data
+
+## AI Integration
+- **Agentic AI system** for autonomous analysis
+- **Context caching** (last 10 messages)
+- **Batch API calling** for efficiency
+- **Token cost calculation** and user limits
+
+## Performance Requirements
+- **<2s file upload processing**
+- **<500ms analysis tool execution**
+- **<1s UI updates**
+- **Memory efficiency** with lazy loading
+- **Caching** for analysis results
+
+## Non-Negotiable Terms
+1. **Virtual environment activation** before ANY terminal command
+2. **PostgreSQL database** (no SQLite)
+3. **Redis for caching** with 'analytical' key prefix
+4. **HTMX for frontend** (no JavaScript)
+5. **Dark theme** (Cursor AI style)
+6. **Comprehensive testing** (TDD approach)
+7. **Audit trail logging** for compliance
+8. **Token usage tracking** for cost management
+
+## File Structure
+- **Single Django project** (not separate backend/frontend)
+- **Services in analytics/services/**
+- **Templates in analytics/templates/**
+- **Static files in analytics/static/**
+- **Tests in tests/ directory**
+
+## Error Handling
+- **Graceful degradation** for all operations
+- **Comprehensive error logging** with correlation IDs
+- **User-friendly error messages**
+- **Automatic recovery** where possible

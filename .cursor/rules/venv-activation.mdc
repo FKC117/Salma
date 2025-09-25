@@ -1,0 +1,39 @@
+---
+alwaysApply: true
+description: Virtual environment activation requirement
+---
+
+# Virtual Environment Activation (NON-NEGOTIABLE)
+
+## Critical Requirement
+**ALWAYS activate the virtual environment before executing ANY terminal command.** This is a non-negotiable requirement for this Django project.
+
+## Virtual Environment Location
+The virtual environment is located at: `E:\analytical\venv\`
+
+## Activation Commands
+- **Windows PowerShell**: `.\\venv\\Scripts\\Activate.ps1`
+- **Windows Command Prompt**: `venv\\Scripts\\activate.bat`
+- **Linux/Mac**: `source venv/bin/activate`
+
+## Verification
+Before running any command, verify the virtual environment is active by checking:
+1. Command prompt shows `(venv)` prefix
+2. Python path points to venv: `where python` should show `E:\analytical\venv\Scripts\python.exe`
+
+## Examples of Commands That Require Venv
+- `python manage.py` commands
+- `pip install` commands
+- `python -m pytest` commands
+- `celery` commands
+- Any Python script execution
+
+## Error Prevention
+If you attempt to run commands without activating the virtual environment:
+- Django settings will not load properly
+- Package imports will fail
+- Database connections will fail
+- The system will not function correctly
+
+## Always Remember
+**NEVER run terminal commands without first activating the virtual environment. This is CRITICAL and NON-NEGOTIABLE.**

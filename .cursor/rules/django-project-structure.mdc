@@ -1,0 +1,42 @@
+---
+alwaysApply: true
+description: Django project structure and navigation guide
+---
+
+# Django Project Structure Guide
+
+## Project Root
+The main Django project is located at: `E:\analytical\analytical\`
+
+## Key Directories
+- **Django Project Settings**: [analytical/settings.py](mdc:analytical/settings.py)
+- **Django App**: [analytics/](mdc:analytics/)
+- **Models**: [analytics/models.py](mdc:analytics/models.py)
+- **Services**: [analytics/services/](mdc:analytics/services/)
+- **Templates**: [analytics/templates/](mdc:analytics/templates/)
+- **Static Files**: [analytics/static/](mdc:analytics/static/)
+- **Tests**: [tests/](mdc:tests/)
+
+## Services Location
+All services are located in: `analytics/services/`
+- File Processing: [analytics/services/file_processing.py](mdc:analytics/services/file_processing.py)
+- Column Type Manager: [analytics/services/column_type_manager.py](mdc:analytics/services/column_type_manager.py)
+- Analysis Executor: [analytics/services/analysis_executor.py](mdc:analytics/services/analysis_executor.py)
+- Audit Trail Manager: [analytics/services/audit_trail_manager.py](mdc:analytics/services/audit_trail_manager.py)
+- Session Manager: [analytics/services/session_manager.py](mdc:analytics/services/session_manager.py)
+- LLM Processor: [analytics/services/llm_processor.py](mdc:analytics/services/llm_processor.py)
+- Agentic AI Controller: [analytics/services/agentic_ai_controller.py](mdc:analytics/services/agentic_ai_controller.py)
+
+## Working Directory
+Always work from: `E:\analytical\analytical\` (where manage.py is located)
+
+## Import Patterns
+- Services: `from analytics.services import ServiceName`
+- Models: `from analytics.models import ModelName`
+- Settings: `from django.conf import settings`
+
+## Virtual Environment
+**CRITICAL**: Always activate venv before any terminal commands:
+```powershell
+.\\venv\\Scripts\\Activate.ps1
+```
