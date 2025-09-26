@@ -23,6 +23,9 @@ urlpatterns = [
     path('', views.dashboard_view, name='dashboard'),
     path('upload-form/', views.upload_form_view, name='upload_form'),
     
+    # CSRF token endpoint
+    path('api/csrf-token/', views.get_csrf_token, name='csrf_token'),
+    
     # API endpoints
     path('api/', include(router.urls)),
     

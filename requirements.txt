@@ -44,6 +44,7 @@ psutil==5.9.6
 cryptography==41.0.7
 whitenoise==6.6.0
 gunicorn==21.2.0
+python-magic==0.4.27
 
 # Development and Testing
 pytest==7.4.3

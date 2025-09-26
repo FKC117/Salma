@@ -1,1 +1,1 @@
-# Security components package
+# Security package for analytics app

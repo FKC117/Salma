@@ -688,3 +688,51 @@ def upload_form_view(request):
             login(request, user)
     
     return render(request, 'analytics/upload_form.html')
+
+
+def csrf_failure(request, reason=""):
+    """
+    Custom CSRF failure handler (T108)
+    
+    Provides user-friendly error messages for CSRF failures
+    and logs security events for monitoring.
+    """
+    from analytics.middleware.audit_logging import get_security_logger
+    
+    # Log security event
+    security_logger = get_security_logger()
+    security_logger.log_suspicious_activity(request, 'csrf_failure', {
+        'reason': reason,
+        'path': request.path,
+        'method': request.method,
+        'referer': request.META.get('HTTP_REFERER', ''),
+    })
+    
+    # Return appropriate response based on request type
+    if request.content_type == 'application/json' or request.path.startswith('/api/'):
+        return JsonResponse({
+            'error': 'CSRF verification failed',
+            'message': 'CSRF token missing or incorrect. Please refresh the page and try again.',
+            'code': 'csrf_failure',
+            'reason': reason
+        }, status=403)
+    else:
+        # For web requests, return HTML error page
+        from django.template.response import TemplateResponse
+        return TemplateResponse(request, 'analytics/csrf_failure.html', {
+            'reason': reason,
+            'referer': request.META.get('HTTP_REFERER', ''),
+        }, status=403)
+
+
+def get_csrf_token(request):
+    """
+    API endpoint to get CSRF token for JavaScript applications
+    """
+    from django.middleware.csrf import get_token
+    
+    return JsonResponse({
+        'csrf_token': get_token(request),
+        'cookie_name': 'analytical_csrftoken',
+        'header_name': 'X-CSRFToken',
+    })

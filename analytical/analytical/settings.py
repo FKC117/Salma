@@ -118,8 +118,11 @@ DATABASES = {
         'PORT': '5432',
         'OPTIONS': {
             'connect_timeout': 10,
+            'application_name': 'analytical_django',
         },
-        'CONN_MAX_AGE': 600,  # Connection pooling
+        'CONN_MAX_AGE': 600,  # Connection pooling - 10 minutes
+        'CONN_HEALTH_CHECKS': True,  # Enable connection health checks
+        'ATOMIC_REQUESTS': False,  # Disable for better performance
     }
 }
 
@@ -166,23 +169,31 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Redis Cache Configuration (T004 - Redis with 'analytical' key prefix)
-# Redis for caching with analytical key prefix (fallback to local memory for testing)
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'analytical-cache',
-        'OPTIONS': {
-            'KEY_PREFIX': 'analytical',
-            'VERSION': 1,
-        }
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': 'redis://localhost:6379/1',
+        'KEY_PREFIX': 'analytical',
+        'VERSION': 1,
+    },
+    'sessions': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': 'redis://localhost:6379/2',
+        'KEY_PREFIX': 'analytical:sessions',
+        'VERSION': 1,
+    },
+    'analysis': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': 'redis://localhost:6379/3',
+        'KEY_PREFIX': 'analytical:analysis',
+        'VERSION': 1,
     }
 }
 
 # Celery Configuration (T005 - Celery with Redis broker and 'analytical' queue)
-# Disabled for testing - Redis not available
-# CELERY_BROKER_URL = 'redis://localhost:6379/0'
-# CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
-# CELERY_TASK_DEFAULT_QUEUE = 'analytical'
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_TASK_DEFAULT_QUEUE = 'analytical'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
@@ -192,6 +203,17 @@ CELERY_TASK_TIME_LIMIT = 30 * 60  # 30 minutes
 CELERY_TASK_SOFT_TIME_LIMIT = 25 * 60  # 25 minutes
 CELERY_WORKER_PREFETCH_MULTIPLIER = 1
 CELERY_TASK_ACKS_LATE = True
+CELERY_RESULT_EXPIRES = 3600  # 1 hour
+CELERY_TASK_ROUTES = {
+    'analytics.tasks.file_processing_tasks.*': {'queue': 'file_processing'},
+    'analytics.tasks.analysis_tasks.*': {'queue': 'analysis'},
+    'analytics.tasks.llm_tasks.*': {'queue': 'llm'},
+    'analytics.tasks.agent_tasks.*': {'queue': 'agent'},
+    'analytics.tasks.report_tasks.*': {'queue': 'reports'},
+    'analytics.tasks.image_tasks.*': {'queue': 'images'},
+    'analytics.tasks.sandbox_tasks.*': {'queue': 'sandbox'},
+    'analytics.tasks.maintenance_tasks.*': {'queue': 'maintenance'},
+}
 
 # Django REST Framework Configuration
 REST_FRAMEWORK = {
@@ -240,9 +262,26 @@ SECURE_HSTS_SECONDS = 31536000 if not DEBUG else 0
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 
+# CSRF Protection Configuration (T108)
+CSRF_COOKIE_SECURE = not DEBUG  # Use secure cookies in production
+CSRF_COOKIE_HTTPONLY = True     # Prevent JavaScript access to CSRF token
+CSRF_COOKIE_SAMESITE = 'Strict' # Strict SameSite policy
+CSRF_COOKIE_AGE = 3600          # CSRF token expires in 1 hour
+CSRF_USE_SESSIONS = False       # Use cookies instead of sessions for better performance
+CSRF_COOKIE_NAME = 'analytical_csrftoken'  # Custom cookie name
+CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'      # Custom header name
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
+    # Add production origins here
+]
+
+# Additional CSRF settings for API endpoints
+CSRF_FAILURE_VIEW = 'analytics.views.csrf_failure'  # Custom CSRF failure handler
+
 # Session Configuration
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
-SESSION_CACHE_ALIAS = 'default'
+SESSION_CACHE_ALIAS = 'sessions'
 SESSION_COOKIE_AGE = 86400  # 24 hours
 SESSION_COOKIE_SECURE = not DEBUG
 SESSION_COOKIE_HTTPONLY = True
@@ -354,6 +393,13 @@ AGENT_VERSION = "1.0"
 CACHE_TTL = 300  # 5 minutes default cache TTL
 ANALYSIS_CACHE_TTL = 3600  # 1 hour for analysis results
 SESSION_CACHE_TTL = 86400  # 24 hours for session data
+
+# Backup Settings
+BACKUP_DIR = 'backups'
+BACKUP_RETENTION_DAYS = 30
+BACKUP_COMPRESSION = True
+BACKUP_FORMAT = 'custom'  # 'sql', 'custom', or 'directory'
+BACKUP_SCHEDULE_HOURS = 24  # Automatic backup every 24 hours
 
 # Django REST Framework Configuration
 REST_FRAMEWORK = {
