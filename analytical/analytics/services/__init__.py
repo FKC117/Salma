@@ -14,7 +14,7 @@ from .agentic_ai_controller import AgenticAIController
 from .rag_service import RAGService
 from .vector_note_manager import VectorNoteManager
 from .google_ai_service import GoogleAIService
-from .logging_service import LoggingService
+from .logging_service import StructuredLogger
 from .image_manager import ImageManager
 from .sandbox_executor import SandboxExecutor
 from .report_generator import ReportGenerator
@@ -30,7 +30,7 @@ __all__ = [
     'RAGService',
     'VectorNoteManager',
     'GoogleAIService',
-    'LoggingService',
+    'StructuredLogger',
     'ImageManager',
     'SandboxExecutor',
     'ReportGenerator'

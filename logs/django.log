@@ -595,3 +595,245 @@ INFO 2025-09-26 11:12:36,901 logging_service 29120 26924 {"timestamp": "2025-09-
 INFO 2025-09-26 11:12:36,903 basehttp 29120 26924 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
 INFO 2025-09-26 11:12:36,950 basehttp 29120 26924 "GET /static/admin/img/icon-yes.svg HTTP/1.1" 200 436
 INFO 2025-09-26 11:12:36,993 basehttp 29120 26924 "GET /static/admin/img/sorting-icons.svg HTTP/1.1" 200 1097
+INFO 2025-09-26 11:13:21,585 logging_service 29120 5756 {"timestamp": "2025-09-26T05:13:21.584125+00:00", "level": "INFO", "message": "Request: GET /admin/analytics/vectornote/", "correlation_id": "5b8f1d8f-c34a-446d-ba26-a28d5c506f26", "request_id": "dadafe73-42c9-439f-9b9a-a4020f504361", "user_id": null, "session_id": null, "service": "analytics", "method": "GET", "path": "/admin/analytics/vectornote/", "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0", "ip_address": "127.0.0.1", "referer": "http://127.0.0.1:8000/admin/auth/user/"}
+INFO 2025-09-26 11:13:21,634 logging_service 29120 5756 {"timestamp": "2025-09-26T05:13:21.634090+00:00", "level": "INFO", "message": "User action: HTTP_GET_RESPONSE", "correlation_id": null, "request_id": null, "user_id": 1, "session_id": null, "service": "analytics", "action_type": "user_action", "action": "HTTP_GET_RESPONSE", "resource": "/admin/analytics/vectornote/", "success": true, "details": {"status_code": 200, "content_type": "text/html; charset=utf-8", "correlation_id": "5b8f1d8f-c34a-446d-ba26-a28d5c506f26"}}
+INFO 2025-09-26 11:13:21,643 logging_service 29120 5756 {"timestamp": "2025-09-26T05:13:21.643212+00:00", "level": "INFO", "message": "Response: 200", "correlation_id": "5b8f1d8f-c34a-446d-ba26-a28d5c506f26", "request_id": "dadafe73-42c9-439f-9b9a-a4020f504361", "user_id": null, "session_id": null, "service": "analytics", "status_code": 200, "content_type": "text/html; charset=utf-8"}
+INFO 2025-09-26 11:13:21,649 basehttp 29120 5756 "GET /admin/analytics/vectornote/ HTTP/1.1" 200 13922
+INFO 2025-09-26 11:13:21,738 logging_service 29120 26924 {"timestamp": "2025-09-26T05:13:21.738470+00:00", "level": "INFO", "message": "Request: GET /admin/jsi18n/", "correlation_id": "194e2ac4-1f7c-44ce-af10-d940d4d7a785", "request_id": "34dc9c9e-3dc3-4026-b5f3-fde1a1509b80", "user_id": null, "session_id": null, "service": "analytics", "method": "GET", "path": "/admin/jsi18n/", "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0", "ip_address": "127.0.0.1", "referer": "http://127.0.0.1:8000/admin/analytics/vectornote/"}
+INFO 2025-09-26 11:13:21,753 logging_service 29120 26924 {"timestamp": "2025-09-26T05:13:21.752027+00:00", "level": "INFO", "message": "User action: HTTP_GET_RESPONSE", "correlation_id": null, "request_id": null, "user_id": 1, "session_id": null, "service": "analytics", "action_type": "user_action", "action": "HTTP_GET_RESPONSE", "resource": "/admin/jsi18n/", "success": true, "details": {"status_code": 200, "content_type": "text/javascript; charset=\"utf-8\"", "correlation_id": "194e2ac4-1f7c-44ce-af10-d940d4d7a785"}}
+INFO 2025-09-26 11:13:21,753 logging_service 29120 26924 {"timestamp": "2025-09-26T05:13:21.753535+00:00", "level": "INFO", "message": "Response: 200", "correlation_id": "194e2ac4-1f7c-44ce-af10-d940d4d7a785", "request_id": "34dc9c9e-3dc3-4026-b5f3-fde1a1509b80", "user_id": null, "session_id": null, "service": "analytics", "status_code": 200, "content_type": "text/javascript; charset=\"utf-8\""}
+INFO 2025-09-26 11:13:21,783 basehttp 29120 26924 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-09-26 11:13:23,140 logging_service 29120 5756 {"timestamp": "2025-09-26T05:13:23.140129+00:00", "level": "INFO", "message": "Request: GET /admin/analytics/sandboxexecution/", "correlation_id": "cc4e5278-03b3-48c7-9160-fa3efe6ed44f", "request_id": "20b909b2-598a-44b9-acb9-7776b51111e7", "user_id": null, "session_id": null, "service": "analytics", "method": "GET", "path": "/admin/analytics/sandboxexecution/", "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0", "ip_address": "127.0.0.1", "referer": "http://127.0.0.1:8000/admin/analytics/vectornote/"}
+INFO 2025-09-26 11:13:23,169 logging_service 29120 5756 {"timestamp": "2025-09-26T05:13:23.169144+00:00", "level": "INFO", "message": "User action: HTTP_GET_RESPONSE", "correlation_id": null, "request_id": null, "user_id": 1, "session_id": null, "service": "analytics", "action_type": "user_action", "action": "HTTP_GET_RESPONSE", "resource": "/admin/analytics/sandboxexecution/", "success": true, "details": {"status_code": 200, "content_type": "text/html; charset=utf-8", "correlation_id": "cc4e5278-03b3-48c7-9160-fa3efe6ed44f"}}
+INFO 2025-09-26 11:13:23,170 logging_service 29120 5756 {"timestamp": "2025-09-26T05:13:23.170130+00:00", "level": "INFO", "message": "Response: 200", "correlation_id": "cc4e5278-03b3-48c7-9160-fa3efe6ed44f", "request_id": "20b909b2-598a-44b9-acb9-7776b51111e7", "user_id": null, "session_id": null, "service": "analytics", "status_code": 200, "content_type": "text/html; charset=utf-8"}
+INFO 2025-09-26 11:13:23,171 basehttp 29120 5756 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 13803
+INFO 2025-09-26 11:13:23,227 logging_service 29120 26924 {"timestamp": "2025-09-26T05:13:23.227614+00:00", "level": "INFO", "message": "Request: GET /admin/jsi18n/", "correlation_id": "671ff7e7-9d97-40cf-83db-905112fc6a03", "request_id": "cf8ee2f6-305e-434d-b7fa-8bd774c74924", "user_id": null, "session_id": null, "service": "analytics", "method": "GET", "path": "/admin/jsi18n/", "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0", "ip_address": "127.0.0.1", "referer": "http://127.0.0.1:8000/admin/analytics/sandboxexecution/"}
+INFO 2025-09-26 11:13:23,231 logging_service 29120 26924 {"timestamp": "2025-09-26T05:13:23.231631+00:00", "level": "INFO", "message": "User action: HTTP_GET_RESPONSE", "correlation_id": null, "request_id": null, "user_id": 1, "session_id": null, "service": "analytics", "action_type": "user_action", "action": "HTTP_GET_RESPONSE", "resource": "/admin/jsi18n/", "success": true, "details": {"status_code": 200, "content_type": "text/javascript; charset=\"utf-8\"", "correlation_id": "671ff7e7-9d97-40cf-83db-905112fc6a03"}}
+INFO 2025-09-26 11:13:23,231 logging_service 29120 26924 {"timestamp": "2025-09-26T05:13:23.231631+00:00", "level": "INFO", "message": "Response: 200", "correlation_id": "671ff7e7-9d97-40cf-83db-905112fc6a03", "request_id": "cf8ee2f6-305e-434d-b7fa-8bd774c74924", "user_id": null, "session_id": null, "service": "analytics", "status_code": 200, "content_type": "text/javascript; charset=\"utf-8\""}
+INFO 2025-09-26 11:13:23,234 basehttp 29120 26924 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-09-26 11:15:20,653 autoreload 29120 21128 E:\analytical\analytical\analytical\urls.py changed, reloading.
+INFO 2025-09-26 11:15:25,829 autoreload 33944 36708 Watching for file changes with StatReloader
+INFO 2025-09-26 11:15:31,894 autoreload 33944 36708 E:\analytical\analytical\analytics\urls.py changed, reloading.
+INFO 2025-09-26 11:15:33,888 autoreload 31756 7032 Watching for file changes with StatReloader
+INFO 2025-09-26 11:16:01,463 autoreload 31756 7032 E:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-09-26 11:16:06,984 autoreload 15384 30272 Watching for file changes with StatReloader
+WARNING 2025-09-26 11:17:25,207 survival_tools 15384 4048 lifelines package not available. Some survival analysis features will be limited.
+INFO 2025-09-26 11:21:39,677 autoreload 15384 30272 E:\analytical\analytical\analytical\settings.py changed, reloading.
+INFO 2025-09-26 11:21:44,871 autoreload 8180 29244 Watching for file changes with StatReloader
+WARNING 2025-09-26 11:22:35,738 survival_tools 8180 15512 lifelines package not available. Some survival analysis features will be limited.
+INFO 2025-09-26 11:22:49,214 logging_service 8180 17916 {"timestamp": "2025-09-26T05:22:49.214935+00:00", "level": "INFO", "message": "Request: GET /api/", "correlation_id": "1d8600dd-d270-4b4a-ad07-632607fb39b1", "request_id": "41647df6-7fc4-4055-b658-756e4f73adc1", "user_id": null, "session_id": null, "service": "analytics", "method": "GET", "path": "/api/", "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0", "ip_address": "127.0.0.1", "referer": ""}
+INFO 2025-09-26 11:22:49,281 logging_service 8180 17916 {"timestamp": "2025-09-26T05:22:49.281725+00:00", "level": "INFO", "message": "Response: 403", "correlation_id": "1d8600dd-d270-4b4a-ad07-632607fb39b1", "request_id": "41647df6-7fc4-4055-b658-756e4f73adc1", "user_id": null, "session_id": null, "service": "analytics", "status_code": 403, "content_type": "application/json"}
+WARNING 2025-09-26 11:22:49,299 log 8180 17916 Forbidden: /api/
+WARNING 2025-09-26 11:22:49,316 basehttp 8180 17916 "GET /api/ HTTP/1.1" 403 58
+INFO 2025-09-26 11:22:49,951 logging_service 8180 24900 {"timestamp": "2025-09-26T05:22:49.950911+00:00", "level": "INFO", "message": "Request: GET /favicon.ico", "correlation_id": "07c99d6c-4b5f-471b-a145-67087e137f19", "request_id": "6e51a54c-2b47-43ae-a475-7c4e98026566", "user_id": null, "session_id": null, "service": "analytics", "method": "GET", "path": "/favicon.ico", "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0", "ip_address": "127.0.0.1", "referer": "http://127.0.0.1:8000/api/"}
+INFO 2025-09-26 11:22:50,068 logging_service 8180 24900 {"timestamp": "2025-09-26T05:22:50.068944+00:00", "level": "INFO", "message": "Response: 404", "correlation_id": "07c99d6c-4b5f-471b-a145-67087e137f19", "request_id": "6e51a54c-2b47-43ae-a475-7c4e98026566", "user_id": null, "session_id": null, "service": "analytics", "status_code": 404, "content_type": "text/html; charset=utf-8"}
+WARNING 2025-09-26 11:22:50,074 log 8180 24900 Not Found: /favicon.ico
+WARNING 2025-09-26 11:22:50,079 basehttp 8180 24900 "GET /favicon.ico HTTP/1.1" 404 2265
+WARNING 2025-09-26 11:23:22,870 survival_tools 10652 30524 lifelines package not available. Some survival analysis features will be limited.
+INFO 2025-09-26 11:23:40,400 logging_service 8180 29768 {"timestamp": "2025-09-26T05:23:40.400719+00:00", "level": "INFO", "message": "Request: GET /api/tools/list_tools/", "correlation_id": "b2442d53-79af-493a-8430-6cdd5b527dbb", "request_id": "1099f808-4488-4916-afe2-f9fe5e921939", "user_id": null, "session_id": null, "service": "analytics", "method": "GET", "path": "/api/tools/list_tools/", "user_agent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.6584", "ip_address": "127.0.0.1", "referer": ""}
+INFO 2025-09-26 11:23:40,400 logging_service 8180 29768 {"timestamp": "2025-09-26T05:23:40.400719+00:00", "level": "INFO", "message": "Response: 403", "correlation_id": "b2442d53-79af-493a-8430-6cdd5b527dbb", "request_id": "1099f808-4488-4916-afe2-f9fe5e921939", "user_id": null, "session_id": null, "service": "analytics", "status_code": 403, "content_type": "application/json"}
+WARNING 2025-09-26 11:23:40,400 log 8180 29768 Forbidden: /api/tools/list_tools/
+WARNING 2025-09-26 11:23:40,404 basehttp 8180 29768 "GET /api/tools/list_tools/ HTTP/1.1" 403 58
+INFO 2025-09-26 11:23:41,360 logging_service 8180 17916 {"timestamp": "2025-09-26T05:23:41.360549+00:00", "level": "INFO", "message": "Request: GET /api/tools", "correlation_id": "c75bb3d5-7e6c-416d-b345-8eb5eefb78e9", "request_id": "cd59d999-1c06-4129-a992-b8152a15f783", "user_id": null, "session_id": null, "service": "analytics", "method": "GET", "path": "/api/tools", "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0", "ip_address": "127.0.0.1", "referer": ""}
+INFO 2025-09-26 11:23:41,388 logging_service 8180 17916 {"timestamp": "2025-09-26T05:23:41.388399+00:00", "level": "INFO", "message": "Response: 404", "correlation_id": "c75bb3d5-7e6c-416d-b345-8eb5eefb78e9", "request_id": "cd59d999-1c06-4129-a992-b8152a15f783", "user_id": null, "session_id": null, "service": "analytics", "status_code": 404, "content_type": "text/html; charset=utf-8"}
+WARNING 2025-09-26 11:23:41,390 log 8180 17916 Not Found: /api/tools
+WARNING 2025-09-26 11:23:41,394 basehttp 8180 17916 "GET /api/tools HTTP/1.1" 404 7593
+INFO 2025-09-26 11:23:49,756 autoreload 8180 29244 E:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-09-26 11:23:52,030 autoreload 20636 33644 Watching for file changes with StatReloader
+WARNING 2025-09-26 11:24:05,430 survival_tools 20636 33644 lifelines package not available. Some survival analysis features will be limited.
+INFO 2025-09-26 11:25:30,031 logging_service 31824 12872 {"timestamp": "2025-09-26T05:25:30.031726+00:00", "level": "INFO", "message": "Request: GET /api/tools/list_tools/", "correlation_id": "a8eb9e71-37a6-401d-8f61-7c8c5377fa4a", "request_id": "b1b48b45-c60a-4999-9259-526e22bff05a", "user_id": null, "session_id": null, "service": "analytics", "method": "GET", "path": "/api/tools/list_tools/", "user_agent": "", "ip_address": "127.0.0.1", "referer": ""}
+ERROR 2025-09-26 11:25:30,035 exception 31824 12872 Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "E:\analytical\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\venv\Lib\site-packages\django\utils\deprecation.py", line 133, in __call__
+    response = self.process_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\venv\Lib\site-packages\django\middleware\common.py", line 48, in process_request
+    host = request.get_host()
+           ^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\venv\Lib\site-packages\django\http\request.py", line 150, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
+WARNING 2025-09-26 11:25:30,606 survival_tools 31824 12872 lifelines package not available. Some survival analysis features will be limited.
+INFO 2025-09-26 11:25:30,640 logging_service 31824 12872 {"timestamp": "2025-09-26T05:25:30.640302+00:00", "level": "INFO", "message": "Response: 400", "correlation_id": "a8eb9e71-37a6-401d-8f61-7c8c5377fa4a", "request_id": "b1b48b45-c60a-4999-9259-526e22bff05a", "user_id": null, "session_id": null, "service": "analytics", "status_code": 400, "content_type": "text/html; charset=utf-8"}
+WARNING 2025-09-26 11:25:30,640 log 31824 12872 Bad Request: /api/tools/list_tools/
+INFO 2025-09-26 11:25:44,459 autoreload 20636 33644 E:\analytical\analytical\analytical\settings.py changed, reloading.
+INFO 2025-09-26 11:25:48,190 autoreload 11048 21772 Watching for file changes with StatReloader
+WARNING 2025-09-26 11:26:08,533 survival_tools 11048 21772 lifelines package not available. Some survival analysis features will be limited.
+INFO 2025-09-26 11:26:09,599 logging_service 11048 6796 {"timestamp": "2025-09-26T05:26:09.598211+00:00", "level": "INFO", "message": "Request: GET /api/tools/list_tools/", "correlation_id": "75f7297e-3a52-48bd-953f-3fb859cec0d4", "request_id": "df3167ce-fcc2-466b-bac2-8094af5af5a5", "user_id": null, "session_id": null, "service": "analytics", "method": "GET", "path": "/api/tools/list_tools/", "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0", "ip_address": "127.0.0.1", "referer": ""}
+INFO 2025-09-26 11:26:09,659 logging_service 11048 6796 {"timestamp": "2025-09-26T05:26:09.659802+00:00", "level": "INFO", "message": "Response: 403", "correlation_id": "75f7297e-3a52-48bd-953f-3fb859cec0d4", "request_id": "df3167ce-fcc2-466b-bac2-8094af5af5a5", "user_id": null, "session_id": null, "service": "analytics", "status_code": 403, "content_type": "application/json"}
+WARNING 2025-09-26 11:26:09,664 log 11048 6796 Forbidden: /api/tools/list_tools/
+WARNING 2025-09-26 11:26:09,669 basehttp 11048 6796 "GET /api/tools/list_tools/ HTTP/1.1" 403 58
+INFO 2025-09-26 11:26:09,957 logging_service 11048 32900 {"timestamp": "2025-09-26T05:26:09.957926+00:00", "level": "INFO", "message": "Request: GET /favicon.ico", "correlation_id": "b91750b3-3af9-464b-b174-2aff376b088e", "request_id": "439ffc7e-03ee-4a1b-ba37-d0814a167fc8", "user_id": null, "session_id": null, "service": "analytics", "method": "GET", "path": "/favicon.ico", "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0", "ip_address": "127.0.0.1", "referer": "http://127.0.0.1:8000/api/tools/list_tools/"}
+INFO 2025-09-26 11:26:10,076 logging_service 11048 32900 {"timestamp": "2025-09-26T05:26:10.076595+00:00", "level": "INFO", "message": "Response: 404", "correlation_id": "b91750b3-3af9-464b-b174-2aff376b088e", "request_id": "439ffc7e-03ee-4a1b-ba37-d0814a167fc8", "user_id": null, "session_id": null, "service": "analytics", "status_code": 404, "content_type": "text/html; charset=utf-8"}
+WARNING 2025-09-26 11:26:10,084 log 11048 32900 Not Found: /favicon.ico
+WARNING 2025-09-26 11:26:10,091 basehttp 11048 32900 "GET /favicon.ico HTTP/1.1" 404 2265
+INFO 2025-09-26 11:26:13,035 logging_service 29652 37200 {"timestamp": "2025-09-26T05:26:13.035689+00:00", "level": "INFO", "message": "Request: GET /api/tools/list_tools/", "correlation_id": "c768bcae-a756-4c40-81b1-e7a632b64d7b", "request_id": "7d4b8135-14c2-426d-9159-353d59b8e543", "user_id": null, "session_id": null, "service": "analytics", "method": "GET", "path": "/api/tools/list_tools/", "user_agent": "", "ip_address": "127.0.0.1", "referer": ""}
+ERROR 2025-09-26 11:26:13,046 exception 29652 37200 Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "E:\analytical\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\venv\Lib\site-packages\django\utils\deprecation.py", line 133, in __call__
+    response = self.process_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\venv\Lib\site-packages\django\middleware\common.py", line 48, in process_request
+    host = request.get_host()
+           ^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\venv\Lib\site-packages\django\http\request.py", line 150, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
+WARNING 2025-09-26 11:26:13,584 survival_tools 29652 37200 lifelines package not available. Some survival analysis features will be limited.
+INFO 2025-09-26 11:26:13,622 logging_service 29652 37200 {"timestamp": "2025-09-26T05:26:13.622012+00:00", "level": "INFO", "message": "Response: 400", "correlation_id": "c768bcae-a756-4c40-81b1-e7a632b64d7b", "request_id": "7d4b8135-14c2-426d-9159-353d59b8e543", "user_id": null, "session_id": null, "service": "analytics", "status_code": 400, "content_type": "text/html; charset=utf-8"}
+WARNING 2025-09-26 11:26:13,622 log 29652 37200 Bad Request: /api/tools/list_tools/
+INFO 2025-09-26 11:26:50,480 logging_service 29640 25524 {"timestamp": "2025-09-26T05:26:50.480677+00:00", "level": "INFO", "message": "Request: GET /api/tools/list_tools/", "correlation_id": "b9aae79c-6324-4854-9e5b-160c717d38e1", "request_id": "0a594bfa-b64c-42cf-896d-55be745937e4", "user_id": null, "session_id": null, "service": "analytics", "method": "GET", "path": "/api/tools/list_tools/", "user_agent": "", "ip_address": "127.0.0.1", "referer": ""}
+ERROR 2025-09-26 11:26:50,480 exception 29640 25524 Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "E:\analytical\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\venv\Lib\site-packages\django\utils\deprecation.py", line 133, in __call__
+    response = self.process_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\venv\Lib\site-packages\django\middleware\common.py", line 48, in process_request
+    host = request.get_host()
+           ^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\venv\Lib\site-packages\django\http\request.py", line 150, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
+WARNING 2025-09-26 11:26:50,914 survival_tools 29640 25524 lifelines package not available. Some survival analysis features will be limited.
+INFO 2025-09-26 11:26:50,951 logging_service 29640 25524 {"timestamp": "2025-09-26T05:26:50.951244+00:00", "level": "INFO", "message": "Response: 400", "correlation_id": "b9aae79c-6324-4854-9e5b-160c717d38e1", "request_id": "0a594bfa-b64c-42cf-896d-55be745937e4", "user_id": null, "session_id": null, "service": "analytics", "status_code": 400, "content_type": "text/html; charset=utf-8"}
+WARNING 2025-09-26 11:26:50,953 log 29640 25524 Bad Request: /api/tools/list_tools/
+INFO 2025-09-26 11:26:50,988 logging_service 29640 25524 {"timestamp": "2025-09-26T05:26:50.988843+00:00", "level": "INFO", "message": "Request: POST /api/sessions/create_session/", "correlation_id": "34b76ad5-fe7b-4426-afb7-b3ac1082af21", "request_id": "5cca8305-a354-4e52-8564-1539e7d319c4", "user_id": null, "session_id": null, "service": "analytics", "method": "POST", "path": "/api/sessions/create_session/", "user_agent": "", "ip_address": "127.0.0.1", "referer": ""}
+WARNING 2025-09-26 11:26:50,988 logging_service 29640 25524 {"timestamp": "2025-09-26T05:26:50.988843+00:00", "level": "WARNING", "message": "Security event: csrf_token_missing", "correlation_id": null, "request_id": null, "user_id": null, "session_id": null, "service": "analytics", "event_type": "security_event", "event": "csrf_token_missing", "severity": "WARNING", "details": {"ip_address": "127.0.0.1", "user_agent": "", "path": "/api/sessions/create_session/", "method": "POST"}}
+ERROR 2025-09-26 11:26:50,993 exception 29640 25524 Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "E:\analytical\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\venv\Lib\site-packages\django\utils\deprecation.py", line 133, in __call__
+    response = self.process_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\venv\Lib\site-packages\django\middleware\common.py", line 48, in process_request
+    host = request.get_host()
+           ^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\venv\Lib\site-packages\django\http\request.py", line 150, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
+INFO 2025-09-26 11:26:51,041 logging_service 29640 25524 {"timestamp": "2025-09-26T05:26:51.041118+00:00", "level": "INFO", "message": "Response: 400", "correlation_id": "34b76ad5-fe7b-4426-afb7-b3ac1082af21", "request_id": "5cca8305-a354-4e52-8564-1539e7d319c4", "user_id": null, "session_id": null, "service": "analytics", "status_code": 400, "content_type": "text/html; charset=utf-8"}
+WARNING 2025-09-26 11:26:51,041 log 29640 25524 Bad Request: /api/sessions/create_session/
+INFO 2025-09-26 11:26:51,064 logging_service 29640 25524 {"timestamp": "2025-09-26T05:26:51.064783+00:00", "level": "INFO", "message": "Request: POST /api/rag/upsert/", "correlation_id": "4e64e346-bd15-4333-b741-55e4bf9f1a0d", "request_id": "faf08937-3673-4550-a26f-f5c507205ef3", "user_id": null, "session_id": null, "service": "analytics", "method": "POST", "path": "/api/rag/upsert/", "user_agent": "", "ip_address": "127.0.0.1", "referer": ""}
+WARNING 2025-09-26 11:26:51,066 logging_service 29640 25524 {"timestamp": "2025-09-26T05:26:51.066335+00:00", "level": "WARNING", "message": "Security event: csrf_token_missing", "correlation_id": null, "request_id": null, "user_id": null, "session_id": null, "service": "analytics", "event_type": "security_event", "event": "csrf_token_missing", "severity": "WARNING", "details": {"ip_address": "127.0.0.1", "user_agent": "", "path": "/api/rag/upsert/", "method": "POST"}}
+ERROR 2025-09-26 11:26:51,067 exception 29640 25524 Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "E:\analytical\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\venv\Lib\site-packages\django\utils\deprecation.py", line 133, in __call__
+    response = self.process_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\venv\Lib\site-packages\django\middleware\common.py", line 48, in process_request
+    host = request.get_host()
+           ^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\venv\Lib\site-packages\django\http\request.py", line 150, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
+INFO 2025-09-26 11:26:51,099 logging_service 29640 25524 {"timestamp": "2025-09-26T05:26:51.099241+00:00", "level": "INFO", "message": "Response: 400", "correlation_id": "4e64e346-bd15-4333-b741-55e4bf9f1a0d", "request_id": "faf08937-3673-4550-a26f-f5c507205ef3", "user_id": null, "session_id": null, "service": "analytics", "status_code": 400, "content_type": "text/html; charset=utf-8"}
+WARNING 2025-09-26 11:26:51,101 log 29640 25524 Bad Request: /api/rag/upsert/
+INFO 2025-09-26 11:26:51,116 logging_service 29640 25524 {"timestamp": "2025-09-26T05:26:51.115849+00:00", "level": "INFO", "message": "Request: GET /api/rag/search/", "correlation_id": "c916d875-a4cb-4c86-b313-8899dd7b23c2", "request_id": "5af58f74-b01a-42e6-9dca-fcee8c9f2b88", "user_id": null, "session_id": null, "service": "analytics", "method": "GET", "path": "/api/rag/search/", "user_agent": "", "ip_address": "127.0.0.1", "referer": ""}
+ERROR 2025-09-26 11:26:51,118 exception 29640 25524 Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "E:\analytical\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\venv\Lib\site-packages\django\utils\deprecation.py", line 133, in __call__
+    response = self.process_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\venv\Lib\site-packages\django\middleware\common.py", line 48, in process_request
+    host = request.get_host()
+           ^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\venv\Lib\site-packages\django\http\request.py", line 150, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
+INFO 2025-09-26 11:26:51,149 logging_service 29640 25524 {"timestamp": "2025-09-26T05:26:51.149220+00:00", "level": "INFO", "message": "Response: 400", "correlation_id": "c916d875-a4cb-4c86-b313-8899dd7b23c2", "request_id": "5af58f74-b01a-42e6-9dca-fcee8c9f2b88", "user_id": null, "session_id": null, "service": "analytics", "status_code": 400, "content_type": "text/html; charset=utf-8"}
+WARNING 2025-09-26 11:26:51,150 log 29640 25524 Bad Request: /api/rag/search/
+INFO 2025-09-26 11:26:51,181 logging_service 29640 25524 {"timestamp": "2025-09-26T05:26:51.181358+00:00", "level": "INFO", "message": "Request: POST /api/chat/messages/", "correlation_id": "63760ea7-b026-4940-8604-79fd57c5d30c", "request_id": "7cf49b3c-7931-4d26-b1ae-b0766bd5dee0", "user_id": null, "session_id": null, "service": "analytics", "method": "POST", "path": "/api/chat/messages/", "user_agent": "", "ip_address": "127.0.0.1", "referer": ""}
+WARNING 2025-09-26 11:26:51,184 logging_service 29640 25524 {"timestamp": "2025-09-26T05:26:51.183562+00:00", "level": "WARNING", "message": "Security event: csrf_token_missing", "correlation_id": null, "request_id": null, "user_id": null, "session_id": null, "service": "analytics", "event_type": "security_event", "event": "csrf_token_missing", "severity": "WARNING", "details": {"ip_address": "127.0.0.1", "user_agent": "", "path": "/api/chat/messages/", "method": "POST"}}
+ERROR 2025-09-26 11:26:51,186 exception 29640 25524 Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "E:\analytical\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\venv\Lib\site-packages\django\utils\deprecation.py", line 133, in __call__
+    response = self.process_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\venv\Lib\site-packages\django\middleware\common.py", line 48, in process_request
+    host = request.get_host()
+           ^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\venv\Lib\site-packages\django\http\request.py", line 150, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
+INFO 2025-09-26 11:26:51,225 logging_service 29640 25524 {"timestamp": "2025-09-26T05:26:51.225489+00:00", "level": "INFO", "message": "Response: 400", "correlation_id": "63760ea7-b026-4940-8604-79fd57c5d30c", "request_id": "7cf49b3c-7931-4d26-b1ae-b0766bd5dee0", "user_id": null, "session_id": null, "service": "analytics", "status_code": 400, "content_type": "text/html; charset=utf-8"}
+WARNING 2025-09-26 11:26:51,225 log 29640 25524 Bad Request: /api/chat/messages/
+INFO 2025-09-26 11:26:51,244 logging_service 29640 25524 {"timestamp": "2025-09-26T05:26:51.244006+00:00", "level": "INFO", "message": "Request: GET /api/audit/trail/", "correlation_id": "195185f0-4a0d-492d-93ac-e6fe523807e6", "request_id": "146d9b06-c755-4ba2-b171-109cc313513f", "user_id": null, "session_id": null, "service": "analytics", "method": "GET", "path": "/api/audit/trail/", "user_agent": "", "ip_address": "127.0.0.1", "referer": ""}
+ERROR 2025-09-26 11:26:51,246 exception 29640 25524 Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "E:\analytical\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\venv\Lib\site-packages\django\utils\deprecation.py", line 133, in __call__
+    response = self.process_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\venv\Lib\site-packages\django\middleware\common.py", line 48, in process_request
+    host = request.get_host()
+           ^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\venv\Lib\site-packages\django\http\request.py", line 150, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
+INFO 2025-09-26 11:26:51,452 logging_service 29640 25524 {"timestamp": "2025-09-26T05:26:51.452315+00:00", "level": "INFO", "message": "Response: 400", "correlation_id": "195185f0-4a0d-492d-93ac-e6fe523807e6", "request_id": "146d9b06-c755-4ba2-b171-109cc313513f", "user_id": null, "session_id": null, "service": "analytics", "status_code": 400, "content_type": "text/html; charset=utf-8"}
+WARNING 2025-09-26 11:26:51,454 log 29640 25524 Bad Request: /api/audit/trail/
+INFO 2025-09-26 11:26:51,545 logging_service 29640 25524 {"timestamp": "2025-09-26T05:26:51.545074+00:00", "level": "INFO", "message": "Request: DELETE /api/rag/clear/", "correlation_id": "76153901-9abb-4f1d-9dda-0366ab559478", "request_id": "cceba2c0-38bb-48fa-962b-f9181900707d", "user_id": null, "session_id": null, "service": "analytics", "method": "DELETE", "path": "/api/rag/clear/", "user_agent": "", "ip_address": "127.0.0.1", "referer": ""}
+WARNING 2025-09-26 11:26:51,545 logging_service 29640 25524 {"timestamp": "2025-09-26T05:26:51.545074+00:00", "level": "WARNING", "message": "Security event: csrf_token_missing", "correlation_id": null, "request_id": null, "user_id": null, "session_id": null, "service": "analytics", "event_type": "security_event", "event": "csrf_token_missing", "severity": "WARNING", "details": {"ip_address": "127.0.0.1", "user_agent": "", "path": "/api/rag/clear/", "method": "DELETE"}}
+ERROR 2025-09-26 11:26:51,545 exception 29640 25524 Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "E:\analytical\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\venv\Lib\site-packages\django\utils\deprecation.py", line 133, in __call__
+    response = self.process_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\venv\Lib\site-packages\django\middleware\common.py", line 48, in process_request
+    host = request.get_host()
+           ^^^^^^^^^^^^^^^^^^
+  File "E:\analytical\venv\Lib\site-packages\django\http\request.py", line 150, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
+INFO 2025-09-26 11:26:51,586 logging_service 29640 25524 {"timestamp": "2025-09-26T05:26:51.586739+00:00", "level": "INFO", "message": "Response: 400", "correlation_id": "76153901-9abb-4f1d-9dda-0366ab559478", "request_id": "cceba2c0-38bb-48fa-962b-f9181900707d", "user_id": null, "session_id": null, "service": "analytics", "status_code": 400, "content_type": "text/html; charset=utf-8"}
+WARNING 2025-09-26 11:26:51,587 log 29640 25524 Bad Request: /api/rag/clear/
+INFO 2025-09-26 11:27:15,738 logging_service 11048 8904 {"timestamp": "2025-09-26T05:27:15.738246+00:00", "level": "INFO", "message": "Request: GET /api/tools/list_tools/", "correlation_id": "c7e69b52-0af4-471c-83c9-368cab085e1f", "request_id": "c7469135-b373-42d4-afb6-fba736df612a", "user_id": null, "session_id": null, "service": "analytics", "method": "GET", "path": "/api/tools/list_tools/", "user_agent": "python-requests/2.32.5", "ip_address": "127.0.0.1", "referer": ""}
+INFO 2025-09-26 11:27:15,738 logging_service 11048 8904 {"timestamp": "2025-09-26T05:27:15.738246+00:00", "level": "INFO", "message": "Response: 403", "correlation_id": "c7e69b52-0af4-471c-83c9-368cab085e1f", "request_id": "c7469135-b373-42d4-afb6-fba736df612a", "user_id": null, "session_id": null, "service": "analytics", "status_code": 403, "content_type": "application/json"}
+WARNING 2025-09-26 11:27:15,738 log 11048 8904 Forbidden: /api/tools/list_tools/
+WARNING 2025-09-26 11:27:15,738 basehttp 11048 8904 "GET /api/tools/list_tools/ HTTP/1.1" 403 58
+INFO 2025-09-26 11:27:17,790 logging_service 11048 36132 {"timestamp": "2025-09-26T05:27:17.790129+00:00", "level": "INFO", "message": "Request: GET /api/rag/search/", "correlation_id": "c4937a3c-0ed6-4c98-8be5-97f6aa3cafc8", "request_id": "f4f440e2-04dd-474c-b931-4a68f133d1b5", "user_id": null, "session_id": null, "service": "analytics", "method": "GET", "path": "/api/rag/search/", "user_agent": "python-requests/2.32.5", "ip_address": "127.0.0.1", "referer": ""}
+INFO 2025-09-26 11:27:17,792 logging_service 11048 36132 {"timestamp": "2025-09-26T05:27:17.792187+00:00", "level": "INFO", "message": "Response: 403", "correlation_id": "c4937a3c-0ed6-4c98-8be5-97f6aa3cafc8", "request_id": "f4f440e2-04dd-474c-b931-4a68f133d1b5", "user_id": null, "session_id": null, "service": "analytics", "status_code": 403, "content_type": "application/json"}
+WARNING 2025-09-26 11:27:17,792 log 11048 36132 Forbidden: /api/rag/search/
+WARNING 2025-09-26 11:27:17,793 basehttp 11048 36132 "GET /api/rag/search/?query=test HTTP/1.1" 403 58
+INFO 2025-09-26 11:27:19,829 logging_service 11048 33252 {"timestamp": "2025-09-26T05:27:19.829463+00:00", "level": "INFO", "message": "Request: GET /api/audit/trail/", "correlation_id": "26679025-9516-4280-874e-3a145c9fc533", "request_id": "e15d239d-64b0-4cfe-8442-1ce005218e64", "user_id": null, "session_id": null, "service": "analytics", "method": "GET", "path": "/api/audit/trail/", "user_agent": "python-requests/2.32.5", "ip_address": "127.0.0.1", "referer": ""}
+INFO 2025-09-26 11:27:19,830 logging_service 11048 33252 {"timestamp": "2025-09-26T05:27:19.830971+00:00", "level": "INFO", "message": "Response: 403", "correlation_id": "26679025-9516-4280-874e-3a145c9fc533", "request_id": "e15d239d-64b0-4cfe-8442-1ce005218e64", "user_id": null, "session_id": null, "service": "analytics", "status_code": 403, "content_type": "application/json"}
+WARNING 2025-09-26 11:27:19,832 log 11048 33252 Forbidden: /api/audit/trail/
+WARNING 2025-09-26 11:27:19,832 basehttp 11048 33252 "GET /api/audit/trail/ HTTP/1.1" 403 58
+INFO 2025-09-26 11:27:21,883 logging_service 11048 34652 {"timestamp": "2025-09-26T05:27:21.883974+00:00", "level": "INFO", "message": "Request: POST /api/sessions/create_session/", "correlation_id": "83c9c972-6e2c-4e84-868d-549a0bfe6fe1", "request_id": "400b3b01-bff8-4028-b6e1-9996ff8491f5", "user_id": null, "session_id": null, "service": "analytics", "method": "POST", "path": "/api/sessions/create_session/", "user_agent": "python-requests/2.32.5", "ip_address": "127.0.0.1", "referer": ""}
+WARNING 2025-09-26 11:27:21,885 logging_service 11048 34652 {"timestamp": "2025-09-26T05:27:21.885972+00:00", "level": "WARNING", "message": "Security event: csrf_token_missing", "correlation_id": null, "request_id": null, "user_id": null, "session_id": null, "service": "analytics", "event_type": "security_event", "event": "csrf_token_missing", "severity": "WARNING", "details": {"ip_address": "127.0.0.1", "user_agent": "python-requests/2.32.5", "path": "/api/sessions/create_session/", "method": "POST"}}
+INFO 2025-09-26 11:27:21,888 logging_service 11048 34652 {"timestamp": "2025-09-26T05:27:21.888973+00:00", "level": "INFO", "message": "Response: 403", "correlation_id": "83c9c972-6e2c-4e84-868d-549a0bfe6fe1", "request_id": "400b3b01-bff8-4028-b6e1-9996ff8491f5", "user_id": null, "session_id": null, "service": "analytics", "status_code": 403, "content_type": "application/json"}
+WARNING 2025-09-26 11:27:21,890 log 11048 34652 Forbidden: /api/sessions/create_session/
+WARNING 2025-09-26 11:27:21,890 basehttp 11048 34652 "POST /api/sessions/create_session/ HTTP/1.1" 403 58
+INFO 2025-09-26 11:27:23,940 logging_service 11048 31872 {"timestamp": "2025-09-26T05:27:23.940288+00:00", "level": "INFO", "message": "Request: POST /api/chat/messages/", "correlation_id": "f1618031-c1d4-4c5e-9e16-d54cbb204a11", "request_id": "ae2071eb-3ad3-4751-aa29-0a54869483b3", "user_id": null, "session_id": null, "service": "analytics", "method": "POST", "path": "/api/chat/messages/", "user_agent": "python-requests/2.32.5", "ip_address": "127.0.0.1", "referer": ""}
+WARNING 2025-09-26 11:27:23,940 logging_service 11048 31872 {"timestamp": "2025-09-26T05:27:23.940611+00:00", "level": "WARNING", "message": "Security event: csrf_token_missing", "correlation_id": null, "request_id": null, "user_id": null, "session_id": null, "service": "analytics", "event_type": "security_event", "event": "csrf_token_missing", "severity": "WARNING", "details": {"ip_address": "127.0.0.1", "user_agent": "python-requests/2.32.5", "path": "/api/chat/messages/", "method": "POST"}}
+INFO 2025-09-26 11:27:23,941 logging_service 11048 31872 {"timestamp": "2025-09-26T05:27:23.941635+00:00", "level": "INFO", "message": "Response: 403", "correlation_id": "f1618031-c1d4-4c5e-9e16-d54cbb204a11", "request_id": "ae2071eb-3ad3-4751-aa29-0a54869483b3", "user_id": null, "session_id": null, "service": "analytics", "status_code": 403, "content_type": "application/json"}
+WARNING 2025-09-26 11:27:23,942 log 11048 31872 Forbidden: /api/chat/messages/
+WARNING 2025-09-26 11:27:23,942 basehttp 11048 31872 "POST /api/chat/messages/ HTTP/1.1" 403 58
+INFO 2025-09-26 11:27:35,569 autoreload 11048 21772 E:\analytical\analytical\analytical\settings.py changed, reloading.
+INFO 2025-09-26 11:27:37,667 autoreload 36180 6072 Watching for file changes with StatReloader
+WARNING 2025-09-26 11:27:48,490 survival_tools 36180 6072 lifelines package not available. Some survival analysis features will be limited.
