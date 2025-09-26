@@ -433,6 +433,30 @@ IMAGE_THUMBNAIL_SIZES = {
 IMAGE_AUTO_OPTIMIZE_THRESHOLD_MB = 1.0  # Auto-optimize images larger than this
 IMAGE_CLEANUP_DAYS = 30  # Clean up compressed images older than this
 
+# Background Monitoring Settings
+ENABLE_BACKGROUND_MONITORING = True
+SYSTEM_MONITORING_INTERVAL = 60  # seconds
+CLEANUP_TASKS_INTERVAL = 3600  # 1 hour
+PERFORMANCE_CHECK_INTERVAL = 300  # 5 minutes
+HEALTH_CHECK_INTERVAL = 1800  # 30 minutes
+
+# Cleanup Thresholds
+OLD_SESSIONS_CLEANUP_DAYS = 90
+OLD_AUDIT_TRAILS_CLEANUP_DAYS = 365
+OLD_IMAGES_CLEANUP_DAYS = 180
+OLD_VECTOR_NOTES_CLEANUP_DAYS = 365
+MAX_FILE_SIZE_MB = 100
+MAX_CACHE_SIZE_MB = 500
+
+# Performance Thresholds
+PERFORMANCE_THRESHOLDS = {
+    'memory_usage_percent': 85,
+    'cpu_usage_percent': 80,
+    'disk_usage_percent': 90,
+    'response_time_ms': 5000,
+    'database_query_time_ms': 1000,
+}
+
 # Backup Settings
 BACKUP_DIR = 'backups'
 BACKUP_RETENTION_DAYS = 30

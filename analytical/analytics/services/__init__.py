@@ -21,6 +21,8 @@ from .report_generator import ReportGenerator
 from .memory_optimizer import MemoryOptimizer, memory_optimizer
 from .query_optimizer import QueryOptimizer, query_optimizer
 from .image_compression import ImageCompressionService, image_compression_service
+from .caching_strategy import CachingStrategyService, caching_strategy_service
+from .background_monitoring import BackgroundMonitoringService, background_monitoring_service
 
 __all__ = [
     'FileProcessingService',
@@ -42,5 +44,9 @@ __all__ = [
     'QueryOptimizer',
     'query_optimizer',
     'ImageCompressionService',
-    'image_compression_service'
+    'image_compression_service',
+    'CachingStrategyService',
+    'caching_strategy_service',
+    'BackgroundMonitoringService',
+    'background_monitoring_service'
 ]
