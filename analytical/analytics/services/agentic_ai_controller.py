@@ -25,6 +25,7 @@ from analytics.services.audit_trail_manager import AuditTrailManager
 from analytics.services.llm_processor import LLMProcessor
 from analytics.services.analysis_executor import AnalysisExecutor
 from analytics.services.session_manager import SessionManager
+from analytics.services.rag_service import RAGService
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
@@ -40,6 +41,7 @@ class AgenticAIController:
         self.llm_processor = LLMProcessor()
         self.analysis_executor = AnalysisExecutor()
         self.session_manager = SessionManager()
+        self.rag_service = RAGService()
         
         # Agent configuration
         self.agent_version = getattr(settings, 'AGENT_VERSION', '1.0')
@@ -464,7 +466,7 @@ class AgenticAIController:
             raise
     
     def _generate_analysis_plan(self, dataset: Dataset, goal: str, user: User) -> Dict[str, Any]:
-        """Generate analysis plan using LLM"""
+        """Generate analysis plan using LLM with RAG context"""
         try:
             dataset_info = {
                 'name': dataset.name,
@@ -473,7 +475,10 @@ class AgenticAIController:
                 'column_types': {col.name: col.confirmed_type for col in dataset.columns.all()}
             }
             
-            plan = self.llm_processor.generate_analysis_plan(dataset_info, goal, user)
+            # RAG Retrieval: Get relevant context for planning
+            rag_context = self._get_rag_context_for_planning(dataset, goal, user)
+            
+            plan = self.llm_processor.generate_analysis_plan(dataset_info, goal, user, rag_context)
             return plan
             
         except Exception as e:
@@ -522,7 +527,12 @@ class AgenticAIController:
                 step.confidence_score = 1.0
                 
             elif tool_name in ['descriptive_statistics', 'correlation_analysis', 'regression_analysis']:
-                # Execute analysis tool
+                # RAG Retrieval: Get relevant context for execution
+                execution_context = self._get_rag_context_for_execution(
+                    agent_run, step_config, tool_name, parameters
+                )
+                
+                # Execute analysis tool with context
                 result = self.analysis_executor.execute_analysis(
                     tool_name=tool_name,
                     parameters=parameters,
@@ -651,3 +661,170 @@ class AgenticAIController:
             self.execute_agent_run(agent_run_id)
         except Exception as e:
             logger.error(f"Async agent execution failed: {str(e)}")
+    
+    def _get_rag_context_for_planning(self, dataset: Dataset, goal: str, user: User) -> str:
+        """
+        Retrieve relevant RAG context for analysis planning
+        
+        Args:
+            dataset: Dataset to analyze
+            goal: Analysis goal
+            user: User requesting the analysis
+            
+        Returns:
+            Formatted context string for LLM planning
+        """
+        try:
+            # Search for relevant vector notes
+            search_queries = [
+                f"dataset {dataset.name} analysis",
+                f"analysis plan {goal}",
+                f"statistical analysis {dataset.name}",
+                f"data exploration {goal}",
+                f"visualization {dataset.name}"
+            ]
+            
+            context_parts = []
+            
+            for query in search_queries:
+                # Search for dataset-scoped notes
+                dataset_results = self.rag_service.search_vectors(
+                    query=query,
+                    user=user,
+                    dataset=dataset,
+                    top_k=3,
+                    similarity_threshold=0.7
+                )
+                
+                # Search for global notes
+                global_results = self.rag_service.search_vectors(
+                    query=query,
+                    user=user,
+                    dataset=None,
+                    top_k=2,
+                    similarity_threshold=0.7
+                )
+                
+                # Combine and format results
+                for result in dataset_results + global_results:
+                    context_parts.append(f"""
+                    Relevant Context:
+                    Title: {result.get('title', 'Unknown')}
+                    Content: {result.get('text', '')[:300]}...
+                    Confidence: {result.get('confidence_score', 0)}
+                    """)
+            
+            # Add dataset-specific context
+            dataset_context = f"""
+            Dataset Context:
+            Name: {dataset.name}
+            Description: {dataset.description or 'No description available'}
+            Rows: {dataset.row_count}
+            Columns: {dataset.column_count}
+            Column Types: {', '.join([f'{col.name}: {col.confirmed_type}' for col in dataset.columns.all()])}
+            """
+            context_parts.insert(0, dataset_context)
+            
+            # Combine all context
+            full_context = "\n".join(context_parts[:10])  # Limit to 10 context items
+            
+            logger.info(f"Retrieved RAG context for planning: {len(context_parts)} items")
+            return full_context
+            
+        except Exception as e:
+            logger.error(f"Failed to retrieve RAG context for planning: {str(e)}")
+            # Return basic dataset context as fallback
+            return f"""
+            Dataset Context:
+            Name: {dataset.name}
+            Rows: {dataset.row_count}
+            Columns: {dataset.column_count}
+            Analysis Goal: {goal}
+            """
+    
+    def _get_rag_context_for_execution(self, agent_run: AgentRun, step_config: Dict[str, Any],
+                                      tool_name: str, parameters: Dict[str, Any]) -> str:
+        """
+        Retrieve relevant RAG context for agent step execution
+        
+        Args:
+            agent_run: Current agent run
+            step_config: Step configuration
+            tool_name: Name of the tool being executed
+            parameters: Tool parameters
+            
+        Returns:
+            Formatted context string for execution
+        """
+        try:
+            dataset = agent_run.session.primary_dataset
+            user = agent_run.user
+            
+            # Search for relevant context based on tool and step
+            search_queries = [
+                f"{tool_name} analysis {dataset.name}",
+                f"{step_config.get('description', '')} {dataset.name}",
+                f"analysis result {tool_name}",
+                f"statistical analysis {dataset.name}",
+                f"data insights {dataset.name}"
+            ]
+            
+            context_parts = []
+            
+            for query in search_queries:
+                if not query.strip():
+                    continue
+                    
+                # Search for dataset-scoped notes
+                dataset_results = self.rag_service.search_vectors(
+                    query=query,
+                    user=user,
+                    dataset=dataset,
+                    top_k=2,
+                    similarity_threshold=0.6
+                )
+                
+                # Search for global notes
+                global_results = self.rag_service.search_vectors(
+                    query=query,
+                    user=user,
+                    dataset=None,
+                    top_k=1,
+                    similarity_threshold=0.6
+                )
+                
+                # Combine and format results
+                for result in dataset_results + global_results:
+                    context_parts.append(f"""
+                    Execution Context:
+                    Title: {result.get('title', 'Unknown')}
+                    Content: {result.get('text', '')[:200]}...
+                    Confidence: {result.get('confidence_score', 0)}
+                    """)
+            
+            # Add step-specific context
+            step_context = f"""
+            Step Context:
+            Tool: {tool_name}
+            Description: {step_config.get('description', 'No description')}
+            Parameters: {parameters}
+            Expected Output: {step_config.get('expected_output', 'Unknown')}
+            Dataset: {dataset.name}
+            """
+            context_parts.insert(0, step_context)
+            
+            # Combine all context
+            full_context = "\n".join(context_parts[:5])  # Limit to 5 context items
+            
+            logger.info(f"Retrieved RAG context for execution: {len(context_parts)} items")
+            return full_context
+            
+        except Exception as e:
+            logger.error(f"Failed to retrieve RAG context for execution: {str(e)}")
+            # Return basic step context as fallback
+            return f"""
+            Step Context:
+            Tool: {tool_name}
+            Description: {step_config.get('description', 'No description')}
+            Dataset: {agent_run.session.primary_dataset.name}
+            """

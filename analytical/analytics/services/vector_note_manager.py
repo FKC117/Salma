@@ -341,7 +341,10 @@ class VectorNoteManager:
         return True
     
     def _preprocess_content(self, text: str) -> str:
-        """Preprocess content for embedding generation"""
+        """Preprocess content for embedding generation with PII masking"""
+        # Apply PII masking first
+        text = self._mask_pii_content(text)
+        
         # Remove extra whitespace
         text = re.sub(r'\s+', ' ', text.strip())
         
@@ -354,6 +357,68 @@ class VectorNoteManager:
             text = text[:max_length] + "..."
         
         return text
+    
+    def _mask_pii_content(self, text: str) -> str:
+        """
+        Mask PII (Personally Identifiable Information) in content
+        
+        Args:
+            text: Input text to mask
+            
+        Returns:
+            Text with PII masked
+        """
+        masked_text = text
+        
+        # Mask email addresses
+        masked_text = re.sub(
+            self.pii_patterns['email'], 
+            '[EMAIL_MASKED]', 
+            masked_text, 
+            flags=re.IGNORECASE
+        )
+        
+        # Mask phone numbers
+        masked_text = re.sub(
+            self.pii_patterns['phone'], 
+            '[PHONE_MASKED]', 
+            masked_text
+        )
+        
+        # Mask SSNs
+        masked_text = re.sub(
+            self.pii_patterns['ssn'], 
+            '[SSN_MASKED]', 
+            masked_text
+        )
+        
+        # Mask credit card numbers
+        masked_text = re.sub(
+            self.pii_patterns['credit_card'], 
+            '[CARD_MASKED]', 
+            masked_text
+        )
+        
+        # Mask IP addresses
+        masked_text = re.sub(
+            self.pii_patterns['ip_address'], 
+            '[IP_MASKED]', 
+            masked_text
+        )
+        
+        # Additional PII patterns
+        additional_patterns = {
+            'name_pattern': r'\b[A-Z][a-z]+ [A-Z][a-z]+\b',  # Simple name pattern
+            'date_pattern': r'\b\d{1,2}/\d{1,2}/\d{4}\b',  # Date pattern
+            'address_pattern': r'\b\d+\s+[A-Za-z\s]+(?:Street|St|Avenue|Ave|Road|Rd|Drive|Dr|Lane|Ln|Boulevard|Blvd)\b',  # Address pattern
+        }
+        
+        # Mask additional patterns
+        masked_text = re.sub(additional_patterns['name_pattern'], '[NAME_MASKED]', masked_text)
+        masked_text = re.sub(additional_patterns['date_pattern'], '[DATE_MASKED]', masked_text)
+        masked_text = re.sub(additional_patterns['address_pattern'], '[ADDRESS_MASKED]', masked_text)
+        
+        return masked_text
     
     def _generate_embedding(self, text: str) -> Optional[List[float]]:
         """Generate embedding for text"""

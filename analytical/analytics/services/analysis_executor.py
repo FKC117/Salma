@@ -31,6 +31,7 @@ from analytics.models import (
 )
 from analytics.services.audit_trail_manager import AuditTrailManager
 from analytics.services.column_type_manager import ColumnTypeManager
+from analytics.services.vector_note_manager import VectorNoteManager
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +44,7 @@ class AnalysisExecutor:
     def __init__(self):
         self.audit_manager = AuditTrailManager()
         self.column_manager = ColumnTypeManager()
+        self.vector_note_manager = VectorNoteManager()
         self.cache_timeout = settings.ANALYSIS_CACHE_TTL
         self.max_execution_time = 300  # 5 minutes
         self.supported_output_types = ['table', 'chart', 'text', 'image', 'json']
@@ -107,6 +109,9 @@ class AnalysisExecutor:
                 
                 # Cache the result
                 self._cache_result(cache_key, analysis_result)
+                
+                # RAG Indexing: Create vector note for analysis result
+                self._index_analysis_result_for_rag(analysis_result, result_data, user, session)
                 
                 # Log audit trail
                 self.audit_manager.log_action(
@@ -531,3 +536,150 @@ class AnalysisExecutor:
                 matches += 1
         
         return matches / len(tool.required_column_types)
+    
+    def _index_analysis_result_for_rag(self, analysis_result: AnalysisResult, 
+                                      result_data: Dict[str, Any], user: User, 
+                                      session: AnalysisSession) -> None:
+        """
+        Index analysis result for RAG (Retrieval-Augmented Generation) system
+        
+        Args:
+            analysis_result: AnalysisResult model instance
+            result_data: Result data from tool execution
+            user: User who executed the analysis
+            session: Analysis session
+        """
+        try:
+            # Create analysis result vector note
+            self._create_analysis_result_note(analysis_result, result_data, user, session)
+            
+            # Create insights vector note if applicable
+            if result_data.get('output_type') in ['table', 'chart']:
+                self._create_analysis_insights_note(analysis_result, result_data, user, session)
+            
+            logger.info(f"RAG indexing completed for analysis result {analysis_result.id}")
+            
+        except Exception as e:
+            logger.error(f"RAG indexing failed for analysis result {analysis_result.id}: {str(e)}")
+            # Don't raise exception - RAG indexing is not critical for analysis execution
+    
+    def _create_analysis_result_note(self, analysis_result: AnalysisResult, 
+                                   result_data: Dict[str, Any], user: User, 
+                                   session: AnalysisSession) -> None:
+        """Create vector note for analysis result"""
+        try:
+            tool = analysis_result.tool
+            dataset = session.primary_dataset
+            
+            result_text = f"""
+            Analysis Result: {tool.display_name}
+            Dataset: {dataset.name}
+            Tool: {tool.name}
+            Parameters: {analysis_result.parameters_json}
+            Output Type: {result_data.get('output_type', 'unknown')}
+            Execution Time: {analysis_result.execution_time_ms}ms
+            Created: {analysis_result.created_at.strftime('%Y-%m-%d %H:%M:%S')}
+            """
+            
+            # Add result-specific content based on output type
+            if result_data.get('output_type') == 'table':
+                table_data = result_data.get('data', {})
+                if isinstance(table_data, dict) and 'rows' in table_data:
+                    result_text += f"\nTable Data: {len(table_data['rows'])} rows"
+                    if 'columns' in table_data:
+                        result_text += f", {len(table_data['columns'])} columns"
+            
+            elif result_data.get('output_type') == 'chart':
+                chart_data = result_data.get('chart_data', {})
+                if isinstance(chart_data, dict):
+                    result_text += f"\nChart Type: {chart_data.get('type', 'unknown')}"
+                    if 'title' in chart_data:
+                        result_text += f"\nChart Title: {chart_data['title']}"
+            
+            elif result_data.get('output_type') == 'text':
+                text_content = result_data.get('text', '')
+                if text_content:
+                    # Truncate long text for vector note
+                    truncated_text = text_content[:500] + "..." if len(text_content) > 500 else text_content
+                    result_text += f"\nResult Text: {truncated_text}"
+            
+            self.vector_note_manager.create_vector_note(
+                title=f"Analysis Result: {tool.display_name}",
+                text=result_text.strip(),
+                scope='dataset',
+                content_type='analysis_result',
+                user=user,
+                dataset=dataset,
+                metadata={
+                    'analysis_id': analysis_result.id,
+                    'tool_name': tool.name,
+                    'tool_display_name': tool.display_name,
+                    'output_type': result_data.get('output_type'),
+                    'execution_time_ms': analysis_result.execution_time_ms,
+                    'parameters': analysis_result.parameters_json
+                },
+                confidence_score=0.9
+            )
+            
+        except Exception as e:
+            logger.error(f"Failed to create analysis result note: {str(e)}")
+    
+    def _create_analysis_insights_note(self, analysis_result: AnalysisResult, 
+                                     result_data: Dict[str, Any], user: User, 
+                                     session: AnalysisSession) -> None:
+        """Create vector note for analysis insights"""
+        try:
+            tool = analysis_result.tool
+            dataset = session.primary_dataset
+            
+            # Generate insights based on result type
+            insights_text = f"""
+            Analysis Insights: {tool.display_name}
+            Dataset: {dataset.name}
+            
+            Key Findings:
+            """
+            
+            if result_data.get('output_type') == 'table':
+                table_data = result_data.get('data', {})
+                if isinstance(table_data, dict):
+                    insights_text += f"- Generated table with {len(table_data.get('rows', []))} rows"
+                    if 'summary' in table_data:
+                        insights_text += f"\n- Summary: {table_data['summary']}"
+            
+            elif result_data.get('output_type') == 'chart':
+                chart_data = result_data.get('chart_data', {})
+                if isinstance(chart_data, dict):
+                    chart_type = chart_data.get('type', 'unknown')
+                    insights_text += f"- Created {chart_type} visualization"
+                    if 'insights' in chart_data:
+                        insights_text += f"\n- Insights: {chart_data['insights']}"
+            
+            # Add tool-specific insights
+            if tool.name == 'descriptive_statistics':
+                insights_text += "\n- Descriptive statistics calculated for dataset columns"
+            elif tool.name == 'correlation_analysis':
+                insights_text += "\n- Correlation analysis performed between variables"
+            elif tool.name == 'regression_analysis':
+                insights_text += "\n- Regression analysis completed"
+            elif 'visualization' in tool.name:
+                insights_text += "\n- Data visualization generated"
+            
+            self.vector_note_manager.create_vector_note(
+                title=f"Analysis Insights: {tool.display_name}",
+                text=insights_text.strip(),
+                scope='dataset',
+                content_type='analysis_insights',
+                user=user,
+                dataset=dataset,
+                metadata={
+                    'analysis_id': analysis_result.id,
+                    'tool_name': tool.name,
+                    'insights_type': 'analysis_summary',
+                    'output_type': result_data.get('output_type')
+                },
+                confidence_score=0.8
+            )
+            
+        except Exception as e:
+            logger.error(f"Failed to create analysis insights note: {str(e)}")

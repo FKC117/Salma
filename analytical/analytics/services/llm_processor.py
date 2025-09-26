@@ -25,6 +25,7 @@ from analytics.models import (
 )
 from django.db import models
 from analytics.services.audit_trail_manager import AuditTrailManager
+from analytics.services.rag_service import RAGService
 
 logger = logging.getLogger(__name__)
 
@@ -36,6 +37,7 @@ class LLMProcessor:
     
     def __init__(self):
         self.audit_manager = AuditTrailManager()
+        self.rag_service = RAGService()
         self.api_key = settings.GOOGLE_AI_API_KEY
         self.model_name = settings.GOOGLE_AI_MODEL
         self.generation_config = settings.GOOGLE_AI_GENERATION_CONFIG
@@ -68,7 +70,7 @@ class LLMProcessor:
     
     def generate_text(self, prompt: str, user: User, context_messages: Optional[List[Dict]] = None,
                      analysis_result: Optional[AnalysisResult] = None, 
-                     include_images: bool = False) -> Dict[str, Any]:
+                     include_images: bool = False, rag_context: Optional[str] = None) -> Dict[str, Any]:
         """
         Generate text using Google AI with context and token tracking
         
@@ -78,6 +80,7 @@ class LLMProcessor:
             context_messages: Previous conversation context
             analysis_result: Associated analysis result
             include_images: Whether to include images in the generation
+            rag_context: Optional RAG context for enhanced responses
             
         Returns:
             Dict containing generated text, token usage, and metadata
@@ -86,8 +89,8 @@ class LLMProcessor:
         start_time = time.time()
         
         try:
-            # Prepare context
-            full_prompt = self._prepare_prompt_with_context(prompt, context_messages, analysis_result)
+            # Prepare context with RAG integration
+            full_prompt = self._prepare_prompt_with_context(prompt, context_messages, analysis_result, rag_context)
             
             # Calculate input tokens
             input_tokens = self._count_tokens(full_prompt)
@@ -207,7 +210,7 @@ class LLMProcessor:
             raise ValueError(f"Data analysis failed: {str(e)}")
     
     def generate_analysis_plan(self, dataset_info: Dict[str, Any], goal: str, 
-                              user: User) -> Dict[str, Any]:
+                              user: User, rag_context: Optional[str] = None) -> Dict[str, Any]:
         """
         Generate an analysis plan for autonomous AI agent
         
@@ -215,6 +218,7 @@ class LLMProcessor:
             dataset_info: Information about the dataset
             goal: Analysis goal or question
             user: User requesting the plan
+            rag_context: Optional RAG context for enhanced planning
             
         Returns:
             Dict containing the analysis plan
@@ -230,6 +234,8 @@ class LLMProcessor:
             - Column Types: {dataset_info.get('column_types', {})}
             
             Analysis Goal: {goal}
+            
+            {f"Relevant Context from Previous Analysis:\n{rag_context}\n" if rag_context else ""}
             
             Please provide a structured analysis plan with:
             1. Data exploration steps
@@ -388,7 +394,7 @@ class LLMProcessor:
             logger.warning(f"Failed to clear context cache: {str(e)}")
     
     def _prepare_prompt_with_context(self, prompt: str, context_messages: Optional[List[Dict]], 
-                                   analysis_result: Optional[AnalysisResult]) -> str:
+                                   analysis_result: Optional[AnalysisResult], rag_context: Optional[str] = None) -> str:
         """Prepare prompt with context and analysis results"""
         full_prompt = prompt
         
@@ -416,6 +422,10 @@ class LLMProcessor:
                     result_context += f"Text: {text[:500]}...\n"  # First 500 chars
             
             full_prompt += result_context
+        
+        # Add RAG context
+        if rag_context:
+            full_prompt += f"\n\nRelevant Context from Knowledge Base:\n{rag_context}"
         
         return full_prompt
     
@@ -604,3 +614,123 @@ class LLMProcessor:
         except Exception as e:
             logger.error(f"Failed to reset monthly usage: {str(e)}")
             return False
+    
+    def _get_rag_context_for_prompt(self, prompt: str, user: User, 
+                                   analysis_result: Optional[AnalysisResult] = None) -> str:
+        """
+        Retrieve relevant RAG context for text generation
+        
+        Args:
+            prompt: User prompt
+            user: User making the request
+            analysis_result: Associated analysis result
+            
+        Returns:
+            Formatted RAG context string
+        """
+        try:
+            context_parts = []
+            
+            # Search for relevant context based on prompt
+            search_queries = [
+                prompt[:100],  # First 100 chars of prompt
+                f"analysis {prompt[:50]}",
+                f"data {prompt[:50]}",
+                f"statistics {prompt[:50]}"
+            ]
+            
+            # Add analysis result context if available
+            if analysis_result:
+                dataset = analysis_result.session.primary_dataset
+                search_queries.extend([
+                    f"dataset {dataset.name}",
+                    f"analysis result {analysis_result.tool_used.name}",
+                    f"{analysis_result.tool_used.name} {dataset.name}"
+                ])
+            
+            for query in search_queries:
+                if not query.strip():
+                    continue
+                    
+                # Search for global notes
+                global_results = self.rag_service.search_vectors(
+                    query=query,
+                    user=user,
+                    dataset=None,
+                    top_k=2,
+                    similarity_threshold=0.6
+                )
+                
+                # Search for dataset-scoped notes if analysis result available
+                if analysis_result:
+                    dataset = analysis_result.session.primary_dataset
+                    dataset_results = self.rag_service.search_vectors(
+                        query=query,
+                        user=user,
+                        dataset=dataset,
+                        top_k=3,
+                        similarity_threshold=0.6
+                    )
+                else:
+                    dataset_results = []
+                
+                # Combine and format results
+                for result in global_results + dataset_results:
+                    context_parts.append(f"""
+                    Knowledge Context:
+                    Title: {result.get('title', 'Unknown')}
+                    Content: {result.get('text', '')[:300]}...
+                    Confidence: {result.get('confidence_score', 0)}
+                    """)
+            
+            # Combine all context
+            full_context = "\n".join(context_parts[:5])  # Limit to 5 context items
+            
+            logger.info(f"Retrieved RAG context for prompt: {len(context_parts)} items")
+            return full_context
+            
+        except Exception as e:
+            logger.error(f"Failed to retrieve RAG context for prompt: {str(e)}")
+            return ""
+    
+    def generate_text_with_rag(self, prompt: str, user: User, 
+                             context_messages: Optional[List[Dict]] = None,
+                             analysis_result: Optional[AnalysisResult] = None, 
+                             include_images: bool = False) -> Dict[str, Any]:
+        """
+        Generate text with automatic RAG context retrieval
+        
+        Args:
+            prompt: Input prompt for text generation
+            user: User making the request
+            context_messages: Previous conversation context
+            analysis_result: Associated analysis result
+            include_images: Whether to include images in the generation
+            
+        Returns:
+            Dict containing generated text, token usage, and metadata
+        """
+        try:
+            # Automatically retrieve RAG context
+            rag_context = self._get_rag_context_for_prompt(prompt, user, analysis_result)
+            
+            # Generate text with RAG context
+            return self.generate_text(
+                prompt=prompt,
+                user=user,
+                context_messages=context_messages,
+                analysis_result=analysis_result,
+                include_images=include_images,
+                rag_context=rag_context
+            )
+            
+        except Exception as e:
+            logger.error(f"RAG-enhanced text generation failed: {str(e)}")
+            # Fallback to regular text generation
+            return self.generate_text(
+                prompt=prompt,
+                user=user,
+                context_messages=context_messages,
+                analysis_result=analysis_result,
+                include_images=include_images
+            )

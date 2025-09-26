@@ -24,6 +24,7 @@ import re
 
 from analytical.analytics.models import Dataset, DatasetColumn, User, AuditTrail
 from analytics.services.audit_trail_manager import AuditTrailManager
+from analytics.services.vector_note_manager import VectorNoteManager
 
 logger = logging.getLogger(__name__)
 
@@ -35,6 +36,7 @@ class FileProcessingService:
     
     def __init__(self):
         self.audit_manager = AuditTrailManager()
+        self.vector_note_manager = VectorNoteManager()
         self.supported_formats = ['.csv', '.xlsx', '.xls', '.json']
         self.max_file_size = settings.FILE_UPLOAD_MAX_MEMORY_SIZE
         self.media_root = Path(settings.MEDIA_ROOT)
@@ -134,6 +136,9 @@ class FileProcessingService:
                 )
             
             logger.info(f"File processed successfully: {uploaded_file.name} -> {parquet_path}")
+            
+            # RAG Indexing: Create vector notes for the dataset
+            self._index_dataset_for_rag(dataset, df, user)
             
             return {
                 'dataset_id': dataset.id,
@@ -515,3 +520,200 @@ class FileProcessingService:
         except Exception as e:
             logger.error(f"Failed to delete dataset {dataset_id}: {str(e)}")
             return False
+    
+    def _index_dataset_for_rag(self, dataset: Dataset, df: pd.DataFrame, user: User) -> None:
+        """
+        Index dataset content for RAG (Retrieval-Augmented Generation) system
+        
+        Args:
+            dataset: Dataset model instance
+            df: Processed DataFrame
+            user: User who owns the dataset
+        """
+        try:
+            # Create dataset overview vector note
+            self._create_dataset_overview_note(dataset, df, user)
+            
+            # Create column information vector notes
+            self._create_column_info_notes(dataset, df, user)
+            
+            # Create sample data vector notes (first few rows)
+            self._create_sample_data_notes(dataset, df, user)
+            
+            # Create data quality insights vector notes
+            self._create_data_quality_notes(dataset, df, user)
+            
+            logger.info(f"RAG indexing completed for dataset {dataset.id}")
+            
+        except Exception as e:
+            logger.error(f"RAG indexing failed for dataset {dataset.id}: {str(e)}")
+            # Don't raise exception - RAG indexing is not critical for file processing
+    
+    def _create_dataset_overview_note(self, dataset: Dataset, df: pd.DataFrame, user: User) -> None:
+        """Create vector note for dataset overview"""
+        try:
+            overview_text = f"""
+            Dataset: {dataset.name}
+            Description: {dataset.description or 'No description provided'}
+            File: {dataset.original_filename}
+            Rows: {len(df)}
+            Columns: {len(df.columns)}
+            File Size: {dataset.file_size_bytes} bytes
+            Upload Date: {dataset.created_at.strftime('%Y-%m-%d %H:%M:%S')}
+            Data Types: {', '.join([f'{col}: {dtype}' for col, dtype in df.dtypes.items()])}
+            """
+            
+            self.vector_note_manager.create_vector_note(
+                title=f"Dataset Overview: {dataset.name}",
+                text=overview_text.strip(),
+                scope='dataset',
+                content_type='dataset_overview',
+                user=user,
+                dataset=dataset,
+                metadata={
+                    'row_count': len(df),
+                    'column_count': len(df.columns),
+                    'file_size': dataset.file_size_bytes,
+                    'upload_date': dataset.created_at.isoformat()
+                },
+                confidence_score=1.0
+            )
+            
+        except Exception as e:
+            logger.error(f"Failed to create dataset overview note: {str(e)}")
+    
+    def _create_column_info_notes(self, dataset: Dataset, df: pd.DataFrame, user: User) -> None:
+        """Create vector notes for each column information"""
+        try:
+            for column in df.columns:
+                column_info = df[column].describe()
+                null_count = df[column].isnull().sum()
+                unique_count = df[column].nunique()
+                
+                column_text = f"""
+                Column: {column}
+                Data Type: {df[column].dtype}
+                Total Values: {len(df)}
+                Null Values: {null_count}
+                Unique Values: {unique_count}
+                Null Percentage: {(null_count / len(df)) * 100:.2f}%
+                """
+                
+                # Add statistical summary for numeric columns
+                if df[column].dtype in ['int64', 'float64']:
+                    column_text += f"""
+                    Mean: {column_info.get('mean', 'N/A')}
+                    Median: {column_info.get('50%', 'N/A')}
+                    Min: {column_info.get('min', 'N/A')}
+                    Max: {column_info.get('max', 'N/A')}
+                    Standard Deviation: {column_info.get('std', 'N/A')}
+                    """
+                
+                # Add sample values for categorical columns
+                if df[column].dtype == 'object' and unique_count <= 20:
+                    top_values = df[column].value_counts().head(5)
+                    column_text += f"\nTop Values: {dict(top_values)}"
+                
+                self.vector_note_manager.create_vector_note(
+                    title=f"Column Info: {column}",
+                    text=column_text.strip(),
+                    scope='dataset',
+                    content_type='column_info',
+                    user=user,
+                    dataset=dataset,
+                    metadata={
+                        'column_name': column,
+                        'data_type': str(df[column].dtype),
+                        'null_count': int(null_count),
+                        'unique_count': int(unique_count)
+                    },
+                    confidence_score=1.0
+                )
+                
+        except Exception as e:
+            logger.error(f"Failed to create column info notes: {str(e)}")
+    
+    def _create_sample_data_notes(self, dataset: Dataset, df: pd.DataFrame, user: User) -> None:
+        """Create vector notes for sample data (first few rows)"""
+        try:
+            # Take first 3 rows as sample
+            sample_df = df.head(3)
+            
+            sample_text = f"""
+            Sample Data from Dataset: {dataset.name}
+            
+            First 3 rows:
+            {sample_df.to_string()}
+            
+            This sample shows the structure and content of the dataset.
+            """
+            
+            self.vector_note_manager.create_vector_note(
+                title=f"Sample Data: {dataset.name}",
+                text=sample_text.strip(),
+                scope='dataset',
+                content_type='sample_data',
+                user=user,
+                dataset=dataset,
+                metadata={
+                    'sample_rows': 3,
+                    'total_rows': len(df),
+                    'columns': list(df.columns)
+                },
+                confidence_score=1.0
+            )
+            
+        except Exception as e:
+            logger.error(f"Failed to create sample data notes: {str(e)}")
+    
+    def _create_data_quality_notes(self, dataset: Dataset, df: pd.DataFrame, user: User) -> None:
+        """Create vector notes for data quality insights"""
+        try:
+            quality_score = self._calculate_data_quality_score(df)
+            
+            # Calculate quality metrics
+            total_cells = len(df) * len(df.columns)
+            null_cells = df.isnull().sum().sum()
+            duplicate_rows = df.duplicated().sum()
+            
+            quality_text = f"""
+            Data Quality Analysis for Dataset: {dataset.name}
+            
+            Overall Quality Score: {quality_score}/100
+            
+            Metrics:
+            - Total Cells: {total_cells}
+            - Null Cells: {null_cells} ({(null_cells/total_cells)*100:.2f}%)
+            - Duplicate Rows: {duplicate_rows}
+            - Data Completeness: {100 - (null_cells/total_cells)*100:.2f}%
+            
+            Quality Assessment:
+            """
+            
+            if quality_score >= 90:
+                quality_text += "Excellent data quality with minimal issues."
+            elif quality_score >= 75:
+                quality_text += "Good data quality with some minor issues."
+            elif quality_score >= 60:
+                quality_text += "Fair data quality with moderate issues."
+            else:
+                quality_text += "Poor data quality with significant issues."
+            
+            self.vector_note_manager.create_vector_note(
+                title=f"Data Quality: {dataset.name}",
+                text=quality_text.strip(),
+                scope='dataset',
+                content_type='data_quality',
+                user=user,
+                dataset=dataset,
+                metadata={
+                    'quality_score': quality_score,
+                    'null_cells': int(null_cells),
+                    'duplicate_rows': int(duplicate_rows),
+                    'total_cells': int(total_cells)
+                },
+                confidence_score=1.0
+            )
+            
+        except Exception as e:
+            logger.error(f"Failed to create data quality notes: {str(e)}")
