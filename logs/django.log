@@ -2212,3 +2212,29 @@ INFO 2025-09-26 20:39:42,015 autoreload 35252 9192 E:\analytical\analytical\anal
 INFO 2025-09-26 20:39:44,213 autoreload 10268 2844 Watching for file changes with StatReloader
 INFO 2025-09-26 20:39:55,536 memory_optimizer 10268 12340 Memory monitoring started
 WARNING 2025-09-26 20:39:55,733 survival_tools 10268 12340 lifelines package not available. Some survival analysis features will be limited.
+INFO 2025-09-26 20:42:51,247 autoreload 10268 2844 E:\analytical\analytical\analytics\services\__init__.py changed, reloading.
+INFO 2025-09-26 20:43:06,732 autoreload 36636 27924 Watching for file changes with StatReloader
+INFO 2025-09-26 20:43:44,536 memory_optimizer 36636 28680 Memory monitoring started
+WARNING 2025-09-26 20:43:45,170 survival_tools 36636 28680 lifelines package not available. Some survival analysis features will be limited.
+INFO 2025-09-26 20:43:46,019 memory_optimizer 23504 36288 Memory monitoring started
+ERROR 2025-09-26 20:43:46,034 query_optimizer 23504 36288 Failed to clear optimization cache: 'RedisCacheClient' object has no attribute 'keys'
+ERROR 2025-09-26 20:43:46,310 query_optimizer 23504 36288 Query performance analysis failed: Need either using or connection
+INFO 2025-09-26 20:44:10,470 autoreload 36636 27924 E:\analytical\analytical\analytics\services\query_optimizer.py changed, reloading.
+INFO 2025-09-26 20:44:19,658 autoreload 13440 38776 Watching for file changes with StatReloader
+INFO 2025-09-26 20:44:40,578 memory_optimizer 13440 17520 Memory monitoring started
+WARNING 2025-09-26 20:44:41,344 survival_tools 13440 17520 lifelines package not available. Some survival analysis features will be limited.
+INFO 2025-09-26 20:47:52,682 autoreload 13440 38776 E:\analytical\analytical\analytics\services\__init__.py changed, reloading.
+INFO 2025-09-26 20:48:14,077 autoreload 35956 22684 Watching for file changes with StatReloader
+INFO 2025-09-26 20:49:15,585 memory_optimizer 35956 37536 Memory monitoring started
+WARNING 2025-09-26 20:49:17,435 survival_tools 35956 37536 lifelines package not available. Some survival analysis features will be limited.
+INFO 2025-09-26 20:49:20,170 memory_optimizer 37352 12388 Memory monitoring started
+ERROR 2025-09-26 20:49:20,410 image_compression 37352 12388 Image compression failed: name 'time' is not defined
+ERROR 2025-09-26 20:49:20,416 image_compression 37352 12388 Thumbnail creation failed: name 'time' is not defined
+INFO 2025-09-26 20:49:35,525 autoreload 35956 22684 E:\analytical\analytical\analytics\services\image_compression.py changed, reloading.
+INFO 2025-09-26 20:49:42,871 autoreload 9936 8064 Watching for file changes with StatReloader
+INFO 2025-09-26 20:50:12,789 memory_optimizer 5368 11180 Memory monitoring started
+INFO 2025-09-26 20:50:13,009 image_compression 5368 11180 Image compressed: 0.00% reduction, 0 bytes saved
+INFO 2025-09-26 20:50:13,028 image_compression 5368 11180 Thumbnail created: thumbnail ((150, 113))
+INFO 2025-09-26 20:50:19,219 memory_optimizer 9936 28728 Memory monitoring started
+WARNING 2025-09-26 20:50:19,536 survival_tools 9936 28728 lifelines package not available. Some survival analysis features will be limited.
+INFO 2025-09-26 20:50:38,051 autoreload 9936 8064 E:\analytical\analytical\analytical\settings.py changed, reloading.

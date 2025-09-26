@@ -284,8 +284,8 @@
 
 ### Performance Optimization
 - [x] T110 [P] Memory optimization service in analytics/services/memory_optimizer.py
-- [ ] T111 [P] Query optimization with select_related/prefetch_related
-- [ ] T112 [P] Image compression and optimization
+- [x] T111 [P] Query optimization with select_related/prefetch_related
+- [x] T112 [P] Image compression and optimization
 - [ ] T113 [P] Caching strategy implementation
 - [ ] T114 [P] Background monitoring and cleanup
 

@@ -407,6 +407,32 @@ MEMORY_GC_THRESHOLD = 0.85  # Force garbage collection at 85%
 MAX_LAZY_LOADERS = 1000  # Maximum number of lazy loaders
 MEMORY_HISTORY_SIZE = 100  # Maximum memory history entries
 
+# Query Optimization Settings
+QUERY_OPTIMIZATION_CACHE_TTL = 300  # 5 minutes for query optimization cache
+ENABLE_QUERY_OPTIMIZATION = True
+QUERY_OPTIMIZATION_LOGGING = True
+MAX_QUERY_EXECUTION_TIME = 5.0  # Maximum query execution time in seconds
+QUERY_OPTIMIZATION_THRESHOLD = 1.0  # Threshold for optimization recommendations
+
+# Image Compression Settings
+IMAGE_COMPRESSION_ENABLED = True
+IMAGE_COMPRESSION_QUALITY_DEFAULT = 85
+IMAGE_COMPRESSION_LEVELS = {
+    'ultra': {'quality': 30, 'optimize': True, 'progressive': True},
+    'high': {'quality': 60, 'optimize': True, 'progressive': True},
+    'medium': {'quality': 80, 'optimize': True, 'progressive': False},
+    'low': {'quality': 95, 'optimize': False, 'progressive': False}
+}
+IMAGE_THUMBNAIL_SIZES = {
+    'thumbnail': (150, 150),
+    'small': (300, 300),
+    'medium': (600, 600),
+    'large': (1200, 1200),
+    'xlarge': (1920, 1080)
+}
+IMAGE_AUTO_OPTIMIZE_THRESHOLD_MB = 1.0  # Auto-optimize images larger than this
+IMAGE_CLEANUP_DAYS = 30  # Clean up compressed images older than this
+
 # Backup Settings
 BACKUP_DIR = 'backups'
 BACKUP_RETENTION_DAYS = 30

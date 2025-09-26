@@ -19,6 +19,8 @@ from .image_manager import ImageManager
 from .sandbox_executor import SandboxExecutor
 from .report_generator import ReportGenerator
 from .memory_optimizer import MemoryOptimizer, memory_optimizer
+from .query_optimizer import QueryOptimizer, query_optimizer
+from .image_compression import ImageCompressionService, image_compression_service
 
 __all__ = [
     'FileProcessingService',
@@ -36,5 +38,9 @@ __all__ = [
     'SandboxExecutor',
     'ReportGenerator',
     'MemoryOptimizer',
-    'memory_optimizer'
+    'memory_optimizer',
+    'QueryOptimizer',
+    'query_optimizer',
+    'ImageCompressionService',
+    'image_compression_service'
 ]
