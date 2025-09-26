@@ -24,8 +24,8 @@ class SecurityMiddleware(MiddlewareMixin):
     def __init__(self, get_response: Callable):
         self.get_response = get_response
         self.logger = get_logger('security')
-        self.audit_logger = get_audit_logger(self.logger)
-        self.error_logger = get_error_logger(self.logger)
+        self.audit_logger = get_audit_logger()
+        self.error_logger = get_error_logger()
         super().__init__(get_response)
     
     def process_request(self, request: HttpRequest) -> HttpResponse:
@@ -168,7 +168,7 @@ class AuditMiddleware(MiddlewareMixin):
     def __init__(self, get_response: Callable):
         self.get_response = get_response
         self.logger = get_logger('audit')
-        self.audit_logger = get_audit_logger(self.logger)
+        self.audit_logger = get_audit_logger()
         super().__init__(get_response)
     
     def process_request(self, request: HttpRequest) -> HttpResponse:
@@ -250,7 +250,7 @@ class ErrorHandlingMiddleware(MiddlewareMixin):
     def __init__(self, get_response: Callable):
         self.get_response = get_response
         self.logger = get_logger('error')
-        self.error_logger = get_error_logger(self.logger)
+        self.error_logger = get_error_logger()
         super().__init__(get_response)
     
     def process_exception(self, request: HttpRequest, exception: Exception) -> HttpResponse:

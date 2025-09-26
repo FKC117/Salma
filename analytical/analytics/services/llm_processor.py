@@ -235,7 +235,7 @@ class LLMProcessor:
             
             Analysis Goal: {goal}
             
-            {f"Relevant Context from Previous Analysis:\n{rag_context}\n" if rag_context else ""}
+            {f"Relevant Context from Previous Analysis:{chr(10)}{rag_context}{chr(10)}" if rag_context else ""}
             
             Please provide a structured analysis plan with:
             1. Data exploration steps

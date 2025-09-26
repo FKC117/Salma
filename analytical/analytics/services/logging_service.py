@@ -270,3 +270,21 @@ def log_function_call(logger: StructuredLogger = None):
         
         return wrapper
     return decorator
+
+
+# Convenience functions for middleware and other components
+def get_logger(name: str = 'analytics') -> StructuredLogger:
+    """Get a structured logger instance"""
+    return StructuredLogger(name)
+
+
+def get_audit_logger() -> 'AuditLogger':
+    """Get audit logger instance"""
+    base_logger = StructuredLogger('audit')
+    return AuditLogger(base_logger)
+
+
+def get_error_logger() -> 'ErrorLogger':
+    """Get error logger instance"""
+    base_logger = StructuredLogger('error')
+    return ErrorLogger(base_logger)

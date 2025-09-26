@@ -14,6 +14,7 @@ import time
 import psutil
 from typing import Dict, List, Any, Optional, Tuple
 from datetime import datetime, timedelta
+from pathlib import Path
 from django.conf import settings
 from django.utils import timezone
 from django.db import transaction
@@ -66,7 +67,7 @@ class SandboxExecutor:
         self.sandbox_dir = Path(settings.MEDIA_ROOT) / 'sandbox'
         self.sandbox_dir.mkdir(parents=True, exist_ok=True)
     
-    def execute_code(self, code: str, language: str = 'python', user: User,
+    def execute_code(self, code: str, user: User, language: str = 'python',
                     session: Optional[AnalysisSession] = None, 
                     timeout: Optional[int] = None) -> SandboxExecution:
         """

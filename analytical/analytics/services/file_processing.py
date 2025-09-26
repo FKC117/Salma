@@ -22,7 +22,7 @@ import openpyxl
 import json
 import re
 
-from analytical.analytics.models import Dataset, DatasetColumn, User, AuditTrail
+from analytics.models import Dataset, DatasetColumn, User, AuditTrail
 from analytics.services.audit_trail_manager import AuditTrailManager
 from analytics.services.vector_note_manager import VectorNoteManager
 

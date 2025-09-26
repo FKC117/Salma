@@ -15,7 +15,7 @@ from django.utils import timezone
 from sentence_transformers import SentenceTransformer
 import numpy as np
 
-from analytical.analytics.models import VectorNote, User, Dataset, AnalysisResult
+from analytics.models import VectorNote, User, Dataset, AnalysisResult
 from analytics.services.rag_service import RAGService
 from analytics.services.audit_trail_manager import AuditTrailManager
 

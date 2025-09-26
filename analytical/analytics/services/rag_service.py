@@ -17,7 +17,7 @@ from django.utils import timezone
 import redis
 from redis.exceptions import RedisError
 
-from analytical.analytics.models import VectorNote, User, Dataset, AuditTrail
+from analytics.models import VectorNote, User, Dataset, AuditTrail
 from django.db import models
 from django.db.models import F
 from analytics.services.audit_trail_manager import AuditTrailManager

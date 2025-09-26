@@ -15,7 +15,7 @@ from django.utils import timezone
 from django.db import transaction
 from django.contrib.auth import get_user_model
 
-from analytics.models import AuditTrail, AuditTrailDetail
+from analytics.models import AuditTrail
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
@@ -314,15 +314,12 @@ class AuditTrailManager:
             return data
     
     def _add_audit_details(self, audit_entry: AuditTrail, details: Dict[str, Any]) -> None:
-        """Add additional details as separate audit detail records"""
-        for key, value in details.items():
-            AuditTrailDetail.objects.create(
-                audit_trail=audit_entry,
-                detail_type='additional_info',
-                key=key,
-                value=str(value) if not isinstance(value, (dict, list)) else json.dumps(value),
-                sensitivity='low'
-            )
+        """Add additional details to the audit trail's after_snapshot field"""
+        # Store additional details in the after_snapshot field
+        current_snapshot = audit_entry.after_snapshot or {}
+        current_snapshot['additional_details'] = details
+        audit_entry.after_snapshot = current_snapshot
+        audit_entry.save(update_fields=['after_snapshot'])
     
     def _create_minimal_audit_entry(self, user_id: Optional[int], action_type: str,
                                    action_category: str, resource_type: str,
