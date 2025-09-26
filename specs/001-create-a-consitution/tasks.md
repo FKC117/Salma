@@ -292,7 +292,7 @@
 ## Phase 3.7: Testing & Validation
 
 ### Unit Tests
-- [ ] T115 [P] Unit tests for all models in tests/unit/test_models.py
+- [x] T115 [P] Unit tests for all models in tests/unit/test_models.py
 - [ ] T116 [P] Unit tests for all services in tests/unit/test_services.py
 - [ ] T117 [P] Unit tests for all tools in tests/unit/test_tools.py
 - [ ] T118 [P] Unit tests for security components in tests/unit/test_security.py

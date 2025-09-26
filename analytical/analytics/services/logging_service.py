@@ -54,8 +54,22 @@ class StructuredLogger:
         """Log structured message"""
         structured_data = self._format_message(message, level, extra_data)
         
+        # Map custom severity levels to standard Python logging levels
+        level_mapping = {
+            'LOW': 'INFO',
+            'MEDIUM': 'WARNING', 
+            'HIGH': 'ERROR',
+            'CRITICAL': 'CRITICAL',
+            'DEBUG': 'DEBUG',
+            'INFO': 'INFO',
+            'WARNING': 'WARNING',
+            'ERROR': 'ERROR'
+        }
+        
+        mapped_level = level_mapping.get(level.upper(), 'INFO')
+        
         # Log to file
-        self.logger.log(getattr(logging, level.upper()), json.dumps(structured_data))
+        self.logger.log(getattr(logging, mapped_level), json.dumps(structured_data))
         
         # Also log to console in development
         if settings.DEBUG:

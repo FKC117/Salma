@@ -487,3 +487,29 @@ REST_FRAMEWORK = {
         'rest_framework.filters.OrderingFilter',
     ],
 }
+
+# Rate Limiting Configuration
+if DEBUG:
+    # Development mode - very lenient rate limiting
+    RATE_LIMITING_ENABLED = False  # Disable rate limiting in development
+    RATE_LIMITING_STRICT = False
+    RATE_LIMITING_EXEMPT_PATHS = [
+        '/admin/',
+        '/static/',
+        '/media/',
+        '/health/',
+        '/metrics/',
+        '/',  # Exempt root path
+        '/favicon.ico',
+    ]
+else:
+    # Production mode - normal rate limiting
+    RATE_LIMITING_ENABLED = True
+    RATE_LIMITING_STRICT = True
+    RATE_LIMITING_EXEMPT_PATHS = [
+        '/admin/',
+        '/static/',
+        '/media/',
+        '/health/',
+        '/metrics/',
+    ]

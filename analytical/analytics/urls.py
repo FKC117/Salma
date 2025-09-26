@@ -19,17 +19,14 @@ router.register(r'agent', views.AgentViewSet, basename='agent')
 router.register(r'audit', views.AuditViewSet, basename='audit')
 
 urlpatterns = [
-    # Template views
+    # Template views (must come first to avoid API router conflicts)
     path('', views.dashboard_view, name='dashboard'),
     path('upload-form/', views.upload_form_view, name='upload_form'),
     
     # CSRF token endpoint
     path('api/csrf-token/', views.get_csrf_token, name='csrf_token'),
     
-    # API endpoints
-    path('api/', include(router.urls)),
-    
-    # Named URL patterns for HTMX
+    # Named URL patterns for HTMX (before API router)
     path('upload/', views.UploadViewSet.as_view({'post': 'upload'}), name='upload_file'),
     path('sessions/create/', views.SessionViewSet.as_view({'post': 'create_session'}), name='create_session'),
     path('analysis/execute/', views.AnalysisViewSet.as_view({'post': 'execute'}), name='analysis_execute'),
@@ -40,4 +37,7 @@ urlpatterns = [
     path('tools/list/', views.ToolsViewSet.as_view({'get': 'list_tools'}), name='tools_refresh'),
     path('agent/run/', views.AgentViewSet.as_view({'post': 'run'}), name='agent_run'),
     path('audit/trail/', views.AuditViewSet.as_view({'get': 'trail'}), name='audit_trail'),
+    
+    # API endpoints (must come last to avoid conflicts)
+    path('api/', include(router.urls)),
 ]

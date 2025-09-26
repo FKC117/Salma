@@ -95,10 +95,28 @@ class RateLimitingMiddleware(MiddlewareMixin):
         self.rate_limiting_enabled = getattr(settings, 'RATE_LIMITING_ENABLED', True)
         self.use_redis = getattr(settings, 'RATE_LIMITING_USE_REDIS', True)
         self.strict_mode = getattr(settings, 'RATE_LIMITING_STRICT', False)
+        self.is_development = getattr(settings, 'DEBUG', False)
         
         # Custom limits from settings
         self.custom_limits = getattr(settings, 'RATE_LIMITS', {})
         self.limits = {**self.DEFAULT_LIMITS, **self.custom_limits}
+        
+        # In development mode, increase limits significantly
+        if self.is_development:
+            self.limits = {
+                'api_general': {'requests': 10000, 'window': 3600},  # 10K req/hour
+                'api_auth': {'requests': 1000, 'window': 3600},     # 1K auth req/hour
+                'file_upload': {'requests': 500, 'window': 3600},  # 500 uploads/hour
+                'file_large': {'requests': 100, 'window': 3600},   # 100 large files/hour
+                'analysis_execute': {'requests': 2000, 'window': 3600},  # 2K analysis/hour
+                'analysis_heavy': {'requests': 200, 'window': 3600},     # 200 heavy analysis/hour
+                'llm_chat': {'requests': 5000, 'window': 3600},   # 5K chat messages/hour
+                'llm_analysis': {'requests': 1000, 'window': 3600},  # 1K AI analysis/hour
+                'agent_run': {'requests': 500, 'window': 3600},    # 500 agent runs/hour
+                'agent_expensive': {'requests': 100, 'window': 3600}, # 100 expensive runs/hour
+                'ip_general': {'requests': 5000, 'window': 3600},  # 5K req/hour per IP
+                'ip_strict': {'requests': 1000, 'window': 3600},   # 1K req/hour for sensitive endpoints
+            }
         
         # Exempt paths
         self.exempt_paths = getattr(settings, 'RATE_LIMITING_EXEMPT_PATHS', [
@@ -211,19 +229,24 @@ class RateLimitingMiddleware(MiddlewareMixin):
                 categories.append(category)
                 break
         
-        # Add general limits
+        # Add general limits only for API endpoints
         if request.path.startswith('/api/'):
             categories.append('api_general')
         
-        # Add IP-based limits for anonymous users
-        if not request.user.is_authenticated:
+        # Add IP-based limits for anonymous users only on API endpoints
+        if not request.user.is_authenticated and request.path.startswith('/api/'):
             if any(request.path.startswith(ep) for ep in ['/api/auth/', '/api/upload/']):
                 categories.append('ip_strict')
             else:
                 categories.append('ip_general')
         
-        # Default to general API limit if no specific category found
-        if not categories:
+        # In development mode, be more lenient - don't apply default limits to non-API paths
+        if not categories and not request.path.startswith('/api/'):
+            # For non-API paths in development, return empty list (no rate limiting)
+            return []
+        
+        # Default to general API limit only for API endpoints
+        if not categories and request.path.startswith('/api/'):
             categories.append('api_general')
         
         return categories
