@@ -18,6 +18,7 @@ from .logging_service import StructuredLogger
 from .image_manager import ImageManager
 from .sandbox_executor import SandboxExecutor
 from .report_generator import ReportGenerator
+from .memory_optimizer import MemoryOptimizer, memory_optimizer
 
 __all__ = [
     'FileProcessingService',
@@ -33,5 +34,7 @@ __all__ = [
     'StructuredLogger',
     'ImageManager',
     'SandboxExecutor',
-    'ReportGenerator'
+    'ReportGenerator',
+    'MemoryOptimizer',
+    'memory_optimizer'
 ]

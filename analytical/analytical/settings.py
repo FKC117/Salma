@@ -394,6 +394,19 @@ CACHE_TTL = 300  # 5 minutes default cache TTL
 ANALYSIS_CACHE_TTL = 3600  # 1 hour for analysis results
 SESSION_CACHE_TTL = 86400  # 24 hours for session data
 
+# Memory Optimization Settings
+ENABLE_MEMORY_MONITORING = True
+MEMORY_MONITORING_INTERVAL = 30  # seconds
+MEMORY_THRESHOLDS = {
+    'critical': 0.90,  # 90% memory usage
+    'warning': 0.80,    # 80% memory usage
+    'optimal': 0.70     # 70% memory usage
+}
+MEMORY_CACHE_CLEANUP_THRESHOLD = 0.75  # Clean cache at 75% memory
+MEMORY_GC_THRESHOLD = 0.85  # Force garbage collection at 85%
+MAX_LAZY_LOADERS = 1000  # Maximum number of lazy loaders
+MEMORY_HISTORY_SIZE = 100  # Maximum memory history entries
+
 # Backup Settings
 BACKUP_DIR = 'backups'
 BACKUP_RETENTION_DAYS = 30
