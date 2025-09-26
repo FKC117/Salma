@@ -1,0 +1,883 @@
+<!-- Real-time Agent Status Updates -->
+<div id="agentStatus" class="agent-status-container">
+    <!-- Status Header -->
+    <div class="status-header bg-dark border-bottom border-secondary p-3">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h6 class="text-light mb-1">
+                    <i class="fas fa-heartbeat me-2"></i>Agent Status
+                </h6>
+                <small class="text-muted">Real-time agent health and performance</small>
+            </div>
+            <div class="col-md-4 text-end">
+                <div class="status-indicators">
+                    <span class="status-badge" id="connectionStatus">
+                        <i class="fas fa-wifi me-1"></i>Connected
+                    </span>
+                    <span class="status-badge" id="lastUpdate">
+                        <i class="fas fa-clock me-1"></i>Just now
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Status Content -->
+    <div class="status-content">
+        <!-- Agent Health -->
+        <div class="agent-health p-3">
+            <h6 class="text-light mb-3">
+                <i class="fas fa-heart me-2"></i>Agent Health
+            </h6>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="health-metric">
+                        <div class="metric-icon">
+                            <i class="fas fa-brain text-primary"></i>
+                        </div>
+                        <div class="metric-content">
+                            <div class="metric-label">AI Model</div>
+                            <div class="metric-value" id="aiModelStatus">Gemini 1.5 Flash</div>
+                            <div class="metric-status">
+                                <span class="status-dot online"></span>
+                                <span class="status-text">Online</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="health-metric">
+                        <div class="metric-icon">
+                            <i class="fas fa-server text-success"></i>
+                        </div>
+                        <div class="metric-content">
+                            <div class="metric-label">Processing</div>
+                            <div class="metric-value" id="processingStatus">Active</div>
+                            <div class="metric-status">
+                                <span class="status-dot online"></span>
+                                <span class="status-text">Running</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="health-metric">
+                        <div class="metric-icon">
+                            <i class="fas fa-database text-info"></i>
+                        </div>
+                        <div class="metric-content">
+                            <div class="metric-label">Data Access</div>
+                            <div class="metric-value" id="dataAccessStatus">Connected</div>
+                            <div class="metric-status">
+                                <span class="status-dot online"></span>
+                                <span class="status-text">Available</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="health-metric">
+                        <div class="metric-icon">
+                            <i class="fas fa-shield-alt text-warning"></i>
+                        </div>
+                        <div class="metric-content">
+                            <div class="metric-label">Security</div>
+                            <div class="metric-value" id="securityStatus">Secure</div>
+                            <div class="metric-status">
+                                <span class="status-dot online"></span>
+                                <span class="status-text">Protected</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Performance Metrics -->
+        <div class="performance-metrics p-3 border-top border-secondary">
+            <h6 class="text-light mb-3">
+                <i class="fas fa-chart-line me-2"></i>Performance Metrics
+            </h6>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Response Time</span>
+                            <span class="metric-trend" id="responseTimeTrend">
+                                <i class="fas fa-arrow-down text-success"></i>
+                            </span>
+                        </div>
+                        <div class="metric-chart">
+                            <canvas id="responseTimeChart" width="300" height="100"></canvas>
+                        </div>
+                        <div class="metric-footer">
+                            <span class="metric-current" id="responseTimeCurrent">245ms</span>
+                            <span class="metric-average">Avg: 280ms</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Token Usage</span>
+                            <span class="metric-trend" id="tokenUsageTrend">
+                                <i class="fas fa-arrow-up text-warning"></i>
+                            </span>
+                        </div>
+                        <div class="metric-chart">
+                            <canvas id="tokenUsageChart" width="300" height="100"></canvas>
+                        </div>
+                        <div class="metric-footer">
+                            <span class="metric-current" id="tokenUsageCurrent">1,247</span>
+                            <span class="metric-average">Today: 8,450</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-4">
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Success Rate</span>
+                            <span class="metric-trend">
+                                <i class="fas fa-arrow-up text-success"></i>
+                            </span>
+                        </div>
+                        <div class="metric-value-large" id="successRate">98.5%</div>
+                        <div class="metric-subtitle">Last 24 hours</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Active Sessions</span>
+                            <span class="metric-trend">
+                                <i class="fas fa-minus text-info"></i>
+                            </span>
+                        </div>
+                        <div class="metric-value-large" id="activeSessions">3</div>
+                        <div class="metric-subtitle">Current users</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Queue Length</span>
+                            <span class="metric-trend">
+                                <i class="fas fa-arrow-down text-success"></i>
+                            </span>
+                        </div>
+                        <div class="metric-value-large" id="queueLength">0</div>
+                        <div class="metric-subtitle">Pending requests</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- System Resources -->
+        <div class="system-resources p-3 border-top border-secondary">
+            <h6 class="text-light mb-3">
+                <i class="fas fa-microchip me-2"></i>System Resources
+            </h6>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="resource-item">
+                        <div class="resource-header">
+                            <i class="fas fa-microchip text-primary"></i>
+                            <span class="resource-label">CPU Usage</span>
+                        </div>
+                        <div class="resource-progress">
+                            <div class="progress">
+                                <div class="progress-bar bg-primary" id="cpuProgress" style="width: 35%"></div>
+                            </div>
+                            <div class="resource-value" id="cpuValue">35%</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="resource-item">
+                        <div class="resource-header">
+                            <i class="fas fa-memory text-success"></i>
+                            <span class="resource-label">Memory</span>
+                        </div>
+                        <div class="resource-progress">
+                            <div class="progress">
+                                <div class="progress-bar bg-success" id="memoryProgress" style="width: 68%"></div>
+                            </div>
+                            <div class="resource-value" id="memoryValue">2.1 GB / 3.2 GB</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="resource-item">
+                        <div class="resource-header">
+                            <i class="fas fa-hdd text-info"></i>
+                            <span class="resource-label">Disk Usage</span>
+                        </div>
+                        <div class="resource-progress">
+                            <div class="progress">
+                                <div class="progress-bar bg-info" id="diskProgress" style="width: 42%"></div>
+                            </div>
+                            <div class="resource-value" id="diskValue">42%</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="resource-item">
+                        <div class="resource-header">
+                            <i class="fas fa-network-wired text-warning"></i>
+                            <span class="resource-label">Network</span>
+                        </div>
+                        <div class="resource-progress">
+                            <div class="progress">
+                                <div class="progress-bar bg-warning" id="networkProgress" style="width: 15%"></div>
+                            </div>
+                            <div class="resource-value" id="networkValue">15%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Activity -->
+        <div class="recent-activity p-3 border-top border-secondary">
+            <h6 class="text-light mb-3">
+                <i class="fas fa-history me-2"></i>Recent Activity
+            </h6>
+            <div id="activityFeed" class="activity-feed">
+                <!-- Activity items will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Activity Item Template -->
+<template id="activityItemTemplate">
+    <div class="activity-item">
+        <div class="activity-icon">
+            <i class="fas fa-circle activity-status-icon"></i>
+        </div>
+        <div class="activity-content">
+            <div class="activity-header">
+                <span class="activity-type">Activity Type</span>
+                <span class="activity-time">00:00:00</span>
+            </div>
+            <div class="activity-description">Activity description...</div>
+        </div>
+    </div>
+</template>
+
+<style>
+.agent-status-container {
+    background-color: #1a1a1a;
+    border: 1px solid #495057;
+    border-radius: 0.5rem;
+    margin: 1rem 0;
+    animation: slideIn 0.5s ease-in-out;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.status-header {
+    border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.status-indicators {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.status-badge {
+    display: flex;
+    align-items: center;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    background-color: #2d2d2d;
+    border: 1px solid #495057;
+    color: #fff;
+}
+
+.status-badge.connected {
+    background-color: rgba(25, 135, 84, 0.2);
+    border-color: #198754;
+    color: #198754;
+}
+
+.status-badge.disconnected {
+    background-color: rgba(220, 53, 69, 0.2);
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+.health-metric {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: #2d2d2d;
+    border-radius: 0.5rem;
+    border: 1px solid #495057;
+    transition: all 0.2s ease-in-out;
+}
+
+.health-metric:hover {
+    border-color: #0d6efd;
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+.metric-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(13, 110, 253, 0.1);
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.metric-content {
+    flex: 1;
+}
+
+.metric-label {
+    font-size: 0.75rem;
+    color: #6c757d;
+    margin-bottom: 0.25rem;
+}
+
+.metric-value {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 0.25rem;
+}
+
+.metric-status {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+.status-dot.online {
+    background-color: #198754;
+}
+
+.status-dot.offline {
+    background-color: #dc3545;
+}
+
+.status-dot.warning {
+    background-color: #ffc107;
+}
+
+.status-text {
+    font-size: 0.75rem;
+    color: #6c757d;
+}
+
+.metric-card {
+    background-color: #2d2d2d;
+    border: 1px solid #495057;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    transition: all 0.2s ease-in-out;
+}
+
+.metric-card:hover {
+    border-color: #0d6efd;
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+.metric-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.metric-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #fff;
+}
+
+.metric-trend {
+    font-size: 0.75rem;
+}
+
+.metric-chart {
+    height: 60px;
+    margin-bottom: 0.75rem;
+}
+
+.metric-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.metric-current {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+}
+
+.metric-average {
+    font-size: 0.75rem;
+    color: #6c757d;
+}
+
+.metric-value-large {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+    text-align: center;
+    margin-bottom: 0.25rem;
+}
+
+.metric-subtitle {
+    font-size: 0.75rem;
+    color: #6c757d;
+    text-align: center;
+}
+
+.resource-item {
+    background-color: #2d2d2d;
+    border: 1px solid #495057;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    transition: all 0.2s ease-in-out;
+}
+
+.resource-item:hover {
+    border-color: #0d6efd;
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+.resource-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.resource-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #fff;
+}
+
+.resource-progress {
+    position: relative;
+}
+
+.resource-progress .progress {
+    height: 8px;
+    background-color: #495057;
+    border-radius: 4px;
+}
+
+.resource-progress .progress-bar {
+    border-radius: 4px;
+    transition: width 0.3s ease-in-out;
+}
+
+.resource-value {
+    font-size: 0.75rem;
+    color: #6c757d;
+    margin-top: 0.25rem;
+    text-align: center;
+}
+
+.activity-feed {
+    max-height: 200px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.activity-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background-color: #2d2d2d;
+    border-radius: 0.5rem;
+    border: 1px solid #495057;
+    transition: all 0.2s ease-in-out;
+}
+
+.activity-item:hover {
+    border-color: #0d6efd;
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+.activity-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.activity-status-icon {
+    font-size: 0.5rem;
+}
+
+.activity-item.info .activity-status-icon {
+    color: #0dcaf0;
+}
+
+.activity-item.success .activity-status-icon {
+    color: #198754;
+}
+
+.activity-item.warning .activity-status-icon {
+    color: #ffc107;
+}
+
+.activity-item.error .activity-status-icon {
+    color: #dc3545;
+}
+
+.activity-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.activity-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.25rem;
+}
+
+.activity-type {
+    font-weight: 600;
+    color: #fff;
+    font-size: 0.875rem;
+}
+
+.activity-time {
+    font-size: 0.75rem;
+    color: #6c757d;
+}
+
+.activity-description {
+    font-size: 0.75rem;
+    color: #adb5bd;
+}
+
+/* Scrollbar styling */
+.activity-feed::-webkit-scrollbar {
+    width: 6px;
+}
+
+.activity-feed::-webkit-scrollbar-track {
+    background: #1a1a1a;
+}
+
+.activity-feed::-webkit-scrollbar-thumb {
+    background: #495057;
+    border-radius: 3px;
+}
+
+.activity-feed::-webkit-scrollbar-thumb:hover {
+    background: #6c757d;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .status-indicators {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .health-metric {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .metric-icon {
+        margin-bottom: 0.5rem;
+    }
+    
+    .performance-metrics .row {
+        flex-direction: column;
+    }
+    
+    .system-resources .row {
+        flex-direction: column;
+    }
+}
+</style>
+
+<script>
+// Agent Status JavaScript
+let statusUpdateInterval = null;
+let responseTimeData = [];
+let tokenUsageData = [];
+
+document.addEventListener('DOMContentLoaded', function() {
+    initializeStatus();
+    startStatusUpdates();
+});
+
+function initializeStatus() {
+    // Initialize charts
+    initializeCharts();
+    
+    // Load sample activity
+    loadSampleActivity();
+    
+    // Set initial values
+    updateConnectionStatus(true);
+    updateLastUpdate();
+}
+
+function initializeCharts() {
+    // Response Time Chart
+    const responseCtx = document.getElementById('responseTimeChart').getContext('2d');
+    new Chart(responseCtx, {
+        type: 'line',
+        data: {
+            labels: Array.from({ length: 20 }, (_, i) => ''),
+            datasets: [{
+                data: Array.from({ length: 20 }, () => Math.random() * 100 + 200),
+                borderColor: '#0d6efd',
+                backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                x: { display: false },
+                y: { display: false }
+            },
+            elements: {
+                point: { radius: 0 }
+            }
+        }
+    });
+    
+    // Token Usage Chart
+    const tokenCtx = document.getElementById('tokenUsageChart').getContext('2d');
+    new Chart(tokenCtx, {
+        type: 'line',
+        data: {
+            labels: Array.from({ length: 20 }, (_, i) => ''),
+            datasets: [{
+                data: Array.from({ length: 20 }, () => Math.random() * 500 + 1000),
+                borderColor: '#ffc107',
+                backgroundColor: 'rgba(255, 193, 7, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                x: { display: false },
+                y: { display: false }
+            },
+            elements: {
+                point: { radius: 0 }
+            }
+        }
+    });
+}
+
+function startStatusUpdates() {
+    statusUpdateInterval = setInterval(() => {
+        updateMetrics();
+        updateResourceUsage();
+        updateLastUpdate();
+    }, 2000);
+}
+
+function updateMetrics() {
+    // Simulate response time changes
+    const responseTime = Math.floor(Math.random() * 50 + 200);
+    document.getElementById('responseTimeCurrent').textContent = responseTime + 'ms';
+    
+    // Simulate token usage changes
+    const tokenUsage = Math.floor(Math.random() * 200 + 1000);
+    document.getElementById('tokenUsageCurrent').textContent = tokenUsage.toLocaleString();
+    
+    // Simulate success rate
+    const successRate = (Math.random() * 2 + 97).toFixed(1);
+    document.getElementById('successRate').textContent = successRate + '%';
+    
+    // Simulate active sessions
+    const activeSessions = Math.floor(Math.random() * 3 + 1);
+    document.getElementById('activeSessions').textContent = activeSessions;
+    
+    // Simulate queue length
+    const queueLength = Math.floor(Math.random() * 5);
+    document.getElementById('queueLength').textContent = queueLength;
+}
+
+function updateResourceUsage() {
+    // CPU Usage
+    const cpuUsage = Math.floor(Math.random() * 20 + 25);
+    document.getElementById('cpuValue').textContent = cpuUsage + '%';
+    document.getElementById('cpuProgress').style.width = cpuUsage + '%';
+    
+    // Memory Usage
+    const memoryUsage = Math.floor(Math.random() * 20 + 60);
+    document.getElementById('memoryValue').textContent = `${memoryUsage}%`;
+    document.getElementById('memoryProgress').style.width = memoryUsage + '%';
+    
+    // Disk Usage
+    const diskUsage = Math.floor(Math.random() * 10 + 40);
+    document.getElementById('diskValue').textContent = diskUsage + '%';
+    document.getElementById('diskProgress').style.width = diskUsage + '%';
+    
+    // Network Usage
+    const networkUsage = Math.floor(Math.random() * 30 + 10);
+    document.getElementById('networkValue').textContent = networkUsage + '%';
+    document.getElementById('networkProgress').style.width = networkUsage + '%';
+}
+
+function updateConnectionStatus(connected) {
+    const statusBadge = document.getElementById('connectionStatus');
+    if (connected) {
+        statusBadge.className = 'status-badge connected';
+        statusBadge.innerHTML = '<i class="fas fa-wifi me-1"></i>Connected';
+    } else {
+        statusBadge.className = 'status-badge disconnected';
+        statusBadge.innerHTML = '<i class="fas fa-wifi-slash me-1"></i>Disconnected';
+    }
+}
+
+function updateLastUpdate() {
+    const lastUpdate = document.getElementById('lastUpdate');
+    lastUpdate.innerHTML = '<i class="fas fa-clock me-1"></i>Just now';
+}
+
+function addActivityItem(type, description) {
+    const container = document.getElementById('activityFeed');
+    const template = document.getElementById('activityItemTemplate').content.cloneNode(true);
+    
+    template.querySelector('.activity-type').textContent = type;
+    template.querySelector('.activity-description').textContent = description;
+    template.querySelector('.activity-time').textContent = new Date().toLocaleTimeString();
+    
+    const activityItem = template.querySelector('.activity-item');
+    activityItem.classList.add(type.toLowerCase());
+    
+    container.insertBefore(template, container.firstChild);
+    
+    // Keep only last 10 items
+    while (container.children.length > 10) {
+        container.removeChild(container.lastChild);
+    }
+}
+
+function loadSampleActivity() {
+    const sampleActivities = [
+        {
+            type: 'success',
+            description: 'Analysis completed successfully for dataset: sales_data.csv'
+        },
+        {
+            type: 'info',
+            description: 'AI model switched to Gemini 1.5 Pro for enhanced accuracy'
+        },
+        {
+            type: 'warning',
+            description: 'High memory usage detected, optimizing resource allocation'
+        },
+        {
+            type: 'success',
+            description: 'New dataset uploaded and processed: customer_data.csv'
+        },
+        {
+            type: 'info',
+            description: 'System backup completed successfully'
+        }
+    ];
+    
+    sampleActivities.forEach(activity => {
+        addActivityItem(activity.type, activity.description);
+    });
+}
+
+// Simulate random activities
+setInterval(() => {
+    const activities = [
+        { type: 'info', description: 'System health check completed' },
+        { type: 'success', description: 'Cache optimization performed' },
+        { type: 'info', description: 'Security scan completed - no threats detected' },
+        { type: 'warning', description: 'Network latency increased to 150ms' },
+        { type: 'success', description: 'Data synchronization completed' }
+    ];
+    
+    const randomActivity = activities[Math.floor(Math.random() * activities.length)];
+    addActivityItem(randomActivity.type, randomActivity.description);
+}, 10000);
+
+// HTMX integration for real-time updates
+document.body.addEventListener('htmx:afterRequest', function(e) {
+    if (e.detail.xhr.responseURL.includes('/api/agent/status/')) {
+        try {
+            const statusData = JSON.parse(e.detail.xhr.response);
+            updateStatusFromAPI(statusData);
+        } catch (error) {
+            console.error('Error updating status from API:', error);
+        }
+    }
+});
+
+function updateStatusFromAPI(data) {
+    if (data.ai_model) {
+        document.getElementById('aiModelStatus').textContent = data.ai_model;
+    }
+    
+    if (data.processing_status) {
+        document.getElementById('processingStatus').textContent = data.processing_status;
+    }
+    
+    if (data.connection_status !== undefined) {
+        updateConnectionStatus(data.connection_status);
+    }
+    
+    if (data.activity) {
+        addActivityItem(data.activity.type, data.activity.description);
+    }
+}
+
+// Cleanup on page unload
+window.addEventListener('beforeunload', function() {
+    if (statusUpdateInterval) {
+        clearInterval(statusUpdateInterval);
+    }
+});
+</script>

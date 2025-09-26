@@ -1,0 +1,683 @@
+<!-- Agent Control Buttons (pause/resume/cancel) -->
+<div id="agentControls" class="agent-controls-container">
+    <!-- Control Header -->
+    <div class="controls-header bg-dark border-bottom border-secondary p-3">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h6 class="text-light mb-1">
+                    <i class="fas fa-gamepad me-2"></i>Agent Controls
+                </h6>
+                <small class="text-muted">Control the AI agent execution</small>
+            </div>
+            <div class="col-md-4 text-end">
+                <div class="agent-status">
+                    <span class="status-indicator" id="statusIndicator"></span>
+                    <span class="status-text text-light" id="statusText">Ready</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Control Buttons -->
+    <div class="controls-content p-3">
+        <div class="control-buttons">
+            <!-- Start/Pause/Resume Button -->
+            <button type="button" class="btn btn-success btn-lg control-btn" id="startPauseBtn" onclick="toggleExecution()">
+                <i class="fas fa-play me-2"></i>
+                <span class="btn-text">Start Analysis</span>
+            </button>
+            
+            <!-- Stop Button -->
+            <button type="button" class="btn btn-danger btn-lg control-btn" id="stopBtn" onclick="stopExecution()" disabled>
+                <i class="fas fa-stop me-2"></i>
+                <span class="btn-text">Stop</span>
+            </button>
+            
+            <!-- Reset Button -->
+            <button type="button" class="btn btn-warning btn-lg control-btn" id="resetBtn" onclick="resetExecution()" disabled>
+                <i class="fas fa-undo me-2"></i>
+                <span class="btn-text">Reset</span>
+            </button>
+        </div>
+        
+        <!-- Advanced Controls -->
+        <div class="advanced-controls mt-4">
+            <div class="card bg-dark border-secondary">
+                <div class="card-header border-secondary">
+                    <h6 class="text-light mb-0">
+                        <i class="fas fa-sliders-h me-2"></i>Advanced Controls
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="executionSpeed" class="form-label text-light">Execution Speed</label>
+                            <select class="form-select bg-dark text-light border-secondary" id="executionSpeed">
+                                <option value="slow">Slow (1x)</option>
+                                <option value="normal" selected>Normal (2x)</option>
+                                <option value="fast">Fast (4x)</option>
+                                <option value="turbo">Turbo (8x)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="stepMode" class="form-label text-light">Step Mode</label>
+                            <select class="form-select bg-dark text-light border-secondary" id="stepMode">
+                                <option value="continuous" selected>Continuous</option>
+                                <option value="step-by-step">Step by Step</option>
+                                <option value="manual">Manual</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="errorHandling" class="form-label text-light">Error Handling</label>
+                            <select class="form-select bg-dark text-light border-secondary" id="errorHandling">
+                                <option value="continue" selected>Continue on Error</option>
+                                <option value="pause">Pause on Error</option>
+                                <option value="stop">Stop on Error</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="autoRetry" checked>
+                                <label class="form-check-label text-light" for="autoRetry">
+                                    <i class="fas fa-redo me-1"></i>Auto-retry failed steps
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="saveCheckpoints" checked>
+                                <label class="form-check-label text-light" for="saveCheckpoints">
+                                    <i class="fas fa-save me-1"></i>Save checkpoints
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Step Controls -->
+        <div class="step-controls mt-4" id="stepControls" style="display: none;">
+            <div class="card bg-dark border-secondary">
+                <div class="card-header border-secondary">
+                    <h6 class="text-light mb-0">
+                        <i class="fas fa-list-ol me-2"></i>Step Controls
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <div class="current-step">
+                                <small class="text-muted">Current Step:</small>
+                                <div class="text-light" id="currentStepName">-</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="step-actions">
+                                <button type="button" class="btn btn-outline-primary btn-sm" onclick="nextStep()" id="nextStepBtn">
+                                    <i class="fas fa-forward me-1"></i>Next Step
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="previousStep()" id="prevStepBtn" disabled>
+                                    <i class="fas fa-backward me-1"></i>Previous
+                                </button>
+                                <button type="button" class="btn btn-outline-warning btn-sm" onclick="skipStep()" id="skipStepBtn">
+                                    <i class="fas fa-step-forward me-1"></i>Skip
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Execution History -->
+        <div class="execution-history mt-4">
+            <div class="card bg-dark border-secondary">
+                <div class="card-header border-secondary">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <h6 class="text-light mb-0">
+                                <i class="fas fa-history me-2"></i>Execution History
+                            </h6>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="clearHistory()">
+                                <i class="fas fa-trash me-1"></i>Clear History
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="executionHistory" class="execution-history-list">
+                        <!-- History items will be dynamically inserted here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- History Item Template -->
+<template id="historyItemTemplate">
+    <div class="history-item">
+        <div class="history-icon">
+            <i class="fas fa-circle history-status-icon"></i>
+        </div>
+        <div class="history-content">
+            <div class="history-header">
+                <span class="history-action">Action</span>
+                <span class="history-time">00:00:00</span>
+            </div>
+            <div class="history-details">Action details...</div>
+        </div>
+    </div>
+</template>
+
+<style>
+.agent-controls-container {
+    background-color: #1a1a1a;
+    border: 1px solid #495057;
+    border-radius: 0.5rem;
+    margin: 1rem 0;
+    animation: slideIn 0.5s ease-in-out;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.controls-header {
+    border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.agent-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.status-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #6c757d;
+    animation: pulse 2s infinite;
+}
+
+.status-indicator.ready {
+    background-color: #6c757d;
+}
+
+.status-indicator.running {
+    background-color: #198754;
+}
+
+.status-indicator.paused {
+    background-color: #ffc107;
+}
+
+.status-indicator.stopped {
+    background-color: #dc3545;
+}
+
+.status-indicator.error {
+    background-color: #dc3545;
+    animation: blink 1s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0.3; }
+}
+
+.control-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.control-btn {
+    min-width: 140px;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease-in-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.control-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.control-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.control-btn.btn-success {
+    background: linear-gradient(135deg, #198754 0%, #20c997 100%);
+    border: none;
+}
+
+.control-btn.btn-danger {
+    background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%);
+    border: none;
+}
+
+.control-btn.btn-warning {
+    background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+    border: none;
+    color: #000;
+}
+
+.btn-text {
+    display: block;
+    font-size: 0.875rem;
+}
+
+.advanced-controls .card-body {
+    padding: 1.5rem;
+}
+
+.step-controls .card-body {
+    padding: 1rem;
+}
+
+.current-step {
+    text-align: left;
+}
+
+.current-step small {
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.current-step div {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.step-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+.execution-history-list {
+    max-height: 200px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.history-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background-color: #2d2d2d;
+    border-radius: 0.5rem;
+    border: 1px solid #495057;
+    transition: all 0.2s ease-in-out;
+}
+
+.history-item:hover {
+    border-color: #0d6efd;
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+.history-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.history-status-icon {
+    font-size: 0.5rem;
+}
+
+.history-item.started .history-status-icon {
+    color: #198754;
+}
+
+.history-item.paused .history-status-icon {
+    color: #ffc107;
+}
+
+.history-item.stopped .history-status-icon {
+    color: #dc3545;
+}
+
+.history-item.completed .history-status-icon {
+    color: #198754;
+}
+
+.history-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.25rem;
+}
+
+.history-action {
+    font-weight: 600;
+    color: #fff;
+    font-size: 0.875rem;
+}
+
+.history-time {
+    font-size: 0.75rem;
+    color: #6c757d;
+}
+
+.history-details {
+    font-size: 0.75rem;
+    color: #adb5bd;
+}
+
+/* Loading Animation */
+.control-btn.loading {
+    position: relative;
+    color: transparent;
+}
+
+.control-btn.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 16px;
+    margin: -8px 0 0 -8px;
+    border: 2px solid transparent;
+    border-top: 2px solid #fff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .control-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .control-btn {
+        width: 100%;
+        max-width: 200px;
+    }
+    
+    .step-actions {
+        justify-content: center;
+        margin-top: 1rem;
+    }
+    
+    .advanced-controls .row {
+        flex-direction: column;
+    }
+    
+    .advanced-controls .col-md-4,
+    .advanced-controls .col-md-6 {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Scrollbar styling */
+.execution-history-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.execution-history-list::-webkit-scrollbar-track {
+    background: #1a1a1a;
+}
+
+.execution-history-list::-webkit-scrollbar-thumb {
+    background: #495057;
+    border-radius: 3px;
+}
+
+.execution-history-list::-webkit-scrollbar-thumb:hover {
+    background: #6c757d;
+}
+</style>
+
+<script>
+// Agent Controls JavaScript
+let executionState = 'ready'; // ready, running, paused, stopped, error
+let currentStepIndex = 0;
+let executionHistory = [];
+
+document.addEventListener('DOMContentLoaded', function() {
+    initializeControls();
+});
+
+function initializeControls() {
+    // Step mode change handler
+    document.getElementById('stepMode').addEventListener('change', function() {
+        const stepControls = document.getElementById('stepControls');
+        if (this.value === 'step-by-step' || this.value === 'manual') {
+            stepControls.style.display = 'block';
+        } else {
+            stepControls.style.display = 'none';
+        }
+    });
+    
+    // Load sample history
+    loadSampleHistory();
+}
+
+function toggleExecution() {
+    const button = document.getElementById('startPauseBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    
+    if (executionState === 'ready' || executionState === 'stopped') {
+        // Start execution
+        executionState = 'running';
+        updateStatus('running', 'Running');
+        button.innerHTML = '<i class="fas fa-pause me-2"></i><span class="btn-text">Pause</span>';
+        button.classList.remove('btn-success');
+        button.classList.add('btn-warning');
+        stopBtn.disabled = false;
+        resetBtn.disabled = false;
+        
+        addHistoryItem('started', 'Analysis started');
+        showNotification('Analysis started', 'success');
+        
+    } else if (executionState === 'running') {
+        // Pause execution
+        executionState = 'paused';
+        updateStatus('paused', 'Paused');
+        button.innerHTML = '<i class="fas fa-play me-2"></i><span class="btn-text">Resume</span>';
+        button.classList.remove('btn-warning');
+        button.classList.add('btn-success');
+        
+        addHistoryItem('paused', 'Analysis paused');
+        showNotification('Analysis paused', 'info');
+        
+    } else if (executionState === 'paused') {
+        // Resume execution
+        executionState = 'running';
+        updateStatus('running', 'Running');
+        button.innerHTML = '<i class="fas fa-pause me-2"></i><span class="btn-text">Pause</span>';
+        button.classList.remove('btn-success');
+        button.classList.add('btn-warning');
+        
+        addHistoryItem('started', 'Analysis resumed');
+        showNotification('Analysis resumed', 'success');
+    }
+}
+
+function stopExecution() {
+    if (confirm('Are you sure you want to stop the analysis?')) {
+        executionState = 'stopped';
+        updateStatus('stopped', 'Stopped');
+        
+        const button = document.getElementById('startPauseBtn');
+        button.innerHTML = '<i class="fas fa-play me-2"></i><span class="btn-text">Start Analysis</span>';
+        button.classList.remove('btn-warning');
+        button.classList.add('btn-success');
+        
+        addHistoryItem('stopped', 'Analysis stopped by user');
+        showNotification('Analysis stopped', 'warning');
+    }
+}
+
+function resetExecution() {
+    if (confirm('Are you sure you want to reset the analysis? This will clear all progress.')) {
+        executionState = 'ready';
+        updateStatus('ready', 'Ready');
+        
+        const button = document.getElementById('startPauseBtn');
+        button.innerHTML = '<i class="fas fa-play me-2"></i><span class="btn-text">Start Analysis</span>';
+        button.classList.remove('btn-warning');
+        button.classList.add('btn-success');
+        
+        document.getElementById('stopBtn').disabled = true;
+        document.getElementById('resetBtn').disabled = true;
+        
+        currentStepIndex = 0;
+        addHistoryItem('stopped', 'Analysis reset');
+        showNotification('Analysis reset', 'info');
+    }
+}
+
+function nextStep() {
+    if (executionState === 'running' || executionState === 'paused') {
+        currentStepIndex++;
+        document.getElementById('currentStepName').textContent = `Step ${currentStepIndex + 1}`;
+        
+        const prevBtn = document.getElementById('prevStepBtn');
+        prevBtn.disabled = currentStepIndex === 0;
+        
+        addHistoryItem('started', `Moved to step ${currentStepIndex + 1}`);
+        showNotification(`Executing step ${currentStepIndex + 1}`, 'info');
+    }
+}
+
+function previousStep() {
+    if (currentStepIndex > 0) {
+        currentStepIndex--;
+        document.getElementById('currentStepName').textContent = `Step ${currentStepIndex + 1}`;
+        
+        const prevBtn = document.getElementById('prevStepBtn');
+        prevBtn.disabled = currentStepIndex === 0;
+        
+        addHistoryItem('started', `Moved back to step ${currentStepIndex + 1}`);
+        showNotification(`Moved back to step ${currentStepIndex + 1}`, 'info');
+    }
+}
+
+function skipStep() {
+    if (executionState === 'running' || executionState === 'paused') {
+        addHistoryItem('stopped', `Skipped step ${currentStepIndex + 1}`);
+        showNotification(`Skipped step ${currentStepIndex + 1}`, 'warning');
+        nextStep();
+    }
+}
+
+function updateStatus(status, text) {
+    const indicator = document.getElementById('statusIndicator');
+    const statusText = document.getElementById('statusText');
+    
+    indicator.className = `status-indicator ${status}`;
+    statusText.textContent = text;
+}
+
+function addHistoryItem(action, details) {
+    const historyItem = {
+        id: Date.now(),
+        action: action,
+        details: details,
+        timestamp: new Date()
+    };
+    
+    executionHistory.unshift(historyItem);
+    updateHistoryDisplay();
+}
+
+function updateHistoryDisplay() {
+    const container = document.getElementById('executionHistory');
+    container.innerHTML = '';
+    
+    executionHistory.slice(0, 10).forEach(item => {
+        const template = document.getElementById('historyItemTemplate').content.cloneNode(true);
+        
+        template.querySelector('.history-action').textContent = item.action.charAt(0).toUpperCase() + item.action.slice(1);
+        template.querySelector('.history-time').textContent = item.timestamp.toLocaleTimeString();
+        template.querySelector('.history-details').textContent = item.details;
+        
+        const historyItem = template.querySelector('.history-item');
+        historyItem.classList.add(item.action);
+        
+        container.appendChild(template);
+    });
+}
+
+function clearHistory() {
+    if (confirm('Are you sure you want to clear the execution history?')) {
+        executionHistory = [];
+        updateHistoryDisplay();
+        showNotification('Execution history cleared', 'success');
+    }
+}
+
+function loadSampleHistory() {
+    executionHistory = [
+        {
+            id: 1,
+            action: 'completed',
+            details: 'Previous analysis completed successfully',
+            timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000)
+        },
+        {
+            id: 2,
+            action: 'started',
+            details: 'Analysis started with dataset: sales_data.csv',
+            timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000)
+        }
+    ];
+    
+    updateHistoryDisplay();
+}
+
+// HTMX integration
+document.body.addEventListener('htmx:afterRequest', function(e) {
+    if (e.detail.xhr.responseURL.includes('/api/agent/run/')) {
+        if (e.detail.xhr.status === 200) {
+            const response = JSON.parse(e.detail.xhr.response);
+            if (response.status === 'started') {
+                toggleExecution();
+            }
+        }
+    }
+});
+</script>

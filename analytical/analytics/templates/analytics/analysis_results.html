@@ -1,0 +1,355 @@
+<!-- Analysis Results Display -->
+<div id="analysisResults" class="analysis-results-container">
+    <!-- Analysis Spinner -->
+    <div id="analysisSpinner" class="htmx-indicator analysis-spinner">
+        <div class="d-flex flex-column justify-content-center align-items-center py-5">
+            <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+                <span class="visually-hidden">Running analysis...</span>
+            </div>
+            <h5 class="text-light mb-2">Running Analysis</h5>
+            <p class="text-muted">Please wait while we process your data...</p>
+            <div class="progress w-50 mt-3">
+                <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                     role="progressbar" style="width: 100%"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Results Content (dynamically loaded) -->
+    <div id="resultsContent" class="results-content" style="display: none;">
+        <!-- Analysis Header -->
+        <div class="analysis-header bg-dark border border-secondary rounded p-3 mb-3">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h4 class="text-light mb-1">
+                        <i class="fas fa-chart-line me-2"></i>
+                        <span id="analysisTitle">Analysis Results</span>
+                    </h4>
+                    <p class="text-muted mb-0">
+                        <span id="analysisTool">Tool</span> • 
+                        <span id="analysisDataset">Dataset</span> • 
+                        <span id="analysisTimestamp">Timestamp</span>
+                    </p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="exportResults('json')">
+                            <i class="fas fa-download me-1"></i>JSON
+                        </button>
+                        <button type="button" class="btn btn-outline-success btn-sm" onclick="exportResults('csv')">
+                            <i class="fas fa-file-csv me-1"></i>CSV
+                        </button>
+                        <button type="button" class="btn btn-outline-info btn-sm" onclick="exportResults('pdf')">
+                            <i class="fas fa-file-pdf me-1"></i>PDF
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Analysis Summary -->
+        <div class="analysis-summary mb-4">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card bg-dark border-secondary h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-clock text-primary fa-2x mb-2"></i>
+                            <h6 class="text-light">Execution Time</h6>
+                            <h4 class="text-primary" id="executionTime">0.0s</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-dark border-secondary h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-database text-success fa-2x mb-2"></i>
+                            <h6 class="text-light">Data Points</h6>
+                            <h4 class="text-success" id="dataPoints">0</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-dark border-secondary h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-check-circle text-info fa-2x mb-2"></i>
+                            <h6 class="text-light">Status</h6>
+                            <h4 class="text-info" id="analysisStatus">Success</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-dark border-secondary h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-memory text-warning fa-2x mb-2"></i>
+                            <h6 class="text-light">Memory Used</h6>
+                            <h4 class="text-warning" id="memoryUsed">0 MB</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Results Tabs -->
+        <ul class="nav nav-tabs nav-tabs-dark mb-3" id="resultsTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="summary-tab" data-bs-toggle="tab" 
+                        data-bs-target="#summary" type="button" role="tab">
+                    <i class="fas fa-info-circle me-1"></i>Summary
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="data-tab" data-bs-toggle="tab" 
+                        data-bs-target="#data" type="button" role="tab">
+                    <i class="fas fa-table me-1"></i>Data
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="visualization-tab" data-bs-toggle="tab" 
+                        data-bs-target="#visualization" type="button" role="tab">
+                    <i class="fas fa-chart-bar me-1"></i>Visualization
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="code-tab" data-bs-toggle="tab" 
+                        data-bs-target="#code" type="button" role="tab">
+                    <i class="fas fa-code me-1"></i>Code
+                </button>
+            </li>
+        </ul>
+        
+        <!-- Tab Content -->
+        <div class="tab-content" id="resultsTabContent">
+            <!-- Summary Tab -->
+            <div class="tab-pane fade show active" id="summary" role="tabpanel">
+                <div class="card bg-dark border-secondary">
+                    <div class="card-body">
+                        <div id="summaryContent">
+                            <!-- Summary content will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Data Tab -->
+            <div class="tab-pane fade" id="data" role="tabpanel">
+                <div class="card bg-dark border-secondary">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-dark table-striped table-hover" id="resultsTable">
+                                <thead>
+                                    <tr id="tableHeaders">
+                                        <!-- Headers will be dynamically inserted -->
+                                    </tr>
+                                </thead>
+                                <tbody id="tableBody">
+                                    <!-- Data will be dynamically inserted -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mt-3">
+                            <nav aria-label="Results pagination">
+                                <ul class="pagination pagination-sm justify-content-center" id="resultsPagination">
+                                    <!-- Pagination will be dynamically inserted -->
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Visualization Tab -->
+            <div class="tab-pane fade" id="visualization" role="tabpanel">
+                <div class="card bg-dark border-secondary">
+                    <div class="card-body">
+                        <div id="visualizationContainer">
+                            <!-- Charts and visualizations will be rendered here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Code Tab -->
+            <div class="tab-pane fade" id="code" role="tabpanel">
+                <div class="card bg-dark border-secondary">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="text-light mb-0">Generated Analysis Code</h6>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="copyCode()">
+                                <i class="fas fa-copy me-1"></i>Copy Code
+                            </button>
+                        </div>
+                        <pre class="bg-black text-light p-3 rounded"><code id="analysisCode">
+// Analysis code will be displayed here
+                        </code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="analysis-actions mt-4 text-center">
+            <button type="button" class="btn btn-primary me-2" onclick="saveAnalysis()">
+                <i class="fas fa-save me-1"></i>Save Analysis
+            </button>
+            <button type="button" class="btn btn-success me-2" onclick="shareAnalysis()">
+                <i class="fas fa-share me-1"></i>Share Results
+            </button>
+            <button type="button" class="btn btn-info me-2" onclick="scheduleAnalysis()">
+                <i class="fas fa-clock me-1"></i>Schedule Recurring
+            </button>
+            <button type="button" class="btn btn-warning" onclick="compareAnalysis()">
+                <i class="fas fa-balance-scale me-1"></i>Compare with Previous
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+.nav-tabs-dark .nav-link {
+    color: #adb5bd;
+    border-color: #495057;
+}
+
+.nav-tabs-dark .nav-link:hover {
+    color: #fff;
+    border-color: #495057;
+}
+
+.nav-tabs-dark .nav-link.active {
+    color: #fff;
+    background-color: #495057;
+    border-color: #495057;
+}
+
+.analysis-spinner {
+    min-height: 300px;
+}
+
+.results-content {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
+
+<script>
+// Analysis Results JavaScript
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle HTMX responses
+    document.body.addEventListener('htmx:afterRequest', function(e) {
+        if (e.target.id === 'analysisResults') {
+            displayAnalysisResults(e.detail.xhr.response);
+        }
+    });
+    
+    // Display analysis results
+    function displayAnalysisResults(response) {
+        try {
+            const data = JSON.parse(response);
+            updateAnalysisHeader(data);
+            updateAnalysisSummary(data);
+            updateResultsTabs(data);
+            showResultsContent();
+        } catch (error) {
+            console.error('Error parsing analysis results:', error);
+            showError('Failed to parse analysis results');
+        }
+    }
+    
+    function updateAnalysisHeader(data) {
+        document.getElementById('analysisTitle').textContent = data.tool_name || 'Analysis Results';
+        document.getElementById('analysisTool').textContent = data.tool_name || 'Unknown Tool';
+        document.getElementById('analysisDataset').textContent = data.dataset_name || 'Unknown Dataset';
+        document.getElementById('analysisTimestamp').textContent = new Date().toLocaleString();
+    }
+    
+    function updateAnalysisSummary(data) {
+        document.getElementById('executionTime').textContent = formatDuration(data.execution_time || 0);
+        document.getElementById('dataPoints').textContent = data.data_points || 0;
+        document.getElementById('analysisStatus').textContent = data.status || 'Success';
+        document.getElementById('memoryUsed').textContent = formatFileSize(data.memory_used || 0);
+    }
+    
+    function updateResultsTabs(data) {
+        // Update summary
+        document.getElementById('summaryContent').innerHTML = data.summary || '<p class="text-muted">No summary available</p>';
+        
+        // Update data table
+        if (data.results && Array.isArray(data.results)) {
+            updateDataTable(data.results);
+        }
+        
+        // Update visualization
+        if (data.visualization) {
+            document.getElementById('visualizationContainer').innerHTML = data.visualization;
+        }
+        
+        // Update code
+        if (data.generated_code) {
+            document.getElementById('analysisCode').textContent = data.generated_code;
+        }
+    }
+    
+    function updateDataTable(results) {
+        if (results.length === 0) return;
+        
+        const headers = Object.keys(results[0]);
+        const headerRow = document.getElementById('tableHeaders');
+        headerRow.innerHTML = headers.map(h => `<th>${h}</th>`).join('');
+        
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = results.slice(0, 100).map(row => 
+            `<tr>${headers.map(h => `<td>${row[h]}</td>`).join('')}</tr>`
+        ).join('');
+    }
+    
+    function showResultsContent() {
+        document.getElementById('analysisSpinner').style.display = 'none';
+        document.getElementById('resultsContent').style.display = 'block';
+    }
+    
+    function showError(message) {
+        document.getElementById('analysisSpinner').innerHTML = `
+            <div class="alert alert-danger" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>${message}
+            </div>
+        `;
+    }
+});
+
+// Export functions
+function exportResults(format) {
+    // Implementation for exporting results
+    console.log(`Exporting results as ${format}`);
+}
+
+function copyCode() {
+    const code = document.getElementById('analysisCode').textContent;
+    navigator.clipboard.writeText(code).then(() => {
+        showNotification('Code copied to clipboard!', 'success');
+    });
+}
+
+function saveAnalysis() {
+    // Implementation for saving analysis
+    console.log('Saving analysis...');
+}
+
+function shareAnalysis() {
+    // Implementation for sharing analysis
+    console.log('Sharing analysis...');
+}
+
+function scheduleAnalysis() {
+    // Implementation for scheduling analysis
+    console.log('Scheduling analysis...');
+}
+
+function compareAnalysis() {
+    // Implementation for comparing analysis
+    console.log('Comparing analysis...');
+}
+</script>

@@ -100,8 +100,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'analytical.wsgi.application'
 
-# Custom User Model
-AUTH_USER_MODEL = 'analytics.User'
+# Use Django's default User model for admin authentication
+# AUTH_USER_MODEL = 'analytics.User'  # Commented out to use default Django User
 
 
 # Database

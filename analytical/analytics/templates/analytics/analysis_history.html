@@ -1,0 +1,558 @@
+<!-- Analysis History Cards -->
+<div id="analysisHistory" class="analysis-history-container">
+    <!-- History Header -->
+    <div class="history-header mb-4">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h4 class="text-light mb-1">
+                    <i class="fas fa-history me-2"></i>Analysis History
+                </h4>
+                <p class="text-muted mb-0">View and manage your previous analyses</p>
+            </div>
+            <div class="col-md-6 text-end">
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="refreshHistory()">
+                        <i class="fas fa-sync-alt me-1"></i>Refresh
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="clearHistory()">
+                        <i class="fas fa-trash me-1"></i>Clear All
+                    </button>
+                    <button type="button" class="btn btn-outline-info btn-sm" onclick="exportHistory()">
+                        <i class="fas fa-download me-1"></i>Export
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Filter and Search -->
+    <div class="history-filters mb-4">
+        <div class="card bg-dark border-secondary">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label for="toolFilter" class="form-label text-light">Tool</label>
+                        <select class="form-select bg-dark text-light border-secondary" id="toolFilter">
+                            <option value="">All Tools</option>
+                            <option value="descriptive_stats">Descriptive Statistics</option>
+                            <option value="correlation">Correlation Analysis</option>
+                            <option value="regression">Regression Analysis</option>
+                            <option value="anova">ANOVA</option>
+                            <option value="t_test">T-Test</option>
+                            <option value="chi_square">Chi-Square Test</option>
+                            <option value="survival_analysis">Survival Analysis</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="dateFilter" class="form-label text-light">Date Range</label>
+                        <select class="form-select bg-dark text-light border-secondary" id="dateFilter">
+                            <option value="">All Time</option>
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                            <option value="quarter">This Quarter</option>
+                            <option value="year">This Year</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="statusFilter" class="form-label text-light">Status</label>
+                        <select class="form-select bg-dark text-light border-secondary" id="statusFilter">
+                            <option value="">All Status</option>
+                            <option value="success">Success</option>
+                            <option value="error">Error</option>
+                            <option value="running">Running</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="searchHistory" class="form-label text-light">Search</label>
+                        <input type="text" class="form-control bg-dark text-light border-secondary" 
+                               id="searchHistory" placeholder="Search analyses...">
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <button type="button" class="btn btn-primary btn-sm" onclick="applyFilters()">
+                            <i class="fas fa-filter me-1"></i>Apply Filters
+                        </button>
+                        <button type="button" class="btn btn-secondary btn-sm ms-2" onclick="clearFilters()">
+                            <i class="fas fa-times me-1"></i>Clear Filters
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- History Stats -->
+    <div class="history-stats mb-4">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card bg-dark border-secondary text-center">
+                    <div class="card-body">
+                        <i class="fas fa-chart-line text-primary fa-2x mb-2"></i>
+                        <h6 class="text-light">Total Analyses</h6>
+                        <h4 class="text-primary" id="totalAnalyses">0</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-dark border-secondary text-center">
+                    <div class="card-body">
+                        <i class="fas fa-check-circle text-success fa-2x mb-2"></i>
+                        <h6 class="text-light">Successful</h6>
+                        <h4 class="text-success" id="successfulAnalyses">0</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-dark border-secondary text-center">
+                    <div class="card-body">
+                        <i class="fas fa-clock text-info fa-2x mb-2"></i>
+                        <h6 class="text-light">Avg. Time</h6>
+                        <h4 class="text-info" id="avgTime">0s</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-dark border-secondary text-center">
+                    <div class="card-body">
+                        <i class="fas fa-calendar text-warning fa-2x mb-2"></i>
+                        <h6 class="text-light">Last Run</h6>
+                        <h4 class="text-warning" id="lastRun">Never</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- History Cards Container -->
+    <div id="historyCards" class="history-cards">
+        <!-- Loading State -->
+        <div id="historySpinner" class="htmx-indicator">
+            <div class="d-flex justify-content-center align-items-center py-5">
+                <div class="spinner-border text-primary me-2" role="status">
+                    <span class="visually-hidden">Loading history...</span>
+                </div>
+                <span class="text-light">Loading analysis history...</span>
+            </div>
+        </div>
+        
+        <!-- Empty State -->
+        <div id="emptyHistory" class="empty-history text-center py-5" style="display: none;">
+            <i class="fas fa-chart-line fa-4x text-muted mb-3"></i>
+            <h5 class="text-light">No Analysis History</h5>
+            <p class="text-muted">Run your first analysis to see it appear here</p>
+            <button type="button" class="btn btn-primary" onclick="startNewAnalysis()">
+                <i class="fas fa-plus me-1"></i>Start New Analysis
+            </button>
+        </div>
+        
+        <!-- History Cards will be dynamically inserted here -->
+    </div>
+    
+    <!-- Pagination -->
+    <div class="history-pagination mt-4">
+        <nav aria-label="History pagination">
+            <ul class="pagination justify-content-center" id="historyPagination">
+                <!-- Pagination will be dynamically inserted -->
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<!-- Analysis History Card Template -->
+<template id="historyCardTemplate">
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card bg-dark border-secondary h-100 analysis-card">
+            <div class="card-header border-secondary">
+                <div class="row align-items-center">
+                    <div class="col-8">
+                        <h6 class="text-light mb-0">
+                            <i class="fas fa-chart-line me-1"></i>
+                            <span class="analysis-tool">Tool Name</span>
+                        </h6>
+                    </div>
+                    <div class="col-4 text-end">
+                        <span class="badge bg-success analysis-status">Success</span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="analysis-info mb-3">
+                    <div class="row">
+                        <div class="col-6">
+                            <small class="text-muted">Dataset</small>
+                            <div class="text-light analysis-dataset">dataset.csv</div>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">Duration</small>
+                            <div class="text-light analysis-duration">2.3s</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="analysis-description mb-3">
+                    <small class="text-muted">Description</small>
+                    <div class="text-light analysis-desc">Analysis description...</div>
+                </div>
+                <div class="analysis-meta">
+                    <small class="text-muted">
+                        <i class="fas fa-clock me-1"></i>
+                        <span class="analysis-timestamp">2 hours ago</span>
+                    </small>
+                </div>
+            </div>
+            <div class="card-footer border-secondary">
+                <div class="btn-group w-100" role="group">
+                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="viewAnalysis(this)">
+                        <i class="fas fa-eye me-1"></i>View
+                    </button>
+                    <button type="button" class="btn btn-outline-success btn-sm" onclick="reRunAnalysis(this)">
+                        <i class="fas fa-redo me-1"></i>Re-run
+                    </button>
+                    <button type="button" class="btn btn-outline-info btn-sm" onclick="shareAnalysis(this)">
+                        <i class="fas fa-share me-1"></i>Share
+                    </button>
+                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="deleteAnalysis(this)">
+                        <i class="fas fa-trash me-1"></i>Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<style>
+.analysis-history-container {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.analysis-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.analysis-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.history-cards {
+    min-height: 200px;
+}
+
+.empty-history {
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.badge.bg-success {
+    background-color: #198754 !important;
+}
+
+.badge.bg-danger {
+    background-color: #dc3545 !important;
+}
+
+.badge.bg-warning {
+    background-color: #ffc107 !important;
+    color: #000 !important;
+}
+
+.badge.bg-info {
+    background-color: #0dcaf0 !important;
+}
+</style>
+
+<script>
+// Analysis History JavaScript
+let currentFilters = {};
+let currentPage = 1;
+let totalPages = 1;
+
+document.addEventListener('DOMContentLoaded', function() {
+    initializeHistory();
+    loadHistoryData();
+});
+
+function initializeHistory() {
+    // Filter event listeners
+    document.getElementById('toolFilter').addEventListener('change', applyFilters);
+    document.getElementById('dateFilter').addEventListener('change', applyFilters);
+    document.getElementById('statusFilter').addEventListener('change', applyFilters);
+    document.getElementById('searchHistory').addEventListener('input', debounce(applyFilters, 300));
+    
+    // Load sample data for demonstration
+    loadSampleHistoryData();
+}
+
+function loadSampleHistoryData() {
+    const sampleData = [
+        {
+            id: 1,
+            tool_name: 'Descriptive Statistics',
+            dataset_name: 'sales_data.csv',
+            status: 'success',
+            duration: 2.3,
+            description: 'Basic statistical summary of sales data',
+            timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
+            results: { mean: 150.5, std: 25.3, count: 1000 }
+        },
+        {
+            id: 2,
+            tool_name: 'Correlation Analysis',
+            dataset_name: 'customer_data.csv',
+            status: 'success',
+            duration: 1.8,
+            description: 'Correlation matrix for customer metrics',
+            timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000), // 5 hours ago
+            results: { correlation: 0.75 }
+        },
+        {
+            id: 3,
+            tool_name: 'Regression Analysis',
+            dataset_name: 'marketing_data.csv',
+            status: 'error',
+            duration: 0.5,
+            description: 'Linear regression analysis failed due to missing data',
+            timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
+            results: null
+        },
+        {
+            id: 4,
+            tool_name: 'ANOVA',
+            dataset_name: 'experiment_data.csv',
+            status: 'success',
+            duration: 3.2,
+            description: 'Analysis of variance for experimental groups',
+            timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
+            results: { f_statistic: 15.6, p_value: 0.001 }
+        },
+        {
+            id: 5,
+            tool_name: 'T-Test',
+            dataset_name: 'test_scores.csv',
+            status: 'success',
+            duration: 1.1,
+            description: 'Independent samples t-test',
+            timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
+            results: { t_statistic: 2.45, p_value: 0.02 }
+        }
+    ];
+    
+    displayHistoryCards(sampleData);
+    updateHistoryStats(sampleData);
+}
+
+function displayHistoryCards(analyses) {
+    const container = document.getElementById('historyCards');
+    const spinner = document.getElementById('historySpinner');
+    const empty = document.getElementById('emptyHistory');
+    
+    spinner.style.display = 'none';
+    
+    if (analyses.length === 0) {
+        empty.style.display = 'block';
+        return;
+    }
+    
+    empty.style.display = 'none';
+    
+    container.innerHTML = '';
+    
+    analyses.forEach(analysis => {
+        const card = createHistoryCard(analysis);
+        container.appendChild(card);
+    });
+}
+
+function createHistoryCard(analysis) {
+    const template = document.getElementById('historyCardTemplate');
+    const card = template.content.cloneNode(true);
+    
+    // Update card content
+    card.querySelector('.analysis-tool').textContent = analysis.tool_name;
+    card.querySelector('.analysis-dataset').textContent = analysis.dataset_name;
+    card.querySelector('.analysis-duration').textContent = formatDuration(analysis.duration);
+    card.querySelector('.analysis-desc').textContent = analysis.description;
+    card.querySelector('.analysis-timestamp').textContent = formatTimestamp(analysis.timestamp);
+    
+    // Update status badge
+    const statusBadge = card.querySelector('.analysis-status');
+    statusBadge.textContent = analysis.status.charAt(0).toUpperCase() + analysis.status.slice(1);
+    statusBadge.className = `badge ${getStatusBadgeClass(analysis.status)}`;
+    
+    // Store analysis ID for actions
+    card.querySelector('.analysis-card').dataset.analysisId = analysis.id;
+    
+    return card;
+}
+
+function getStatusBadgeClass(status) {
+    switch (status) {
+        case 'success': return 'bg-success';
+        case 'error': return 'bg-danger';
+        case 'running': return 'bg-info';
+        case 'cancelled': return 'bg-warning';
+        default: return 'bg-secondary';
+    }
+}
+
+function updateHistoryStats(analyses) {
+    const total = analyses.length;
+    const successful = analyses.filter(a => a.status === 'success').length;
+    const avgTime = analyses.length > 0 
+        ? analyses.reduce((sum, a) => sum + a.duration, 0) / analyses.length 
+        : 0;
+    const lastRun = analyses.length > 0 
+        ? formatTimestamp(analyses[0].timestamp)
+        : 'Never';
+    
+    document.getElementById('totalAnalyses').textContent = total;
+    document.getElementById('successfulAnalyses').textContent = successful;
+    document.getElementById('avgTime').textContent = formatDuration(avgTime);
+    document.getElementById('lastRun').textContent = lastRun;
+}
+
+function applyFilters() {
+    const tool = document.getElementById('toolFilter').value;
+    const date = document.getElementById('dateFilter').value;
+    const status = document.getElementById('statusFilter').value;
+    const search = document.getElementById('searchHistory').value.toLowerCase();
+    
+    currentFilters = { tool, date, status, search };
+    currentPage = 1;
+    
+    // In a real implementation, this would make an API call
+    loadHistoryData();
+}
+
+function clearFilters() {
+    document.getElementById('toolFilter').value = '';
+    document.getElementById('dateFilter').value = '';
+    document.getElementById('statusFilter').value = '';
+    document.getElementById('searchHistory').value = '';
+    
+    currentFilters = {};
+    currentPage = 1;
+    
+    loadHistoryData();
+}
+
+function refreshHistory() {
+    loadHistoryData();
+}
+
+function clearHistory() {
+    if (confirm('Are you sure you want to clear all analysis history? This action cannot be undone.')) {
+        // In a real implementation, this would make an API call
+        document.getElementById('historyCards').innerHTML = '';
+        document.getElementById('emptyHistory').style.display = 'block';
+        updateHistoryStats([]);
+        showNotification('Analysis history cleared', 'success');
+    }
+}
+
+function exportHistory() {
+    // Implementation for exporting history
+    console.log('Exporting analysis history...');
+    showNotification('History export started', 'info');
+}
+
+function viewAnalysis(button) {
+    const card = button.closest('.analysis-card');
+    const analysisId = card.dataset.analysisId;
+    console.log(`Viewing analysis ${analysisId}`);
+    // Implementation for viewing analysis
+}
+
+function reRunAnalysis(button) {
+    const card = button.closest('.analysis-card');
+    const analysisId = card.dataset.analysisId;
+    console.log(`Re-running analysis ${analysisId}`);
+    // Implementation for re-running analysis
+}
+
+function shareAnalysis(button) {
+    const card = button.closest('.analysis-card');
+    const analysisId = card.dataset.analysisId;
+    console.log(`Sharing analysis ${analysisId}`);
+    // Implementation for sharing analysis
+}
+
+function deleteAnalysis(button) {
+    const card = button.closest('.analysis-card');
+    const analysisId = card.dataset.analysisId;
+    
+    if (confirm('Are you sure you want to delete this analysis?')) {
+        card.remove();
+        showNotification('Analysis deleted', 'success');
+    }
+}
+
+function startNewAnalysis() {
+    // Implementation for starting new analysis
+    console.log('Starting new analysis...');
+}
+
+function loadHistoryData() {
+    // In a real implementation, this would make an API call
+    // For now, we'll use the sample data
+    loadSampleHistoryData();
+}
+
+// Utility functions
+function formatDuration(seconds) {
+    if (seconds < 1) return `${(seconds * 1000).toFixed(0)}ms`;
+    if (seconds < 60) return `${seconds.toFixed(1)}s`;
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}m ${remainingSeconds.toFixed(1)}s`;
+}
+
+function formatTimestamp(timestamp) {
+    const now = new Date();
+    const diff = now - timestamp;
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(diff / 3600000);
+    const days = Math.floor(diff / 86400000);
+    
+    if (minutes < 1) return 'Just now';
+    if (minutes < 60) return `${minutes}m ago`;
+    if (hours < 24) return `${hours}h ago`;
+    if (days < 7) return `${days}d ago`;
+    return timestamp.toLocaleDateString();
+}
+
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// HTMX integration
+document.body.addEventListener('htmx:afterRequest', function(e) {
+    if (e.target.id === 'analysisHistory') {
+        try {
+            const data = JSON.parse(e.detail.xhr.response);
+            displayHistoryCards(data.analyses);
+            updateHistoryStats(data.analyses);
+        } catch (error) {
+            console.error('Error loading history:', error);
+        }
+    }
+});
+</script>

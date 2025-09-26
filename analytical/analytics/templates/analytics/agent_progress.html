@@ -1,0 +1,824 @@
+<!-- Agent Progress Display -->
+<div id="agentProgress" class="agent-progress-container">
+    <!-- Progress Header -->
+    <div class="progress-header bg-dark border-bottom border-secondary p-3">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h5 class="text-light mb-1">
+                    <i class="fas fa-robot me-2"></i>AI Agent Progress
+                </h5>
+                <small class="text-muted">Real-time analysis progress</small>
+            </div>
+            <div class="col-md-4 text-end">
+                <div class="btn-group btn-group-sm" role="group">
+                    <button type="button" class="btn btn-outline-secondary" onclick="minimizeProgress()" title="Minimize">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-info" onclick="refreshProgress()" title="Refresh">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-danger" onclick="stopAnalysis()" title="Stop Analysis">
+                        <i class="fas fa-stop"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Progress Content -->
+    <div class="progress-content">
+        <!-- Overall Progress -->
+        <div class="overall-progress p-3">
+            <div class="progress-info mb-3">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-light mb-1">Analysis Progress</h6>
+                        <small class="text-muted" id="progressStatus">Initializing...</small>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <span class="progress-percentage text-primary" id="progressPercentage">0%</span>
+                    </div>
+                </div>
+            </div>
+            <div class="progress mb-3">
+                <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                     id="progressBar" role="progressbar" style="width: 0%"></div>
+            </div>
+            <div class="progress-details">
+                <div class="row">
+                    <div class="col-md-3">
+                        <small class="text-muted">Elapsed Time</small>
+                        <div class="text-light" id="elapsedTime">0:00</div>
+                    </div>
+                    <div class="col-md-3">
+                        <small class="text-muted">Estimated Remaining</small>
+                        <div class="text-light" id="estimatedTime">-</div>
+                    </div>
+                    <div class="col-md-3">
+                        <small class="text-muted">Current Step</small>
+                        <div class="text-light" id="currentStep">-</div>
+                    </div>
+                    <div class="col-md-3">
+                        <small class="text-muted">AI Model</small>
+                        <div class="text-light" id="aiModel">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Step-by-Step Progress -->
+        <div class="steps-progress p-3 border-top border-secondary">
+            <h6 class="text-light mb-3">
+                <i class="fas fa-list-ol me-2"></i>Analysis Steps
+            </h6>
+            <div id="stepsList" class="steps-list">
+                <!-- Steps will be dynamically inserted here -->
+            </div>
+        </div>
+        
+        <!-- Real-time Logs -->
+        <div class="logs-section p-3 border-top border-secondary">
+            <div class="logs-header mb-3">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h6 class="text-light mb-0">
+                            <i class="fas fa-terminal me-2"></i>Real-time Logs
+                        </h6>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <div class="btn-group btn-group-sm" role="group">
+                            <button type="button" class="btn btn-outline-secondary" onclick="clearLogs()">
+                                <i class="fas fa-trash me-1"></i>Clear
+                            </button>
+                            <button type="button" class="btn btn-outline-info" onclick="exportLogs()">
+                                <i class="fas fa-download me-1"></i>Export
+                            </button>
+                            <button type="button" class="btn btn-outline-primary" onclick="toggleAutoScroll()">
+                                <i class="fas fa-arrow-down me-1"></i>Auto-scroll
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="logs-container">
+                <div id="logsContent" class="logs-content">
+                    <!-- Logs will be dynamically inserted here -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Resource Usage -->
+        <div class="resource-usage p-3 border-top border-secondary">
+            <h6 class="text-light mb-3">
+                <i class="fas fa-chart-line me-2"></i>Resource Usage
+            </h6>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="resource-item">
+                        <div class="resource-label">CPU Usage</div>
+                        <div class="resource-value">
+                            <span id="cpuUsage">0%</span>
+                            <div class="progress progress-sm">
+                                <div class="progress-bar bg-info" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="resource-item">
+                        <div class="resource-label">Memory Usage</div>
+                        <div class="resource-value">
+                            <span id="memoryUsage">0 MB</span>
+                            <div class="progress progress-sm">
+                                <div class="progress-bar bg-success" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="resource-item">
+                        <div class="resource-label">Token Usage</div>
+                        <div class="resource-value">
+                            <span id="tokenUsage">0</span>
+                            <div class="progress progress-sm">
+                                <div class="progress-bar bg-warning" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="resource-item">
+                        <div class="resource-label">Network I/O</div>
+                        <div class="resource-value">
+                            <span id="networkIO">0 KB/s</span>
+                            <div class="progress progress-sm">
+                                <div class="progress-bar bg-danger" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Progress Footer -->
+    <div class="progress-footer bg-dark border-top border-secondary p-3">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <div class="analysis-summary">
+                    <span class="text-muted">Analysis ID:</span>
+                    <span class="text-light" id="analysisId">-</span>
+                    <span class="text-muted ms-3">Started:</span>
+                    <span class="text-light" id="startTime">-</span>
+                </div>
+            </div>
+            <div class="col-md-6 text-end">
+                <div class="progress-actions">
+                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="viewResults()" id="viewResultsBtn" disabled>
+                        <i class="fas fa-eye me-1"></i>View Results
+                    </button>
+                    <button type="button" class="btn btn-outline-success btn-sm" onclick="downloadReport()" id="downloadReportBtn" disabled>
+                        <i class="fas fa-download me-1"></i>Download Report
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Step Template -->
+<template id="stepTemplate">
+    <div class="step-item">
+        <div class="step-icon">
+            <i class="fas fa-circle step-status-icon"></i>
+        </div>
+        <div class="step-content">
+            <div class="step-header">
+                <span class="step-name">Step Name</span>
+                <span class="step-duration">0s</span>
+            </div>
+            <div class="step-description">Step description...</div>
+            <div class="step-progress">
+                <div class="progress progress-sm">
+                    <div class="progress-bar" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<!-- Log Template -->
+<template id="logTemplate">
+    <div class="log-entry">
+        <div class="log-timestamp">00:00:00</div>
+        <div class="log-level">INFO</div>
+        <div class="log-message">Log message...</div>
+    </div>
+</template>
+
+<style>
+.agent-progress-container {
+    background-color: #1a1a1a;
+    border: 1px solid #495057;
+    border-radius: 0.5rem;
+    margin: 1rem 0;
+    animation: slideIn 0.5s ease-in-out;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.progress-header {
+    border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.progress-content {
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.overall-progress {
+    background-color: #2d2d2d;
+}
+
+.progress-info h6 {
+    margin-bottom: 0.25rem;
+}
+
+.progress-percentage {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.progress-details {
+    font-size: 0.875rem;
+}
+
+.steps-progress {
+    background-color: #1a1a1a;
+}
+
+.steps-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.step-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background-color: #2d2d2d;
+    border-radius: 0.5rem;
+    border: 1px solid #495057;
+    transition: all 0.2s ease-in-out;
+}
+
+.step-item.active {
+    border-color: #0d6efd;
+    background-color: rgba(13, 110, 253, 0.1);
+}
+
+.step-item.completed {
+    border-color: #198754;
+    background-color: rgba(25, 135, 84, 0.1);
+}
+
+.step-item.error {
+    border-color: #dc3545;
+    background-color: rgba(220, 53, 69, 0.1);
+}
+
+.step-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.step-status-icon {
+    font-size: 0.75rem;
+    transition: color 0.2s ease-in-out;
+}
+
+.step-item.pending .step-status-icon {
+    color: #6c757d;
+}
+
+.step-item.active .step-status-icon {
+    color: #0d6efd;
+    animation: pulse 1s infinite;
+}
+
+.step-item.completed .step-status-icon {
+    color: #198754;
+}
+
+.step-item.error .step-status-icon {
+    color: #dc3545;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.step-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.step-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.25rem;
+}
+
+.step-name {
+    font-weight: 600;
+    color: #fff;
+    font-size: 0.875rem;
+}
+
+.step-duration {
+    font-size: 0.75rem;
+    color: #6c757d;
+}
+
+.step-description {
+    font-size: 0.75rem;
+    color: #adb5bd;
+    margin-bottom: 0.5rem;
+}
+
+.step-progress .progress {
+    height: 4px;
+    background-color: #495057;
+}
+
+.step-progress .progress-bar {
+    background-color: #0d6efd;
+    transition: width 0.3s ease-in-out;
+}
+
+.logs-section {
+    background-color: #1a1a1a;
+}
+
+.logs-container {
+    background-color: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 0.25rem;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.logs-content {
+    padding: 0.75rem;
+    font-family: 'Courier New', monospace;
+    font-size: 0.75rem;
+    line-height: 1.4;
+}
+
+.log-entry {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 0.25rem;
+    padding: 0.25rem 0;
+}
+
+.log-timestamp {
+    color: #6c757d;
+    flex-shrink: 0;
+    width: 60px;
+}
+
+.log-level {
+    flex-shrink: 0;
+    width: 50px;
+    font-weight: 600;
+}
+
+.log-level.INFO {
+    color: #58a6ff;
+}
+
+.log-level.WARNING {
+    color: #d29922;
+}
+
+.log-level.ERROR {
+    color: #f85149;
+}
+
+.log-level.DEBUG {
+    color: #8b949e;
+}
+
+.log-message {
+    color: #f0f6fc;
+    flex: 1;
+    word-wrap: break-word;
+}
+
+.resource-usage {
+    background-color: #2d2d2d;
+}
+
+.resource-item {
+    text-align: center;
+}
+
+.resource-label {
+    font-size: 0.75rem;
+    color: #6c757d;
+    margin-bottom: 0.25rem;
+}
+
+.resource-value {
+    font-size: 0.875rem;
+    color: #fff;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.resource-value .progress {
+    height: 4px;
+    background-color: #495057;
+}
+
+.progress-footer {
+    border-radius: 0 0 0.5rem 0.5rem;
+}
+
+.analysis-summary {
+    font-size: 0.875rem;
+}
+
+.progress-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Scrollbar styling */
+.progress-content::-webkit-scrollbar,
+.logs-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.progress-content::-webkit-scrollbar-track,
+.logs-container::-webkit-scrollbar-track {
+    background: #1a1a1a;
+}
+
+.progress-content::-webkit-scrollbar-thumb,
+.logs-container::-webkit-scrollbar-thumb {
+    background: #495057;
+    border-radius: 3px;
+}
+
+.progress-content::-webkit-scrollbar-thumb:hover,
+.logs-container::-webkit-scrollbar-thumb:hover {
+    background: #6c757d;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .progress-details .row {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .progress-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .progress-actions .btn {
+        width: 100%;
+    }
+    
+    .resource-usage .row {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+</style>
+
+<script>
+// Agent Progress JavaScript
+let progressInterval = null;
+let startTime = null;
+let autoScroll = true;
+let currentSteps = [];
+
+document.addEventListener('DOMContentLoaded', function() {
+    initializeProgress();
+});
+
+function initializeProgress() {
+    // Initialize with sample data
+    loadSampleProgress();
+    
+    // Start progress polling
+    startProgressPolling();
+}
+
+function loadSampleProgress() {
+    const sampleSteps = [
+        {
+            id: 1,
+            name: 'Data Loading',
+            description: 'Loading and validating dataset...',
+            status: 'completed',
+            duration: '2.3s',
+            progress: 100
+        },
+        {
+            id: 2,
+            name: 'Data Preprocessing',
+            description: 'Cleaning and transforming data...',
+            status: 'completed',
+            duration: '1.8s',
+            progress: 100
+        },
+        {
+            id: 3,
+            name: 'Descriptive Statistics',
+            description: 'Calculating basic statistics...',
+            status: 'active',
+            duration: '0.5s',
+            progress: 45
+        },
+        {
+            id: 4,
+            name: 'Correlation Analysis',
+            description: 'Analyzing variable relationships...',
+            status: 'pending',
+            duration: '0s',
+            progress: 0
+        },
+        {
+            id: 5,
+            name: 'AI Insights Generation',
+            description: 'Generating AI-powered insights...',
+            status: 'pending',
+            duration: '0s',
+            progress: 0
+        },
+        {
+            id: 6,
+            name: 'Report Generation',
+            description: 'Creating comprehensive report...',
+            status: 'pending',
+            duration: '0s',
+            progress: 0
+        }
+    ];
+    
+    currentSteps = sampleSteps;
+    updateStepsDisplay();
+    updateOverallProgress();
+    updateResourceUsage();
+    
+    // Set initial values
+    document.getElementById('analysisId').textContent = 'ANL-' + Date.now().toString().slice(-6);
+    document.getElementById('startTime').textContent = new Date().toLocaleTimeString();
+    document.getElementById('aiModel').textContent = 'Gemini 1.5 Flash';
+    
+    startTime = Date.now();
+}
+
+function updateStepsDisplay() {
+    const container = document.getElementById('stepsList');
+    container.innerHTML = '';
+    
+    currentSteps.forEach(step => {
+        const template = document.getElementById('stepTemplate').content.cloneNode(true);
+        
+        template.querySelector('.step-name').textContent = step.name;
+        template.querySelector('.step-description').textContent = step.description;
+        template.querySelector('.step-duration').textContent = step.duration;
+        
+        const stepItem = template.querySelector('.step-item');
+        stepItem.classList.add(step.status);
+        
+        const progressBar = template.querySelector('.step-progress .progress-bar');
+        progressBar.style.width = step.progress + '%';
+        
+        if (step.status === 'completed') {
+            progressBar.classList.add('bg-success');
+        } else if (step.status === 'active') {
+            progressBar.classList.add('bg-primary');
+        } else if (step.status === 'error') {
+            progressBar.classList.add('bg-danger');
+        }
+        
+        container.appendChild(template);
+    });
+}
+
+function updateOverallProgress() {
+    const completedSteps = currentSteps.filter(step => step.status === 'completed').length;
+    const totalSteps = currentSteps.length;
+    const progress = Math.round((completedSteps / totalSteps) * 100);
+    
+    document.getElementById('progressPercentage').textContent = progress + '%';
+    document.getElementById('progressBar').style.width = progress + '%';
+    
+    const activeStep = currentSteps.find(step => step.status === 'active');
+    if (activeStep) {
+        document.getElementById('progressStatus').textContent = activeStep.name;
+        document.getElementById('currentStep').textContent = activeStep.name;
+    } else if (progress === 100) {
+        document.getElementById('progressStatus').textContent = 'Analysis Complete';
+        document.getElementById('currentStep').textContent = 'Complete';
+        document.getElementById('viewResultsBtn').disabled = false;
+        document.getElementById('downloadReportBtn').disabled = false;
+    }
+    
+    // Update elapsed time
+    if (startTime) {
+        const elapsed = Date.now() - startTime;
+        document.getElementById('elapsedTime').textContent = formatDuration(elapsed);
+    }
+}
+
+function updateResourceUsage() {
+    // Simulate resource usage
+    const cpuUsage = Math.floor(Math.random() * 30) + 20; // 20-50%
+    const memoryUsage = Math.floor(Math.random() * 200) + 100; // 100-300 MB
+    const tokenUsage = Math.floor(Math.random() * 500) + 1000; // 1000-1500 tokens
+    const networkIO = Math.floor(Math.random() * 50) + 10; // 10-60 KB/s
+    
+    document.getElementById('cpuUsage').textContent = cpuUsage + '%';
+    document.getElementById('cpuUsage').nextElementSibling.querySelector('.progress-bar').style.width = cpuUsage + '%';
+    
+    document.getElementById('memoryUsage').textContent = memoryUsage + ' MB';
+    document.getElementById('memoryUsage').nextElementSibling.querySelector('.progress-bar').style.width = Math.min(memoryUsage / 5, 100) + '%';
+    
+    document.getElementById('tokenUsage').textContent = tokenUsage.toLocaleString();
+    document.getElementById('tokenUsage').nextElementSibling.querySelector('.progress-bar').style.width = Math.min(tokenUsage / 20, 100) + '%';
+    
+    document.getElementById('networkIO').textContent = networkIO + ' KB/s';
+    document.getElementById('networkIO').nextElementSibling.querySelector('.progress-bar').style.width = Math.min(networkIO * 2, 100) + '%';
+}
+
+function addLogEntry(level, message) {
+    const container = document.getElementById('logsContent');
+    const template = document.getElementById('logTemplate').content.cloneNode(true);
+    
+    template.querySelector('.log-timestamp').textContent = new Date().toLocaleTimeString();
+    template.querySelector('.log-level').textContent = level;
+    template.querySelector('.log-level').classList.add(level);
+    template.querySelector('.log-message').textContent = message;
+    
+    container.appendChild(template);
+    
+    if (autoScroll) {
+        container.scrollTop = container.scrollHeight;
+    }
+}
+
+function startProgressPolling() {
+    progressInterval = setInterval(() => {
+        simulateProgress();
+        updateResourceUsage();
+    }, 2000);
+}
+
+function simulateProgress() {
+    const activeStepIndex = currentSteps.findIndex(step => step.status === 'active');
+    
+    if (activeStepIndex !== -1) {
+        const activeStep = currentSteps[activeStepIndex];
+        activeStep.progress = Math.min(activeStep.progress + Math.random() * 15, 100);
+        
+        if (activeStep.progress >= 100) {
+            activeStep.status = 'completed';
+            activeStep.duration = formatDuration(Date.now() - startTime);
+            
+            // Move to next step
+            if (activeStepIndex + 1 < currentSteps.length) {
+                currentSteps[activeStepIndex + 1].status = 'active';
+                addLogEntry('INFO', `Completed: ${activeStep.name}`);
+                addLogEntry('INFO', `Starting: ${currentSteps[activeStepIndex + 1].name}`);
+            } else {
+                addLogEntry('INFO', 'Analysis completed successfully!');
+                clearInterval(progressInterval);
+            }
+        }
+        
+        updateStepsDisplay();
+        updateOverallProgress();
+    }
+}
+
+function minimizeProgress() {
+    const content = document.querySelector('.progress-content');
+    content.style.display = content.style.display === 'none' ? 'block' : 'none';
+}
+
+function refreshProgress() {
+    // Implementation for refreshing progress
+    addLogEntry('INFO', 'Progress refreshed');
+}
+
+function stopAnalysis() {
+    if (confirm('Are you sure you want to stop the analysis?')) {
+        clearInterval(progressInterval);
+        
+        const activeStep = currentSteps.find(step => step.status === 'active');
+        if (activeStep) {
+            activeStep.status = 'error';
+            activeStep.progress = 0;
+        }
+        
+        document.getElementById('progressStatus').textContent = 'Analysis Stopped';
+        addLogEntry('WARNING', 'Analysis stopped by user');
+        
+        updateStepsDisplay();
+        updateOverallProgress();
+    }
+}
+
+function clearLogs() {
+    document.getElementById('logsContent').innerHTML = '';
+}
+
+function exportLogs() {
+    const logs = Array.from(document.querySelectorAll('.log-entry')).map(log => {
+        return {
+            timestamp: log.querySelector('.log-timestamp').textContent,
+            level: log.querySelector('.log-level').textContent,
+            message: log.querySelector('.log-message').textContent
+        };
+    });
+    
+    const blob = new Blob([JSON.stringify(logs, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `analysis-logs-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    showNotification('Logs exported successfully', 'success');
+}
+
+function toggleAutoScroll() {
+    autoScroll = !autoScroll;
+    const button = event.target.closest('button');
+    const icon = button.querySelector('i');
+    
+    if (autoScroll) {
+        icon.className = 'fas fa-arrow-down me-1';
+        button.classList.remove('btn-outline-primary');
+        button.classList.add('btn-primary');
+    } else {
+        icon.className = 'fas fa-pause me-1';
+        button.classList.remove('btn-primary');
+        button.classList.add('btn-outline-primary');
+    }
+}
+
+function viewResults() {
+    // Implementation for viewing results
+    showNotification('Opening results...', 'info');
+}
+
+function downloadReport() {
+    // Implementation for downloading report
+    showNotification('Downloading report...', 'info');
+}
+
+function formatDuration(milliseconds) {
+    const seconds = Math.floor(milliseconds / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    
+    if (minutes > 0) {
+        return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+    }
+    return `${remainingSeconds}s`;
+}
+
+// HTMX integration
+document.body.addEventListener('htmx:afterRequest', function(e) {
+    if (e.detail.xhr.responseURL.includes('/api/agent/run/')) {
+        if (e.detail.xhr.status === 200) {
+            const response = JSON.parse(e.detail.xhr.response);
+            if (response.analysis_id) {
+                document.getElementById('analysisId').textContent = response.analysis_id;
+                addLogEntry('INFO', `Analysis started with ID: ${response.analysis_id}`);
+            }
+        }
+    }
+});
+</script>

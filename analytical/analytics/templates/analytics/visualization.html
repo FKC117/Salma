@@ -1,0 +1,511 @@
+<!-- Chart and Table Rendering -->
+<div id="visualizationContainer" class="visualization-container">
+    <!-- Visualization Controls -->
+    <div class="visualization-controls mb-3">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <div class="btn-group" role="group" aria-label="Chart Types">
+                    <button type="button" class="btn btn-outline-primary btn-sm active" data-chart-type="line">
+                        <i class="fas fa-chart-line me-1"></i>Line
+                    </button>
+                    <button type="button" class="btn btn-outline-primary btn-sm" data-chart-type="bar">
+                        <i class="fas fa-chart-bar me-1"></i>Bar
+                    </button>
+                    <button type="button" class="btn btn-outline-primary btn-sm" data-chart-type="scatter">
+                        <i class="fas fa-chart-scatter me-1"></i>Scatter
+                    </button>
+                    <button type="button" class="btn btn-outline-primary btn-sm" data-chart-type="pie">
+                        <i class="fas fa-chart-pie me-1"></i>Pie
+                    </button>
+                    <button type="button" class="btn btn-outline-primary btn-sm" data-chart-type="heatmap">
+                        <i class="fas fa-th me-1"></i>Heatmap
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-6 text-end">
+                <div class="btn-group" role="group" aria-label="Visualization Actions">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="downloadChart()">
+                        <i class="fas fa-download me-1"></i>Download
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="fullscreenChart()">
+                        <i class="fas fa-expand me-1"></i>Fullscreen
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="resetChart()">
+                        <i class="fas fa-undo me-1"></i>Reset
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Chart Configuration Panel -->
+    <div class="chart-config-panel mb-3">
+        <div class="accordion" id="chartConfigAccordion">
+            <div class="accordion-item bg-dark border-secondary">
+                <h2 class="accordion-header">
+                    <button class="accordion-button bg-dark text-light border-secondary collapsed" 
+                            type="button" data-bs-toggle="collapse" data-bs-target="#chartConfigCollapse" 
+                            aria-expanded="false" aria-controls="chartConfigCollapse">
+                        <i class="fas fa-sliders-h me-2"></i>Chart Configuration
+                    </button>
+                </h2>
+                <div id="chartConfigCollapse" class="accordion-collapse collapse" data-bs-parent="#chartConfigAccordion">
+                    <div class="accordion-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label for="chartTitle" class="form-label text-light">Chart Title</label>
+                                <input type="text" class="form-control bg-dark text-light border-secondary" 
+                                       id="chartTitle" placeholder="Enter chart title">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="xAxisLabel" class="form-label text-light">X-Axis Label</label>
+                                <input type="text" class="form-control bg-dark text-light border-secondary" 
+                                       id="xAxisLabel" placeholder="X-axis label">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="yAxisLabel" class="form-label text-light">Y-Axis Label</label>
+                                <input type="text" class="form-control bg-dark text-light border-secondary" 
+                                       id="yAxisLabel" placeholder="Y-axis label">
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-3">
+                                <label for="chartWidth" class="form-label text-light">Width</label>
+                                <input type="number" class="form-control bg-dark text-light border-secondary" 
+                                       id="chartWidth" value="800" min="300" max="2000">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="chartHeight" class="form-label text-light">Height</label>
+                                <input type="number" class="form-control bg-dark text-light border-secondary" 
+                                       id="chartHeight" value="400" min="200" max="1200">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="chartTheme" class="form-label text-light">Theme</label>
+                                <select class="form-select bg-dark text-light border-secondary" id="chartTheme">
+                                    <option value="dark">Dark</option>
+                                    <option value="light">Light</option>
+                                    <option value="auto">Auto</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="chartAnimation" class="form-label text-light">Animation</label>
+                                <select class="form-select bg-dark text-light border-secondary" id="chartAnimation">
+                                    <option value="true">Enabled</option>
+                                    <option value="false">Disabled</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <button type="button" class="btn btn-primary btn-sm" onclick="applyChartConfig()">
+                                    <i class="fas fa-check me-1"></i>Apply Configuration
+                                </button>
+                                <button type="button" class="btn btn-secondary btn-sm ms-2" onclick="resetChartConfig()">
+                                    <i class="fas fa-undo me-1"></i>Reset to Default
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Chart Container -->
+    <div class="chart-container mb-4">
+        <div class="card bg-dark border-secondary">
+            <div class="card-body">
+                <div id="chartCanvas" class="chart-canvas">
+                    <!-- Chart will be rendered here -->
+                    <div class="chart-placeholder d-flex justify-content-center align-items-center" style="height: 400px;">
+                        <div class="text-center text-muted">
+                            <i class="fas fa-chart-line fa-3x mb-3"></i>
+                            <h5>No data to visualize</h5>
+                            <p>Run an analysis to see visualizations here</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Data Table -->
+    <div class="data-table-container">
+        <div class="card bg-dark border-secondary">
+            <div class="card-header border-secondary">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h6 class="text-light mb-0">
+                            <i class="fas fa-table me-2"></i>Data Table
+                        </h6>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <div class="btn-group btn-group-sm" role="group">
+                            <button type="button" class="btn btn-outline-secondary" onclick="exportTable('csv')">
+                                <i class="fas fa-file-csv me-1"></i>CSV
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" onclick="exportTable('excel')">
+                                <i class="fas fa-file-excel me-1"></i>Excel
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" onclick="exportTable('json')">
+                                <i class="fas fa-file-code me-1"></i>JSON
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-dark table-striped table-hover" id="visualizationTable">
+                        <thead>
+                            <tr id="tableHeaders">
+                                <!-- Headers will be dynamically inserted -->
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <!-- Data will be dynamically inserted -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-3">
+                    <nav aria-label="Table pagination">
+                        <ul class="pagination pagination-sm justify-content-center" id="tablePagination">
+                            <!-- Pagination will be dynamically inserted -->
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Statistics Summary -->
+    <div class="statistics-summary mt-4">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card bg-dark border-secondary text-center">
+                    <div class="card-body">
+                        <i class="fas fa-calculator text-primary fa-2x mb-2"></i>
+                        <h6 class="text-light">Mean</h6>
+                        <h5 class="text-primary" id="statMean">-</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-dark border-secondary text-center">
+                    <div class="card-body">
+                        <i class="fas fa-chart-line text-success fa-2x mb-2"></i>
+                        <h6 class="text-light">Median</h6>
+                        <h5 class="text-success" id="statMedian">-</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-dark border-secondary text-center">
+                    <div class="card-body">
+                        <i class="fas fa-expand-arrows-alt text-info fa-2x mb-2"></i>
+                        <h6 class="text-light">Std Dev</h6>
+                        <h5 class="text-info" id="statStdDev">-</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-dark border-secondary text-center">
+                    <div class="card-body">
+                        <i class="fas fa-sort-numeric-up text-warning fa-2x mb-2"></i>
+                        <h6 class="text-light">Range</h6>
+                        <h5 class="text-warning" id="statRange">-</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+
+<style>
+.chart-canvas {
+    position: relative;
+    height: 400px;
+    width: 100%;
+}
+
+.visualization-container {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.chart-placeholder {
+    background: linear-gradient(45deg, #1a1a1a 25%, transparent 25%), 
+                linear-gradient(-45deg, #1a1a1a 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #1a1a1a 75%), 
+                linear-gradient(-45deg, transparent 75%, #1a1a1a 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+}
+
+.btn-group .btn.active {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    color: white;
+}
+</style>
+
+<script>
+// Visualization JavaScript
+let currentChart = null;
+let chartData = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+    initializeVisualization();
+});
+
+function initializeVisualization() {
+    // Chart type buttons
+    document.querySelectorAll('[data-chart-type]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('[data-chart-type]').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            const chartType = this.dataset.chartType;
+            renderChart(chartType);
+        });
+    });
+    
+    // Load sample data for demonstration
+    loadSampleData();
+}
+
+function loadSampleData() {
+    // Sample data for demonstration
+    chartData = {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        datasets: [{
+            label: 'Sample Data',
+            data: [12, 19, 3, 5, 2, 3],
+            borderColor: 'rgb(75, 192, 192)',
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            tension: 0.1
+        }]
+    };
+    
+    renderChart('line');
+    updateStatistics();
+}
+
+function renderChart(type) {
+    const ctx = document.getElementById('chartCanvas');
+    const placeholder = ctx.querySelector('.chart-placeholder');
+    
+    if (placeholder) {
+        placeholder.style.display = 'none';
+    }
+    
+    // Destroy existing chart
+    if (currentChart) {
+        currentChart.destroy();
+    }
+    
+    // Create canvas if it doesn't exist
+    let canvas = ctx.querySelector('canvas');
+    if (!canvas) {
+        canvas = document.createElement('canvas');
+        canvas.id = 'chart';
+        ctx.appendChild(canvas);
+    }
+    
+    const config = getChartConfig(type);
+    currentChart = new Chart(canvas, config);
+}
+
+function getChartConfig(type) {
+    const baseConfig = {
+        type: type,
+        data: chartData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#fff'
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        color: '#fff'
+                    },
+                    grid: {
+                        color: '#495057'
+                    }
+                },
+                y: {
+                    ticks: {
+                        color: '#fff'
+                    },
+                    grid: {
+                        color: '#495057'
+                    }
+                }
+            }
+        }
+    };
+    
+    // Type-specific configurations
+    switch (type) {
+        case 'pie':
+            baseConfig.options.scales = {};
+            break;
+        case 'scatter':
+            baseConfig.data.datasets[0].showLine = false;
+            break;
+    }
+    
+    return baseConfig;
+}
+
+function updateStatistics() {
+    if (!chartData || !chartData.datasets[0].data) return;
+    
+    const data = chartData.datasets[0].data;
+    const mean = data.reduce((a, b) => a + b, 0) / data.length;
+    const sorted = [...data].sort((a, b) => a - b);
+    const median = sorted.length % 2 === 0 
+        ? (sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2
+        : sorted[Math.floor(sorted.length / 2)];
+    const variance = data.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / data.length;
+    const stdDev = Math.sqrt(variance);
+    const range = Math.max(...data) - Math.min(...data);
+    
+    document.getElementById('statMean').textContent = mean.toFixed(2);
+    document.getElementById('statMedian').textContent = median.toFixed(2);
+    document.getElementById('statStdDev').textContent = stdDev.toFixed(2);
+    document.getElementById('statRange').textContent = range.toFixed(2);
+}
+
+function applyChartConfig() {
+    const title = document.getElementById('chartTitle').value;
+    const xLabel = document.getElementById('xAxisLabel').value;
+    const yLabel = document.getElementById('yAxisLabel').value;
+    const width = document.getElementById('chartWidth').value;
+    const height = document.getElementById('chartHeight').value;
+    
+    if (currentChart) {
+        currentChart.options.plugins.title = {
+            display: !!title,
+            text: title,
+            color: '#fff'
+        };
+        
+        if (currentChart.options.scales) {
+            if (currentChart.options.scales.x) {
+                currentChart.options.scales.x.title = {
+                    display: !!xLabel,
+                    text: xLabel,
+                    color: '#fff'
+                };
+            }
+            if (currentChart.options.scales.y) {
+                currentChart.options.scales.y.title = {
+                    display: !!yLabel,
+                    text: yLabel,
+                    color: '#fff'
+                };
+            }
+        }
+        
+        currentChart.update();
+    }
+    
+    // Update canvas size
+    const canvas = document.getElementById('chart');
+    if (canvas) {
+        canvas.style.width = width + 'px';
+        canvas.style.height = height + 'px';
+    }
+}
+
+function resetChartConfig() {
+    document.getElementById('chartTitle').value = '';
+    document.getElementById('xAxisLabel').value = '';
+    document.getElementById('yAxisLabel').value = '';
+    document.getElementById('chartWidth').value = '800';
+    document.getElementById('chartHeight').value = '400';
+    document.getElementById('chartTheme').value = 'dark';
+    document.getElementById('chartAnimation').value = 'true';
+}
+
+function downloadChart() {
+    if (currentChart) {
+        const url = currentChart.toBase64Image();
+        const link = document.createElement('a');
+        link.download = 'chart.png';
+        link.href = url;
+        link.click();
+    }
+}
+
+function fullscreenChart() {
+    const canvas = document.getElementById('chart');
+    if (canvas) {
+        if (canvas.requestFullscreen) {
+            canvas.requestFullscreen();
+        }
+    }
+}
+
+function resetChart() {
+    if (currentChart) {
+        currentChart.reset();
+    }
+}
+
+function exportTable(format) {
+    console.log(`Exporting table as ${format}`);
+    // Implementation for table export
+}
+
+// HTMX integration
+document.body.addEventListener('htmx:afterRequest', function(e) {
+    if (e.target.id === 'visualizationContainer') {
+        try {
+            const data = JSON.parse(e.detail.xhr.response);
+            updateVisualizationData(data);
+        } catch (error) {
+            console.error('Error updating visualization:', error);
+        }
+    }
+});
+
+function updateVisualizationData(data) {
+    if (data.chart_data) {
+        chartData = data.chart_data;
+        renderChart('line');
+        updateStatistics();
+    }
+    
+    if (data.table_data) {
+        updateDataTable(data.table_data);
+    }
+}
+
+function updateDataTable(data) {
+    if (!data || data.length === 0) return;
+    
+    const headers = Object.keys(data[0]);
+    const headerRow = document.getElementById('tableHeaders');
+    headerRow.innerHTML = headers.map(h => `<th>${h}</th>`).join('');
+    
+    const tbody = document.getElementById('tableBody');
+    tbody.innerHTML = data.slice(0, 50).map(row => 
+        `<tr>${headers.map(h => `<td>${row[h]}</td>`).join('')}</tr>`
+    ).join('');
+}
+</script>

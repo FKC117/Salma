@@ -1,0 +1,200 @@
+<!-- Statistical Tools Panel -->
+<div class="tools-panel">
+    <!-- Statistical Tools -->
+    <div class="tool-category">
+        <h4 class="tool-category-title">Statistical Analysis</h4>
+        <div class="tool-item" 
+             hx-post="{% url 'analysis_execute' %}" 
+             hx-vals='{"tool_name": "descriptive_stats", "parameters": {}}'
+             hx-target="#analysis-results"
+             hx-indicator="#analysis-loading">
+            <i class="bi bi-graph-up tool-icon"></i>
+            <div class="tool-info">
+                <h5 class="tool-name">Descriptive Statistics</h5>
+                <p class="tool-description">Mean, median, mode, std dev</p>
+            </div>
+        </div>
+        
+        <div class="tool-item" 
+             hx-post="{% url 'analysis_execute' %}" 
+             hx-vals='{"tool_name": "correlation_matrix", "parameters": {}}'
+             hx-target="#analysis-results"
+             hx-indicator="#analysis-loading">
+            <i class="bi bi-diagram-3 tool-icon"></i>
+            <div class="tool-info">
+                <h5 class="tool-name">Correlation Matrix</h5>
+                <p class="tool-description">Variable relationships</p>
+            </div>
+        </div>
+        
+        <div class="tool-item" 
+             hx-post="{% url 'analysis_execute' %}" 
+             hx-vals='{"tool_name": "regression_analysis", "parameters": {}}'
+             hx-target="#analysis-results"
+             hx-indicator="#analysis-loading">
+            <i class="bi bi-graph-down-arrow tool-icon"></i>
+            <div class="tool-info">
+                <h5 class="tool-name">Regression Analysis</h5>
+                <p class="tool-description">Linear and multiple regression</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Visualization Tools -->
+    <div class="tool-category">
+        <h4 class="tool-category-title">Visualization</h4>
+        <div class="tool-item" 
+             hx-post="{% url 'analysis_execute' %}" 
+             hx-vals='{"tool_name": "histogram", "parameters": {}}'
+             hx-target="#analysis-results"
+             hx-indicator="#analysis-loading">
+            <i class="bi bi-bar-chart tool-icon"></i>
+            <div class="tool-info">
+                <h5 class="tool-name">Histogram</h5>
+                <p class="tool-description">Distribution visualization</p>
+            </div>
+        </div>
+        
+        <div class="tool-item" 
+             hx-post="{% url 'analysis_execute' %}" 
+             hx-vals='{"tool_name": "scatter_plot", "parameters": {}}'
+             hx-target="#analysis-results"
+             hx-indicator="#analysis-loading">
+            <i class="bi bi-scatter tool-icon"></i>
+            <div class="tool-info">
+                <h5 class="tool-name">Scatter Plot</h5>
+                <p class="tool-description">Two-variable relationship</p>
+            </div>
+        </div>
+        
+        <div class="tool-item" 
+             onclick="alert('Box Plot visualization coming soon!')">
+            <i class="bi bi-box tool-icon"></i>
+            <div class="tool-info">
+                <h5 class="tool-name">Box Plot</h5>
+                <p class="tool-description">Distribution summary</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Machine Learning Tools -->
+    <div class="tool-category">
+        <h4 class="tool-category-title">Machine Learning</h4>
+        <div class="tool-item" 
+             onclick="alert('Linear Regression coming soon!')">
+            <i class="bi bi-graph-down-arrow tool-icon"></i>
+            <div class="tool-info">
+                <h5 class="tool-name">Linear Regression</h5>
+                <p class="tool-description">Predictive modeling</p>
+            </div>
+        </div>
+        
+        <div class="tool-item" 
+             onclick="alert('Clustering analysis coming soon!')">
+            <i class="bi bi-diagram-2 tool-icon"></i>
+            <div class="tool-info">
+                <h5 class="tool-name">Clustering</h5>
+                <p class="tool-description">K-means clustering</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Survival Analysis Tools -->
+    <div class="tool-category">
+        <h4 class="tool-category-title">Survival Analysis</h4>
+        <div class="tool-item" 
+             onclick="alert('Kaplan-Meier analysis coming soon!')">
+            <i class="bi bi-graph-up-arrow tool-icon"></i>
+            <div class="tool-info">
+                <h5 class="tool-name">Kaplan-Meier</h5>
+                <p class="tool-description">Survival curve estimation</p>
+            </div>
+        </div>
+        
+        <div class="tool-item" 
+             onclick="alert('Cox Regression analysis coming soon!')">
+            <i class="bi bi-graph-down tool-icon"></i>
+            <div class="tool-info">
+                <h5 class="tool-name">Cox Regression</h5>
+                <p class="tool-description">Proportional hazards model</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.tools-panel {
+    padding: 1rem;
+}
+
+.tool-category {
+    margin-bottom: 1.5rem;
+}
+
+.tool-category-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--analytical-text-secondary);
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.25rem;
+    border-bottom: 1px solid var(--analytical-border-color);
+}
+
+.tool-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    background-color: var(--analytical-bg-tertiary);
+    border: 1px solid var(--analytical-border-color);
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: var(--transition-normal);
+}
+
+.tool-item:hover {
+    background-color: var(--analytical-accent-blue);
+    border-color: var(--analytical-accent-blue);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px var(--analytical-shadow);
+}
+
+.tool-icon {
+    font-size: 1.25rem;
+    color: var(--analytical-accent-blue);
+    flex-shrink: 0;
+}
+
+.tool-item:hover .tool-icon {
+    color: white;
+}
+
+.tool-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.tool-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin: 0 0 0.25rem 0;
+    color: var(--analytical-text-primary);
+}
+
+.tool-item:hover .tool-name {
+    color: white;
+}
+
+.tool-description {
+    font-size: 0.75rem;
+    margin: 0;
+    color: var(--analytical-text-secondary);
+    line-height: 1.3;
+}
+
+.tool-item:hover .tool-description {
+    color: rgba(255, 255, 255, 0.8);
+}
+</style>

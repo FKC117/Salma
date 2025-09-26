@@ -1,0 +1,887 @@
+<!-- Image and Table Display in Chat -->
+<div id="chatContent" class="chat-content-container">
+    <!-- Content Tabs -->
+    <div class="content-tabs mb-3">
+        <ul class="nav nav-tabs nav-tabs-dark" id="contentTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="images-tab" data-bs-toggle="tab" 
+                        data-bs-target="#images" type="button" role="tab">
+                    <i class="fas fa-image me-1"></i>Images
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tables-tab" data-bs-toggle="tab" 
+                        data-bs-target="#tables" type="button" role="tab">
+                    <i class="fas fa-table me-1"></i>Tables
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="charts-tab" data-bs-toggle="tab" 
+                        data-bs-target="#charts" type="button" role="tab">
+                    <i class="fas fa-chart-bar me-1"></i>Charts
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="files-tab" data-bs-toggle="tab" 
+                        data-bs-target="#files" type="button" role="tab">
+                    <i class="fas fa-file me-1"></i>Files
+                </button>
+            </li>
+        </ul>
+    </div>
+    
+    <!-- Tab Content -->
+    <div class="tab-content" id="contentTabContent">
+        <!-- Images Tab -->
+        <div class="tab-pane fade show active" id="images" role="tabpanel">
+            <div class="images-container">
+                <!-- Image Gallery -->
+                <div id="imageGallery" class="image-gallery">
+                    <!-- Images will be dynamically inserted here -->
+                </div>
+                
+                <!-- Image Upload Area -->
+                <div class="image-upload-area">
+                    <div class="upload-zone" id="imageUploadZone">
+                        <div class="upload-content">
+                            <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+                            <h6 class="text-light">Drop images here or click to browse</h6>
+                            <p class="text-muted">Supported: PNG, JPG, JPEG, GIF, WebP</p>
+                            <input type="file" id="imageInput" multiple accept="image/*" style="display: none;">
+                            <button type="button" class="btn btn-outline-primary" onclick="selectImages()">
+                                <i class="fas fa-plus me-1"></i>Add Images
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tables Tab -->
+        <div class="tab-pane fade" id="tables" role="tabpanel">
+            <div class="tables-container">
+                <!-- Table List -->
+                <div id="tableList" class="table-list">
+                    <!-- Tables will be dynamically inserted here -->
+                </div>
+                
+                <!-- Table Creation Area -->
+                <div class="table-creation-area">
+                    <div class="card bg-dark border-secondary">
+                        <div class="card-header border-secondary">
+                            <h6 class="text-light mb-0">
+                                <i class="fas fa-table me-2"></i>Create New Table
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <form id="tableCreationForm">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="tableName" class="form-label text-light">Table Name</label>
+                                        <input type="text" class="form-control bg-dark text-light border-secondary" 
+                                               id="tableName" placeholder="Enter table name">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="tableRows" class="form-label text-light">Rows</label>
+                                        <input type="number" class="form-control bg-dark text-light border-secondary" 
+                                               id="tableRows" value="3" min="1" max="20">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="tableCols" class="form-label text-light">Columns</label>
+                                        <input type="number" class="form-control bg-dark text-light border-secondary" 
+                                               id="tableCols" value="3" min="1" max="10">
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <button type="button" class="btn btn-primary" onclick="createTable()">
+                                        <i class="fas fa-plus me-1"></i>Create Table
+                                    </button>
+                                    <button type="button" class="btn btn-secondary ms-2" onclick="importTable()">
+                                        <i class="fas fa-upload me-1"></i>Import CSV
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Charts Tab -->
+        <div class="tab-pane fade" id="charts" role="tabpanel">
+            <div class="charts-container">
+                <!-- Chart Gallery -->
+                <div id="chartGallery" class="chart-gallery">
+                    <!-- Charts will be dynamically inserted here -->
+                </div>
+                
+                <!-- Chart Creation Area -->
+                <div class="chart-creation-area">
+                    <div class="card bg-dark border-secondary">
+                        <div class="card-header border-secondary">
+                            <h6 class="text-light mb-0">
+                                <i class="fas fa-chart-bar me-2"></i>Create New Chart
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label for="chartType" class="form-label text-light">Chart Type</label>
+                                    <select class="form-select bg-dark text-light border-secondary" id="chartType">
+                                        <option value="line">Line Chart</option>
+                                        <option value="bar">Bar Chart</option>
+                                        <option value="pie">Pie Chart</option>
+                                        <option value="scatter">Scatter Plot</option>
+                                        <option value="area">Area Chart</option>
+                                        <option value="histogram">Histogram</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="chartData" class="form-label text-light">Data Source</label>
+                                    <select class="form-select bg-dark text-light border-secondary" id="chartData">
+                                        <option value="manual">Manual Entry</option>
+                                        <option value="dataset">From Dataset</option>
+                                        <option value="analysis">From Analysis</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="chartTitle" class="form-label text-light">Chart Title</label>
+                                    <input type="text" class="form-control bg-dark text-light border-secondary" 
+                                           id="chartTitle" placeholder="Enter chart title">
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <button type="button" class="btn btn-primary" onclick="createChart()">
+                                    <i class="fas fa-plus me-1"></i>Create Chart
+                                </button>
+                                <button type="button" class="btn btn-secondary ms-2" onclick="previewChart()">
+                                    <i class="fas fa-eye me-1"></i>Preview
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Files Tab -->
+        <div class="tab-pane fade" id="files" role="tabpanel">
+            <div class="files-container">
+                <!-- File List -->
+                <div id="fileList" class="file-list">
+                    <!-- Files will be dynamically inserted here -->
+                </div>
+                
+                <!-- File Upload Area -->
+                <div class="file-upload-area">
+                    <div class="upload-zone" id="fileUploadZone">
+                        <div class="upload-content">
+                            <i class="fas fa-file-upload fa-3x text-muted mb-3"></i>
+                            <h6 class="text-light">Drop files here or click to browse</h6>
+                            <p class="text-muted">Supported: CSV, Excel, JSON, PDF, TXT</p>
+                            <input type="file" id="fileInput" multiple accept=".csv,.xlsx,.xls,.json,.pdf,.txt" style="display: none;">
+                            <button type="button" class="btn btn-outline-primary" onclick="selectFiles()">
+                                <i class="fas fa-plus me-1"></i>Add Files
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Image Template -->
+<template id="imageTemplate">
+    <div class="image-item">
+        <div class="image-preview">
+            <img src="" alt="" class="image-thumbnail">
+            <div class="image-overlay">
+                <div class="image-actions">
+                    <button type="button" class="btn btn-outline-light btn-sm" onclick="viewImage(this)">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-light btn-sm" onclick="downloadImage(this)">
+                        <i class="fas fa-download"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-light btn-sm" onclick="deleteImage(this)">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="image-info">
+            <div class="image-name">image.jpg</div>
+            <div class="image-size">2.3 MB</div>
+        </div>
+    </div>
+</template>
+
+<!-- Table Template -->
+<template id="tableTemplate">
+    <div class="table-item">
+        <div class="table-preview">
+            <div class="table-header">
+                <h6 class="text-light">Table Name</h6>
+                <div class="table-actions">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="editTable(this)">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="viewTable(this)">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-success btn-sm" onclick="exportTable(this)">
+                        <i class="fas fa-download"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="deleteTable(this)">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="table-content">
+                <div class="table-responsive">
+                    <table class="table table-dark table-sm">
+                        <thead>
+                            <tr class="table-headers"></tr>
+                        </thead>
+                        <tbody class="table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<!-- Chart Template -->
+<template id="chartTemplate">
+    <div class="chart-item">
+        <div class="chart-preview">
+            <div class="chart-header">
+                <h6 class="text-light">Chart Name</h6>
+                <div class="chart-actions">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="editChart(this)">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="viewChart(this)">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-success btn-sm" onclick="exportChart(this)">
+                        <i class="fas fa-download"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="deleteChart(this)">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="chart-content">
+                <canvas class="chart-canvas"></canvas>
+            </div>
+        </div>
+    </div>
+</template>
+
+<!-- File Template -->
+<template id="fileTemplate">
+    <div class="file-item">
+        <div class="file-preview">
+            <div class="file-icon">
+                <i class="fas fa-file"></i>
+            </div>
+            <div class="file-info">
+                <div class="file-name">filename.csv</div>
+                <div class="file-size">1.2 MB</div>
+                <div class="file-type">CSV File</div>
+            </div>
+            <div class="file-actions">
+                <button type="button" class="btn btn-outline-primary btn-sm" onclick="viewFile(this)">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button type="button" class="btn btn-outline-success btn-sm" onclick="downloadFile(this)">
+                    <i class="fas fa-download"></i>
+                </button>
+                <button type="button" class="btn btn-outline-danger btn-sm" onclick="deleteFile(this)">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</template>
+
+<style>
+.chat-content-container {
+    background-color: #1a1a1a;
+    border-radius: 0.5rem;
+    border: 1px solid #495057;
+    padding: 1rem;
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.nav-tabs-dark .nav-link {
+    color: #adb5bd;
+    border-color: #495057;
+}
+
+.nav-tabs-dark .nav-link:hover {
+    color: #fff;
+    border-color: #495057;
+}
+
+.nav-tabs-dark .nav-link.active {
+    color: #fff;
+    background-color: #495057;
+    border-color: #495057;
+}
+
+.image-gallery,
+.table-list,
+.chart-gallery,
+.file-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.image-item,
+.table-item,
+.chart-item,
+.file-item {
+    background-color: #2d2d2d;
+    border: 1px solid #495057;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.image-item:hover,
+.table-item:hover,
+.chart-item:hover,
+.file-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.image-preview {
+    position: relative;
+    height: 150px;
+    overflow: hidden;
+}
+
+.image-thumbnail {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.image-preview:hover .image-overlay {
+    opacity: 1;
+}
+
+.image-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.image-info,
+.file-info {
+    padding: 0.75rem;
+}
+
+.image-name,
+.file-name {
+    font-weight: 600;
+    color: #fff;
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+}
+
+.image-size,
+.file-size {
+    font-size: 0.75rem;
+    color: #6c757d;
+}
+
+.file-type {
+    font-size: 0.75rem;
+    color: #6c757d;
+    margin-top: 0.25rem;
+}
+
+.table-preview,
+.chart-preview {
+    padding: 0.75rem;
+}
+
+.table-header,
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.table-header h6,
+.chart-header h6 {
+    margin: 0;
+    font-size: 0.875rem;
+}
+
+.table-actions,
+.chart-actions {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.table-content {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.table-dark {
+    --bs-table-bg: #1a1a1a;
+    --bs-table-striped-bg: #2d2d2d;
+    --bs-table-hover-bg: #3d3d3d;
+    --bs-table-color: #fff;
+    --bs-table-border-color: #495057;
+}
+
+.chart-content {
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chart-canvas {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.upload-zone {
+    border: 2px dashed #495057;
+    border-radius: 0.5rem;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+.upload-zone:hover {
+    border-color: #0d6efd;
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+.upload-zone.dragover {
+    border-color: #0d6efd;
+    background-color: rgba(13, 110, 253, 0.1);
+}
+
+.upload-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.table-creation-area,
+.chart-creation-area {
+    margin-top: 2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .image-gallery,
+    .table-list,
+    .chart-gallery,
+    .file-list {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 0.75rem;
+    }
+    
+    .table-actions,
+    .chart-actions {
+        flex-direction: column;
+    }
+    
+    .upload-zone {
+        padding: 1rem;
+    }
+}
+</style>
+
+<script>
+// Chat Content JavaScript
+let images = [];
+let tables = [];
+let charts = [];
+let files = [];
+
+document.addEventListener('DOMContentLoaded', function() {
+    initializeChatContent();
+    loadSampleContent();
+});
+
+function initializeChatContent() {
+    // Image upload
+    const imageUploadZone = document.getElementById('imageUploadZone');
+    const imageInput = document.getElementById('imageInput');
+    
+    imageUploadZone.addEventListener('click', () => imageInput.click());
+    imageUploadZone.addEventListener('dragover', handleDragOver);
+    imageUploadZone.addEventListener('dragleave', handleDragLeave);
+    imageUploadZone.addEventListener('drop', handleImageDrop);
+    
+    imageInput.addEventListener('change', (e) => handleImages(e.target.files));
+    
+    // File upload
+    const fileUploadZone = document.getElementById('fileUploadZone');
+    const fileInput = document.getElementById('fileInput');
+    
+    fileUploadZone.addEventListener('click', () => fileInput.click());
+    fileUploadZone.addEventListener('dragover', handleDragOver);
+    fileUploadZone.addEventListener('dragleave', handleDragLeave);
+    fileUploadZone.addEventListener('drop', handleFileDrop);
+    
+    fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+}
+
+function loadSampleContent() {
+    // Sample images
+    images = [
+        { id: 1, name: 'chart1.png', size: '2.3 MB', url: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMzMzIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkNoYXJ0IEltYWdlPC90ZXh0Pjwvc3ZnPg==' },
+        { id: 2, name: 'data_visualization.jpg', size: '1.8 MB', url: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjNDQ0Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkRhdGEgVmlzdWFsaXphdGlvbjwvdGV4dD48L3N2Zz4=' }
+    ];
+    
+    // Sample tables
+    tables = [
+        {
+            id: 1,
+            name: 'Sales Data',
+            headers: ['Month', 'Revenue', 'Customers'],
+            data: [
+                ['Jan', '$10,000', '150'],
+                ['Feb', '$12,000', '180'],
+                ['Mar', '$15,000', '220']
+            ]
+        }
+    ];
+    
+    // Sample files
+    files = [
+        { id: 1, name: 'sales_data.csv', size: '1.2 MB', type: 'CSV File' },
+        { id: 2, name: 'analysis_report.pdf', size: '3.4 MB', type: 'PDF File' }
+    ];
+    
+    updateContent();
+}
+
+function updateContent() {
+    updateImages();
+    updateTables();
+    updateCharts();
+    updateFiles();
+}
+
+function updateImages() {
+    const container = document.getElementById('imageGallery');
+    container.innerHTML = '';
+    
+    images.forEach(image => {
+        const template = document.getElementById('imageTemplate').content.cloneNode(true);
+        template.querySelector('.image-thumbnail').src = image.url;
+        template.querySelector('.image-thumbnail').alt = image.name;
+        template.querySelector('.image-name').textContent = image.name;
+        template.querySelector('.image-size').textContent = image.size;
+        template.querySelector('.image-item').dataset.imageId = image.id;
+        container.appendChild(template);
+    });
+}
+
+function updateTables() {
+    const container = document.getElementById('tableList');
+    container.innerHTML = '';
+    
+    tables.forEach(table => {
+        const template = document.getElementById('tableTemplate').content.cloneNode(true);
+        template.querySelector('.table-header h6').textContent = table.name;
+        
+        const headerRow = template.querySelector('.table-headers');
+        headerRow.innerHTML = table.headers.map(header => `<th>${header}</th>`).join('');
+        
+        const tbody = template.querySelector('.table-body');
+        tbody.innerHTML = table.data.map(row => 
+            `<tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>`
+        ).join('');
+        
+        template.querySelector('.table-item').dataset.tableId = table.id;
+        container.appendChild(template);
+    });
+}
+
+function updateCharts() {
+    const container = document.getElementById('chartGallery');
+    container.innerHTML = '';
+    
+    charts.forEach(chart => {
+        const template = document.getElementById('chartTemplate').content.cloneNode(true);
+        template.querySelector('.chart-header h6').textContent = chart.name;
+        template.querySelector('.chart-item').dataset.chartId = chart.id;
+        container.appendChild(template);
+    });
+}
+
+function updateFiles() {
+    const container = document.getElementById('fileList');
+    container.innerHTML = '';
+    
+    files.forEach(file => {
+        const template = document.getElementById('fileTemplate').content.cloneNode(true);
+        template.querySelector('.file-name').textContent = file.name;
+        template.querySelector('.file-size').textContent = file.size;
+        template.querySelector('.file-type').textContent = file.type;
+        template.querySelector('.file-item').dataset.fileId = file.id;
+        container.appendChild(template);
+    });
+}
+
+function selectImages() {
+    document.getElementById('imageInput').click();
+}
+
+function selectFiles() {
+    document.getElementById('fileInput').click();
+}
+
+function handleDragOver(e) {
+    e.preventDefault();
+    e.currentTarget.classList.add('dragover');
+}
+
+function handleDragLeave(e) {
+    e.preventDefault();
+    e.currentTarget.classList.remove('dragover');
+}
+
+function handleImageDrop(e) {
+    e.preventDefault();
+    e.currentTarget.classList.remove('dragover');
+    handleImages(e.dataTransfer.files);
+}
+
+function handleFileDrop(e) {
+    e.preventDefault();
+    e.currentTarget.classList.remove('dragover');
+    handleFiles(e.dataTransfer.files);
+}
+
+function handleImages(fileList) {
+    Array.from(fileList).forEach(file => {
+        if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const image = {
+                    id: Date.now() + Math.random(),
+                    name: file.name,
+                    size: formatFileSize(file.size),
+                    url: e.target.result
+                };
+                images.push(image);
+                updateImages();
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+}
+
+function handleFiles(fileList) {
+    Array.from(fileList).forEach(file => {
+        const fileData = {
+            id: Date.now() + Math.random(),
+            name: file.name,
+            size: formatFileSize(file.size),
+            type: getFileType(file.name)
+        };
+        files.push(fileData);
+        updateFiles();
+    });
+}
+
+function createTable() {
+    const name = document.getElementById('tableName').value || 'New Table';
+    const rows = parseInt(document.getElementById('tableRows').value);
+    const cols = parseInt(document.getElementById('tableCols').value);
+    
+    const headers = Array.from({ length: cols }, (_, i) => `Column ${i + 1}`);
+    const data = Array.from({ length: rows }, () => 
+        Array.from({ length: cols }, () => '')
+    );
+    
+    const table = {
+        id: Date.now(),
+        name: name,
+        headers: headers,
+        data: data
+    };
+    
+    tables.push(table);
+    updateTables();
+    
+    // Clear form
+    document.getElementById('tableName').value = '';
+    document.getElementById('tableRows').value = '3';
+    document.getElementById('tableCols').value = '3';
+    
+    showNotification('Table created successfully', 'success');
+}
+
+function createChart() {
+    const type = document.getElementById('chartType').value;
+    const dataSource = document.getElementById('chartData').value;
+    const title = document.getElementById('chartTitle').value || `${type.charAt(0).toUpperCase() + type.slice(1)} Chart`;
+    
+    const chart = {
+        id: Date.now(),
+        name: title,
+        type: type,
+        dataSource: dataSource
+    };
+    
+    charts.push(chart);
+    updateCharts();
+    
+    showNotification('Chart created successfully', 'success');
+}
+
+function importTable() {
+    // Implementation for importing CSV
+    showNotification('CSV import feature coming soon', 'info');
+}
+
+function previewChart() {
+    // Implementation for chart preview
+    showNotification('Chart preview feature coming soon', 'info');
+}
+
+// Action functions
+function viewImage(button) {
+    const imageId = button.closest('.image-item').dataset.imageId;
+    const image = images.find(img => img.id == imageId);
+    console.log('Viewing image:', image.name);
+}
+
+function downloadImage(button) {
+    const imageId = button.closest('.image-item').dataset.imageId;
+    const image = images.find(img => img.id == imageId);
+    console.log('Downloading image:', image.name);
+}
+
+function deleteImage(button) {
+    const imageId = button.closest('.image-item').dataset.imageId;
+    images = images.filter(img => img.id != imageId);
+    updateImages();
+    showNotification('Image deleted', 'success');
+}
+
+function editTable(button) {
+    const tableId = button.closest('.table-item').dataset.tableId;
+    console.log('Editing table:', tableId);
+}
+
+function viewTable(button) {
+    const tableId = button.closest('.table-item').dataset.tableId;
+    console.log('Viewing table:', tableId);
+}
+
+function exportTable(button) {
+    const tableId = button.closest('.table-item').dataset.tableId;
+    console.log('Exporting table:', tableId);
+}
+
+function deleteTable(button) {
+    const tableId = button.closest('.table-item').dataset.tableId;
+    tables = tables.filter(table => table.id != tableId);
+    updateTables();
+    showNotification('Table deleted', 'success');
+}
+
+function editChart(button) {
+    const chartId = button.closest('.chart-item').dataset.chartId;
+    console.log('Editing chart:', chartId);
+}
+
+function viewChart(button) {
+    const chartId = button.closest('.chart-item').dataset.chartId;
+    console.log('Viewing chart:', chartId);
+}
+
+function exportChart(button) {
+    const chartId = button.closest('.chart-item').dataset.chartId;
+    console.log('Exporting chart:', chartId);
+}
+
+function deleteChart(button) {
+    const chartId = button.closest('.chart-item').dataset.chartId;
+    charts = charts.filter(chart => chart.id != chartId);
+    updateCharts();
+    showNotification('Chart deleted', 'success');
+}
+
+function viewFile(button) {
+    const fileId = button.closest('.file-item').dataset.fileId;
+    const file = files.find(f => f.id == fileId);
+    console.log('Viewing file:', file.name);
+}
+
+function downloadFile(button) {
+    const fileId = button.closest('.file-item').dataset.fileId;
+    const file = files.find(f => f.id == fileId);
+    console.log('Downloading file:', file.name);
+}
+
+function deleteFile(button) {
+    const fileId = button.closest('.file-item').dataset.fileId;
+    files = files.filter(file => file.id != fileId);
+    updateFiles();
+    showNotification('File deleted', 'success');
+}
+
+// Utility functions
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+function getFileType(filename) {
+    const extension = filename.split('.').pop().toLowerCase();
+    const types = {
+        'csv': 'CSV File',
+        'xlsx': 'Excel File',
+        'xls': 'Excel File',
+        'json': 'JSON File',
+        'pdf': 'PDF File',
+        'txt': 'Text File'
+    };
+    return types[extension] || 'File';
+}
+</script>

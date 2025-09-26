@@ -1,0 +1,679 @@
+<!-- Message Input Form with HTMX -->
+<div id="chatInputForm" class="chat-input-form">
+    <form id="messageForm" hx-post="/api/chat/messages/" hx-target="#messagesContainer" hx-swap="beforeend">
+        <div class="input-container">
+            <!-- Main Input Area -->
+            <div class="input-group">
+                <div class="input-wrapper">
+                    <textarea class="form-control message-input bg-dark text-light border-secondary" 
+                              id="messageTextarea" name="message" rows="1" 
+                              placeholder="Ask me anything about your data..." 
+                              style="resize: none; min-height: 40px; max-height: 120px;"
+                              required></textarea>
+                    
+                    <!-- Input Actions -->
+                    <div class="input-actions">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" 
+                                onclick="attachFile()" title="Attach File">
+                            <i class="fas fa-paperclip"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" 
+                                onclick="insertCodeBlock()" title="Insert Code Block">
+                            <i class="fas fa-code"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" 
+                                onclick="insertTable()" title="Insert Table">
+                            <i class="fas fa-table"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" 
+                                onclick="clearInput()" title="Clear Input">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Send Button -->
+                <button type="submit" class="btn btn-primary send-button" id="sendButton">
+                    <i class="fas fa-paper-plane"></i>
+                    <span class="send-text">Send</span>
+                </button>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <div class="quick-action-group">
+                    <span class="quick-action-label">Quick Actions:</span>
+                    <button type="button" class="btn btn-outline-info btn-sm" onclick="quickAction('explain')">
+                        <i class="fas fa-question-circle me-1"></i>Explain
+                    </button>
+                    <button type="button" class="btn btn-outline-success btn-sm" onclick="quickAction('analyze')">
+                        <i class="fas fa-chart-line me-1"></i>Analyze
+                    </button>
+                    <button type="button" class="btn btn-outline-warning btn-sm" onclick="quickAction('visualize')">
+                        <i class="fas fa-chart-bar me-1"></i>Visualize
+                    </button>
+                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="quickAction('code')">
+                        <i class="fas fa-code me-1"></i>Generate Code
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Input Help -->
+            <div class="input-help">
+                <small class="text-muted">
+                    <i class="fas fa-keyboard me-1"></i>
+                    Press <kbd>Enter</kbd> to send, <kbd>Shift+Enter</kbd> for new line
+                    <span class="ms-3">
+                        <i class="fas fa-magic me-1"></i>
+                        Use <kbd>@</kbd> to mention datasets or analyses
+                    </span>
+                </small>
+            </div>
+        </div>
+        
+        <!-- Hidden Fields -->
+        <input type="hidden" name="session_id" id="sessionId">
+        <input type="hidden" name="context_type" id="contextType" value="general">
+        <input type="hidden" name="include_context" id="includeContext" value="true">
+    </form>
+    
+    <!-- File Attachment Modal -->
+    <div class="modal fade" id="fileAttachmentModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark border-secondary">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title text-light">
+                        <i class="fas fa-paperclip me-2"></i>Attach File
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="file-drop-zone" id="fileDropZone">
+                        <div class="text-center py-4">
+                            <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+                            <h6 class="text-light">Drop files here or click to browse</h6>
+                            <p class="text-muted">Supported: CSV, Excel, JSON, Images</p>
+                            <input type="file" id="fileInput" multiple accept=".csv,.xlsx,.xls,.json,.png,.jpg,.jpeg,.gif" style="display: none;">
+                        </div>
+                    </div>
+                    <div id="attachedFiles" class="attached-files mt-3" style="display: none;">
+                        <h6 class="text-light">Attached Files:</h6>
+                        <div id="fileList"></div>
+                    </div>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="confirmFileAttachment()">Attach Files</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Typing Indicator -->
+    <div id="typingStatus" class="typing-status" style="display: none;">
+        <div class="typing-indicator">
+            <i class="fas fa-circle text-primary"></i>
+            <i class="fas fa-circle text-primary"></i>
+            <i class="fas fa-circle text-primary"></i>
+        </div>
+        <span class="typing-text text-muted">AI is typing...</span>
+    </div>
+</div>
+
+<style>
+.chat-input-form {
+    background-color: #1a1a1a;
+    border-top: 1px solid #495057;
+    padding: 1rem;
+}
+
+.input-container {
+    max-width: 100%;
+}
+
+.input-group {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.5rem;
+}
+
+.input-wrapper {
+    flex: 1;
+    position: relative;
+}
+
+.message-input {
+    width: 100%;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid #495057;
+    background-color: #2d2d2d;
+    color: #fff;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    transition: all 0.2s ease-in-out;
+}
+
+.message-input:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    outline: none;
+}
+
+.message-input::placeholder {
+    color: #6c757d;
+}
+
+.input-actions {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    gap: 0.25rem;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.input-wrapper:hover .input-actions {
+    opacity: 1;
+}
+
+.input-actions .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    border-radius: 0.25rem;
+}
+
+.send-button {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.2s ease-in-out;
+    min-width: 80px;
+}
+
+.send-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(13, 110, 253, 0.3);
+}
+
+.send-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.quick-actions {
+    margin-top: 0.75rem;
+}
+
+.quick-action-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.quick-action-label {
+    color: #6c757d;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.quick-actions .btn {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.375rem;
+}
+
+.input-help {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid #495057;
+}
+
+.input-help kbd {
+    background-color: #495057;
+    color: #fff;
+    padding: 0.125rem 0.25rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-family: 'Courier New', monospace;
+}
+
+.file-drop-zone {
+    border: 2px dashed #495057;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+.file-drop-zone:hover {
+    border-color: #0d6efd;
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+.file-drop-zone.dragover {
+    border-color: #0d6efd;
+    background-color: rgba(13, 110, 253, 0.1);
+}
+
+.attached-files {
+    background-color: #2d2d2d;
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem;
+    background-color: #1a1a1a;
+    border-radius: 0.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.file-item:last-child {
+    margin-bottom: 0;
+}
+
+.file-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.file-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.file-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.file-name {
+    font-weight: 500;
+    color: #fff;
+    font-size: 0.875rem;
+}
+
+.file-size {
+    font-size: 0.75rem;
+    color: #6c757d;
+}
+
+.file-remove {
+    color: #dc3545;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 0.25rem;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.file-remove:hover {
+    background-color: rgba(220, 53, 69, 0.1);
+}
+
+.typing-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background-color: rgba(13, 110, 253, 0.1);
+    border-radius: 0.25rem;
+    border: 1px solid rgba(13, 110, 253, 0.2);
+}
+
+.typing-indicator {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.typing-indicator i {
+    animation: typingPulse 1.4s infinite ease-in-out;
+}
+
+.typing-indicator i:nth-child(1) {
+    animation-delay: -0.32s;
+}
+
+.typing-indicator i:nth-child(2) {
+    animation-delay: -0.16s;
+}
+
+@keyframes typingPulse {
+    0%, 80%, 100% {
+        opacity: 0.3;
+        transform: scale(0.8);
+    }
+    40% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.typing-text {
+    font-size: 0.875rem;
+    font-style: italic;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .input-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .send-button {
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+    
+    .quick-action-group {
+        justify-content: center;
+    }
+    
+    .input-help {
+        text-align: center;
+    }
+}
+
+/* Auto-resize textarea */
+.message-input {
+    overflow: hidden;
+    transition: height 0.2s ease-in-out;
+}
+</style>
+
+<script>
+// Chat Input JavaScript
+let attachedFiles = [];
+let isTyping = false;
+
+document.addEventListener('DOMContentLoaded', function() {
+    initializeChatInput();
+});
+
+function initializeChatInput() {
+    const textarea = document.getElementById('messageTextarea');
+    const form = document.getElementById('messageForm');
+    const fileDropZone = document.getElementById('fileDropZone');
+    const fileInput = document.getElementById('fileInput');
+    
+    // Auto-resize textarea
+    textarea.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+    });
+    
+    // Handle Enter key
+    textarea.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            if (this.value.trim()) {
+                form.dispatchEvent(new Event('submit'));
+            }
+        }
+    });
+    
+    // Handle @ mentions
+    textarea.addEventListener('input', function(e) {
+        const value = this.value;
+        const cursorPos = this.selectionStart;
+        const textBeforeCursor = value.substring(0, cursorPos);
+        const lastAtIndex = textBeforeCursor.lastIndexOf('@');
+        
+        if (lastAtIndex !== -1 && lastAtIndex === textBeforeCursor.length - 1) {
+            showMentionSuggestions();
+        }
+    });
+    
+    // File drop zone
+    fileDropZone.addEventListener('click', () => fileInput.click());
+    
+    fileDropZone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        this.classList.add('dragover');
+    });
+    
+    fileDropZone.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        this.classList.remove('dragover');
+    });
+    
+    fileDropZone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        this.classList.remove('dragover');
+        handleFiles(e.dataTransfer.files);
+    });
+    
+    fileInput.addEventListener('change', function(e) {
+        handleFiles(e.target.files);
+    });
+    
+    // Form submission
+    form.addEventListener('htmx:beforeRequest', function(e) {
+        const message = textarea.value.trim();
+        if (message) {
+            showTypingStatus();
+            disableInput();
+        }
+    });
+    
+    form.addEventListener('htmx:afterRequest', function(e) {
+        hideTypingStatus();
+        enableInput();
+        
+        if (e.detail.xhr.status === 200) {
+            textarea.value = '';
+            textarea.style.height = 'auto';
+            attachedFiles = [];
+            updateAttachedFiles();
+        }
+    });
+}
+
+function attachFile() {
+    const modal = new bootstrap.Modal(document.getElementById('fileAttachmentModal'));
+    modal.show();
+}
+
+function handleFiles(files) {
+    Array.from(files).forEach(file => {
+        if (isValidFile(file)) {
+            attachedFiles.push({
+                file: file,
+                id: Date.now() + Math.random(),
+                name: file.name,
+                size: file.size,
+                type: file.type
+            });
+        }
+    });
+    updateAttachedFiles();
+}
+
+function isValidFile(file) {
+    const validTypes = [
+        'text/csv',
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/json',
+        'image/png',
+        'image/jpeg',
+        'image/gif'
+    ];
+    
+    const validExtensions = ['.csv', '.xlsx', '.xls', '.json', '.png', '.jpg', '.jpeg', '.gif'];
+    const extension = '.' + file.name.split('.').pop().toLowerCase();
+    
+    return validTypes.includes(file.type) || validExtensions.includes(extension);
+}
+
+function updateAttachedFiles() {
+    const container = document.getElementById('attachedFiles');
+    const fileList = document.getElementById('fileList');
+    
+    if (attachedFiles.length === 0) {
+        container.style.display = 'none';
+        return;
+    }
+    
+    container.style.display = 'block';
+    fileList.innerHTML = '';
+    
+    attachedFiles.forEach(fileData => {
+        const fileItem = document.createElement('div');
+        fileItem.className = 'file-item';
+        fileItem.innerHTML = `
+            <div class="file-info">
+                <div class="file-icon">
+                    <i class="fas fa-file"></i>
+                </div>
+                <div class="file-details">
+                    <div class="file-name">${fileData.name}</div>
+                    <div class="file-size">${formatFileSize(fileData.size)}</div>
+                </div>
+            </div>
+            <div class="file-remove" onclick="removeFile('${fileData.id}')">
+                <i class="fas fa-times"></i>
+            </div>
+        `;
+        fileList.appendChild(fileItem);
+    });
+}
+
+function removeFile(fileId) {
+    attachedFiles = attachedFiles.filter(f => f.id !== fileId);
+    updateAttachedFiles();
+}
+
+function confirmFileAttachment() {
+    const modal = bootstrap.Modal.getInstance(document.getElementById('fileAttachmentModal'));
+    modal.hide();
+    
+    if (attachedFiles.length > 0) {
+        const fileNames = attachedFiles.map(f => f.name).join(', ');
+        const textarea = document.getElementById('messageTextarea');
+        textarea.value += `\n\n[Attached files: ${fileNames}]`;
+        textarea.style.height = 'auto';
+        textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+    }
+}
+
+function insertCodeBlock() {
+    const textarea = document.getElementById('messageTextarea');
+    const cursorPos = textarea.selectionStart;
+    const textBefore = textarea.value.substring(0, cursorPos);
+    const textAfter = textarea.value.substring(cursorPos);
+    
+    textarea.value = textBefore + '\n```\n\n```\n' + textAfter;
+    textarea.focus();
+    textarea.setSelectionRange(cursorPos + 4, cursorPos + 4);
+}
+
+function insertTable() {
+    const textarea = document.getElementById('messageTextarea');
+    const cursorPos = textarea.selectionStart;
+    const textBefore = textarea.value.substring(0, cursorPos);
+    const textAfter = textarea.value.substring(cursorPos);
+    
+    const tableText = '\n| Column 1 | Column 2 | Column 3 |\n|----------|----------|----------|\n| Data 1   | Data 2   | Data 3   |\n';
+    textarea.value = textBefore + tableText + textAfter;
+    textarea.focus();
+}
+
+function clearInput() {
+    const textarea = document.getElementById('messageTextarea');
+    textarea.value = '';
+    textarea.style.height = 'auto';
+    attachedFiles = [];
+    updateAttachedFiles();
+}
+
+function quickAction(action) {
+    const textarea = document.getElementById('messageTextarea');
+    const actions = {
+        'explain': 'Can you explain the results of my analysis?',
+        'analyze': 'Please analyze this data and provide insights.',
+        'visualize': 'What visualization would best represent this data?',
+        'code': 'Generate Python code to perform this analysis.'
+    };
+    
+    if (actions[action]) {
+        textarea.value = actions[action];
+        textarea.style.height = 'auto';
+        textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+        textarea.focus();
+    }
+}
+
+function showMentionSuggestions() {
+    // Implementation for @ mention suggestions
+    console.log('Showing mention suggestions...');
+}
+
+function showTypingStatus() {
+    document.getElementById('typingStatus').style.display = 'flex';
+}
+
+function hideTypingStatus() {
+    document.getElementById('typingStatus').style.display = 'none';
+}
+
+function disableInput() {
+    const textarea = document.getElementById('messageTextarea');
+    const sendButton = document.getElementById('sendButton');
+    
+    textarea.disabled = true;
+    sendButton.disabled = true;
+    sendButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+}
+
+function enableInput() {
+    const textarea = document.getElementById('messageTextarea');
+    const sendButton = document.getElementById('sendButton');
+    
+    textarea.disabled = false;
+    sendButton.disabled = false;
+    sendButton.innerHTML = '<i class="fas fa-paper-plane"></i><span class="send-text">Send</span>';
+}
+
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+// HTMX integration
+document.body.addEventListener('htmx:beforeRequest', function(e) {
+    if (e.target.id === 'messageForm') {
+        // Add attached files to form data
+        if (attachedFiles.length > 0) {
+            const formData = new FormData();
+            formData.append('message', document.getElementById('messageTextarea').value);
+            formData.append('session_id', document.getElementById('sessionId').value);
+            formData.append('context_type', document.getElementById('contextType').value);
+            formData.append('include_context', document.getElementById('includeContext').value);
+            
+            attachedFiles.forEach(fileData => {
+                formData.append('files', fileData.file);
+            });
+            
+            e.detail.xhr.send(formData);
+            e.preventDefault();
+        }
+    }
+});
+</script>

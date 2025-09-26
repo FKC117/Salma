@@ -1,0 +1,655 @@
+<!-- "Analyze" Button Integration -->
+<div id="analyzeButtonContainer" class="analyze-button-container">
+    <!-- Main Analyze Button -->
+    <div class="analyze-button-section">
+        <button type="button" class="btn btn-primary btn-lg analyze-button" id="analyzeButton" onclick="startAnalysis()">
+            <i class="fas fa-magic me-2"></i>
+            <span class="button-text">Analyze with AI</span>
+            <span class="button-subtitle">Let AI analyze your data automatically</span>
+        </button>
+        
+        <!-- Analysis Options -->
+        <div class="analysis-options mt-3">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="includeDescriptive" checked>
+                        <label class="form-check-label text-light" for="includeDescriptive">
+                            <i class="fas fa-chart-line me-1"></i>Descriptive Statistics
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="includeCorrelation" checked>
+                        <label class="form-check-label text-light" for="includeCorrelation">
+                            <i class="fas fa-project-diagram me-1"></i>Correlation Analysis
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="includeVisualization" checked>
+                        <label class="form-check-label text-light" for="includeVisualization">
+                            <i class="fas fa-chart-bar me-1"></i>Visualizations
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="includeInsights">
+                        <label class="form-check-label text-light" for="includeInsights">
+                            <i class="fas fa-lightbulb me-1"></i>AI Insights
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="includeRecommendations">
+                        <label class="form-check-label text-light" for="includeRecommendations">
+                            <i class="fas fa-thumbs-up me-1"></i>Recommendations
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="includeCode">
+                        <label class="form-check-label text-light" for="includeCode">
+                            <i class="fas fa-code me-1"></i>Generate Code
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Analysis Configuration -->
+    <div class="analysis-config mt-4">
+        <div class="card bg-dark border-secondary">
+            <div class="card-header border-secondary">
+                <h6 class="text-light mb-0">
+                    <i class="fas fa-cog me-2"></i>Analysis Configuration
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label for="analysisDepth" class="form-label text-light">Analysis Depth</label>
+                        <select class="form-select bg-dark text-light border-secondary" id="analysisDepth">
+                            <option value="quick">Quick (2-3 minutes)</option>
+                            <option value="standard" selected>Standard (5-10 minutes)</option>
+                            <option value="comprehensive">Comprehensive (15-30 minutes)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="confidenceLevel" class="form-label text-light">Confidence Level</label>
+                        <select class="form-select bg-dark text-light border-secondary" id="confidenceLevel">
+                            <option value="0.90">90%</option>
+                            <option value="0.95" selected>95%</option>
+                            <option value="0.99">99%</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="aiModel" class="form-label text-light">AI Model</label>
+                        <select class="form-select bg-dark text-light border-secondary" id="aiModel">
+                            <option value="gemini-1.5-flash" selected>Gemini 1.5 Flash</option>
+                            <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+                            <option value="gemini-1.0-pro">Gemini 1.0 Pro</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="outputFormat" class="form-label text-light">Output Format</label>
+                        <select class="form-select bg-dark text-light border-secondary" id="outputFormat">
+                            <option value="interactive" selected>Interactive Report</option>
+                            <option value="pdf">PDF Report</option>
+                            <option value="html">HTML Report</option>
+                            <option value="markdown">Markdown</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <label for="analysisPrompt" class="form-label text-light">Custom Analysis Prompt</label>
+                        <textarea class="form-control bg-dark text-light border-secondary" 
+                                  id="analysisPrompt" rows="2" 
+                                  placeholder="Optional: Add specific instructions for the AI analysis..."></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="excludeColumns" class="form-label text-light">Exclude Columns</label>
+                        <input type="text" class="form-control bg-dark text-light border-secondary" 
+                               id="excludeColumns" placeholder="Column names separated by commas">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Dataset Selection -->
+    <div class="dataset-selection mt-4">
+        <div class="card bg-dark border-secondary">
+            <div class="card-header border-secondary">
+                <h6 class="text-light mb-0">
+                    <i class="fas fa-database me-2"></i>Select Dataset for Analysis
+                </h6>
+            </div>
+            <div class="card-body">
+                <div id="datasetList" class="dataset-list">
+                    <!-- Datasets will be dynamically loaded here -->
+                </div>
+                <div id="noDatasets" class="no-datasets text-center py-4" style="display: none;">
+                    <i class="fas fa-database fa-3x text-muted mb-3"></i>
+                    <h6 class="text-light">No datasets available</h6>
+                    <p class="text-muted">Upload a dataset first to start analysis</p>
+                    <button type="button" class="btn btn-primary" onclick="uploadDataset()">
+                        <i class="fas fa-upload me-1"></i>Upload Dataset
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Analysis Preview -->
+    <div id="analysisPreview" class="analysis-preview mt-4" style="display: none;">
+        <div class="card bg-dark border-secondary">
+            <div class="card-header border-secondary">
+                <h6 class="text-light mb-0">
+                    <i class="fas fa-eye me-2"></i>Analysis Preview
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="preview-content">
+                    <div class="preview-summary">
+                        <h6 class="text-light">Analysis Summary</h6>
+                        <ul class="text-muted">
+                            <li>Dataset: <span id="previewDataset">-</span></li>
+                            <li>Analysis Type: <span id="previewType">-</span></li>
+                            <li>Estimated Time: <span id="previewTime">-</span></li>
+                            <li>AI Model: <span id="previewModel">-</span></li>
+                        </ul>
+                    </div>
+                    <div class="preview-actions">
+                        <button type="button" class="btn btn-success" onclick="confirmAnalysis()">
+                            <i class="fas fa-play me-1"></i>Start Analysis
+                        </button>
+                        <button type="button" class="btn btn-secondary ms-2" onclick="cancelAnalysis()">
+                            <i class="fas fa-times me-1"></i>Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dataset Item Template -->
+<template id="datasetTemplate">
+    <div class="dataset-item">
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="selectedDataset" id="dataset-{id}" value="{id}">
+            <label class="form-check-label text-light" for="dataset-{id}">
+                <div class="dataset-info">
+                    <div class="dataset-name">
+                        <i class="fas fa-file-csv me-2"></i>
+                        <span class="name">{name}</span>
+                    </div>
+                    <div class="dataset-details">
+                        <span class="dataset-size">{size}</span>
+                        <span class="dataset-rows">{rows} rows</span>
+                        <span class="dataset-columns">{columns} columns</span>
+                        <span class="dataset-date">{date}</span>
+                    </div>
+                </div>
+            </label>
+        </div>
+    </div>
+</template>
+
+<style>
+.analyze-button-container {
+    background-color: #1a1a1a;
+    border-radius: 0.5rem;
+    border: 1px solid #495057;
+    padding: 2rem;
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.analyze-button-section {
+    text-align: center;
+}
+
+.analyze-button {
+    background: linear-gradient(135deg, #0d6efd 0%, #6f42c1 100%);
+    border: none;
+    border-radius: 1rem;
+    padding: 1.5rem 3rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    box-shadow: 0 8px 16px rgba(13, 110, 253, 0.3);
+    transition: all 0.3s ease-in-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.analyze-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(13, 110, 253, 0.4);
+}
+
+.analyze-button:active {
+    transform: translateY(0);
+}
+
+.analyze-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 0 8px 16px rgba(13, 110, 253, 0.3);
+}
+
+.button-text {
+    display: block;
+    font-size: 1.25rem;
+    margin-bottom: 0.25rem;
+}
+
+.button-subtitle {
+    display: block;
+    font-size: 0.875rem;
+    opacity: 0.8;
+    font-weight: 400;
+}
+
+.analysis-options {
+    background-color: #2d2d2d;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    border: 1px solid #495057;
+}
+
+.analysis-options .form-check {
+    margin-bottom: 0.75rem;
+}
+
+.analysis-options .form-check-label {
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: color 0.2s ease-in-out;
+}
+
+.analysis-options .form-check-label:hover {
+    color: #0d6efd;
+}
+
+.analysis-config .card-body {
+    padding: 1.5rem;
+}
+
+.dataset-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.dataset-item {
+    background-color: #2d2d2d;
+    border: 1px solid #495057;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    transition: all 0.2s ease-in-out;
+}
+
+.dataset-item:hover {
+    border-color: #0d6efd;
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+.dataset-item .form-check-input:checked + .form-check-label .dataset-item {
+    border-color: #0d6efd;
+    background-color: rgba(13, 110, 253, 0.1);
+}
+
+.dataset-info {
+    width: 100%;
+}
+
+.dataset-name {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 0.5rem;
+}
+
+.dataset-details {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.875rem;
+    color: #6c757d;
+    flex-wrap: wrap;
+}
+
+.dataset-size,
+.dataset-rows,
+.dataset-columns,
+.dataset-date {
+    display: flex;
+    align-items: center;
+}
+
+.dataset-size::before {
+    content: "📊";
+    margin-right: 0.25rem;
+}
+
+.dataset-rows::before {
+    content: "📋";
+    margin-right: 0.25rem;
+}
+
+.dataset-columns::before {
+    content: "📑";
+    margin-right: 0.25rem;
+}
+
+.dataset-date::before {
+    content: "📅";
+    margin-right: 0.25rem;
+}
+
+.analysis-preview {
+    animation: slideIn 0.3s ease-in-out;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.preview-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.preview-summary ul {
+    margin-bottom: 0;
+    padding-left: 1.5rem;
+}
+
+.preview-summary li {
+    margin-bottom: 0.25rem;
+}
+
+.preview-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.no-datasets {
+    background-color: #2d2d2d;
+    border-radius: 0.5rem;
+    border: 2px dashed #495057;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .analyze-button {
+        padding: 1rem 2rem;
+        font-size: 1rem;
+    }
+    
+    .button-text {
+        font-size: 1rem;
+    }
+    
+    .button-subtitle {
+        font-size: 0.75rem;
+    }
+    
+    .analysis-options .row {
+        flex-direction: column;
+    }
+    
+    .analysis-config .row {
+        flex-direction: column;
+    }
+    
+    .preview-content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .preview-actions {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .dataset-details {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+}
+
+/* Loading Animation */
+.analyze-button.loading {
+    position: relative;
+    color: transparent;
+}
+
+.analyze-button.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid transparent;
+    border-top: 2px solid #fff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+</style>
+
+<script>
+// Analyze Button JavaScript
+let selectedDataset = null;
+let analysisConfig = {};
+
+document.addEventListener('DOMContentLoaded', function() {
+    initializeAnalyzeButton();
+    loadDatasets();
+});
+
+function initializeAnalyzeButton() {
+    // Dataset selection
+    document.addEventListener('change', function(e) {
+        if (e.target.name === 'selectedDataset') {
+            selectedDataset = e.target.value;
+            updateAnalysisPreview();
+        }
+    });
+    
+    // Analysis options
+    document.querySelectorAll('.analysis-options input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', updateAnalysisPreview);
+    });
+    
+    // Configuration changes
+    document.querySelectorAll('#analysisDepth, #confidenceLevel, #aiModel, #outputFormat').forEach(select => {
+        select.addEventListener('change', updateAnalysisPreview);
+    });
+    
+    document.getElementById('analysisPrompt').addEventListener('input', updateAnalysisPreview);
+    document.getElementById('excludeColumns').addEventListener('input', updateAnalysisPreview);
+}
+
+function loadDatasets() {
+    // Sample datasets for demonstration
+    const sampleDatasets = [
+        {
+            id: 1,
+            name: 'sales_data.csv',
+            size: '2.3 MB',
+            rows: 1500,
+            columns: 8,
+            date: '2 hours ago'
+        },
+        {
+            id: 2,
+            name: 'customer_data.csv',
+            size: '1.8 MB',
+            rows: 1200,
+            columns: 12,
+            date: '1 day ago'
+        },
+        {
+            id: 3,
+            name: 'marketing_data.csv',
+            size: '3.1 MB',
+            rows: 2000,
+            columns: 15,
+            date: '3 days ago'
+        }
+    ];
+    
+    const container = document.getElementById('datasetList');
+    const noDatasets = document.getElementById('noDatasets');
+    
+    if (sampleDatasets.length === 0) {
+        container.style.display = 'none';
+        noDatasets.style.display = 'block';
+        return;
+    }
+    
+    container.innerHTML = '';
+    sampleDatasets.forEach(dataset => {
+        const template = document.getElementById('datasetTemplate').content.cloneNode(true);
+        
+        // Replace placeholders
+        template.querySelector('[id^="dataset-"]').id = `dataset-${dataset.id}`;
+        template.querySelector('[value]').value = dataset.id;
+        template.querySelector('.name').textContent = dataset.name;
+        template.querySelector('.dataset-size').textContent = dataset.size;
+        template.querySelector('.dataset-rows').textContent = `${dataset.rows} rows`;
+        template.querySelector('.dataset-columns').textContent = `${dataset.columns} columns`;
+        template.querySelector('.dataset-date').textContent = dataset.date;
+        
+        container.appendChild(template);
+    });
+}
+
+function startAnalysis() {
+    if (!selectedDataset) {
+        showNotification('Please select a dataset first', 'warning');
+        return;
+    }
+    
+    updateAnalysisPreview();
+    document.getElementById('analysisPreview').style.display = 'block';
+}
+
+function updateAnalysisPreview() {
+    if (!selectedDataset) return;
+    
+    const dataset = document.querySelector(`input[value="${selectedDataset}"]`).closest('.dataset-item');
+    const datasetName = dataset.querySelector('.name').textContent;
+    
+    // Get selected options
+    const selectedOptions = Array.from(document.querySelectorAll('.analysis-options input:checked'))
+        .map(cb => cb.nextElementSibling.textContent.trim());
+    
+    const analysisDepth = document.getElementById('analysisDepth').value;
+    const aiModel = document.getElementById('aiModel').value;
+    
+    // Update preview
+    document.getElementById('previewDataset').textContent = datasetName;
+    document.getElementById('previewType').textContent = selectedOptions.join(', ') || 'Basic Analysis';
+    document.getElementById('previewTime').textContent = getEstimatedTime(analysisDepth);
+    document.getElementById('previewModel').textContent = aiModel;
+}
+
+function getEstimatedTime(depth) {
+    const times = {
+        'quick': '2-3 minutes',
+        'standard': '5-10 minutes',
+        'comprehensive': '15-30 minutes'
+    };
+    return times[depth] || '5-10 minutes';
+}
+
+function confirmAnalysis() {
+    const button = document.getElementById('analyzeButton');
+    button.classList.add('loading');
+    button.disabled = true;
+    
+    // Collect analysis configuration
+    analysisConfig = {
+        datasetId: selectedDataset,
+        options: {
+            descriptive: document.getElementById('includeDescriptive').checked,
+            correlation: document.getElementById('includeCorrelation').checked,
+            visualization: document.getElementById('includeVisualization').checked,
+            insights: document.getElementById('includeInsights').checked,
+            recommendations: document.getElementById('includeRecommendations').checked,
+            code: document.getElementById('includeCode').checked
+        },
+        depth: document.getElementById('analysisDepth').value,
+        confidenceLevel: document.getElementById('confidenceLevel').value,
+        aiModel: document.getElementById('aiModel').value,
+        outputFormat: document.getElementById('outputFormat').value,
+        customPrompt: document.getElementById('analysisPrompt').value,
+        excludeColumns: document.getElementById('excludeColumns').value.split(',').map(s => s.trim()).filter(s => s)
+    };
+    
+    // Start analysis via HTMX
+    htmx.ajax('POST', '/api/agent/run/', {
+        values: analysisConfig,
+        target: '#agentProgress',
+        swap: 'innerHTML'
+    });
+    
+    showNotification('Analysis started! Check the progress panel.', 'success');
+    
+    // Hide preview
+    document.getElementById('analysisPreview').style.display = 'none';
+}
+
+function cancelAnalysis() {
+    document.getElementById('analysisPreview').style.display = 'none';
+}
+
+function uploadDataset() {
+    // Implementation for uploading dataset
+    showNotification('Dataset upload feature coming soon', 'info');
+}
+
+// HTMX integration
+document.body.addEventListener('htmx:afterRequest', function(e) {
+    if (e.target.id === 'analyzeButton' || e.detail.xhr.responseURL.includes('/api/agent/run/')) {
+        const button = document.getElementById('analyzeButton');
+        button.classList.remove('loading');
+        button.disabled = false;
+        
+        if (e.detail.xhr.status === 200) {
+            showNotification('Analysis completed successfully!', 'success');
+        } else {
+            showNotification('Analysis failed. Please try again.', 'error');
+        }
+    }
+});
+</script>

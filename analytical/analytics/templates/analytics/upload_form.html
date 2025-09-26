@@ -1,0 +1,190 @@
+<!-- Upload Modal -->
+<div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="uploadModalLabel">
+                    <i class="bi bi-upload"></i> Upload Dataset
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- File Upload Form -->
+                <form hx-post="{% url 'upload_file' %}" 
+                      hx-target="#upload-status" 
+                      hx-indicator="#upload-loading"
+                      enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <!-- File Input -->
+                    <div class="mb-4">
+                        <label for="file" class="form-label">
+                            <i class="bi bi-file-earmark-spreadsheet"></i> Select Dataset File
+                        </label>
+                        <input type="file" 
+                               class="form-control" 
+                               id="file" 
+                               name="file" 
+                               accept=".csv,.xlsx,.xls,.parquet,.json"
+                               required>
+                        <div class="form-text">
+                            Supported formats: CSV, Excel (.xlsx, .xls), Parquet, JSON
+                        </div>
+                    </div>
+                    
+                    <!-- Dataset Name -->
+                    <div class="mb-4">
+                        <label for="dataset_name" class="form-label">
+                            <i class="bi bi-tag"></i> Dataset Name
+                        </label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="dataset_name" 
+                               name="dataset_name" 
+                               placeholder="Enter a name for this dataset"
+                               required>
+                    </div>
+                    
+                    <!-- Processing Options -->
+                    <div class="mb-4">
+                        <h6><i class="bi bi-gear"></i> Processing Options</h6>
+                        
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" 
+                                   type="checkbox" 
+                                   id="detect_types" 
+                                   name="detect_types" 
+                                   checked>
+                            <label class="form-check-label" for="detect_types">
+                                Auto-detect column types
+                            </label>
+                        </div>
+                        
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" 
+                                   type="checkbox" 
+                                   id="mask_pii" 
+                                   name="mask_pii" 
+                                   checked>
+                            <label class="form-check-label" for="mask_pii">
+                                Mask PII (Personal Identifiable Information)
+                            </label>
+                        </div>
+                        
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" 
+                                   type="checkbox" 
+                                   id="index_rag" 
+                                   name="index_rag" 
+                                   checked>
+                            <label class="form-check-label" for="index_rag">
+                                Index for AI analysis (RAG)
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Upload Status -->
+                    <div id="upload-status"></div>
+                    <div id="upload-loading" class="htmx-indicator">
+                        <div class="alert alert-info">
+                            <div class="d-flex align-items-center">
+                                <div class="spinner-border spinner-border-sm me-2" role="status">
+                                    <span class="visually-hidden">Processing...</span>
+                                </div>
+                                <span>Processing your dataset...</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-upload"></i> Upload Dataset
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Upload Success Template -->
+<div id="upload-success-template" style="display: none;">
+    <div class="alert alert-success">
+        <h6><i class="bi bi-check-circle"></i> Upload Successful!</h6>
+        <p class="mb-2">Your dataset has been processed and is ready for analysis.</p>
+        <div class="row">
+            <div class="col-md-6">
+                <strong>Rows:</strong> <span id="success-rows"></span><br>
+                <strong>Columns:</strong> <span id="success-columns"></span>
+            </div>
+            <div class="col-md-6">
+                <strong>Size:</strong> <span id="success-size"></span><br>
+                <strong>Format:</strong> <span id="success-format"></span>
+            </div>
+        </div>
+        <div class="mt-3">
+            <button type="button" class="btn btn-success btn-sm" data-bs-dismiss="modal">
+                <i class="bi bi-check"></i> Continue Analysis
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Upload Error Template -->
+<div id="upload-error-template" style="display: none;">
+    <div class="alert alert-danger">
+        <h6><i class="bi bi-exclamation-triangle"></i> Upload Failed</h6>
+        <p class="mb-2" id="error-message"></p>
+        <button type="button" class="btn btn-danger btn-sm" onclick="document.getElementById('upload-status').innerHTML = '';">
+            <i class="bi bi-arrow-clockwise"></i> Try Again
+        </button>
+    </div>
+</div>
+
+<script>
+// HTMX Event Handlers for Upload
+document.body.addEventListener('htmx:afterRequest', function(event) {
+    if (event.detail.target.id === 'upload-status') {
+        // Handle successful upload
+        if (event.detail.xhr.status === 200) {
+            const response = JSON.parse(event.detail.xhr.responseText);
+            if (response.success) {
+                // Update dataset info in dashboard
+                updateDatasetInfo(response.data);
+                
+                // Close modal after delay
+                setTimeout(() => {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('uploadModal'));
+                    if (modal) modal.hide();
+                }, 2000);
+            }
+        }
+    }
+});
+
+function updateDatasetInfo(datasetData) {
+    const datasetName = document.getElementById('dataset-name');
+    const rowCount = document.getElementById('row-count');
+    const columnCount = document.getElementById('column-count');
+    const fileSize = document.getElementById('file-size');
+    const datasetStats = document.querySelector('.dataset-stats');
+    
+    if (datasetName) datasetName.textContent = datasetData.original_filename || 'Uploaded Dataset';
+    if (rowCount) rowCount.textContent = datasetData.row_count || '-';
+    if (columnCount) columnCount.textContent = datasetData.column_count || '-';
+    if (fileSize) fileSize.textContent = formatFileSize(datasetData.file_size_bytes || 0);
+    if (datasetStats) datasetStats.style.display = 'grid';
+}
+
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+</script>

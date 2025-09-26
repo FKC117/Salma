@@ -1,0 +1,785 @@
+<!-- LLM Response Formatting -->
+<div id="llmResponse" class="llm-response-container">
+    <!-- Response Header -->
+    <div class="response-header">
+        <div class="response-meta">
+            <div class="response-info">
+                <span class="response-model">
+                    <i class="fas fa-robot me-1"></i>
+                    <span id="responseModel">Gemini 1.5 Flash</span>
+                </span>
+                <span class="response-time">
+                    <i class="fas fa-clock me-1"></i>
+                    <span id="responseTime">2.3s</span>
+                </span>
+                <span class="response-tokens">
+                    <i class="fas fa-coins me-1"></i>
+                    <span id="responseTokens">1,247 tokens</span>
+                </span>
+            </div>
+            <div class="response-actions">
+                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="copyResponse()">
+                    <i class="fas fa-copy me-1"></i>Copy
+                </button>
+                <button type="button" class="btn btn-outline-primary btn-sm" onclick="regenerateResponse()">
+                    <i class="fas fa-redo me-1"></i>Regenerate
+                </button>
+                <button type="button" class="btn btn-outline-info btn-sm" onclick="exportResponse()">
+                    <i class="fas fa-download me-1"></i>Export
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Response Content -->
+    <div class="response-content">
+        <!-- Text Response -->
+        <div id="textResponse" class="response-section">
+            <div class="response-text">
+                <!-- Formatted text content will be inserted here -->
+            </div>
+        </div>
+        
+        <!-- Code Blocks -->
+        <div id="codeBlocks" class="response-section" style="display: none;">
+            <div class="code-blocks-container">
+                <!-- Code blocks will be dynamically inserted here -->
+            </div>
+        </div>
+        
+        <!-- Tables -->
+        <div id="tables" class="response-section" style="display: none;">
+            <div class="tables-container">
+                <!-- Tables will be dynamically inserted here -->
+            </div>
+        </div>
+        
+        <!-- Charts/Visualizations -->
+        <div id="visualizations" class="response-section" style="display: none;">
+            <div class="visualizations-container">
+                <!-- Charts will be dynamically inserted here -->
+            </div>
+        </div>
+        
+        <!-- File Attachments -->
+        <div id="attachments" class="response-section" style="display: none;">
+            <div class="attachments-container">
+                <!-- File attachments will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Response Footer -->
+    <div class="response-footer">
+        <div class="response-feedback">
+            <span class="feedback-label">Was this helpful?</span>
+            <div class="feedback-buttons">
+                <button type="button" class="btn btn-outline-success btn-sm" onclick="thumbsUp()">
+                    <i class="fas fa-thumbs-up me-1"></i>Yes
+                </button>
+                <button type="button" class="btn btn-outline-danger btn-sm" onclick="thumbsDown()">
+                    <i class="fas fa-thumbs-down me-1"></i>No
+                </button>
+            </div>
+        </div>
+        <div class="response-suggestions">
+            <span class="suggestions-label">Suggested follow-ups:</span>
+            <div class="suggestion-chips">
+                <button type="button" class="btn btn-outline-secondary btn-sm suggestion-chip" onclick="applySuggestion(this)">
+                    Explain this in more detail
+                </button>
+                <button type="button" class="btn btn-outline-secondary btn-sm suggestion-chip" onclick="applySuggestion(this)">
+                    Show me the code
+                </button>
+                <button type="button" class="btn btn-outline-secondary btn-sm suggestion-chip" onclick="applySuggestion(this)">
+                    Create a visualization
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Code Block Template -->
+<template id="codeBlockTemplate">
+    <div class="code-block">
+        <div class="code-header">
+            <div class="code-info">
+                <span class="code-language">Python</span>
+                <span class="code-lines">15 lines</span>
+            </div>
+            <div class="code-actions">
+                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="copyCode(this)">
+                    <i class="fas fa-copy me-1"></i>Copy
+                </button>
+                <button type="button" class="btn btn-outline-primary btn-sm" onclick="runCode(this)">
+                    <i class="fas fa-play me-1"></i>Run
+                </button>
+                <button type="button" class="btn btn-outline-info btn-sm" onclick="downloadCode(this)">
+                    <i class="fas fa-download me-1"></i>Download
+                </button>
+            </div>
+        </div>
+        <div class="code-content">
+            <pre><code class="language-python"></code></pre>
+        </div>
+    </div>
+</template>
+
+<!-- Table Template -->
+<template id="tableTemplate">
+    <div class="table-block">
+        <div class="table-header">
+            <div class="table-info">
+                <span class="table-title">Data Table</span>
+                <span class="table-dimensions">5 rows × 3 columns</span>
+            </div>
+            <div class="table-actions">
+                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="copyTable(this)">
+                    <i class="fas fa-copy me-1"></i>Copy
+                </button>
+                <button type="button" class="btn btn-outline-success btn-sm" onclick="exportTable(this, 'csv')">
+                    <i class="fas fa-file-csv me-1"></i>CSV
+                </button>
+                <button type="button" class="btn btn-outline-primary btn-sm" onclick="exportTable(this, 'excel')">
+                    <i class="fas fa-file-excel me-1"></i>Excel
+                </button>
+            </div>
+        </div>
+        <div class="table-content">
+            <div class="table-responsive">
+                <table class="table table-dark table-striped table-hover">
+                    <thead>
+                        <tr class="table-headers"></tr>
+                    </thead>
+                    <tbody class="table-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</template>
+
+<style>
+.llm-response-container {
+    background-color: #1a1a1a;
+    border-radius: 0.5rem;
+    border: 1px solid #495057;
+    margin: 1rem 0;
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.response-header {
+    background-color: #2d2d2d;
+    border-bottom: 1px solid #495057;
+    padding: 1rem;
+    border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.response-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.response-info {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.response-model,
+.response-time,
+.response-tokens {
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+    color: #adb5bd;
+}
+
+.response-model {
+    color: #6f42c1;
+    font-weight: 600;
+}
+
+.response-time {
+    color: #198754;
+}
+
+.response-tokens {
+    color: #fd7e14;
+}
+
+.response-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.response-content {
+    padding: 1.5rem;
+}
+
+.response-section {
+    margin-bottom: 1.5rem;
+}
+
+.response-section:last-child {
+    margin-bottom: 0;
+}
+
+.response-text {
+    line-height: 1.6;
+    color: #fff;
+}
+
+.response-text h1,
+.response-text h2,
+.response-text h3,
+.response-text h4,
+.response-text h5,
+.response-text h6 {
+    color: #fff;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.response-text h1:first-child,
+.response-text h2:first-child,
+.response-text h3:first-child,
+.response-text h4:first-child,
+.response-text h5:first-child,
+.response-text h6:first-child {
+    margin-top: 0;
+}
+
+.response-text p {
+    margin-bottom: 1rem;
+    color: #e9ecef;
+}
+
+.response-text ul,
+.response-text ol {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+}
+
+.response-text li {
+    margin-bottom: 0.25rem;
+    color: #e9ecef;
+}
+
+.response-text blockquote {
+    border-left: 4px solid #0d6efd;
+    padding-left: 1rem;
+    margin: 1rem 0;
+    color: #adb5bd;
+    font-style: italic;
+}
+
+.response-text code {
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 0.125rem 0.25rem;
+    border-radius: 0.25rem;
+    font-family: 'Courier New', monospace;
+    font-size: 0.875rem;
+    color: #f8f9fa;
+}
+
+.response-text pre {
+    background-color: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    overflow-x: auto;
+    margin: 1rem 0;
+}
+
+.response-text pre code {
+    background: none;
+    padding: 0;
+    color: #f0f6fc;
+}
+
+.code-blocks-container,
+.tables-container,
+.visualizations-container,
+.attachments-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.code-block,
+.table-block {
+    background-color: #2d2d2d;
+    border: 1px solid #495057;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.code-header,
+.table-header {
+    background-color: #1a1a1a;
+    border-bottom: 1px solid #495057;
+    padding: 0.75rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.code-info,
+.table-info {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.code-language,
+.table-title {
+    font-weight: 600;
+    color: #fff;
+}
+
+.code-lines,
+.table-dimensions {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+.code-actions,
+.table-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.code-content {
+    padding: 0;
+}
+
+.code-content pre {
+    margin: 0;
+    border-radius: 0;
+    background-color: #0d1117;
+    border: none;
+}
+
+.code-content code {
+    background: none;
+    padding: 0;
+    color: #f0f6fc;
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.table-content {
+    padding: 1rem;
+}
+
+.table-responsive {
+    border-radius: 0.25rem;
+    overflow: hidden;
+}
+
+.table-dark {
+    --bs-table-bg: #1a1a1a;
+    --bs-table-striped-bg: #2d2d2d;
+    --bs-table-hover-bg: #3d3d3d;
+    --bs-table-color: #fff;
+    --bs-table-border-color: #495057;
+}
+
+.response-footer {
+    background-color: #2d2d2d;
+    border-top: 1px solid #495057;
+    padding: 1rem 1.5rem;
+    border-radius: 0 0 0.5rem 0.5rem;
+}
+
+.response-feedback {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.feedback-label {
+    color: #adb5bd;
+    font-size: 0.875rem;
+}
+
+.feedback-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.response-suggestions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.suggestions-label {
+    color: #adb5bd;
+    font-size: 0.875rem;
+}
+
+.suggestion-chips {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.suggestion-chip {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    transition: all 0.2s ease-in-out;
+}
+
+.suggestion-chip:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Syntax highlighting for code blocks */
+.hljs {
+    background: #0d1117 !important;
+    color: #f0f6fc !important;
+}
+
+.hljs-keyword { color: #ff7b72 !important; }
+.hljs-string { color: #a5d6ff !important; }
+.hljs-comment { color: #8b949e !important; }
+.hljs-number { color: #79c0ff !important; }
+.hljs-function { color: #d2a8ff !important; }
+.hljs-variable { color: #ffa657 !important; }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .response-meta {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .response-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .response-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+    
+    .response-feedback,
+    .response-suggestions {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .suggestion-chips {
+        width: 100%;
+        justify-content: flex-start;
+    }
+}
+</style>
+
+<script>
+// LLM Response JavaScript
+let currentResponse = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+    initializeLLMResponse();
+});
+
+function initializeLLMResponse() {
+    // Load sample response for demonstration
+    loadSampleResponse();
+}
+
+function loadSampleResponse() {
+    const sampleResponse = {
+        model: 'Gemini 1.5 Flash',
+        time: 2.3,
+        tokens: 1247,
+        content: `
+# Analysis Results Summary
+
+Based on your sales data analysis, here are the key findings:
+
+## Key Insights
+
+1. **Revenue Growth**: Your Q4 revenue increased by **23.5%** compared to Q3
+2. **Customer Acquisition**: New customer acquisition rate is **15.2%** higher than industry average
+3. **Product Performance**: Product A shows the highest conversion rate at **12.8%**
+
+## Recommendations
+
+- Focus marketing efforts on Product A to maximize ROI
+- Implement customer retention strategies for Q1
+- Consider expanding Product A inventory by 30%
+
+## Statistical Analysis
+
+The correlation between marketing spend and revenue shows a strong positive relationship (r = 0.78, p < 0.001).
+        `,
+        codeBlocks: [
+            {
+                language: 'python',
+                code: `import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Load the data
+df = pd.read_csv('sales_data.csv')
+
+# Calculate key metrics
+revenue_growth = df['revenue'].pct_change().mean() * 100
+customer_acquisition = df['new_customers'].sum() / df['total_customers'].sum() * 100
+
+print(f"Revenue Growth: {revenue_growth:.1f}%")
+print(f"Customer Acquisition Rate: {customer_acquisition:.1f}%")`
+            }
+        ],
+        tables: [
+            {
+                title: 'Product Performance Summary',
+                headers: ['Product', 'Revenue', 'Customers', 'Conversion Rate'],
+                data: [
+                    ['Product A', '$125,000', '1,250', '12.8%'],
+                    ['Product B', '$98,000', '980', '9.2%'],
+                    ['Product C', '$87,000', '870', '8.1%']
+                ]
+            }
+        ]
+    };
+    
+    displayResponse(sampleResponse);
+}
+
+function displayResponse(response) {
+    currentResponse = response;
+    
+    // Update header
+    document.getElementById('responseModel').textContent = response.model;
+    document.getElementById('responseTime').textContent = `${response.time}s`;
+    document.getElementById('responseTokens').textContent = `${response.tokens.toLocaleString()} tokens`;
+    
+    // Update content
+    updateTextResponse(response.content);
+    updateCodeBlocks(response.codeBlocks || []);
+    updateTables(response.tables || []);
+    
+    // Show/hide sections
+    document.getElementById('codeBlocks').style.display = response.codeBlocks?.length > 0 ? 'block' : 'none';
+    document.getElementById('tables').style.display = response.tables?.length > 0 ? 'block' : 'none';
+}
+
+function updateTextResponse(content) {
+    const textContainer = document.getElementById('textResponse').querySelector('.response-text');
+    textContainer.innerHTML = formatMarkdown(content);
+}
+
+function updateCodeBlocks(codeBlocks) {
+    const container = document.getElementById('codeBlocks').querySelector('.code-blocks-container');
+    container.innerHTML = '';
+    
+    codeBlocks.forEach((block, index) => {
+        const template = document.getElementById('codeBlockTemplate').content.cloneNode(true);
+        
+        // Update code info
+        template.querySelector('.code-language').textContent = block.language || 'Code';
+        template.querySelector('.code-lines').textContent = `${block.code.split('\n').length} lines`;
+        
+        // Update code content
+        template.querySelector('code').textContent = block.code;
+        template.querySelector('code').className = `language-${block.language || 'text'}`;
+        
+        // Store block data
+        template.querySelector('.code-block').dataset.blockIndex = index;
+        
+        container.appendChild(template);
+    });
+}
+
+function updateTables(tables) {
+    const container = document.getElementById('tables').querySelector('.tables-container');
+    container.innerHTML = '';
+    
+    tables.forEach((table, index) => {
+        const template = document.getElementById('tableTemplate').content.cloneNode(true);
+        
+        // Update table info
+        template.querySelector('.table-title').textContent = table.title || 'Data Table';
+        template.querySelector('.table-dimensions').textContent = `${table.data.length} rows × ${table.headers.length} columns`;
+        
+        // Update table headers
+        const headerRow = template.querySelector('.table-headers');
+        headerRow.innerHTML = table.headers.map(header => `<th>${header}</th>`).join('');
+        
+        // Update table body
+        const tbody = template.querySelector('.table-body');
+        tbody.innerHTML = table.data.map(row => 
+            `<tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>`
+        ).join('');
+        
+        // Store table data
+        template.querySelector('.table-block').dataset.tableIndex = index;
+        
+        container.appendChild(template);
+    });
+}
+
+function formatMarkdown(text) {
+    return text
+        .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+        .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+        .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+        .replace(/^#### (.*$)/gim, '<h4>$1</h4>')
+        .replace(/^##### (.*$)/gim, '<h5>$1</h5>')
+        .replace(/^###### (.*$)/gim, '<h6>$1</h6>')
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/`(.*?)`/g, '<code>$1</code>')
+        .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
+        .replace(/\n/g, '<br>');
+}
+
+function copyResponse() {
+    const textContent = document.getElementById('textResponse').querySelector('.response-text').textContent;
+    navigator.clipboard.writeText(textContent).then(() => {
+        showNotification('Response copied to clipboard', 'success');
+    });
+}
+
+function regenerateResponse() {
+    if (confirm('Are you sure you want to regenerate this response?')) {
+        // Implementation for regenerating response
+        showNotification('Regenerating response...', 'info');
+        
+        setTimeout(() => {
+            loadSampleResponse();
+            showNotification('Response regenerated', 'success');
+        }, 2000);
+    }
+}
+
+function exportResponse() {
+    const responseData = {
+        model: currentResponse.model,
+        time: currentResponse.time,
+        tokens: currentResponse.tokens,
+        content: currentResponse.content,
+        timestamp: new Date().toISOString()
+    };
+    
+    const blob = new Blob([JSON.stringify(responseData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `response-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    showNotification('Response exported', 'success');
+}
+
+function copyCode(button) {
+    const codeBlock = button.closest('.code-block');
+    const code = codeBlock.querySelector('code').textContent;
+    navigator.clipboard.writeText(code).then(() => {
+        showNotification('Code copied to clipboard', 'success');
+    });
+}
+
+function runCode(button) {
+    const codeBlock = button.closest('.code-block');
+    const code = codeBlock.querySelector('code').textContent;
+    
+    // Implementation for running code
+    showNotification('Running code...', 'info');
+    
+    setTimeout(() => {
+        showNotification('Code executed successfully', 'success');
+    }, 2000);
+}
+
+function downloadCode(button) {
+    const codeBlock = button.closest('.code-block');
+    const code = codeBlock.querySelector('code').textContent;
+    const language = codeBlock.querySelector('.code-language').textContent.toLowerCase();
+    
+    const blob = new Blob([code], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `code.${language}`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    showNotification('Code downloaded', 'success');
+}
+
+function copyTable(button) {
+    const tableBlock = button.closest('.table-block');
+    const table = tableBlock.querySelector('table');
+    
+    // Copy table data as CSV
+    const rows = Array.from(table.querySelectorAll('tr'));
+    const csvData = rows.map(row => 
+        Array.from(row.querySelectorAll('th, td')).map(cell => cell.textContent).join(',')
+    ).join('\n');
+    
+    navigator.clipboard.writeText(csvData).then(() => {
+        showNotification('Table copied to clipboard', 'success');
+    });
+}
+
+function exportTable(button, format) {
+    const tableBlock = button.closest('.table-block');
+    const table = tableBlock.querySelector('table');
+    
+    // Implementation for exporting table
+    showNotification(`Table exported as ${format.toUpperCase()}`, 'success');
+}
+
+function thumbsUp() {
+    showNotification('Thanks for your feedback!', 'success');
+}
+
+function thumbsDown() {
+    showNotification('Thanks for your feedback! We\'ll work to improve.', 'info');
+}
+
+function applySuggestion(button) {
+    const suggestion = button.textContent.trim();
+    const textarea = document.getElementById('messageTextarea');
+    
+    if (textarea) {
+        textarea.value = suggestion;
+        textarea.style.height = 'auto';
+        textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+        textarea.focus();
+    }
+}
+
+// HTMX integration
+document.body.addEventListener('htmx:afterRequest', function(e) {
+    if (e.target.id === 'messageForm' && e.detail.xhr.status === 200) {
+        try {
+            const response = JSON.parse(e.detail.xhr.response);
+            displayResponse(response);
+        } catch (error) {
+            console.error('Error displaying LLM response:', error);
+        }
+    }
+});
+</script>

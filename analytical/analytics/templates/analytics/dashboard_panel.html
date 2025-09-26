@@ -1,0 +1,207 @@
+<!-- Dashboard Panel Component -->
+<div class="dashboard-panel-content">
+    <!-- Dataset Information -->
+    <div class="dataset-info" id="dataset-info">
+        {% if datasets %}
+            {% for dataset in datasets %}
+                <div class="dataset-card">
+                    <h4 class="dataset-name">{{ dataset.name }}</h4>
+                    <p class="text-muted">{{ dataset.description|default:"No description available" }}</p>
+                    <div class="dataset-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">{{ dataset.row_count|default:"-" }}</div>
+                            <div class="stat-label">Rows</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">{{ dataset.column_count|default:"-" }}</div>
+                            <div class="stat-label">Columns</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">{{ dataset.file_size_bytes|filesizeformat|default:"-" }}</div>
+                            <div class="stat-label">Size</div>
+                        </div>
+                    </div>
+                    <div class="dataset-actions">
+                        <button class="btn btn-sm btn-outline-primary" 
+                                onclick="alert('Dataset analysis coming soon!')">
+                            <i class="bi bi-graph-up"></i> Analyze
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary" 
+                                onclick="alert('Dataset view coming soon!')">
+                            <i class="bi bi-eye"></i> View
+                        </button>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-dataset">
+                <h4 class="dataset-name">No Dataset Loaded</h4>
+                <p class="text-muted">Upload a dataset to begin analysis</p>
+                <div class="upload-prompt">
+                    <button class="btn btn-primary" 
+                            onclick="alert('Upload functionality coming soon!')">
+                        <i class="bi bi-upload"></i> Upload Dataset
+                    </button>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="quick-actions mt-3">
+        <h5 class="text-light mb-2">Quick Actions</h5>
+        <div class="action-buttons">
+            <button class="btn btn-outline-primary btn-sm" 
+                    onclick="alert('AI Analysis coming soon!')">
+                <i class="bi bi-robot"></i> AI Analysis
+            </button>
+            <button class="btn btn-outline-success btn-sm" 
+                    onclick="alert('Data Overview coming soon!')">
+                <i class="bi bi-eye"></i> Data Overview
+            </button>
+            <button class="btn btn-outline-info btn-sm" 
+                    onclick="alert('Analysis History coming soon!')">
+                <i class="bi bi-clock-history"></i> History
+            </button>
+        </div>
+    </div>
+    
+    <!-- Recent Activity -->
+    <div class="recent-activity mt-3">
+        <h5 class="text-light mb-2">Recent Activity</h5>
+        <div class="activity-list">
+            <div class="activity-item">
+                <i class="bi bi-upload text-primary"></i>
+                <span class="activity-text">Dataset uploaded</span>
+                <span class="activity-time">2 hours ago</span>
+            </div>
+            <div class="activity-item">
+                <i class="bi bi-graph-up text-success"></i>
+                <span class="activity-text">Analysis completed</span>
+                <span class="activity-time">1 day ago</span>
+            </div>
+            <div class="activity-item">
+                <i class="bi bi-chat-dots text-info"></i>
+                <span class="activity-text">AI chat session</span>
+                <span class="activity-time">2 days ago</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.dashboard-panel-content {
+    padding: 1rem;
+}
+
+.dataset-card {
+    background-color: var(--analytical-bg-tertiary);
+    border: 1px solid var(--analytical-border-color);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    transition: var(--transition-normal);
+}
+
+.dataset-card:hover {
+    border-color: var(--analytical-accent-blue);
+    box-shadow: 0 4px 8px var(--analytical-shadow);
+}
+
+.dataset-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--analytical-text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.dataset-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 0.5rem;
+    background-color: var(--analytical-bg-secondary);
+    border-radius: 0.25rem;
+}
+
+.stat-value {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--analytical-accent-blue);
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: var(--analytical-text-secondary);
+    margin-top: 0.25rem;
+}
+
+.dataset-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.no-dataset {
+    text-align: center;
+    padding: 2rem;
+    background-color: var(--analytical-bg-tertiary);
+    border: 2px dashed var(--analytical-border-color);
+    border-radius: 0.5rem;
+}
+
+.upload-prompt {
+    margin-top: 1rem;
+}
+
+.quick-actions {
+    background-color: var(--analytical-bg-tertiary);
+    border: 1px solid var(--analytical-border-color);
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.recent-activity {
+    background-color: var(--analytical-bg-tertiary);
+    border: 1px solid var(--analytical-border-color);
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem;
+    background-color: var(--analytical-bg-secondary);
+    border-radius: 0.25rem;
+}
+
+.activity-text {
+    flex: 1;
+    font-size: 0.875rem;
+    color: var(--analytical-text-primary);
+}
+
+.activity-time {
+    font-size: 0.75rem;
+    color: var(--analytical-text-secondary);
+}
+</style>

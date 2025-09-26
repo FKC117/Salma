@@ -1,0 +1,153 @@
+<!-- Dynamic Parameter Modal -->
+<div class="modal fade" id="parameterModal" tabindex="-1" aria-labelledby="parameterModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark border-secondary">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title text-light" id="parameterModalLabel">
+                    <i class="fas fa-cog me-2"></i>Analysis Parameters
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="parameterForm" hx-post="/api/analysis/execute/" hx-target="#analysisResults" hx-indicator="#analysisSpinner">
+                    <input type="hidden" name="tool_name" id="selectedToolName">
+                    <input type="hidden" name="dataset_id" id="selectedDatasetId">
+                    
+                    <!-- Dynamic Parameters Container -->
+                    <div id="dynamicParameters">
+                        <!-- Parameters will be dynamically inserted here -->
+                    </div>
+                    
+                    <!-- Analysis Options -->
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="save_results" id="saveResults" checked>
+                                <label class="form-check-label text-light" for="saveResults">
+                                    Save results to history
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="generate_chart" id="generateChart" checked>
+                                <label class="form-check-label text-light" for="generateChart">
+                                    Generate visualization
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Advanced Options -->
+                    <div class="accordion mt-3" id="advancedOptions">
+                        <div class="accordion-item bg-dark border-secondary">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button bg-dark text-light border-secondary" type="button" 
+                                        data-bs-toggle="collapse" data-bs-target="#advancedCollapse" 
+                                        aria-expanded="false" aria-controls="advancedCollapse">
+                                    <i class="fas fa-sliders-h me-2"></i>Advanced Options
+                                </button>
+                            </h2>
+                            <div id="advancedCollapse" class="accordion-collapse collapse" data-bs-parent="#advancedOptions">
+                                <div class="accordion-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="confidenceLevel" class="form-label text-light">Confidence Level</label>
+                                            <select class="form-select bg-dark text-light border-secondary" name="confidence_level" id="confidenceLevel">
+                                                <option value="0.90">90%</option>
+                                                <option value="0.95" selected>95%</option>
+                                                <option value="0.99">99%</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="randomSeed" class="form-label text-light">Random Seed</label>
+                                            <input type="number" class="form-control bg-dark text-light border-secondary" 
+                                                   name="random_seed" id="randomSeed" placeholder="Auto">
+                                        </div>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col-md-6">
+                                            <label for="maxIterations" class="form-label text-light">Max Iterations</label>
+                                            <input type="number" class="form-control bg-dark text-light border-secondary" 
+                                                   name="max_iterations" id="maxIterations" value="1000" min="1" max="10000">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="tolerance" class="form-label text-light">Tolerance</label>
+                                            <input type="number" class="form-control bg-dark text-light border-secondary" 
+                                                   name="tolerance" id="tolerance" value="1e-6" step="1e-6" min="1e-10">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>Cancel
+                </button>
+                <button type="submit" form="parameterForm" class="btn btn-primary">
+                    <i class="fas fa-play me-1"></i>Run Analysis
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Parameter Loading Indicator -->
+<div id="parameterSpinner" class="htmx-indicator">
+    <div class="d-flex justify-content-center align-items-center py-3">
+        <div class="spinner-border text-primary me-2" role="status">
+            <span class="visually-hidden">Loading parameters...</span>
+        </div>
+        <span class="text-light">Loading tool parameters...</span>
+    </div>
+</div>
+
+<script>
+// Parameter Modal JavaScript
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle tool selection and load parameters
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.tool-item')) {
+            const toolItem = e.target.closest('.tool-item');
+            const toolName = toolItem.dataset.toolName;
+            const datasetId = toolItem.dataset.datasetId;
+            
+            // Set hidden inputs
+            document.getElementById('selectedToolName').value = toolName;
+            document.getElementById('selectedDatasetId').value = datasetId;
+            
+            // Load tool parameters
+            loadToolParameters(toolName);
+        }
+    });
+    
+    // Load tool parameters dynamically
+    function loadToolParameters(toolName) {
+        const paramsContainer = document.getElementById('dynamicParameters');
+        paramsContainer.innerHTML = '<div class="text-center"><div class="spinner-border text-primary" role="status"></div></div>';
+        
+        // Fetch tool parameters via HTMX
+        htmx.ajax('GET', `/api/tools/parameters/${toolName}/`, {
+            target: '#dynamicParameters',
+            indicator: '#parameterSpinner'
+        });
+    }
+    
+    // Handle form submission
+    document.getElementById('parameterForm').addEventListener('htmx:beforeRequest', function(e) {
+        // Show analysis spinner
+        document.getElementById('analysisSpinner').style.display = 'block';
+    });
+    
+    document.getElementById('parameterForm').addEventListener('htmx:afterRequest', function(e) {
+        // Hide modal on success
+        if (e.detail.xhr.status === 200) {
+            const modal = bootstrap.Modal.getInstance(document.getElementById('parameterModal'));
+            modal.hide();
+        }
+    });
+});
+</script>
