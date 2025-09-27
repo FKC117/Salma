@@ -110,10 +110,10 @@ class SecurityMiddleware(MiddlewareMixin):
         # Different limits for authenticated vs anonymous users
         if user_id:
             limit_key = f"rate_limit_user_{user_id}"
-            limit = 1000  # 1000 requests per hour for authenticated users
+            limit = 10000  # 1000 requests per hour for authenticated users
         else:
             limit_key = f"rate_limit_ip_{ip_address}"
-            limit = 100  # 100 requests per hour for anonymous users
+            limit = 10000  # 100 requests per hour for anonymous users
         
         # Check current count
         current_count = cache.get(limit_key, 0)

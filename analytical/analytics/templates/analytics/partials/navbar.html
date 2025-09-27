@@ -1,0 +1,265 @@
+<!-- Navigation Bar Component -->
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: var(--cursor-bg-secondary); border-bottom: 1px solid var(--cursor-border);">
+    <div class="container-fluid">
+        <!-- Brand/Logo -->
+        <a class="navbar-brand fw-bold" href="{% url 'dashboard' %}">
+            <i class="bi bi-graph-up me-2 text-primary"></i>
+            <span class="text-light">Analytical</span>
+        </a>
+        
+        <!-- Mobile Toggle Button -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <!-- Navigation Menu -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <!-- Left Navigation -->
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'dashboard' %}">
+                        <i class="bi bi-house me-1"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="analysisDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-graph-up me-1"></i>Analysis
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="analysisDropdown">
+                        <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#uploadModal">
+                            <i class="bi bi-upload me-2"></i>Upload Dataset
+                        </a></li>
+                        <li><a class="dropdown-item" href="#" hx-get="/api/tools/list/" hx-target="#tools-list">
+                            <i class="bi bi-tools me-2"></i>Browse Tools
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" hx-post="/api/agent/run/" hx-target="#dashboard-content">
+                            <i class="bi bi-robot me-2"></i>Auto Analyze
+                        </a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="dataDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-database me-1"></i>Data
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dataDropdown">
+                        <li><a class="dropdown-item" href="#" hx-get="/api/upload/" hx-target="#data-content">
+                            <i class="bi bi-folder me-2"></i>My Datasets
+                        </a></li>
+                        <li><a class="dropdown-item" href="#" hx-get="/api/rag/search/" hx-target="#data-content">
+                            <i class="bi bi-search me-2"></i>Search Knowledge
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" hx-delete="/api/rag/clear/" hx-target="#data-content">
+                            <i class="bi bi-trash me-2"></i>Clear Cache
+                        </a></li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" hx-get="/api/audit/trail/" hx-target="#audit-content">
+                        <i class="bi bi-shield-check me-1"></i>Audit Trail
+                    </a>
+                </li>
+            </ul>
+            
+            <!-- Right Navigation -->
+            <ul class="navbar-nav">
+                <!-- User Status -->
+                {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle me-1"></i>{{ user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="userDropdown">
+                            <li><h6 class="dropdown-header">Account</h6></li>
+                            <li><a class="dropdown-item" href="#" hx-get="/api/user/profile/" hx-target="#user-content">
+                                <i class="bi bi-person me-2"></i>Profile
+                            </a></li>
+                            <li><a class="dropdown-item" href="#" hx-get="/api/user/settings/" hx-target="#user-content">
+                                <i class="bi bi-gear me-2"></i>Settings
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'logout' %}">
+                                <i class="bi bi-box-arrow-right me-2"></i>Logout
+                            </a></li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">
+                            <i class="bi bi-box-arrow-in-right me-1"></i>Login
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'register' %}">
+                            <i class="bi bi-person-plus me-1"></i>Register
+                        </a>
+                    </li>
+                {% endif %}
+                
+                <!-- System Status -->
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-bs-toggle="tooltip" title="System Status">
+                        <i class="bi bi-circle-fill text-success" id="system-status"></i>
+                    </a>
+                </li>
+                
+                <!-- Help -->
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#helpModal">
+                        <i class="bi bi-question-circle me-1"></i>Help
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Toast Container for Notifications -->
+<div id="toast-container" class="toast-container position-fixed top-0 end-0 p-3"></div>
+
+<!-- Help Modal -->
+<div class="modal fade" id="helpModal" tabindex="-1" aria-labelledby="helpModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark text-light">
+            <div class="modal-header">
+                <h5 class="modal-title" id="helpModalLabel">
+                    <i class="bi bi-question-circle me-2"></i>Help & Documentation
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6><i class="bi bi-upload me-2"></i>Getting Started</h6>
+                        <ul class="list-unstyled">
+                            <li>• Upload your dataset using the Upload button</li>
+                            <li>• Select analysis tools from the left panel</li>
+                            <li>• View results in the center dashboard</li>
+                            <li>• Chat with AI assistant on the right</li>
+                        </ul>
+                        
+                        <h6 class="mt-3"><i class="bi bi-tools me-2"></i>Analysis Tools</h6>
+                        <ul class="list-unstyled">
+                            <li>• Statistical analysis tools</li>
+                            <li>• Machine learning algorithms</li>
+                            <li>• Data visualization tools</li>
+                            <li>• Survival analysis tools</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6><i class="bi bi-robot me-2"></i>AI Features</h6>
+                        <ul class="list-unstyled">
+                            <li>• Auto-analyze with one click</li>
+                            <li>• Intelligent data interpretation</li>
+                            <li>• Context-aware suggestions</li>
+                            <li>• Natural language queries</li>
+                        </ul>
+                        
+                        <h6 class="mt-3"><i class="bi bi-shield-check me-2"></i>Security</h6>
+                        <ul class="list-unstyled">
+                            <li>• All files are scanned for threats</li>
+                            <li>• Data is encrypted in transit</li>
+                            <li>• Complete audit trail logging</li>
+                            <li>• GDPR/HIPAA compliant</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a href="#" class="btn btn-primary">Full Documentation</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Upload Modal -->
+<div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark text-light">
+            <div class="modal-header">
+                <h5 class="modal-title" id="uploadModalLabel">
+                    <i class="bi bi-upload me-2"></i>Upload Dataset
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form hx-post="/api/upload/" hx-target="#upload-results" hx-indicator="#upload-progress" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <!-- File Drop Zone -->
+                    <div class="upload-dropzone border border-dashed border-secondary rounded p-5 text-center mb-3" id="upload-dropzone">
+                        <i class="bi bi-cloud-upload display-1 text-muted"></i>
+                        <h5 class="mt-3">Drag & Drop your file here</h5>
+                        <p class="text-muted">or click to browse</p>
+                        <input type="file" class="form-control" name="file" accept=".csv,.xls,.xlsx,.json" required>
+                    </div>
+                    
+                    <!-- File Info -->
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description (Optional)</label>
+                        <textarea class="form-control bg-dark text-light border-secondary" name="description" rows="3" placeholder="Describe your dataset..."></textarea>
+                    </div>
+                    
+                    <!-- Supported Formats -->
+                    <div class="mb-3">
+                        <small class="text-muted">
+                            <strong>Supported formats:</strong> CSV, XLS, XLSX, JSON<br>
+                            <strong>Max file size:</strong> 10MB<br>
+                            <strong>Security:</strong> All files are scanned for threats
+                        </small>
+                    </div>
+                    
+                    <!-- Upload Progress -->
+                    <div id="upload-progress" class="htmx-indicator">
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                        </div>
+                        <div class="text-center mt-2">
+                            <span class="spinner-border spinner-border-sm" role="status"></span>
+                            <span class="ms-2">Processing file...</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Upload Results -->
+                    <div id="upload-results"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary" form="upload-form">
+                    <i class="bi bi-upload me-1"></i>Upload Dataset
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Initialize tooltips
+document.addEventListener('DOMContentLoaded', function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+    
+    // System status indicator
+    const statusIndicator = document.getElementById('system-status');
+    if (statusIndicator) {
+        // Check system status periodically
+        setInterval(() => {
+            fetch('/api/health/')
+                .then(response => response.ok)
+                .then(isHealthy => {
+                    statusIndicator.className = isHealthy ? 
+                        'bi bi-circle-fill text-success' : 
+                        'bi bi-circle-fill text-danger';
+                })
+                .catch(() => {
+                    statusIndicator.className = 'bi bi-circle-fill text-warning';
+                });
+        }, 30000); // Check every 30 seconds
+    }
+});
+</script>

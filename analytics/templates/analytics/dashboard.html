@@ -285,7 +285,7 @@
         max-width: none !important;
     }
 
-    /* Responsive Design */
+    /* Responsive Design - Mobile Friendly */
     @media (max-width: 1200px) {
         .dashboard-container {
             grid-template-columns: 240px 4px 1fr 4px 280px !important;
@@ -581,10 +581,10 @@
 
 {% block extra_js %}
 <script>
-// Cursor-style Panel Resizing
+// Cursor-style Panel Resizing (NO STATE SAVING)
 class CursorPanelResizer {
     constructor() {
-        this.container = document.querySelector('.dashboard-container');
+        this.container = document.querySelector('.dashboard-container');        
         this.isResizing = false;
         this.currentResizer = null;
         this.startX = 0;
@@ -592,35 +592,35 @@ class CursorPanelResizer {
         
         this.init();
     }
-    
+
     init() {
         this.createResizers();
         this.bindEvents();
-        this.loadPanelState();
+        // NO loadPanelState() - panels reset on refresh
     }
-    
+
     createResizers() {
         // Check if resizers already exist
         if (document.getElementById('tools-dashboard-resizer') && document.getElementById('dashboard-chat-resizer')) {
             return; // Resizers already exist
         }
-        
+
         // Create vertical resizers between panels
-        const toolsResizer = this.createResizer('vertical', 'tools-dashboard'); 
-        const chatResizer = this.createResizer('vertical', 'dashboard-chat');   
+        const toolsResizer = this.createResizer('vertical', 'tools-dashboard-resizer');
+        const chatResizer = this.createResizer('vertical', 'dashboard-chat-resizer');
 
         // Insert resizers into DOM at correct positions
-        this.container.insertBefore(toolsResizer, this.container.children[1]);  
-        this.container.insertBefore(chatResizer, this.container.children[3]);   
+        this.container.insertBefore(toolsResizer, this.container.children[1]);
+        this.container.insertBefore(chatResizer, this.container.children[3]);
     }
-    
+
     createResizer(direction, id) {
         const resizer = document.createElement('div');
         resizer.className = `resizer ${direction}`;
         resizer.id = id;
         return resizer;
     }
-    
+
     bindEvents() {
         // Use event delegation for dynamically created resizers
         document.addEventListener('mousedown', (e) => {
@@ -644,7 +644,7 @@ class CursorPanelResizer {
             }
         });
     }
-    
+
     startResize(e) {
         console.log('Starting resize with resizer:', e.target.id);
         this.isResizing = true;
@@ -658,7 +658,7 @@ class CursorPanelResizer {
         // Add visual feedback
         this.currentResizer.style.backgroundColor = 'var(--cursor-border-focus)';
     }
-    
+
     resize(e) {
         const containerRect = this.container.getBoundingClientRect();
         const deltaX = e.clientX - this.startX;
@@ -670,7 +670,7 @@ class CursorPanelResizer {
 
         console.log('Resizing:', this.currentResizer.id, 'deltaX:', deltaX, 'adjustedDeltaX:', adjustedDeltaX, 'containerWidth:', containerWidth);
 
-        if (this.currentResizer.id === 'tools-dashboard') {
+        if (this.currentResizer.id === 'tools-dashboard-resizer') {
             // Resize tools panel (200px to 600px range) - much larger range
             const newToolsWidth = Math.max(200, Math.min(600, 280 + adjustedDeltaX));
             const remainingWidth = containerWidth - newToolsWidth - 4 - 320 - 4; // 4px for resizers, 320px for chat
@@ -678,7 +678,7 @@ class CursorPanelResizer {
             const newGridTemplate = `${newToolsWidth}px 4px ${remainingWidth}px 4px 320px`;
             console.log('New grid template:', newGridTemplate);
             this.container.style.setProperty('grid-template-columns', newGridTemplate, 'important');
-        } else if (this.currentResizer.id === 'dashboard-chat') {
+        } else if (this.currentResizer.id === 'dashboard-chat-resizer') {
             // Resize chat panel (200px to 600px range) - much larger range
             const newChatWidth = Math.max(200, Math.min(600, 320 - adjustedDeltaX));
             const remainingWidth = containerWidth - 280 - 4 - newChatWidth - 4; // 280px for tools, 4px for resizers
@@ -688,38 +688,22 @@ class CursorPanelResizer {
             this.container.style.setProperty('grid-template-columns', newGridTemplate, 'important');
         }
     }
-    
+
     stopResize() {
         this.isResizing = false;
         this.currentResizer.style.backgroundColor = '';
         this.currentResizer = null;
         document.body.style.cursor = '';
         document.body.style.userSelect = '';
-        this.savePanelState();
+        // NO savePanelState() - panels reset on refresh
     }
-    
+
     getCurrentColumns() {
         const computedStyle = window.getComputedStyle(this.container);
         return computedStyle.gridTemplateColumns.split(' ');
     }
-    
-    savePanelState() {
-        const state = {
-            gridTemplateColumns: this.container.style.gridTemplateColumns,
-            timestamp: Date.now()
-        };
-        localStorage.setItem('cursorPanelState', JSON.stringify(state));
-    }
-    
-    loadPanelState() {
-        const saved = localStorage.getItem('cursorPanelState');
-        if (saved) {
-            const state = JSON.parse(saved);
-            if (state.gridTemplateColumns) {
-                this.container.style.setProperty('grid-template-columns', state.gridTemplateColumns, 'important');
-            }
-        }
-    }
+
+    // State saving functionality removed - panels reset to default on page refresh
 }
 
 // Cursor-style Tool Interactions

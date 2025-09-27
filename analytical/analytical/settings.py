@@ -28,7 +28,7 @@ def verify_virtual_environment():
             "Linux/Mac: source venv/bin/activate\n"
             "This is NON-NEGOTIABLE for security and dependency isolation."
         )
-    print("✅ Virtual environment verified successfully")
+    print("Virtual environment verified successfully")
 
 # Verify virtual environment on startup
 verify_virtual_environment()
@@ -43,7 +43,7 @@ SECRET_KEY = 'django-insecure-^4_0i9d%o7)p)*8kf7ii#zkthv717)09s63t24!kse2i=xl0e$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver']
 
 
 # Application definition
@@ -434,7 +434,7 @@ IMAGE_AUTO_OPTIMIZE_THRESHOLD_MB = 1.0  # Auto-optimize images larger than this
 IMAGE_CLEANUP_DAYS = 30  # Clean up compressed images older than this
 
 # Background Monitoring Settings
-ENABLE_BACKGROUND_MONITORING = True
+ENABLE_BACKGROUND_MONITORING = False
 SYSTEM_MONITORING_INTERVAL = 60  # seconds
 CLEANUP_TASKS_INTERVAL = 3600  # 1 hour
 PERFORMANCE_CHECK_INTERVAL = 300  # 5 minutes

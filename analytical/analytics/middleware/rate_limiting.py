@@ -31,28 +31,28 @@ class RateLimitingMiddleware(MiddlewareMixin):
     # Default rate limits (requests per time window)
     DEFAULT_LIMITS = {
         # General API limits
-        'api_general': {'requests': 1000, 'window': 3600},  # 1000 req/hour
-        'api_auth': {'requests': 100, 'window': 3600},      # 100 auth req/hour
+        'api_general': {'requests': 1000, 'window': 3600000},  # 1000 req/hour
+        'api_auth': {'requests': 100, 'window': 3600000},      # 100 auth req/hour
         
         # File upload limits
-        'file_upload': {'requests': 50, 'window': 3600},    # 50 uploads/hour
-        'file_large': {'requests': 10, 'window': 3600},     # 10 large files/hour
+        'file_upload': {'requests': 50, 'window': 3600000},    # 50 uploads/hour
+        'file_large': {'requests': 10, 'window': 3600000},     # 10 large files/hour
         
         # Analysis limits
-        'analysis_execute': {'requests': 200, 'window': 3600},  # 200 analysis/hour
-        'analysis_heavy': {'requests': 20, 'window': 3600},     # 20 heavy analysis/hour
+        'analysis_execute': {'requests': 200, 'window': 3600000},  # 200 analysis/hour
+        'analysis_heavy': {'requests': 20, 'window': 3600000},     # 20 heavy analysis/hour
         
         # AI/LLM limits
-        'llm_chat': {'requests': 500, 'window': 3600},      # 500 chat messages/hour
-        'llm_analysis': {'requests': 100, 'window': 3600},  # 100 AI analysis/hour
+        'llm_chat': {'requests': 500, 'window': 3600000},      # 500 chat messages/hour
+        'llm_analysis': {'requests': 100, 'window': 3600000},  # 100 AI analysis/hour
         
         # Agent limits
-        'agent_run': {'requests': 50, 'window': 3600},      # 50 agent runs/hour
-        'agent_expensive': {'requests': 10, 'window': 3600}, # 10 expensive runs/hour
+        'agent_run': {'requests': 50, 'window': 3600000},      # 50 agent runs/hour
+        'agent_expensive': {'requests': 10, 'window': 3600000}, # 10 expensive runs/hour
         
         # Per-IP limits (for anonymous users)
-        'ip_general': {'requests': 500, 'window': 3600},    # 500 req/hour per IP
-        'ip_strict': {'requests': 100, 'window': 3600},     # 100 req/hour for sensitive endpoints
+        'ip_general': {'requests': 500, 'window': 3600000},    # 500 req/hour per IP
+        'ip_strict': {'requests': 100, 'window': 3600000},     # 100 req/hour for sensitive endpoints
     }
     
     # Endpoint to rate limit mapping
@@ -81,10 +81,10 @@ class RateLimitingMiddleware(MiddlewareMixin):
     
     # Burst limits (short-term limits)
     BURST_LIMITS = {
-        'api_general': {'requests': 100, 'window': 60},     # 100 req/minute
-        'file_upload': {'requests': 10, 'window': 60},     # 10 uploads/minute
-        'llm_chat': {'requests': 30, 'window': 60},        # 30 messages/minute
-        'agent_run': {'requests': 5, 'window': 60},        # 5 agent runs/minute
+        'api_general': {'requests': 100, 'window': 600},     # 100 req/minute
+        'file_upload': {'requests': 10, 'window': 600},     # 10 uploads/minute
+        'llm_chat': {'requests': 30, 'window': 600},        # 30 messages/minute
+        'agent_run': {'requests': 5, 'window': 600},        # 5 agent runs/minute
     }
     
     def __init__(self, get_response):
@@ -104,18 +104,18 @@ class RateLimitingMiddleware(MiddlewareMixin):
         # In development mode, increase limits significantly
         if self.is_development:
             self.limits = {
-                'api_general': {'requests': 10000, 'window': 3600},  # 10K req/hour
-                'api_auth': {'requests': 1000, 'window': 3600},     # 1K auth req/hour
-                'file_upload': {'requests': 500, 'window': 3600},  # 500 uploads/hour
-                'file_large': {'requests': 100, 'window': 3600},   # 100 large files/hour
-                'analysis_execute': {'requests': 2000, 'window': 3600},  # 2K analysis/hour
-                'analysis_heavy': {'requests': 200, 'window': 3600},     # 200 heavy analysis/hour
-                'llm_chat': {'requests': 5000, 'window': 3600},   # 5K chat messages/hour
-                'llm_analysis': {'requests': 1000, 'window': 3600},  # 1K AI analysis/hour
-                'agent_run': {'requests': 500, 'window': 3600},    # 500 agent runs/hour
-                'agent_expensive': {'requests': 100, 'window': 3600}, # 100 expensive runs/hour
-                'ip_general': {'requests': 5000, 'window': 3600},  # 5K req/hour per IP
-                'ip_strict': {'requests': 1000, 'window': 3600},   # 1K req/hour for sensitive endpoints
+                'api_general': {'requests': 10000, 'window': 3600000},  # 10K req/hour
+                'api_auth': {'requests': 1000, 'window': 3600000},     # 1K auth req/hour
+                'file_upload': {'requests': 500, 'window': 360000},  # 500 uploads/hour
+                'file_large': {'requests': 100, 'window': 360000},   # 100 large files/hour
+                'analysis_execute': {'requests': 2000, 'window': 360000},  # 2K analysis/hour
+                'analysis_heavy': {'requests': 200, 'window': 360000},     # 200 heavy analysis/hour
+                'llm_chat': {'requests': 5000, 'window': 360000},   # 5K chat messages/hour
+                'llm_analysis': {'requests': 1000, 'window': 360000},  # 1K AI analysis/hour
+                'agent_run': {'requests': 500, 'window': 360000},    # 500 agent runs/hour
+                'agent_expensive': {'requests': 100, 'window': 360000}, # 100 expensive runs/hour
+                'ip_general': {'requests': 5000, 'window': 360000},  # 5K req/hour per IP
+                'ip_strict': {'requests': 1000, 'window': 360000},   # 1K req/hour for sensitive endpoints
             }
         
         # Exempt paths

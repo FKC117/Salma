@@ -14,107 +14,258 @@
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <script src="{% static 'analytics/js/htmx-config.js' %}"></script>
     
-    <!-- Custom Dark Theme CSS Variables (T008) -->
+    <!-- Cursor-Inspired Dark Theme CSS Variables -->
     <style>
         :root {
-            /* Dark Theme Color Palette */
-            --bs-body-bg: #1a1a1a;
-            --bs-body-color: #e9ecef;
-            --bs-primary: #0d6efd;
-            --bs-secondary: #6c757d;
-            --bs-success: #198754;
-            --bs-info: #0dcaf0;
-            --bs-warning: #ffc107;
-            --bs-danger: #dc3545;
-            --bs-light: #f8f9fa;
-            --bs-dark: #212529;
+            /* Cursor Color Palette */
+            --cursor-bg-primary: #0d1117;
+            --cursor-bg-secondary: #161b22;
+            --cursor-bg-tertiary: #21262d;
+            --cursor-bg-quaternary: #30363d;
+            --cursor-border: #30363d;
+            --cursor-border-focus: #58a6ff;
+            --cursor-text-primary: #f0f6fc;
+            --cursor-text-secondary: #8b949e;
+            --cursor-text-muted: #6e7681;
+            --cursor-accent-blue: #58a6ff;
+            --cursor-accent-green: #3fb950;
+            --cursor-accent-orange: #ffa657;
+            --cursor-accent-purple: #bc8cff;
+            --cursor-accent-red: #f85149;
+            --cursor-accent-yellow: #d29922;
             
-            /* Custom Dark Theme Variables */
-            --analytical-bg-primary: #1a1a1a;
-            --analytical-bg-secondary: #2d2d2d;
-            --analytical-bg-tertiary: #343a40;
-            --analytical-border-color: #495057;
-            --analytical-text-primary: #e9ecef;
-            --analytical-text-secondary: #adb5bd;
-            --analytical-text-muted: #6c757d;
-            --analytical-accent-blue: #0d6efd;
-            --analytical-accent-green: #198754;
-            --analytical-accent-orange: #fd7e14;
-            --analytical-accent-purple: #6f42c1;
-            --analytical-shadow: rgba(0, 0, 0, 0.3);
-            --analytical-shadow-lg: rgba(0, 0, 0, 0.5);
+            /* Legacy Analytical Variables (for compatibility) */
+            --analytical-bg-primary: #0d1117;
+            --analytical-bg-secondary: #161b22;
+            --analytical-bg-tertiary: #21262d;
+            --analytical-border-color: #30363d;
+            --analytical-text-primary: #f0f6fc;
+            --analytical-text-secondary: #8b949e;
             
-            /* Panel Layout Variables */
-            --panel-header-height: 60px;
-            --panel-border-radius: 0.5rem;
-            --panel-padding: 1rem;
-            --panel-gap: 1rem;
+            /* Cursor UI Variables */
+            --cursor-sidebar-width: 280px;
+            --cursor-header-height: 48px;
+            --cursor-border-radius: 6px;
+            --cursor-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            --cursor-shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.24);
             
             /* Animation Variables */
-            --transition-fast: 0.15s ease-in-out;
-            --transition-normal: 0.3s ease-in-out;
-            --transition-slow: 0.5s ease-in-out;
+            --cursor-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --cursor-transition-fast: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        * {
+            box-sizing: border-box;
         }
         
         body {
-            background-color: var(--bs-body-bg);
-            color: var(--bs-body-color);
+            background-color: var(--cursor-bg-primary);
+            color: var(--cursor-text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
         }
         
-        .card {
-            background-color: #2d2d2d;
-            border: 1px solid #495057;
-        }
-        
-        .card-header {
-            background-color: #343a40;
-            border-bottom: 1px solid #495057;
+        /* Cursor-style buttons */
+        .btn {
+            border-radius: var(--cursor-border-radius);
+            font-weight: 500;
+            transition: var(--cursor-transition);
+            border: 1px solid transparent;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 6px 16px;
         }
         
         .btn-primary {
-            background-color: var(--bs-primary);
-            border-color: var(--bs-primary);
+            background-color: var(--cursor-accent-blue);
+            color: white;
+            border-color: var(--cursor-accent-blue);
         }
         
+        .btn-primary:hover {
+            background-color: #4c9eff;
+            border-color: #4c9eff;
+            transform: translateY(-1px);
+            box-shadow: var(--cursor-shadow);
+        }
+        
+        .btn-secondary {
+            background-color: var(--cursor-bg-tertiary);
+            color: var(--cursor-text-primary);
+            border-color: var(--cursor-border);
+        }
+        
+        .btn-secondary:hover {
+            background-color: var(--cursor-bg-quaternary);
+            border-color: var(--cursor-border-focus);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            color: var(--cursor-text-secondary);
+            border-color: var(--cursor-border);
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--cursor-bg-tertiary);
+            color: var(--cursor-text-primary);
+            border-color: var(--cursor-border-focus);
+        }
+        
+        /* Cursor-style form controls */
         .form-control {
-            background-color: #495057;
-            border: 1px solid #6c757d;
-            color: var(--bs-body-color);
+            background-color: var(--cursor-bg-secondary);
+            border: 1px solid var(--cursor-border);
+            color: var(--cursor-text-primary);
+            border-radius: var(--cursor-border-radius);
+            padding: 8px 12px;
+            font-size: 14px;
+            transition: var(--cursor-transition);
         }
         
         .form-control:focus {
-            background-color: #495057;
-            border-color: var(--bs-primary);
-            color: var(--bs-body-color);
+            background-color: var(--cursor-bg-secondary);
+            border-color: var(--cursor-border-focus);
+            color: var(--cursor-text-primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1);
+        }
+        
+        .form-control::placeholder {
+            color: var(--cursor-text-muted);
+        }
+        
+        /* Cursor-style cards */
+        .card {
+            background-color: var(--cursor-bg-secondary);
+            border: 1px solid var(--cursor-border);
+            border-radius: var(--cursor-border-radius);
+            box-shadow: var(--cursor-shadow);
+        }
+        
+        .card-header {
+            background-color: var(--cursor-bg-tertiary);
+            border-bottom: 1px solid var(--cursor-border);
+            padding: 12px 16px;
+            font-weight: 600;
+        }
+        
+        /* Cursor-style navigation */
+        .navbar {
+            background-color: var(--cursor-bg-secondary) !important;
+            border-bottom: 1px solid var(--cursor-border);
+            height: var(--cursor-header-height);
+            padding: 0 16px;
+        }
+        
+        .navbar-brand {
+            color: var(--cursor-text-primary) !important;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .nav-link {
+            color: var(--cursor-text-secondary) !important;
+            font-weight: 500;
+            padding: 8px 12px !important;
+            border-radius: var(--cursor-border-radius);
+            transition: var(--cursor-transition);
+        }
+        
+        .nav-link:hover {
+            color: var(--cursor-text-primary) !important;
+            background-color: var(--cursor-bg-tertiary);
+        }
+        
+        /* Cursor-style dropdowns */
+        .dropdown-menu {
+            background-color: var(--cursor-bg-secondary);
+            border: 1px solid var(--cursor-border);
+            border-radius: var(--cursor-border-radius);
+            box-shadow: var(--cursor-shadow-lg);
+            padding: 4px;
+        }
+        
+        .dropdown-item {
+            color: var(--cursor-text-primary);
+            padding: 8px 12px;
+            border-radius: var(--cursor-border-radius);
+            transition: var(--cursor-transition);
+        }
+        
+        .dropdown-item:hover {
+            background-color: var(--cursor-bg-tertiary);
+            color: var(--cursor-text-primary);
+        }
+        
+        /* Cursor-style modals */
+        .modal-content {
+            background-color: var(--cursor-bg-secondary);
+            border: 1px solid var(--cursor-border);
+            border-radius: var(--cursor-border-radius);
+            box-shadow: var(--cursor-shadow-lg);
+        }
+        
+        .modal-header {
+            border-bottom: 1px solid var(--cursor-border);
+            padding: 16px 20px;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .modal-footer {
+            border-top: 1px solid var(--cursor-border);
+            padding: 16px 20px;
+        }
+        
+        /* Cursor-style scrollbars */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--cursor-bg-primary);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--cursor-bg-quaternary);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--cursor-text-muted);
+        }
+        
+        /* Cursor-style focus states */
+        *:focus {
+            outline: none;
+        }
+        
+        *:focus-visible {
+            outline: 2px solid var(--cursor-border-focus);
+            outline-offset: 2px;
         }
     </style>
     
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="{% url 'dashboard' %}">
-                <i class="bi bi-graph-up"></i> Data Analysis System
-            </a>
-            
-            <div class="navbar-nav ms-auto">
-                {% if user.is_authenticated %}
-                    <span class="navbar-text me-3">
-                        Welcome, {{ user.username }}
-                    </span>
-                    <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-                {% else %}
-                    <a class="nav-link" href="{% url 'login' %}">Login</a>
-                    <a class="nav-link" href="{% url 'register' %}">Register</a>
-                {% endif %}
-            </div>
-        </div>
-    </nav>
+    <!-- Navigation Bar -->
+    {% include 'analytics/partials/navbar.html' %}
 
     <!-- Main Content -->
-    <div class="container-fluid mt-3">
+    <div class="container-fluid">
         {% block content %}{% endblock %}
     </div>
 
