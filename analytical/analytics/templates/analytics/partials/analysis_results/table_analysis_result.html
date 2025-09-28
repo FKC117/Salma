@@ -1,0 +1,1271 @@
+{% load dict_filters %}
+<!-- Table Analysis Result Template -->
+<!-- Debug: Template loaded dict_filters filter -->
+<div class="analysis-result-container table-analysis-result" data-analysis-id="{{ analysis_id|default:'new' }}">
+    <!-- Analysis Header -->
+    <div class="analysis-header">
+        <div class="analysis-title-section">
+            <div class="analysis-icon">
+                <i class="bi bi-table"></i>
+            </div>
+            <div class="analysis-title-info">
+                <h4 class="analysis-title">{{ title|default:"Table Analysis Result" }}</h4>
+                <p class="analysis-description">{{ description|default:"Statistical analysis and data insights" }}</p>
+            </div>
+        </div>
+        <div class="analysis-actions">
+            <button class="btn btn-sm btn-outline-primary" onclick="copyAnalysisResult('{{ analysis_id|default:'new' }}')" title="Copy Result">
+                <i class="bi bi-clipboard"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-secondary" onclick="downloadAnalysisResult('{{ analysis_id|default:'new' }}', 'table')" title="Download">
+                <i class="bi bi-download"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-success" onclick="interpretAnalysisResult('{{ analysis_id|default:'new' }}', 'table')" title="Interpret with AI">
+                <i class="bi bi-robot"></i> Interpret Data
+            </button>
+        </div>
+    </div>
+
+    <!-- Analysis Content -->
+    <div class="analysis-content">
+        <div class="table-analysis-content">
+            <!-- Table Summary -->
+            {% if table_summary %}
+            <div class="table-summary-section">
+                <h5 class="section-title">
+                    <i class="bi bi-info-circle"></i> Table Summary
+                </h5>
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <div class="summary-icon">
+                            <i class="bi bi-table"></i>
+                        </div>
+                        <div class="summary-content">
+                            <div class="summary-label">Rows</div>
+                            <div class="summary-value">{{ table_summary.rows|default:"0" }}</div>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-icon">
+                            <i class="bi bi-columns"></i>
+                        </div>
+                        <div class="summary-content">
+                            <div class="summary-label">Columns</div>
+                            <div class="summary-value">{{ table_summary.columns|default:"0" }}</div>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-icon">
+                            <i class="bi bi-hdd"></i>
+                        </div>
+                        <div class="summary-content">
+                            <div class="summary-label">Size</div>
+                            <div class="summary-value">{{ table_summary.size|default:"0 MB" }}</div>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-icon">
+                            <i class="bi bi-check-circle"></i>
+                        </div>
+                        <div class="summary-content">
+                            <div class="summary-label">Completeness</div>
+                            <div class="summary-value">{{ table_summary.completeness|default:"100%" }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Data Table -->
+            {% if table_data %}
+            <div class="data-table-section">
+                <h5 class="section-title">
+                    <i class="bi bi-table"></i> Data Table
+                </h5>
+                <div class="table-controls">
+                    <div class="table-search">
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text">
+                                <i class="bi bi-search"></i>
+                            </span>
+                            <input type="text" class="form-control" id="tableSearch-{{ analysis_id|default:'new' }}" placeholder="Search table...">
+                        </div>
+                    </div>
+                    <div class="table-export">
+                        <button class="btn btn-sm btn-outline-primary" onclick="exportTable('{{ analysis_id|default:'new' }}', 'csv')">
+                            <i class="bi bi-file-earmark-spreadsheet"></i> CSV
+                        </button>
+                        <button class="btn btn-sm btn-outline-primary" onclick="exportTable('{{ analysis_id|default:'new' }}', 'excel')">
+                            <i class="bi bi-file-excel"></i> Excel
+                        </button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table class="table table-dark table-striped table-hover" id="dataTable-{{ analysis_id|default:'new' }}">
+                        <thead class="table-dark">
+                            <tr>
+                                <th scope="col" class="sortable" data-column="0">
+                                    Variable
+                                    <i class="bi bi-arrow-down-up sort-icon"></i>
+                                </th>
+                                {% for stat in table_data.columns %}
+                                <th scope="col" class="sortable" data-column="{{ forloop.counter }}">
+                                    {{ stat }}
+                                    <i class="bi bi-arrow-down-up sort-icon"></i>
+                                </th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in table_data.rows %}
+                            <tr>
+                                <td><strong>{{ row.0 }}</strong></td>
+                                {% for value in row|slice:"1:" %}
+                                <td>{{ value|floatformat:4|default:"—" }}</td>
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Summary Statistics -->
+            {% if summary_stats %}
+            <div class="summary-stats-section">
+                <h5 class="section-title">
+                    <i class="bi bi-graph-up"></i> Summary Statistics
+                </h5>
+                <div class="summary-stats-grid">
+                    {% for stat in summary_stats %}
+                    <div class="summary-stat-card">
+                        <div class="stat-icon">
+                            <i class="bi bi-bar-chart"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">{{ stat.label }}</div>
+                            <div class="stat-value">{{ stat.value }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+        <!-- Visualizations -->
+        {% if table_data.rows %}
+        <div class="visualizations-section">
+            <h5 class="section-title">
+                <i class="bi bi-graph-up"></i> Data Visualizations
+            </h5>
+            <!-- Debug: Visualizations data -->
+            <div style="background: #f8f9fa; padding: 10px; margin: 10px 0; border-radius: 5px; font-size: 12px;">
+                <strong>Debug Info:</strong><br>
+                Visualizations type: {{ visualizations|default:"None" }}<br>
+                Histograms count: {{ visualizations.histograms|length|default:"0" }}<br>
+                Box plots count: {{ visualizations.boxplots|length|default:"0" }}<br>
+                Outliers count: {{ visualizations.outliers|length|default:"0" }}<br>
+                {% if visualizations.histograms %}
+                    Histogram keys: {{ visualizations.histograms.keys|join:", " }}<br>
+                    First row key: {{ table_data.rows.0.0|default:"No rows" }}<br>
+                    First histogram preview: {{ visualizations.histograms|get_item:table_data.rows.0.0|slice:":50" }}...<br>
+                    <br><strong>Template Filter Test:</strong><br>
+                    Test dict access: {{ visualizations.histograms|get_item:"radius_mean"|slice:":20" }}...<br>
+                    <br><strong>Test Image Display:</strong><br>
+                    {% for column_name, histogram_data in visualizations.histograms.items %}
+                        {% if forloop.first %}
+                        <img src="data:image/png;base64,{{ histogram_data }}" 
+                             alt="Test histogram for {{ column_name }}" 
+                             style="max-width: 200px; height: auto; border: 1px solid #ccc; margin: 5px;">
+                        <br><small>Base64 length: {{ histogram_data|length }} for {{ column_name }}</small>
+                        {% endif %}
+                    {% empty %}
+                    <p style="color: red;">No histogram data found</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+                <div class="visualization-tabs">
+                    <ul class="nav nav-tabs" id="vizTabs-{{ analysis_id|default:'new' }}" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="histograms-tab" data-bs-toggle="tab" data-bs-target="#histograms-{{ analysis_id|default:'new' }}" type="button" role="tab">
+                                <i class="bi bi-bar-chart"></i> Histograms
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="boxplots-tab" data-bs-toggle="tab" data-bs-target="#boxplots-{{ analysis_id|default:'new' }}" type="button" role="tab">
+                                <i class="bi bi-box"></i> Box Plots
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="outliers-tab" data-bs-toggle="tab" data-bs-target="#outliers-{{ analysis_id|default:'new' }}" type="button" role="tab">
+                                <i class="bi bi-exclamation-triangle"></i> Outliers
+                            </button>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="vizTabContent-{{ analysis_id|default:'new' }}">
+                        <div class="tab-pane fade show active" id="histograms-{{ analysis_id|default:'new' }}" role="tabpanel">
+                            <div class="histograms-grid">
+                                {% for column_name, histogram_data in visualizations.histograms.items %}
+                                <div class="histogram-card">
+                                    <h6>{{ column_name }}</h6>
+                                    <!-- Debug for this specific column -->
+                                    <div style="font-size: 10px; color: #666; margin: 5px 0;">
+                                        Debug: {{ column_name }} - 
+                                        Has histograms: {{ visualizations.histograms|yesno:"Yes,No" }} - 
+                                        Has data: {{ histogram_data|yesno:"Yes,No" }}
+                                    </div>
+                                <div class="chart-container">
+                                    {% if histogram_data %}
+                                    <img src="data:image/png;base64,{{ histogram_data }}" 
+                                         alt="Histogram of {{ column_name }}" 
+                                         class="chart-image"
+                                         style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px;"
+                                         onerror="console.error('Image failed to load for {{ column_name }}'); this.style.display='none';">
+                                    {% else %}
+                                    <div class="chart-placeholder">
+                                        <i class="bi bi-bar-chart text-muted" style="font-size: 2rem;"></i>
+                                        <p class="text-muted">Histogram not available for {{ column_name }}</p>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="boxplots-{{ analysis_id|default:'new' }}" role="tabpanel">
+                            <div class="boxplots-grid">
+                                {% for column_name, boxplot_data in visualizations.boxplots.items %}
+                                <div class="boxplot-card">
+                                    <h6>{{ column_name }}</h6>
+                                    <!-- Debug for this specific column -->
+                                    <div style="font-size: 10px; color: #666; margin: 5px 0;">
+                                        Debug: {{ column_name }} - 
+                                        Has boxplots: {{ visualizations.boxplots|yesno:"Yes,No" }} - 
+                                        Has data: {{ boxplot_data|yesno:"Yes,No" }}
+                                    </div>
+                                <div class="chart-container">
+                                    {% if boxplot_data %}
+                                    <img src="data:image/png;base64,{{ boxplot_data }}" 
+                                         alt="Box plot of {{ column_name }}" 
+                                         class="chart-image"
+                                         style="max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 4px;"
+                                         onerror="console.error('Box plot failed to load for {{ column_name }}'); this.style.display='none';">
+                                    {% else %}
+                                    <div class="chart-placeholder">
+                                        <i class="bi bi-box text-muted" style="font-size: 2rem;"></i>
+                                        <p class="text-muted">Box plot not available for {{ column_name }}</p>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="outliers-{{ analysis_id|default:'new' }}" role="tabpanel">
+                            <div class="outliers-section">
+                                <div class="outlier-detection">
+                                    <h6>Outlier Detection Summary (IQR Method)</h6>
+                                    <div class="outlier-results">
+                                        {% for column_name, outlier_data in visualizations.outliers.items %}
+                                        <div class="outlier-variable-card">
+                                            <h6>{{ column_name }}</h6>
+                                            <div class="outlier-stats">
+                                                <div class="outlier-stat">
+                                                    <span class="stat-label">Outliers Found:</span>
+                                                    <span class="stat-value">{{ outlier_data.outlier_count }}</span>
+                                                </div>
+                                                <div class="outlier-stat">
+                                                    <span class="stat-label">Percentage:</span>
+                                                    <span class="stat-value">{{ outlier_data.outlier_percentage|floatformat:2 }}%</span>
+                                                </div>
+                                                <div class="outlier-stat">
+                                                    <span class="stat-label">Lower Bound:</span>
+                                                    <span class="stat-value">{{ outlier_data.bounds.lower|floatformat:4 }}</span>
+                                                </div>
+                                                <div class="outlier-stat">
+                                                    <span class="stat-label">Upper Bound:</span>
+                                                    <span class="stat-value">{{ outlier_data.bounds.upper|floatformat:4 }}</span>
+                                                </div>
+                                            </div>
+                                            {% if outlier_data.outlier_count > 0 %}
+                                            <div class="outlier-values">
+                                                <small class="text-muted">Outlier values: {{ outlier_data.iqr_outliers|slice:":10"|join:", " }}{% if outlier_data.outlier_count > 10 %}...{% endif %}</small>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Data Quality Insights -->
+            {% if data_quality %}
+            <div class="data-quality-section">
+                <h5 class="section-title">
+                    <i class="bi bi-shield-check"></i> Data Quality
+                </h5>
+                <div class="quality-metrics">
+                    {% for metric in data_quality.metrics %}
+                    <div class="quality-metric">
+                        <div class="metric-header">
+                            <span class="metric-name">{{ metric.name }}</span>
+                            <span class="metric-score score-{{ metric.status|default:'good' }}">
+                                {{ metric.score|default:"100" }}%
+                            </span>
+                        </div>
+                        <div class="metric-bar">
+                            <div class="metric-progress" style="width: {{ metric.score|default:"100" }}%"></div>
+                        </div>
+                        {% if metric.issues %}
+                        <div class="metric-issues">
+                            <small class="text-muted">{{ metric.issues|length }} issues found</small>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- AI Interpretation Modal -->
+    <div class="modal fade" id="aiInterpretationModal-{{ analysis_id|default:'new' }}" tabindex="-1" aria-labelledby="aiInterpretationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header bg-secondary">
+                    <h5 class="modal-title" id="aiInterpretationModalLabel">
+                        <i class="bi bi-robot"></i> AI Data Interpretation
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="interpretation-content">
+                        <div class="interpretation-loading" id="interpretationLoading-{{ analysis_id|default:'new' }}" style="display: none;">
+                            <div class="text-center py-4">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">AI is analyzing...</span>
+                                </div>
+                                <p class="mt-2">AI is interpreting your table analysis...</p>
+                            </div>
+                        </div>
+                        <div class="interpretation-result" id="interpretationResult-{{ analysis_id|default:'new' }}">
+                            <!-- AI interpretation will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-secondary">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="copyInterpretation('{{ analysis_id|default:'new' }}')">
+                        <i class="bi bi-clipboard"></i> Copy Interpretation
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Table Analysis Result Styles */
+.table-analysis-result {
+    background-color: var(--cursor-bg-secondary);
+    border: 1px solid var(--cursor-border);
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+.analysis-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1rem;
+    background-color: var(--cursor-bg-tertiary);
+    border-bottom: 1px solid var(--cursor-border);
+}
+
+.analysis-title-section {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    flex: 1;
+}
+
+.analysis-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    background-color: var(--cursor-accent-blue);
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.analysis-icon i {
+    color: white;
+    font-size: 1.25rem;
+}
+
+.analysis-title-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.analysis-title {
+    margin: 0 0 0.25rem 0;
+    color: var(--cursor-text-primary);
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.analysis-description {
+    margin: 0;
+    color: var(--cursor-text-muted);
+    font-size: 0.875rem;
+    line-height: 1.4;
+}
+
+.analysis-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.analysis-actions .btn {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    border-radius: 0.375rem;
+}
+
+.analysis-content {
+    padding: 1.5rem;
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 1rem 0;
+    color: var(--cursor-text-primary);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.section-title i {
+    color: var(--cursor-accent-blue);
+    font-size: 0.875rem;
+}
+
+/* Table Summary */
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.summary-card {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background-color: var(--cursor-bg-tertiary);
+    border: 1px solid var(--cursor-border);
+    border-radius: 0.5rem;
+}
+
+.summary-icon {
+    width: 2rem;
+    height: 2rem;
+    background-color: var(--cursor-accent-blue);
+    border-radius: 0.375rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.summary-icon i {
+    color: white;
+    font-size: 0.875rem;
+}
+
+.summary-content {
+    flex: 1;
+}
+
+.summary-label {
+    color: var(--cursor-text-muted);
+    font-size: 0.75rem;
+    margin-bottom: 0.25rem;
+}
+
+.summary-value {
+    color: var(--cursor-text-primary);
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+/* Data Table */
+.data-table-section {
+    margin-bottom: 2rem;
+}
+
+.table-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    gap: 1rem;
+}
+
+.table-search {
+    flex: 1;
+    max-width: 300px;
+}
+
+.table-export {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.table-container {
+    background-color: var(--cursor-bg-tertiary);
+    border: 1px solid var(--cursor-border);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table th {
+    background-color: var(--cursor-bg-quaternary);
+    border-color: var(--cursor-border);
+    color: var(--cursor-text-primary);
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.table td {
+    border-color: var(--cursor-border);
+    color: var(--cursor-text-primary);
+    vertical-align: middle;
+}
+
+.table-hover tbody tr:hover {
+    background-color: var(--cursor-bg-quaternary);
+}
+
+.sortable {
+    cursor: pointer;
+    user-select: none;
+}
+
+.sortable:hover {
+    background-color: var(--cursor-bg-quaternary);
+}
+
+.sort-icon {
+    margin-left: 0.5rem;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+}
+
+.sortable:hover .sort-icon {
+    opacity: 1;
+}
+
+.table-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: var(--cursor-bg-tertiary);
+    border-top: 1px solid var(--cursor-border);
+}
+
+.pagination-info {
+    color: var(--cursor-text-muted);
+    font-size: 0.875rem;
+}
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.page-info {
+    color: var(--cursor-text-primary);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* Summary Statistics */
+.summary-stats-section {
+    margin-bottom: 2rem;
+}
+
+.summary-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.summary-stat-card {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background-color: var(--cursor-bg-tertiary);
+    border: 1px solid var(--cursor-border);
+    border-radius: 0.5rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.summary-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.stat-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    background-color: var(--cursor-accent-blue);
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.stat-icon i {
+    color: white;
+    font-size: 1rem;
+}
+
+.stat-content {
+    flex: 1;
+}
+
+.stat-label {
+    color: var(--cursor-text-muted);
+    font-size: 0.75rem;
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+}
+
+.stat-value {
+    color: var(--cursor-text-primary);
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+/* Statistical Analysis */
+.stats-tabs {
+    margin-bottom: 2rem;
+}
+
+.nav-tabs {
+    border-bottom: 1px solid var(--cursor-border);
+}
+
+.nav-tabs .nav-link {
+    color: var(--cursor-text-muted);
+    border: 1px solid transparent;
+    border-radius: 0.375rem 0.375rem 0 0;
+}
+
+.nav-tabs .nav-link:hover {
+    border-color: var(--cursor-border);
+    color: var(--cursor-text-primary);
+}
+
+.nav-tabs .nav-link.active {
+    color: var(--cursor-text-primary);
+    background-color: var(--cursor-bg-tertiary);
+    border-color: var(--cursor-border) var(--cursor-border) var(--cursor-bg-tertiary);
+}
+
+.tab-content {
+    background-color: var(--cursor-bg-tertiary);
+    border: 1px solid var(--cursor-border);
+    border-top: none;
+    border-radius: 0 0 0.5rem 0.5rem;
+    padding: 1.5rem;
+}
+
+.stats-table-container {
+    overflow-x: auto;
+}
+
+.distribution-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.distribution-card {
+    background-color: var(--cursor-bg-secondary);
+    border: 1px solid var(--cursor-border);
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.distribution-card h6 {
+    color: var(--cursor-text-primary);
+    margin-bottom: 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.distribution-values {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.dist-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dist-label {
+    color: var(--cursor-text-muted);
+    font-size: 0.75rem;
+}
+
+.dist-value {
+    color: var(--cursor-text-primary);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* Visualizations */
+.visualizations-section {
+    margin-bottom: 2rem;
+}
+
+.visualization-tabs {
+    margin-bottom: 2rem;
+}
+
+.histograms-grid,
+.boxplots-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.histogram-card,
+.boxplot-card {
+    background-color: var(--cursor-bg-tertiary);
+    border: 1px solid var(--cursor-border);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    text-align: center;
+}
+
+.histogram-card h6,
+.boxplot-card h6 {
+    color: var(--cursor-text-primary);
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.chart-container {
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--cursor-bg-secondary);
+    border-radius: 0.375rem;
+    border: 1px solid var(--cursor-border);
+    overflow: hidden;
+    padding: 10px;
+}
+
+.chart-image {
+    max-width: 100%;
+    max-height: 300px;
+    height: auto;
+    width: auto;
+    object-fit: contain;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.chart-placeholder {
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--cursor-bg-secondary);
+    border-radius: 0.375rem;
+    border: 2px dashed var(--cursor-border);
+}
+
+.outliers-section {
+    margin-top: 1rem;
+}
+
+.outlier-detection h6 {
+    color: var(--cursor-text-primary);
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.outlier-methods {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.method-card {
+    background-color: var(--cursor-bg-tertiary);
+    border: 1px solid var(--cursor-border);
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.method-card h6 {
+    color: var(--cursor-text-primary);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.method-card p {
+    color: var(--cursor-text-muted);
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+}
+
+.outlier-results {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.outlier-variable-card {
+    background-color: var(--cursor-bg-tertiary);
+    border: 1px solid var(--cursor-border);
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.outlier-variable-card h6 {
+    color: var(--cursor-text-primary);
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.outlier-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.outlier-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.outlier-stat .stat-label {
+    color: var(--cursor-text-muted);
+    font-size: 0.75rem;
+    margin-bottom: 0.25rem;
+}
+
+.outlier-stat .stat-value {
+    color: var(--cursor-text-primary);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.outlier-values {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--cursor-border);
+}
+
+/* Data Quality */
+.quality-metrics {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.quality-metric {
+    background-color: var(--cursor-bg-tertiary);
+    border: 1px solid var(--cursor-border);
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.metric-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.metric-name {
+    color: var(--cursor-text-primary);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.metric-score {
+    font-size: 0.875rem;
+    font-weight: 700;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+}
+
+.score-excellent {
+    background-color: var(--cursor-accent-green);
+    color: white;
+}
+
+.score-good {
+    background-color: var(--cursor-accent-blue);
+    color: white;
+}
+
+.score-warning {
+    background-color: var(--cursor-accent-yellow);
+    color: var(--cursor-bg-primary);
+}
+
+.score-poor {
+    background-color: var(--cursor-accent-red);
+    color: white;
+}
+
+.metric-bar {
+    height: 0.5rem;
+    background-color: var(--cursor-bg-secondary);
+    border-radius: 0.25rem;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.metric-progress {
+    height: 100%;
+    background-color: var(--cursor-accent-blue);
+    transition: width 0.3s ease;
+}
+
+.metric-issues {
+    color: var(--cursor-text-muted);
+    font-size: 0.75rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .analysis-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .analysis-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+    
+    .summary-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .table-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .table-search {
+        max-width: none;
+    }
+    
+    .table-pagination {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .distribution-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+// Table functionality
+let currentPage = 1;
+const rowsPerPage = 10;
+
+// Initialize table functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const analysisId = '{{ analysis_id|default:"new" }}';
+    initializeTable(analysisId);
+});
+
+function initializeTable(analysisId) {
+    const table = document.getElementById(`dataTable-${analysisId}`);
+    if (!table) return;
+    
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    const totalRows = rows.length;
+    
+    // Update pagination info
+    document.getElementById(`totalRows-${analysisId}`).textContent = totalRows;
+    updatePagination(analysisId, totalRows);
+    
+    // Show first page
+    showPage(analysisId, 1, rows);
+    
+    // Setup search
+    const searchInput = document.getElementById(`tableSearch-${analysisId}`);
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            filterTable(analysisId, this.value, rows);
+        });
+    }
+    
+    // Setup sorting
+    const headers = table.querySelectorAll('th.sortable');
+    headers.forEach((header, index) => {
+        header.addEventListener('click', function() {
+            sortTable(analysisId, index, rows);
+        });
+    });
+}
+
+function showPage(analysisId, page, rows) {
+    const start = (page - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+    
+    // Hide all rows
+    rows.forEach(row => row.style.display = 'none');
+    
+    // Show rows for current page
+    const pageRows = rows.slice(start, end);
+    pageRows.forEach(row => row.style.display = '');
+    
+    // Update pagination info
+    document.getElementById(`showingStart-${analysisId}`).textContent = start + 1;
+    document.getElementById(`showingEnd-${analysisId}`).textContent = Math.min(end, rows.length);
+    
+    // Update page info
+    const totalPages = Math.ceil(rows.length / rowsPerPage);
+    document.getElementById(`pageInfo-${analysisId}`).textContent = `Page ${page} of ${totalPages}`;
+    
+    // Update button states
+    document.getElementById(`prevPage-${analysisId}`).disabled = page === 1;
+    document.getElementById(`nextPage-${analysisId}`).disabled = page === totalPages;
+    
+    currentPage = page;
+}
+
+function changePage(analysisId, direction) {
+    const table = document.getElementById(`dataTable-${analysisId}`);
+    const rows = Array.from(table.querySelector('tbody').querySelectorAll('tr'));
+    const totalPages = Math.ceil(rows.length / rowsPerPage);
+    
+    if (direction === 'prev' && currentPage > 1) {
+        showPage(analysisId, currentPage - 1, rows);
+    } else if (direction === 'next' && currentPage < totalPages) {
+        showPage(analysisId, currentPage + 1, rows);
+    }
+}
+
+function filterTable(analysisId, searchTerm, rows) {
+    const filteredRows = rows.filter(row => {
+        const text = row.textContent.toLowerCase();
+        return text.includes(searchTerm.toLowerCase());
+    });
+    
+    showPage(analysisId, 1, filteredRows);
+}
+
+function sortTable(analysisId, columnIndex, rows) {
+    // Simple sorting implementation
+    const isNumeric = !isNaN(parseFloat(rows[0].cells[columnIndex].textContent));
+    
+    rows.sort((a, b) => {
+        const aVal = a.cells[columnIndex].textContent.trim();
+        const bVal = b.cells[columnIndex].textContent.trim();
+        
+        if (isNumeric) {
+            return parseFloat(aVal) - parseFloat(bVal);
+        } else {
+            return aVal.localeCompare(bVal);
+        }
+    });
+    
+    showPage(analysisId, 1, rows);
+}
+
+function updatePagination(analysisId, totalRows) {
+    const totalPages = Math.ceil(totalRows / rowsPerPage);
+    // Pagination controls are updated in showPage function
+}
+
+// Export functions
+function exportTable(analysisId, format) {
+    const table = document.getElementById(`dataTable-${analysisId}`);
+    const rows = Array.from(table.querySelectorAll('tr'));
+    
+    let csvContent = '';
+    rows.forEach(row => {
+        const cells = Array.from(row.querySelectorAll('th, td'));
+        const rowData = cells.map(cell => `"${cell.textContent.trim()}"`).join(',');
+        csvContent += rowData + '\n';
+    });
+    
+    if (format === 'csv') {
+        downloadCSV(csvContent, `table_${analysisId}_${new Date().toISOString().split('T')[0]}.csv`);
+    } else if (format === 'excel') {
+        // For Excel export, you might want to use a library like SheetJS
+        downloadCSV(csvContent, `table_${analysisId}_${new Date().toISOString().split('T')[0]}.xlsx`);
+    }
+}
+
+function downloadCSV(content, filename) {
+    const blob = new Blob([content], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+// Copy and download functions (same as text template)
+function copyAnalysisResult(analysisId) {
+    const container = document.querySelector(`[data-analysis-id="${analysisId}"]`);
+    if (container) {
+        const textContent = container.innerText;
+        navigator.clipboard.writeText(textContent).then(() => {
+            showNotification('Analysis result copied to clipboard!', 'success');
+        }).catch(err => {
+            console.error('Failed to copy: ', err);
+            showNotification('Failed to copy result', 'error');
+        });
+    }
+}
+
+function downloadAnalysisResult(analysisId, type) {
+    const container = document.querySelector(`[data-analysis-id="${analysisId}"]`);
+    if (container) {
+        const textContent = container.innerText;
+        const blob = new Blob([textContent], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `table_analysis_${analysisId}_${new Date().toISOString().split('T')[0]}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+}
+
+function interpretAnalysisResult(analysisId, type) {
+    const modal = new bootstrap.Modal(document.getElementById(`aiInterpretationModal-${analysisId}`));
+    modal.show();
+    
+    document.getElementById(`interpretationLoading-${analysisId}`).style.display = 'block';
+    document.getElementById(`interpretationResult-${analysisId}`).innerHTML = '';
+    
+    const container = document.querySelector(`[data-analysis-id="${analysisId}"]`);
+    const analysisData = {
+        type: type,
+        title: container.querySelector('.analysis-title').textContent,
+        content: container.innerText,
+        timestamp: new Date().toISOString()
+    };
+    
+    fetch('/api/ai/interpret-analysis/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCSRFToken()
+        },
+        body: JSON.stringify(analysisData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById(`interpretationLoading-${analysisId}`).style.display = 'none';
+        document.getElementById(`interpretationResult-${analysisId}`).innerHTML = `
+            <div class="ai-interpretation">
+                <h6><i class="bi bi-robot"></i> AI Interpretation</h6>
+                <div class="interpretation-text">${data.interpretation}</div>
+                <div class="interpretation-meta">
+                    <small class="text-muted">Generated at ${new Date().toLocaleString()}</small>
+                </div>
+            </div>
+        `;
+    })
+    .catch(error => {
+        console.error('Error getting AI interpretation:', error);
+        document.getElementById(`interpretationLoading-${analysisId}`).style.display = 'none';
+        document.getElementById(`interpretationResult-${analysisId}`).innerHTML = `
+            <div class="alert alert-danger">
+                <i class="bi bi-exclamation-triangle"></i>
+                Failed to get AI interpretation. Please try again.
+            </div>
+        `;
+    });
+}
+
+function copyInterpretation(analysisId) {
+    const interpretation = document.getElementById(`interpretationResult-${analysisId}`).innerText;
+    navigator.clipboard.writeText(interpretation).then(() => {
+        showNotification('AI interpretation copied to clipboard!', 'success');
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+        showNotification('Failed to copy interpretation', 'error');
+    });
+}
+
+function getCSRFToken() {
+    return document.querySelector('[name=csrfmiddlewaretoken]').value;
+}
+
+function showNotification(message, type) {
+    console.log(`${type.toUpperCase()}: ${message}`);
+}
+
+// Charts are now generated automatically by the backend
+</script>

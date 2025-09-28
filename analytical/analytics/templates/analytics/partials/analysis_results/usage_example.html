@@ -1,0 +1,161 @@
+<!-- Usage Example for Analysis Result Templates -->
+<!-- This file shows how to use the analysis result templates in your analysis tools -->
+
+{% load static %}
+
+<!-- Example 1: Text Analysis Result -->
+<div class="analysis-example">
+    <h3>Text Analysis Result Example</h3>
+    <p>Use this for statistical summaries, insights, and text-based analysis results.</p>
+    
+    {% include 'analytics/partials/analysis_results/text_analysis_result.html' with 
+        analysis_id="example_text_001"
+        title="Customer Satisfaction Analysis"
+        description="Statistical analysis of customer satisfaction scores"
+        summary_stats=text_summary_stats
+        key_insights=text_key_insights
+        detailed_analysis=text_detailed_analysis
+        recommendations=text_recommendations
+    %}
+</div>
+
+<!-- Example 2: Table Analysis Result -->
+<div class="analysis-example">
+    <h3>Table Analysis Result Example</h3>
+    <p>Use this for data tables, statistical analysis, and data quality reports.</p>
+    
+    {% include 'analytics/partials/analysis_results/table_analysis_result.html' with 
+        analysis_id="example_table_001"
+        title="Sales Performance Data"
+        description="Comprehensive analysis of sales data with statistical insights"
+        table_summary=table_summary_data
+        table_data=table_data_structure
+        statistical_analysis=statistical_analysis_data
+        data_quality=data_quality_metrics
+    %}
+</div>
+
+<!-- Example 3: Chart Analysis Result -->
+<div class="analysis-example">
+    <h3>Chart Analysis Result Example</h3>
+    <p>Use this for visualizations, charts, and graphical analysis results.</p>
+    
+    {% include 'analytics/partials/analysis_results/chart_analysis_result.html' with 
+        analysis_id="example_chart_001"
+        title="Revenue Trend Analysis"
+        description="Line chart showing revenue trends over time"
+        chart_summary=chart_summary_data
+        chart_data=chart_data_structure
+        chart_config=chart_configuration
+        chart_insights=chart_insights_data
+        statistical_summary=chart_statistical_summary
+    %}
+</div>
+
+<!-- Example 4: Using the Analysis Result Renderer -->
+<div class="analysis-example">
+    <h3>Dynamic Analysis Result Example</h3>
+    <p>Use this for dynamically rendering analysis results based on type.</p>
+    
+    {% include 'analytics/partials/analysis_results/analysis_result_renderer.html' with 
+        result_type=dynamic_result_type
+        analysis_id=dynamic_analysis_id
+        title=dynamic_title
+        description=dynamic_description
+        **dynamic_context
+    %}
+</div>
+
+<style>
+.analysis-example {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background-color: var(--cursor-bg-tertiary);
+    border: 1px solid var(--cursor-border);
+    border-radius: 0.5rem;
+}
+
+.analysis-example h3 {
+    color: var(--cursor-text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.analysis-example p {
+    color: var(--cursor-text-muted);
+    margin-bottom: 1rem;
+}
+</style>
+
+<!-- JavaScript Example for Dynamic Analysis Results -->
+<script>
+// Example of how to dynamically create analysis results
+function createAnalysisResult(resultType, analysisId, data) {
+    const container = document.getElementById('analysis-results-container');
+    
+    // Create analysis result based on type
+    let resultHtml = '';
+    
+    if (resultType === 'text') {
+        resultHtml = createTextAnalysisResult(analysisId, data);
+    } else if (resultType === 'table') {
+        resultHtml = createTableAnalysisResult(analysisId, data);
+    } else if (resultType === 'chart') {
+        resultHtml = createChartAnalysisResult(analysisId, data);
+    }
+    
+    // Insert the result
+    container.insertAdjacentHTML('beforeend', resultHtml);
+    
+    // Initialize any JavaScript functionality
+    initializeAnalysisResult(analysisId);
+}
+
+function createTextAnalysisResult(analysisId, data) {
+    return `
+        <div class="analysis-result-container text-analysis-result" data-analysis-id="${analysisId}">
+            <div class="analysis-header">
+                <div class="analysis-title-section">
+                    <div class="analysis-icon">
+                        <i class="bi bi-file-text"></i>
+                    </div>
+                    <div class="analysis-title-info">
+                        <h4 class="analysis-title">${data.title || 'Text Analysis'}</h4>
+                        <p class="analysis-description">${data.description || 'Statistical analysis and insights'}</p>
+                    </div>
+                </div>
+                <div class="analysis-actions">
+                    <button class="btn btn-sm btn-outline-primary" onclick="copyAnalysisResult('${analysisId}')" title="Copy Result">
+                        <i class="bi bi-clipboard"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="downloadAnalysisResult('${analysisId}', 'text')" title="Download">
+                        <i class="bi bi-download"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-success" onclick="interpretAnalysisResult('${analysisId}', 'text')" title="Interpret with AI">
+                        <i class="bi bi-robot"></i> Interpret Data
+                    </button>
+                </div>
+            </div>
+            <div class="analysis-content">
+                <div class="text-analysis-content">
+                    ${data.content || '<p>No analysis content available.</p>'}
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function createTableAnalysisResult(analysisId, data) {
+    // Similar implementation for table analysis
+    return `<div>Table analysis result for ${analysisId}</div>`;
+}
+
+function createChartAnalysisResult(analysisId, data) {
+    // Similar implementation for chart analysis
+    return `<div>Chart analysis result for ${analysisId}</div>`;
+}
+
+function initializeAnalysisResult(analysisId) {
+    // Initialize any JavaScript functionality for the analysis result
+    console.log(`Initializing analysis result: ${analysisId}`);
+}
+</script>

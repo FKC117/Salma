@@ -1,0 +1,17 @@
+<!-- Analysis Result Renderer -->
+<!-- This template renders analysis results based on their type -->
+
+{% load static %}
+
+{% if result_type == 'text' %}
+    {% include 'analytics/partials/analysis_results/text_analysis_result.html' with analysis_id=analysis_id title=title description=description summary_stats=summary_stats key_insights=key_insights detailed_analysis=detailed_analysis recommendations=recommendations %}
+{% elif result_type == 'table' %}
+    {% include 'analytics/partials/analysis_results/table_analysis_result.html' with analysis_id=analysis_id title=title description=description table_summary=table_summary table_data=table_data statistical_analysis=statistical_analysis data_quality=data_quality %}
+{% elif result_type == 'chart' %}
+    {% include 'analytics/partials/analysis_results/chart_analysis_result.html' with analysis_id=analysis_id title=title description=description chart_summary=chart_summary chart_data=chart_data chart_config=chart_config chart_insights=chart_insights statistical_summary=statistical_summary %}
+{% else %}
+    <div class="alert alert-warning">
+        <i class="bi bi-exclamation-triangle"></i>
+        Unknown analysis result type: {{ result_type }}
+    </div>
+{% endif %}

@@ -1,0 +1,1034 @@
+<!-- Chart Analysis Result Template -->
+<div class="analysis-result-container chart-analysis-result" data-analysis-id="{{ analysis_id|default:'new' }}">
+    <!-- Analysis Header -->
+    <div class="analysis-header">
+        <div class="analysis-title-section">
+            <div class="analysis-icon">
+                <i class="bi bi-graph-up"></i>
+            </div>
+            <div class="analysis-title-info">
+                <h4 class="analysis-title">{{ title|default:"Chart Analysis Result" }}</h4>
+                <p class="analysis-description">{{ description|default:"Data visualization and insights" }}</p>
+            </div>
+        </div>
+        <div class="analysis-actions">
+            <button class="btn btn-sm btn-outline-primary" onclick="copyAnalysisResult('{{ analysis_id|default:'new' }}')" title="Copy Result">
+                <i class="bi bi-clipboard"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-secondary" onclick="downloadAnalysisResult('{{ analysis_id|default:'new' }}', 'chart')" title="Download">
+                <i class="bi bi-download"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-success" onclick="interpretAnalysisResult('{{ analysis_id|default:'new' }}', 'chart')" title="Interpret with AI">
+                <i class="bi bi-robot"></i> Interpret Data
+            </button>
+        </div>
+    </div>
+
+    <!-- Analysis Content -->
+    <div class="analysis-content">
+        <div class="chart-analysis-content">
+            <!-- Chart Summary -->
+            {% if chart_summary %}
+            <div class="chart-summary-section">
+                <h5 class="section-title">
+                    <i class="bi bi-info-circle"></i> Chart Summary
+                </h5>
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <div class="summary-icon">
+                            <i class="bi bi-graph-up"></i>
+                        </div>
+                        <div class="summary-content">
+                            <div class="summary-label">Chart Type</div>
+                            <div class="summary-value">{{ chart_summary.type|default:"Visualization" }}</div>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-icon">
+                            <i class="bi bi-bar-chart"></i>
+                        </div>
+                        <div class="summary-content">
+                            <div class="summary-label">Data Points</div>
+                            <div class="summary-value">{{ chart_summary.data_points|default:"0" }}</div>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-icon">
+                            <i class="bi bi-layers"></i>
+                        </div>
+                        <div class="summary-content">
+                            <div class="summary-label">Variables</div>
+                            <div class="summary-value">{{ chart_summary.variables|default:"0" }}</div>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-icon">
+                            <i class="bi bi-eye"></i>
+                        </div>
+                        <div class="summary-content">
+                            <div class="summary-label">Insights</div>
+                            <div class="summary-value">{{ chart_summary.insights_count|default:"0" }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Chart Visualization -->
+            {% if chart_data %}
+            <div class="chart-visualization-section">
+                <h5 class="section-title">
+                    <i class="bi bi-graph-up"></i> Chart Visualization
+                </h5>
+                <div class="chart-controls">
+                    <div class="chart-options">
+                        <button class="btn btn-sm btn-outline-primary" onclick="toggleChartFullscreen('{{ analysis_id|default:'new' }}')" title="Fullscreen">
+                            <i class="bi bi-arrows-fullscreen"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="exportChart('{{ analysis_id|default:'new' }}', 'png')" title="Export PNG">
+                            <i class="bi bi-image"></i> PNG
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="exportChart('{{ analysis_id|default:'new' }}', 'svg')" title="Export SVG">
+                            <i class="bi bi-vector-pen"></i> SVG
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="exportChart('{{ analysis_id|default:'new' }}', 'pdf')" title="Export PDF">
+                            <i class="bi bi-file-pdf"></i> PDF
+                        </button>
+                    </div>
+                    <div class="chart-zoom">
+                        <button class="btn btn-sm btn-outline-secondary" onclick="zoomChart('{{ analysis_id|default:'new' }}', 'in')" title="Zoom In">
+                            <i class="bi bi-zoom-in"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="zoomChart('{{ analysis_id|default:'new' }}', 'out')" title="Zoom Out">
+                            <i class="bi bi-zoom-out"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="resetChartZoom('{{ analysis_id|default:'new' }}')" title="Reset Zoom">
+                            <i class="bi bi-arrow-clockwise"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="chart-container" id="chartContainer-{{ analysis_id|default:'new' }}">
+                    {% if chart_data.image_base64 %}
+                    <img src="data:image/png;base64,{{ chart_data.image_base64 }}" 
+                         alt="Chart Visualization" 
+                         class="chart-image" 
+                         id="chartImage-{{ analysis_id|default:'new' }}">
+                    {% elif chart_data.image_url %}
+                    <img src="{{ chart_data.image_url }}" 
+                         alt="Chart Visualization" 
+                         class="chart-image" 
+                         id="chartImage-{{ analysis_id|default:'new' }}">
+                    {% else %}
+                    <div class="chart-placeholder">
+                        <i class="bi bi-graph-up text-muted" style="font-size: 3rem;"></i>
+                        <p class="text-muted">Chart visualization will appear here</p>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="chart-metadata">
+                    <div class="metadata-item">
+                        <span class="metadata-label">Dimensions:</span>
+                        <span class="metadata-value">{{ chart_data.width|default:"800" }} × {{ chart_data.height|default:"600" }} px</span>
+                    </div>
+                    <div class="metadata-item">
+                        <span class="metadata-label">DPI:</span>
+                        <span class="metadata-value">{{ chart_data.dpi|default:"100" }}</span>
+                    </div>
+                    <div class="metadata-item">
+                        <span class="metadata-label">Format:</span>
+                        <span class="metadata-value">{{ chart_data.format|default:"PNG" }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Chart Configuration -->
+            {% if chart_config %}
+            <div class="chart-config-section">
+                <h5 class="section-title">
+                    <i class="bi bi-gear"></i> Chart Configuration
+                </h5>
+                <div class="config-tabs">
+                    <ul class="nav nav-tabs" id="configTabs-{{ analysis_id|default:'new' }}" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="style-tab" data-bs-toggle="tab" data-bs-target="#style-{{ analysis_id|default:'new' }}" type="button" role="tab">
+                                Style
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="data-tab" data-bs-toggle="tab" data-bs-target="#data-{{ analysis_id|default:'new' }}" type="button" role="tab">
+                                Data
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="axes-tab" data-bs-toggle="tab" data-bs-target="#axes-{{ analysis_id|default:'new' }}" type="button" role="tab">
+                                Axes
+                            </button>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="configTabContent-{{ analysis_id|default:'new' }}">
+                        <div class="tab-pane fade show active" id="style-{{ analysis_id|default:'new' }}" role="tabpanel">
+                            <div class="config-grid">
+                                <div class="config-item">
+                                    <label class="config-label">Background Color:</label>
+                                    <span class="config-value">{{ chart_config.background_color|default:"White" }}</span>
+                                </div>
+                                <div class="config-item">
+                                    <label class="config-label">Color Palette:</label>
+                                    <span class="config-value">{{ chart_config.color_palette|default:"Default" }}</span>
+                                </div>
+                                <div class="config-item">
+                                    <label class="config-label">Figure Size:</label>
+                                    <span class="config-value">{{ chart_config.figure_size|default:"(10, 6)" }}</span>
+                                </div>
+                                <div class="config-item">
+                                    <label class="config-label">DPI:</label>
+                                    <span class="config-value">{{ chart_config.dpi|default:"100" }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="data-{{ analysis_id|default:'new' }}" role="tabpanel">
+                            <div class="config-grid">
+                                <div class="config-item">
+                                    <label class="config-label">Data Source:</label>
+                                    <span class="config-value">{{ chart_config.data_source|default:"Current Dataset" }}</span>
+                                </div>
+                                <div class="config-item">
+                                    <label class="config-label">X Variable:</label>
+                                    <span class="config-value">{{ chart_config.x_variable|default:"—" }}</span>
+                                </div>
+                                <div class="config-item">
+                                    <label class="config-label">Y Variable:</label>
+                                    <span class="config-value">{{ chart_config.y_variable|default:"—" }}</span>
+                                </div>
+                                <div class="config-item">
+                                    <label class="config-label">Group By:</label>
+                                    <span class="config-value">{{ chart_config.group_by|default:"—" }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="axes-{{ analysis_id|default:'new' }}" role="tabpanel">
+                            <div class="config-grid">
+                                <div class="config-item">
+                                    <label class="config-label">X Label:</label>
+                                    <span class="config-value">{{ chart_config.x_label|default:"X Axis" }}</span>
+                                </div>
+                                <div class="config-item">
+                                    <label class="config-label">Y Label:</label>
+                                    <span class="config-value">{{ chart_config.y_label|default:"Y Axis" }}</span>
+                                </div>
+                                <div class="config-item">
+                                    <label class="config-label">Title:</label>
+                                    <span class="config-value">{{ chart_config.title|default:"Chart Title" }}</span>
+                                </div>
+                                <div class="config-item">
+                                    <label class="config-label">Legend:</label>
+                                    <span class="config-value">{{ chart_config.legend|default:"True" }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Chart Insights -->
+            {% if chart_insights %}
+            <div class="chart-insights-section">
+                <h5 class="section-title">
+                    <i class="bi bi-lightbulb"></i> Chart Insights
+                </h5>
+                <div class="insights-grid">
+                    {% for insight in chart_insights %}
+                    <div class="insight-card">
+                        <div class="insight-header">
+                            <div class="insight-icon">
+                                <i class="bi bi-{{ insight.icon|default:'arrow-right-circle' }}"></i>
+                            </div>
+                            <div class="insight-title">{{ insight.title }}</div>
+                        </div>
+                        <div class="insight-content">
+                            <div class="insight-description">{{ insight.description }}</div>
+                            {% if insight.value %}
+                            <div class="insight-value">
+                                <span class="value-label">Value:</span>
+                                <span class="value-number">{{ insight.value }}</span>
+                            </div>
+                            {% endif %}
+                            {% if insight.trend %}
+                            <div class="insight-trend trend-{{ insight.trend.direction|default:'neutral' }}">
+                                <i class="bi bi-arrow-{{ insight.trend.direction|default:'right' }}"></i>
+                                <span>{{ insight.trend.text|default:"No trend" }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Statistical Summary -->
+            {% if statistical_summary %}
+            <div class="statistical-summary-section">
+                <h5 class="section-title">
+                    <i class="bi bi-calculator"></i> Statistical Summary
+                </h5>
+                <div class="stats-container">
+                    {% for stat_group in statistical_summary %}
+                    <div class="stat-group">
+                        <h6 class="stat-group-title">{{ stat_group.name }}</h6>
+                        <div class="stat-values">
+                            {% for stat in stat_group.stats %}
+                            <div class="stat-item">
+                                <span class="stat-name">{{ stat.name }}:</span>
+                                <span class="stat-value">{{ stat.value|floatformat:4 }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Fullscreen Chart Modal -->
+    <div class="modal fade" id="fullscreenChartModal-{{ analysis_id|default:'new' }}" tabindex="-1" aria-labelledby="fullscreenChartModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header bg-secondary">
+                    <h5 class="modal-title" id="fullscreenChartModalLabel">
+                        <i class="bi bi-graph-up"></i> {{ title|default:"Chart Analysis" }} - Fullscreen
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <div class="fullscreen-chart-container">
+                        <img src="" alt="Fullscreen Chart" class="fullscreen-chart-image" id="fullscreenChartImage-{{ analysis_id|default:'new' }}">
+                    </div>
+                </div>
+                <div class="modal-footer bg-secondary">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="exportFullscreenChart('{{ analysis_id|default:'new' }}')">
+                        <i class="bi bi-download"></i> Export Chart
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Interpretation Modal -->
+    <div class="modal fade" id="aiInterpretationModal-{{ analysis_id|default:'new' }}" tabindex="-1" aria-labelledby="aiInterpretationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header bg-secondary">
+                    <h5 class="modal-title" id="aiInterpretationModalLabel">
+                        <i class="bi bi-robot"></i> AI Chart Interpretation
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="interpretation-content">
+                        <div class="interpretation-loading" id="interpretationLoading-{{ analysis_id|default:'new' }}" style="display: none;">
+                            <div class="text-center py-4">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">AI is analyzing...</span>
+                                </div>
+                                <p class="mt-2">AI is interpreting your chart analysis...</p>
+                            </div>
+                        </div>
+                        <div class="interpretation-result" id="interpretationResult-{{ analysis_id|default:'new' }}">
+                            <!-- AI interpretation will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-secondary">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="copyInterpretation('{{ analysis_id|default:'new' }}')">
+                        <i class="bi bi-clipboard"></i> Copy Interpretation
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Chart Analysis Result Styles */
+.chart-analysis-result {
+    background-color: var(--cursor-bg-secondary);
+    border: 1px solid var(--cursor-border);
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+.analysis-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1rem;
+    background-color: var(--cursor-bg-tertiary);
+    border-bottom: 1px solid var(--cursor-border);
+}
+
+.analysis-title-section {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    flex: 1;
+}
+
+.analysis-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    background-color: var(--cursor-accent-blue);
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.analysis-icon i {
+    color: white;
+    font-size: 1.25rem;
+}
+
+.analysis-title-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.analysis-title {
+    margin: 0 0 0.25rem 0;
+    color: var(--cursor-text-primary);
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.analysis-description {
+    margin: 0;
+    color: var(--cursor-text-muted);
+    font-size: 0.875rem;
+    line-height: 1.4;
+}
+
+.analysis-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.analysis-actions .btn {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    border-radius: 0.375rem;
+}
+
+.analysis-content {
+    padding: 1.5rem;
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 1rem 0;
+    color: var(--cursor-text-primary);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.section-title i {
+    color: var(--cursor-accent-blue);
+    font-size: 0.875rem;
+}
+
+/* Chart Summary */
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.summary-card {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background-color: var(--cursor-bg-tertiary);
+    border: 1px solid var(--cursor-border);
+    border-radius: 0.5rem;
+}
+
+.summary-icon {
+    width: 2rem;
+    height: 2rem;
+    background-color: var(--cursor-accent-blue);
+    border-radius: 0.375rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.summary-icon i {
+    color: white;
+    font-size: 0.875rem;
+}
+
+.summary-content {
+    flex: 1;
+}
+
+.summary-label {
+    color: var(--cursor-text-muted);
+    font-size: 0.75rem;
+    margin-bottom: 0.25rem;
+}
+
+.summary-value {
+    color: var(--cursor-text-primary);
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+/* Chart Visualization */
+.chart-visualization-section {
+    margin-bottom: 2rem;
+}
+
+.chart-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.chart-options, .chart-zoom {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.chart-container {
+    background-color: var(--cursor-bg-tertiary);
+    border: 1px solid var(--cursor-border);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    text-align: center;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+.chart-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.375rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+}
+
+.chart-image:hover {
+    transform: scale(1.02);
+}
+
+.chart-placeholder {
+    padding: 3rem;
+    color: var(--cursor-text-muted);
+}
+
+.chart-metadata {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.metadata-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.metadata-label {
+    color: var(--cursor-text-muted);
+    font-size: 0.75rem;
+}
+
+.metadata-value {
+    color: var(--cursor-text-primary);
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+/* Chart Configuration */
+.chart-config-section {
+    margin-bottom: 2rem;
+}
+
+.config-tabs {
+    background-color: var(--cursor-bg-tertiary);
+    border: 1px solid var(--cursor-border);
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.nav-tabs {
+    border-bottom: 1px solid var(--cursor-border);
+    margin-bottom: 0;
+}
+
+.nav-tabs .nav-link {
+    color: var(--cursor-text-muted);
+    border: 1px solid transparent;
+    border-radius: 0;
+}
+
+.nav-tabs .nav-link:hover {
+    border-color: var(--cursor-border);
+    color: var(--cursor-text-primary);
+}
+
+.nav-tabs .nav-link.active {
+    color: var(--cursor-text-primary);
+    background-color: var(--cursor-bg-secondary);
+    border-color: var(--cursor-border) var(--cursor-border) var(--cursor-bg-secondary);
+}
+
+.tab-content {
+    padding: 1.5rem;
+}
+
+.config-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.config-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    background-color: var(--cursor-bg-secondary);
+    border: 1px solid var(--cursor-border);
+    border-radius: 0.375rem;
+}
+
+.config-label {
+    color: var(--cursor-text-muted);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.config-value {
+    color: var(--cursor-text-primary);
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+/* Chart Insights */
+.chart-insights-section {
+    margin-bottom: 2rem;
+}
+
+.insights-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+.insight-card {
+    background-color: var(--cursor-bg-tertiary);
+    border: 1px solid var(--cursor-border);
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.insight-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.insight-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    background-color: var(--cursor-accent-blue);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.insight-icon i {
+    color: white;
+    font-size: 0.75rem;
+}
+
+.insight-title {
+    color: var(--cursor-text-primary);
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.insight-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.insight-description {
+    color: var(--cursor-text-primary);
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.insight-value {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.value-label {
+    color: var(--cursor-text-muted);
+    font-size: 0.75rem;
+}
+
+.value-number {
+    color: var(--cursor-text-primary);
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.insight-trend {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.trend-up {
+    color: var(--cursor-accent-green);
+}
+
+.trend-down {
+    color: var(--cursor-accent-red);
+}
+
+.trend-neutral {
+    color: var(--cursor-text-muted);
+}
+
+/* Statistical Summary */
+.statistical-summary-section {
+    margin-bottom: 2rem;
+}
+
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.stat-group {
+    background-color: var(--cursor-bg-tertiary);
+    border: 1px solid var(--cursor-border);
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.stat-group-title {
+    color: var(--cursor-text-primary);
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--cursor-border);
+}
+
+.stat-values {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stat-name {
+    color: var(--cursor-text-muted);
+    font-size: 0.75rem;
+}
+
+.stat-value {
+    color: var(--cursor-text-primary);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* Fullscreen Modal */
+.fullscreen-chart-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 2rem;
+}
+
+.fullscreen-chart-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 0.5rem;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .analysis-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .analysis-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+    
+    .summary-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .chart-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .chart-options, .chart-zoom {
+        justify-content: center;
+    }
+    
+    .chart-metadata {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .config-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .insights-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats-container {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+// Chart functionality
+let currentZoom = 1;
+
+// Initialize chart functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const analysisId = '{{ analysis_id|default:"new" }}';
+    initializeChart(analysisId);
+});
+
+function initializeChart(analysisId) {
+    const chartImage = document.getElementById(`chartImage-${analysisId}`);
+    if (chartImage) {
+        // Add click to zoom functionality
+        chartImage.addEventListener('click', function() {
+            toggleChartFullscreen(analysisId);
+        });
+    }
+}
+
+function toggleChartFullscreen(analysisId) {
+    const chartImage = document.getElementById(`chartImage-${analysisId}`);
+    const fullscreenImage = document.getElementById(`fullscreenChartImage-${analysisId}`);
+    
+    if (chartImage && fullscreenImage) {
+        fullscreenImage.src = chartImage.src;
+        const modal = new bootstrap.Modal(document.getElementById(`fullscreenChartModal-${analysisId}`));
+        modal.show();
+    }
+}
+
+function zoomChart(analysisId, direction) {
+    const chartImage = document.getElementById(`chartImage-${analysisId}`);
+    if (!chartImage) return;
+    
+    if (direction === 'in') {
+        currentZoom = Math.min(currentZoom * 1.2, 3);
+    } else if (direction === 'out') {
+        currentZoom = Math.max(currentZoom / 1.2, 0.5);
+    }
+    
+    chartImage.style.transform = `scale(${currentZoom})`;
+}
+
+function resetChartZoom(analysisId) {
+    const chartImage = document.getElementById(`chartImage-${analysisId}`);
+    if (chartImage) {
+        currentZoom = 1;
+        chartImage.style.transform = 'scale(1)';
+    }
+}
+
+function exportChart(analysisId, format) {
+    const chartImage = document.getElementById(`chartImage-${analysisId}`);
+    if (!chartImage) return;
+    
+    // Create a canvas to convert the image
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    canvas.width = chartImage.naturalWidth || chartImage.width;
+    canvas.height = chartImage.naturalHeight || chartImage.height;
+    
+    ctx.drawImage(chartImage, 0, 0);
+    
+    // Convert to desired format
+    const mimeType = format === 'png' ? 'image/png' : 
+                    format === 'svg' ? 'image/svg+xml' : 
+                    'application/pdf';
+    
+    canvas.toBlob(function(blob) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `chart_${analysisId}_${new Date().toISOString().split('T')[0]}.${format}`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }, mimeType);
+}
+
+function exportFullscreenChart(analysisId) {
+    const fullscreenImage = document.getElementById(`fullscreenChartImage-${analysisId}`);
+    if (fullscreenImage) {
+        const url = fullscreenImage.src;
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `chart_${analysisId}_fullscreen_${new Date().toISOString().split('T')[0]}.png`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+}
+
+// Copy and download functions (same as other templates)
+function copyAnalysisResult(analysisId) {
+    const container = document.querySelector(`[data-analysis-id="${analysisId}"]`);
+    if (container) {
+        const textContent = container.innerText;
+        navigator.clipboard.writeText(textContent).then(() => {
+            showNotification('Analysis result copied to clipboard!', 'success');
+        }).catch(err => {
+            console.error('Failed to copy: ', err);
+            showNotification('Failed to copy result', 'error');
+        });
+    }
+}
+
+function downloadAnalysisResult(analysisId, type) {
+    const container = document.querySelector(`[data-analysis-id="${analysisId}"]`);
+    if (container) {
+        const textContent = container.innerText;
+        const blob = new Blob([textContent], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `chart_analysis_${analysisId}_${new Date().toISOString().split('T')[0]}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+}
+
+function interpretAnalysisResult(analysisId, type) {
+    const modal = new bootstrap.Modal(document.getElementById(`aiInterpretationModal-${analysisId}`));
+    modal.show();
+    
+    document.getElementById(`interpretationLoading-${analysisId}`).style.display = 'block';
+    document.getElementById(`interpretationResult-${analysisId}`).innerHTML = '';
+    
+    const container = document.querySelector(`[data-analysis-id="${analysisId}"]`);
+    const analysisData = {
+        type: type,
+        title: container.querySelector('.analysis-title').textContent,
+        content: container.innerText,
+        timestamp: new Date().toISOString()
+    };
+    
+    fetch('/api/ai/interpret-analysis/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCSRFToken()
+        },
+        body: JSON.stringify(analysisData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById(`interpretationLoading-${analysisId}`).style.display = 'none';
+        document.getElementById(`interpretationResult-${analysisId}`).innerHTML = `
+            <div class="ai-interpretation">
+                <h6><i class="bi bi-robot"></i> AI Interpretation</h6>
+                <div class="interpretation-text">${data.interpretation}</div>
+                <div class="interpretation-meta">
+                    <small class="text-muted">Generated at ${new Date().toLocaleString()}</small>
+                </div>
+            </div>
+        `;
+    })
+    .catch(error => {
+        console.error('Error getting AI interpretation:', error);
+        document.getElementById(`interpretationLoading-${analysisId}`).style.display = 'none';
+        document.getElementById(`interpretationResult-${analysisId}`).innerHTML = `
+            <div class="alert alert-danger">
+                <i class="bi bi-exclamation-triangle"></i>
+                Failed to get AI interpretation. Please try again.
+            </div>
+        `;
+    });
+}
+
+function copyInterpretation(analysisId) {
+    const interpretation = document.getElementById(`interpretationResult-${analysisId}`).innerText;
+    navigator.clipboard.writeText(interpretation).then(() => {
+        showNotification('AI interpretation copied to clipboard!', 'success');
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+        showNotification('Failed to copy interpretation', 'error');
+    });
+}
+
+function getCSRFToken() {
+    return document.querySelector('[name=csrfmiddlewaretoken]').value;
+}
+
+function showNotification(message, type) {
+    console.log(`${type.toUpperCase()}: ${message}`);
+}
+</script>

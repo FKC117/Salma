@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils import timezone
+from django.conf import settings
 import uuid
 
 # Create your models here.
@@ -1235,6 +1236,26 @@ class AnalysisSession(models.Model):
         datasets = [self.primary_dataset]
         datasets.extend(self.additional_datasets.all())
         return datasets
+    
+    def get_dataset(self):
+        """Get the primary dataset as a pandas DataFrame"""
+        try:
+            if self.primary_dataset and self.primary_dataset.parquet_path:
+                import pandas as pd
+                import os
+                # Load the dataset from the parquet path
+                parquet_file_path = os.path.join(settings.MEDIA_ROOT, self.primary_dataset.parquet_path)
+                if os.path.exists(parquet_file_path):
+                    return pd.read_parquet(parquet_file_path)
+                else:
+                    print(f"🔧 DEBUG: Parquet file not found at: {parquet_file_path}")
+                    return None
+            else:
+                print(f"🔧 DEBUG: No primary dataset or parquet path available")
+                return None
+        except Exception as e:
+            print(f"🔧 DEBUG: Error loading dataset: {str(e)}")
+            return None
     
     def add_dataset(self, dataset):
         """Add a dataset to the session"""

@@ -591,6 +591,127 @@
     .created-date-card {
         font-size: 0.625rem;
     }
+    
+    /* Analysis Results Container */
+    .analysis-results-container {
+        margin-top: 2rem;
+    }
+    
+    .analysis-result-container {
+        background-color: var(--cursor-bg-secondary);
+        border: 1px solid var(--cursor-border);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .analysis-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--cursor-border);
+    }
+    
+    .analysis-title-section {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .analysis-icon {
+        width: 3rem;
+        height: 3rem;
+        background-color: var(--cursor-accent-blue);
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    
+    .analysis-icon i {
+        color: white;
+        font-size: 1.25rem;
+    }
+    
+    .analysis-title {
+        margin: 0 0 0.5rem 0;
+        color: var(--cursor-text-primary);
+        font-size: 1.25rem;
+        font-weight: 600;
+    }
+    
+    .analysis-description {
+        margin: 0;
+        color: var(--cursor-text-secondary);
+        font-size: 0.9rem;
+    }
+    
+    .analysis-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    .analysis-content {
+        color: var(--cursor-text-primary);
+    }
+    
+    .summary-stats {
+        background-color: var(--cursor-bg-tertiary);
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin-top: 1rem;
+    }
+    
+    .stat-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 0;
+    }
+    
+    .stat-label {
+        font-weight: 500;
+        color: var(--cursor-text-secondary);
+    }
+    
+    .stat-value {
+        font-weight: 600;
+        color: var(--cursor-accent-blue);
+    }
+    
+    .analysis-execution-status {
+        background-color: var(--cursor-bg-tertiary);
+        border: 1px solid var(--cursor-border);
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        display: none;
+    }
+    
+    .execution-progress {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .progress {
+        flex: 1;
+        height: 0.5rem;
+        background-color: var(--cursor-bg-secondary);
+    }
+    
+    .progress-bar {
+        background-color: var(--cursor-accent-blue);
+    }
+    
+    .execution-status-text {
+        color: var(--cursor-text-primary);
+        font-size: 0.875rem;
+    }
 </style>
 {% endblock %}
 
@@ -618,86 +739,18 @@
                        hx-target="#tools-list">
             </div>
             
-            <!-- Tool Categories -->
+            <!-- Analysis Tools Section -->
             <div class="mb-3">
-                <div class="tool-item" data-bs-toggle="collapse" data-bs-target="#statistical-tools">
-                    <i class="bi bi-graph-up"></i>
-                    <span>Statistical Analysis</span>
-                    <i class="bi bi-chevron-down ms-auto"></i>
+                <div class="tool-item" data-bs-toggle="modal" data-bs-target="#analysisToolsModal">
+                    <i class="bi bi-tools"></i>
+                    <span>Analysis Tools</span>
+                    <i class="bi bi-arrow-right ms-auto"></i>
                 </div>
-                <div class="collapse" id="statistical-tools">
-                    <div class="ms-3">
-                        <a href="#" class="tool-item" hx-post="/api/analysis/execute/" hx-target="#dashboard-content">
-                            <i class="bi bi-calculator"></i>
-                            <span>Descriptive Stats</span>
-                        </a>
-                        <a href="#" class="tool-item" hx-post="/api/analysis/execute/" hx-target="#dashboard-content">
-                            <i class="bi bi-graph-up"></i>
-                            <span>Correlation</span>
-                        </a>
-                        <a href="#" class="tool-item" hx-post="/api/analysis/execute/" hx-target="#dashboard-content">
-                            <i class="bi bi-bar-chart"></i>
-                            <span>Distribution</span>
-                        </a>
-                        <a href="#" class="tool-item" hx-post="/api/analysis/execute/" hx-target="#dashboard-content">
-                            <i class="bi bi-arrow-up-right"></i>
-                            <span>Regression</span>
-                        </a>
-                    </div>
+                <div class="ms-3 mt-2">
+                    <small class="text-muted">Click to open the analysis tools modal with 15+ statistical, visualization, and ML tools.</small>
                 </div>
             </div>
             
-            <div class="mb-3">
-                <div class="tool-item" data-bs-toggle="collapse" data-bs-target="#advanced-tools">
-                    <i class="bi bi-gear"></i>
-                    <span>Advanced Tools</span>
-                    <i class="bi bi-chevron-down ms-auto"></i>
-                </div>
-                <div class="collapse" id="advanced-tools">
-                    <div class="ms-3">
-                        <a href="#" class="tool-item" hx-post="/api/analysis/execute/" hx-target="#dashboard-content">
-                            <i class="bi bi-cpu"></i>
-                            <span>Machine Learning</span>
-                        </a>
-                        <a href="#" class="tool-item" hx-post="/api/analysis/execute/" hx-target="#dashboard-content">
-                            <i class="bi bi-heart-pulse"></i>
-                            <span>Survival Analysis</span>
-                        </a>
-                        <a href="#" class="tool-item" hx-post="/api/analysis/execute/" hx-target="#dashboard-content">
-                            <i class="bi bi-diagram-3"></i>
-                            <span>Clustering</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="mb-3">
-                <div class="tool-item" data-bs-toggle="collapse" data-bs-target="#visualization-tools">
-                    <i class="bi bi-palette"></i>
-                    <span>Visualization</span>
-                    <i class="bi bi-chevron-down ms-auto"></i>
-                </div>
-                <div class="collapse" id="visualization-tools">
-                    <div class="ms-3">
-                        <a href="#" class="tool-item" hx-post="/api/analysis/execute/" hx-target="#dashboard-content">
-                            <i class="bi bi-graph-up"></i>
-                            <span>Line Charts</span>
-                        </a>
-                        <a href="#" class="tool-item" hx-post="/api/analysis/execute/" hx-target="#dashboard-content">
-                            <i class="bi bi-bar-chart"></i>
-                            <span>Bar Charts</span>
-                        </a>
-                        <a href="#" class="tool-item" hx-post="/api/analysis/execute/" hx-target="#dashboard-content">
-                            <i class="bi bi-pie-chart"></i>
-                            <span>Pie Charts</span>
-                        </a>
-                        <a href="#" class="tool-item" hx-post="/api/analysis/execute/" hx-target="#dashboard-content">
-                            <i class="bi bi-scatter"></i>
-                            <span>Scatter Plots</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -710,6 +763,10 @@
                 {% include 'analytics/partials/compact_dataset_switcher.html' %}
             </div>
             <div class="dashboard-header-right">
+                <button class="btn btn-outline me-2" data-bs-toggle="modal" data-bs-target="#analysisToolsModal">
+                    <i class="bi bi-tools"></i>
+                    <span class="d-none d-md-inline ms-1">Analysis Tools</span>
+                </button>
                 <button class="btn btn-outline" data-bs-toggle="modal" data-bs-target="#uploadModal">
                     <i class="bi bi-upload"></i>
                     <span class="d-none d-md-inline ms-1">Upload</span>
@@ -748,6 +805,11 @@
                 </div>
                 
                 <!-- Analysis Results will be loaded here via HTMX -->
+                
+                <!-- Analysis Results Container -->
+                <div id="analysisResultsContainer" class="analysis-results-container">
+                    <!-- Analysis results will be displayed here -->
+                </div>
             </div>
         </div>
     </div>
@@ -817,6 +879,9 @@
 </div>
 
 <!-- Move modals outside the main container to avoid CSS conflicts -->
+
+<!-- Analysis Tools Modal -->
+{% include 'analytics/partials/analysis_tools_modal.html' %}
 
 <!-- Compact Dataset Switcher Modal -->
 <div class="modal fade" id="compactDatasetSwitcherModal" tabindex="-1" aria-labelledby="compactDatasetSwitcherModalLabel" aria-hidden="true">

@@ -44,6 +44,10 @@ urlpatterns = [
     path('tools/list/', views.ToolsViewSet.as_view({'get': 'list_tools'}), name='tools_refresh'),
     path('agent/run/', views.AgentViewSet.as_view({'post': 'run'}), name='agent_run'),
     path('audit/trail/', views.AuditViewSet.as_view({'get': 'trail'}), name='audit_trail'),
+    path('api/ai/interpret-analysis/', views.interpret_analysis, name='interpret_analysis'),
+    path('api/tools/list/', views.list_analysis_tools, name='list_analysis_tools'),
+    path('api/tools/configure/<str:tool_id>/', views.get_tool_configuration, name='get_tool_configuration'),
+    path('api/tools/execute/', views.execute_analysis_tool, name='execute_analysis_tool'),
     
     # API endpoints (must come last to avoid conflicts)
     path('api/', include(router.urls)),

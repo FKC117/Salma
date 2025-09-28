@@ -611,6 +611,12 @@ class CompactDatasetSwitcher {
                 if (response.ok) {
                     const data = await response.json();
                     
+                    // Store the new session ID in localStorage for the frontend
+                    if (data.session_id) {
+                        localStorage.setItem('current_session_id', data.session_id);
+                        console.log('Stored session ID:', data.session_id);
+                    }
+                    
                     // Close modal immediately
                     const modalElement = document.getElementById('compactDatasetSwitcherModal');
                     const modal = bootstrap.Modal.getInstance(modalElement);
@@ -624,7 +630,7 @@ class CompactDatasetSwitcher {
                     
                     // Dispatch custom event to notify other components
                     document.dispatchEvent(new CustomEvent('datasetChanged', {
-                        detail: { dataset: this.selectedDataset }
+                        detail: { dataset: this.selectedDataset, session_id: data.session_id }
                     }));
                     
                     // Show success message

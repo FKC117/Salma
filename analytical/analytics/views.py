@@ -4,10 +4,10 @@ API Views for Analytics System
 import logging
 import re
 from rest_framework import viewsets, status
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
@@ -236,6 +236,12 @@ class SessionViewSet(viewsets.ViewSet):
                 dataset=dataset,
                 session_name=request.data.get('session_name', f'Session {timezone.now().strftime("%Y-%m-%d %H:%M")}')
             )
+            
+            # Store session ID in request session
+            request.session['current_session_id'] = session.id
+            request.session.save()
+            
+            logger.info(f"DEBUG: Created session {session.id} and stored in request session")
             
             return Response({
                 'success': True,
@@ -1280,6 +1286,12 @@ def api_create_session(request):
             session_name=data.get('session_name', f'Session {timezone.now().strftime("%Y-%m-%d %H:%M")}')
         )
         
+        # Store session ID in request session
+        request.session['current_session_id'] = session.id
+        request.session.save()
+        
+        logger.info(f"DEBUG: Created session {session.id} and stored in request session")
+        
         return JsonResponse({
             'success': True,
             'session_id': session.id,
@@ -1291,4 +1303,376 @@ def api_create_session(request):
         return JsonResponse({
             'success': False,
             'error': 'Internal server error'
+        }, status=500)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def interpret_analysis(request):
+    """
+    AI interpretation endpoint for analysis results
+    """
+    try:
+        data = request.data
+        analysis_type = data.get('type', 'text')
+        analysis_data = {
+            'title': data.get('title', 'Untitled Analysis'),
+            'content': data.get('content', ''),
+            'timestamp': data.get('timestamp', '')
+        }
+        
+        # Get AI interpretation
+        from analytics.services.ai_interpretation_service import ai_interpretation_service
+        result = ai_interpretation_service.interpret_analysis_result(
+            analysis_data, analysis_type
+        )
+        
+        if result['success']:
+            return Response({
+                'success': True,
+                'interpretation': result['interpretation'],
+                'confidence': result.get('confidence', 0.8),
+                'analysis_type': analysis_type
+            })
+        else:
+            return Response({
+                'success': False,
+                'error': result.get('error', 'Failed to generate interpretation')
+            }, status=500)
+            
+    except Exception as e:
+        logger.error(f"Error in interpret_analysis: {str(e)}")
+        return Response({
+            'success': False,
+            'error': 'Internal server error'
+        }, status=500)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def list_analysis_tools(request):
+    """
+    List all available analysis tools organized by category
+    """
+    try:
+        from analytics.services.tool_registry import tool_registry
+        logger.info("DEBUG: Loading analysis tools")
+        logger.info(f"DEBUG: Tool registry initialized: {tool_registry is not None}")
+        logger.info(f"DEBUG: Tool registry tools count: {len(tool_registry.tools)}")
+        logger.info(f"DEBUG: Tool registry categories: {list(tool_registry.categories.keys())}")
+        
+        tools = tool_registry.get_tool_categories()
+        logger.info(f"DEBUG: Found {len(tools)} tool categories")
+        
+        for category, tool_list in tools.items():
+            logger.info(f"DEBUG: Category {category}: {len(tool_list)} tools")
+            for tool in tool_list:
+                logger.info(f"DEBUG: Tool {tool['id']}: {tool['name']}")
+        
+        return Response({
+            'success': True,
+            'tools': tools
+        })
+        
+    except Exception as e:
+        logger.error(f"DEBUG: Error listing analysis tools: {str(e)}")
+        return Response({
+            'success': False,
+            'error': 'Failed to load analysis tools'
+        }, status=500)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_tool_configuration(request, tool_id):
+    """
+    Get configuration details for a specific tool with dataset column information
+    """
+    try:
+        from analytics.services.tool_registry import tool_registry
+        from analytics.models import AnalysisSession
+        
+        logger.info(f"DEBUG: Getting tool configuration for tool_id: {tool_id}")
+        logger.info(f"DEBUG: User: {request.user}")
+        logger.info(f"DEBUG: Session keys: {list(request.session.keys())}")
+        logger.info(f"DEBUG: Tool registry initialized: {tool_registry is not None}")
+        logger.info(f"DEBUG: Tool registry tools count: {len(tool_registry.tools)}")
+        logger.info(f"DEBUG: Available tool IDs: {list(tool_registry.tools.keys())}")
+        
+        tool = tool_registry.get_tool(tool_id)
+        logger.info(f"DEBUG: Tool found: {tool is not None}")
+        if tool:
+            logger.info(f"DEBUG: Tool name: {tool.name}")
+            logger.info(f"DEBUG: Tool parameters count: {len(tool.parameters)}")
+            for i, param in enumerate(tool.parameters):
+                logger.info(f"DEBUG: Parameter {i}: {param.name} ({param.type})")
+        else:
+            logger.error(f"DEBUG: Tool not found for ID: {tool_id}")
+            logger.info(f"DEBUG: Available tools: {list(tool_registry.tools.keys())}")
+        
+        if not tool:
+            return Response({
+                'success': False,
+                'error': 'Tool not found'
+            }, status=404)
+        
+        # Get current session and dataset information
+        session_id = request.session.get('current_session_id')
+        logger.info(f"DEBUG: Session ID from request: {session_id}")
+        logger.info(f"DEBUG: All session data: {dict(request.session)}")
+        
+        dataset_info = None
+        columns_info = []
+        
+        # Try to get session by ID first, then fall back to latest session for user
+        session = None
+        if session_id:
+            try:
+                print(f"DEBUG: Looking for session with ID: {session_id}")
+                logger.info(f"DEBUG: Looking for session with ID: {session_id}")
+                session = AnalysisSession.objects.get(id=session_id, user=request.user)
+                print(f"DEBUG: Session found by ID: {session}")
+                logger.info(f"DEBUG: Session found by ID: {session}")
+            except AnalysisSession.DoesNotExist:
+                print(f"DEBUG: Session {session_id} not found for user {request.user}, trying latest session")
+                logger.warning(f"DEBUG: Session {session_id} not found for user {request.user}, trying latest session")
+                session = None
+        
+        # If no session found by ID, get the latest session for the user
+        if not session:
+            try:
+                session = AnalysisSession.objects.filter(user=request.user).order_by('-created_at').first()
+                print(f"DEBUG: Latest session for user: {session}")
+                logger.info(f"DEBUG: Latest session for user: {session}")
+                if session:
+                    # Update the session ID in request session
+                    request.session['current_session_id'] = session.id
+                    request.session.save()
+                    print(f"DEBUG: Updated session ID in request session to: {session.id}")
+                    logger.info(f"DEBUG: Updated session ID in request session to: {session.id}")
+            except Exception as e:
+                print(f"DEBUG: Error getting latest session: {str(e)}")
+                logger.error(f"DEBUG: Error getting latest session: {str(e)}")
+        
+        if session:
+            try:
+                print(f"DEBUG: Session found: {session}")
+                logger.info(f"DEBUG: Session found: {session}")
+                print(f"DEBUG: Session primary_dataset: {session.primary_dataset}")
+                logger.info(f"DEBUG: Session primary_dataset: {session.primary_dataset}")
+                
+                dataset = session.get_dataset()
+                print(f"DEBUG: Dataset loaded: {dataset is not None}")
+                logger.info(f"DEBUG: Dataset loaded: {dataset is not None}")
+                if dataset is not None:
+                    print(f"DEBUG: Dataset shape: {dataset.shape}")
+                    logger.info(f"DEBUG: Dataset shape: {dataset.shape}")
+                    print(f"DEBUG: Dataset columns: {list(dataset.columns)}")
+                    logger.info(f"DEBUG: Dataset columns: {list(dataset.columns)}")
+                    print(f"DEBUG: Dataset empty: {dataset.empty}")
+                    logger.info(f"DEBUG: Dataset empty: {dataset.empty}")
+                    print(f"DEBUG: Dataset dtypes: {dataset.dtypes.to_dict()}")
+                    logger.info(f"DEBUG: Dataset dtypes: {dataset.dtypes.to_dict()}")
+                else:
+                    print("DEBUG: Dataset is None")
+                    logger.warning("DEBUG: Dataset is None")
+                
+                if dataset is not None and not dataset.empty:
+                    print("DEBUG: Processing dataset columns")
+                    # Get column information with types
+                    columns_info = []
+                    for column in dataset.columns:
+                        col_type = 'numeric' if dataset[column].dtype in ['int64', 'float64', 'int32', 'float32'] else \
+                                  'datetime' if dataset[column].dtype.name.startswith('datetime') else \
+                                  'categorical'
+                        
+                        sample_values = dataset[column].dropna().head(3).tolist() if not dataset[column].dropna().empty else []
+                        
+                        column_info = {
+                            'name': column,
+                            'type': col_type,
+                            'dtype': str(dataset[column].dtype),
+                            'sample_values': sample_values
+                        }
+                        columns_info.append(column_info)
+                        print(f"DEBUG: Column {column}: {column_info}")
+                        logger.info(f"DEBUG: Column {column}: {column_info}")
+                        print(f"DEBUG: Column {column} dtype: {dataset[column].dtype}, type: {col_type}")
+                        logger.info(f"DEBUG: Column {column} dtype: {dataset[column].dtype}, type: {col_type}")
+                    
+                    dataset_info = {
+                        'name': session.primary_dataset.name if session.primary_dataset else 'Current Dataset',
+                        'rows': len(dataset),
+                        'columns': len(dataset.columns),
+                        'columns_info': columns_info
+                    }
+                    print(f"DEBUG: Dataset info: {dataset_info}")
+                    logger.info(f"DEBUG: Dataset info: {dataset_info}")
+                else:
+                    print("DEBUG: Dataset is None or empty")
+                    logger.warning("DEBUG: Dataset is None or empty")
+            except Exception as e:
+                print(f"DEBUG: Error getting session/dataset: {str(e)}")
+                logger.error(f"DEBUG: Error getting session/dataset: {str(e)}")
+        else:
+            print("DEBUG: No session found for user")
+            logger.warning("DEBUG: No session found for user")
+        
+        # Enhance parameters with column information
+        enhanced_parameters = []
+        for param in tool.parameters:
+            param_info = {
+                'name': param.name,
+                'type': param.type.value,
+                'label': param.label,
+                'description': param.description,
+                'required': param.required,
+                'default_value': param.default_value,
+                'options': param.options,
+                'min_value': param.min_value,
+                'max_value': param.max_value
+            }
+            
+            # Add column options for column-type parameters
+            if param.type.value in ['column', 'multicolumn']:
+                logger.info(f"DEBUG: Adding column options for parameter {param.name}")
+                
+                # Filter columns based on tool requirements
+                filtered_columns = [
+                    col for col in columns_info 
+                    if not tool.required_column_types or col['type'] in tool.required_column_types
+                ]
+                
+                # Use filtered columns for the parameter options
+                param_info['column_options'] = filtered_columns
+                param_info['filtered_columns'] = filtered_columns
+                
+                logger.info(f"DEBUG: Column options added: {len(param_info['column_options'])} columns")
+                logger.info(f"DEBUG: Filtered columns: {len(param_info['filtered_columns'])} columns")
+                logger.info(f"DEBUG: Tool required column types: {tool.required_column_types}")
+                logger.info(f"DEBUG: Available column types: {[col['type'] for col in columns_info]}")
+            
+            enhanced_parameters.append(param_info)
+        
+        response_data = {
+            'success': True,
+            'tool': {
+                'id': tool.id,
+                'name': tool.name,
+                'description': tool.description,
+                'category': tool.category.value,
+                'parameters': enhanced_parameters,
+                'result_type': tool.result_type,
+                'icon': tool.icon,
+                'tags': tool.tags or []
+            },
+            'dataset_info': dataset_info,
+            'session_id': session.id if session else None
+        }
+        
+        print(f"DEBUG: Final response data: {response_data}")
+        logger.info(f"DEBUG: Final response data: {response_data}")
+        print(f"DEBUG: Enhanced parameters count: {len(enhanced_parameters)}")
+        logger.info(f"DEBUG: Enhanced parameters count: {len(enhanced_parameters)}")
+        for i, param in enumerate(enhanced_parameters):
+            print(f"DEBUG: Enhanced parameter {i}: {param['name']} - column_options: {param.get('column_options', 'None')}")
+            logger.info(f"DEBUG: Enhanced parameter {i}: {param['name']} - column_options: {param.get('column_options', 'None')}")
+        
+        return Response(response_data)
+        
+    except Exception as e:
+        logger.error(f"Error getting tool configuration: {str(e)}")
+        return Response({
+            'success': False,
+            'error': 'Failed to load tool configuration'
+        }, status=500)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def execute_analysis_tool(request):
+    """
+    Execute an analysis tool with given parameters
+    """
+    try:
+        data = request.data
+        tool_id = data.get('tool_id')
+        parameters = data.get('parameters', {})
+        
+        if not tool_id:
+            return Response({
+                'success': False,
+                'error': 'Tool ID is required'
+            }, status=400)
+        
+        # Get current session and dataset
+        session_id = request.session.get('current_session_id')
+        if not session_id:
+            return Response({
+                'success': False,
+                'error': 'No active analysis session'
+            }, status=400)
+        
+        # Get dataset
+        from analytics.models import AnalysisSession
+        try:
+            session = AnalysisSession.objects.get(id=session_id, user=request.user)
+            dataset = session.get_dataset()
+        except AnalysisSession.DoesNotExist:
+            return Response({
+                'success': False,
+                'error': 'Analysis session not found'
+            }, status=404)
+        
+        if dataset is None or dataset.empty:
+            return Response({
+                'success': False,
+                'error': 'No dataset available for analysis'
+            }, status=400)
+        
+        # Execute tool
+        from analytics.services.tool_executor import tool_executor
+        execution_result = tool_executor.execute_tool(tool_id, parameters, dataset, session_id)
+        
+        if execution_result.success:
+            # Generate analysis result template
+            from analytics.services.analysis_result_manager import analysis_result_manager
+            analysis_id = f"analysis_{execution_result.execution_id}"
+            
+            # Extract the specific parameters we need and remove them from the data
+            result_data = execution_result.result_data.copy()
+            result_type = result_data.pop('type', 'text')
+            title = result_data.pop('title', 'Analysis Result')
+            description = result_data.pop('description', '')
+            
+            result_html = analysis_result_manager.create_analysis_result(
+                result_type=result_type,
+                analysis_id=analysis_id,
+                title=title,
+                description=description,
+                **result_data
+            )
+            
+            return Response({
+                'success': True,
+                'execution_id': execution_result.execution_id,
+                'result': {
+                    'analysis_id': analysis_id,
+                    'type': execution_result.result_data.get('type', 'text'),
+                    'title': execution_result.result_data.get('title', 'Analysis Result'),
+                    'description': execution_result.result_data.get('description', ''),
+                    'html': result_html
+                }
+            })
+        else:
+            return Response({
+                'success': False,
+                'error': execution_result.error_message
+            }, status=500)
+            
+    except Exception as e:
+        logger.error(f"Error executing analysis tool: {str(e)}")
+        return Response({
+            'success': False,
+            'error': 'Failed to execute analysis tool'
         }, status=500)

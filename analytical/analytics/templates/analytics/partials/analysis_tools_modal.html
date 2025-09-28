@@ -1,0 +1,941 @@
+<!-- Analysis Tools Modal -->
+<div class="modal fade" id="analysisToolsModal" tabindex="-1" aria-labelledby="analysisToolsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content bg-dark text-light">
+            <div class="modal-header bg-secondary">
+                <h5 class="modal-title" id="analysisToolsModalLabel">
+                    <i class="bi bi-tools"></i> Analysis Tools
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Tool Categories Tabs -->
+                <ul class="nav nav-tabs" id="toolCategoryTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="statistical-tab" data-bs-toggle="tab" data-bs-target="#statistical" type="button" role="tab">
+                            <i class="bi bi-calculator"></i> Statistical
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="visualization-tab" data-bs-toggle="tab" data-bs-target="#visualization" type="button" role="tab">
+                            <i class="bi bi-graph-up"></i> Visualization
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="data-quality-tab" data-bs-toggle="tab" data-bs-target="#data-quality" type="button" role="tab">
+                            <i class="bi bi-shield-check"></i> Data Quality
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="machine-learning-tab" data-bs-toggle="tab" data-bs-target="#machine-learning" type="button" role="tab">
+                            <i class="bi bi-diagram-2"></i> Machine Learning
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="time-series-tab" data-bs-toggle="tab" data-bs-target="#time-series" type="button" role="tab">
+                            <i class="bi bi-clock"></i> Time Series
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="survival-analysis-tab" data-bs-toggle="tab" data-bs-target="#survival-analysis" type="button" role="tab">
+                            <i class="bi bi-heart-pulse"></i> Survival Analysis
+                        </button>
+                    </li>
+                </ul>
+
+                <!-- Tool Categories Content -->
+                <div class="tab-content" id="toolCategoryContent">
+                    <!-- Statistical Tools -->
+                    <div class="tab-pane fade show active" id="statistical" role="tabpanel">
+                        <div class="tools-grid" id="statistical-tools">
+                            <!-- Tools will be loaded here via HTMX -->
+                        </div>
+                    </div>
+
+                    <!-- Visualization Tools -->
+                    <div class="tab-pane fade" id="visualization" role="tabpanel">
+                        <div class="tools-grid" id="visualization-tools">
+                            <!-- Tools will be loaded here via HTMX -->
+                        </div>
+                    </div>
+
+                    <!-- Data Quality Tools -->
+                    <div class="tab-pane fade" id="data-quality" role="tabpanel">
+                        <div class="tools-grid" id="data-quality-tools">
+                            <!-- Tools will be loaded here via HTMX -->
+                        </div>
+                    </div>
+
+                    <!-- Machine Learning Tools -->
+                    <div class="tab-pane fade" id="machine-learning" role="tabpanel">
+                        <div class="tools-grid" id="machine-learning-tools">
+                            <!-- Tools will be loaded here via HTMX -->
+                        </div>
+                    </div>
+
+                    <!-- Time Series Tools -->
+                    <div class="tab-pane fade" id="time-series" role="tabpanel">
+                        <div class="tools-grid" id="time-series-tools">
+                            <!-- Tools will be loaded here via HTMX -->
+                        </div>
+                    </div>
+
+                    <!-- Survival Analysis Tools -->
+                    <div class="tab-pane fade" id="survival-analysis" role="tabpanel">
+                        <div class="tools-grid" id="survival-analysis-tools">
+                            <!-- Tools will be loaded here via HTMX -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer bg-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="executeAnalysisBtn" disabled>
+                    <i class="bi bi-play-circle"></i> Execute Analysis
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tool Configuration Modal -->
+<div class="modal fade" id="toolConfigurationModal" tabindex="-1" aria-labelledby="toolConfigurationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark text-light">
+            <div class="modal-header bg-secondary">
+                <h5 class="modal-title" id="toolConfigurationModalLabel">
+                    <i class="bi bi-gear"></i> Configure Tool
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="toolConfigurationForm">
+                    <div id="toolConfigurationContent">
+                        <!-- Tool configuration will be loaded here -->
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer bg-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="configureToolBtn">
+                    <i class="bi bi-check-circle"></i> Configure & Execute
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Analysis Results Container -->
+<div id="analysisResultsContainer" class="analysis-results-container">
+    <!-- Analysis results will be displayed here -->
+</div>
+
+<style>
+/* Analysis Tools Modal Styles */
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+    padding: 1rem 0;
+}
+
+.tool-card {
+    background-color: var(--cursor-bg-tertiary);
+    border: 1px solid var(--cursor-border);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.tool-card:hover {
+    border-color: var(--cursor-accent-blue);
+    box-shadow: 0 4px 12px rgba(88, 166, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.tool-card.selected {
+    border-color: var(--cursor-accent-blue);
+    background-color: rgba(88, 166, 255, 0.1);
+}
+
+.tool-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.tool-icon {
+    width: 2rem;
+    height: 2rem;
+    background-color: var(--cursor-accent-blue);
+    border-radius: 0.375rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.tool-icon i {
+    color: white;
+    font-size: 1rem;
+}
+
+.tool-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.tool-name {
+    margin: 0 0 0.25rem 0;
+    color: var(--cursor-text-primary);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.tool-description {
+    margin: 0;
+    color: var(--cursor-text-muted);
+    font-size: 0.875rem;
+    line-height: 1.4;
+}
+
+.tool-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin-top: 0.5rem;
+}
+
+.tool-tag {
+    background-color: var(--cursor-bg-quaternary);
+    color: var(--cursor-text-muted);
+    font-size: 0.75rem;
+    padding: 0.125rem 0.5rem;
+    border-radius: 0.25rem;
+}
+
+.tool-result-type {
+    margin-top: auto;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--cursor-border);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--cursor-text-muted);
+    font-size: 0.75rem;
+}
+
+.tool-result-type i {
+    color: var(--cursor-accent-blue);
+}
+
+/* Tool Configuration Styles */
+.tool-parameter {
+    margin-bottom: 1.5rem;
+}
+
+.parameter-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--cursor-text-primary);
+    font-weight: 500;
+}
+
+.parameter-description {
+    font-size: 0.875rem;
+    color: var(--cursor-text-muted);
+    margin-bottom: 0.5rem;
+}
+
+.parameter-required {
+    color: var(--cursor-accent-red);
+    font-size: 0.75rem;
+    margin-left: 0.25rem;
+}
+
+.form-control, .form-select {
+    background-color: var(--cursor-bg-secondary);
+    border-color: var(--cursor-border);
+    color: var(--cursor-text-primary);
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: var(--cursor-bg-secondary);
+    border-color: var(--cursor-accent-blue);
+    color: var(--cursor-text-primary);
+    box-shadow: 0 0 0 0.2rem rgba(88, 166, 255, 0.25);
+}
+
+.form-check-input:checked {
+    background-color: var(--cursor-accent-blue);
+    border-color: var(--cursor-accent-blue);
+}
+
+/* Analysis Results Container */
+.analysis-results-container {
+    margin-top: 2rem;
+}
+
+.analysis-execution-status {
+    background-color: var(--cursor-bg-tertiary);
+    border: 1px solid var(--cursor-border);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    display: none;
+}
+
+.execution-progress {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.progress {
+    flex: 1;
+    height: 0.5rem;
+    background-color: var(--cursor-bg-secondary);
+}
+
+.progress-bar {
+    background-color: var(--cursor-accent-blue);
+}
+
+.execution-status-text {
+    color: var(--cursor-text-primary);
+    font-size: 0.875rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .tools-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .tool-card {
+        padding: 0.75rem;
+    }
+    
+    .tool-header {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .tool-icon {
+        align-self: flex-start;
+    }
+}
+</style>
+
+<script>
+// Analysis Tools Modal JavaScript
+class AnalysisToolsModal {
+    constructor() {
+        this.selectedTool = null;
+        this.toolParameters = {};
+        this.initializeEventListeners();
+        this.loadTools();
+    }
+    
+    initializeEventListeners() {
+        // Tool selection
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.tool-card')) {
+                this.selectTool(e.target.closest('.tool-card'));
+            }
+        });
+        
+        // Execute analysis button
+        document.getElementById('executeAnalysisBtn').addEventListener('click', () => {
+            this.openToolConfiguration();
+        });
+        
+        // Configure tool button
+        document.getElementById('configureToolBtn').addEventListener('click', () => {
+            this.executeAnalysis();
+        });
+        
+        // Tool configuration form changes
+        document.addEventListener('change', (e) => {
+            if (e.target.closest('#toolConfigurationForm')) {
+                this.updateToolParameters();
+            }
+        });
+    }
+    
+    async loadTools() {
+        try {
+            const response = await fetch('/api/tools/list/', {
+                method: 'GET',
+                headers: {
+                    'X-CSRFToken': this.getCSRFToken(),
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Tools loaded:', data);
+                this.renderTools(data.tools);
+            } else {
+                console.error('Failed to load tools:', response.status, response.statusText);
+                const errorData = await response.text();
+                console.error('Error response:', errorData);
+            }
+        } catch (error) {
+            console.error('Error loading tools:', error);
+        }
+    }
+    
+    renderTools(tools) {
+        // Clear existing tools
+        document.querySelectorAll('.tools-grid').forEach(grid => {
+            grid.innerHTML = '';
+        });
+        
+        // Render tools by category
+        Object.entries(tools).forEach(([category, categoryTools]) => {
+            const grid = document.getElementById(`${category}-tools`);
+            if (grid) {
+                categoryTools.forEach(tool => {
+                    const toolCard = this.createToolCard(tool);
+                    grid.appendChild(toolCard);
+                });
+            }
+        });
+    }
+    
+    createToolCard(tool) {
+        const card = document.createElement('div');
+        card.className = 'tool-card';
+        card.dataset.toolId = tool.id;
+        
+        card.innerHTML = `
+            <div class="tool-header">
+                <div class="tool-icon">
+                    <i class="bi ${tool.icon}"></i>
+                </div>
+                <div class="tool-info">
+                    <h6 class="tool-name">${tool.name}</h6>
+                    <p class="tool-description">${tool.description}</p>
+                </div>
+            </div>
+            <div class="tool-tags">
+                ${tool.tags.map(tag => `<span class="tool-tag">${tag}</span>`).join('')}
+            </div>
+            <div class="tool-result-type">
+                <i class="bi bi-${this.getResultTypeIcon(tool.result_type)}"></i>
+                <span>${tool.result_type.toUpperCase()} Result</span>
+            </div>
+        `;
+        
+        return card;
+    }
+    
+    getResultTypeIcon(resultType) {
+        const icons = {
+            'text': 'file-text',
+            'table': 'table',
+            'chart': 'graph-up'
+        };
+        return icons[resultType] || 'file';
+    }
+    
+    selectTool(toolCard) {
+        // Remove previous selection
+        document.querySelectorAll('.tool-card.selected').forEach(card => {
+            card.classList.remove('selected');
+        });
+        
+        // Select current tool
+        toolCard.classList.add('selected');
+        this.selectedTool = toolCard.dataset.toolId;
+        
+        // Enable execute button
+        document.getElementById('executeAnalysisBtn').disabled = false;
+    }
+    
+    async openToolConfiguration() {
+        if (!this.selectedTool) return;
+        
+        console.log('🔧 DEBUG: Opening tool configuration for tool:', this.selectedTool);
+        
+        try {
+            // Get tool details
+            const response = await fetch(`/api/tools/configure/${this.selectedTool}/`, {
+                method: 'GET',
+                headers: {
+                    'X-CSRFToken': this.getCSRFToken(),
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            console.log('🔧 DEBUG: Tool configuration response status:', response.status);
+            
+            if (response.ok) {
+                const data = await response.json();
+                console.log('🔧 DEBUG: Tool configuration data:', data);
+                console.log('🔧 DEBUG: Dataset info:', data.dataset_info);
+                console.log('🔧 DEBUG: Session ID:', data.session_id);
+                console.log('🔧 DEBUG: Tool parameters:', data.tool.parameters);
+                
+                this.renderToolConfiguration(data.tool);
+                
+                // Show configuration modal
+                const modal = new bootstrap.Modal(document.getElementById('toolConfigurationModal'));
+                modal.show();
+            } else {
+                console.error('🔧 DEBUG: Failed to load tool configuration:', response.status, response.statusText);
+                const errorData = await response.text();
+                console.error('🔧 DEBUG: Error response:', errorData);
+            }
+        } catch (error) {
+            console.error('🔧 DEBUG: Error loading tool configuration:', error);
+        }
+    }
+    
+    renderToolConfiguration(tool) {
+        console.log('🔧 DEBUG: Rendering tool configuration for tool:', tool);
+        console.log('🔧 DEBUG: Tool parameters:', tool.parameters);
+        
+        const content = document.getElementById('toolConfigurationContent');
+        content.innerHTML = '';
+        
+        // Update modal title
+        document.getElementById('toolConfigurationModalLabel').innerHTML = `
+            <i class="bi bi-gear"></i> Configure ${tool.name}
+        `;
+        
+        // Show dataset information if available
+        if (tool.dataset_info) {
+            console.log('🔧 DEBUG: Dataset info available:', tool.dataset_info);
+            const datasetInfo = document.createElement('div');
+            datasetInfo.className = 'alert alert-info mb-3';
+            datasetInfo.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-database me-2"></i>
+                    <div>
+                        <strong>Dataset:</strong> ${tool.dataset_info.name} 
+                        (${tool.dataset_info.rows} rows, ${tool.dataset_info.columns} columns)
+                    </div>
+                </div>
+            `;
+            content.appendChild(datasetInfo);
+        } else {
+            console.log('🔧 DEBUG: No dataset info available');
+        }
+        
+        // Render parameters
+        tool.parameters.forEach((param, index) => {
+            console.log(`🔧 DEBUG: Rendering parameter ${index}:`, param);
+            const paramElement = this.createParameterElement(param);
+            content.appendChild(paramElement);
+        });
+    }
+    
+    createParameterElement(param) {
+        console.log('🔧 DEBUG: Creating parameter element for:', param);
+        console.log('🔧 DEBUG: Parameter type:', param.type);
+        console.log('🔧 DEBUG: Column options:', param.column_options);
+        console.log('🔧 DEBUG: Filtered columns:', param.filtered_columns);
+        
+        const div = document.createElement('div');
+        div.className = 'tool-parameter';
+        
+        const label = document.createElement('label');
+        label.className = 'parameter-label';
+        label.textContent = param.label;
+        if (param.required) {
+            label.innerHTML += '<span class="parameter-required">*</span>';
+        }
+        
+        const description = document.createElement('div');
+        description.className = 'parameter-description';
+        description.textContent = param.description;
+        
+        div.appendChild(label);
+        div.appendChild(description);
+        
+        // Create input based on parameter type
+        let input;
+        if (param.type === 'select') {
+            input = document.createElement('select');
+            input.className = 'form-select';
+            input.name = param.name;
+            
+            // Add default option
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = 'Select an option...';
+            input.appendChild(defaultOption);
+            
+            param.options.forEach(option => {
+                const optionElement = document.createElement('option');
+                optionElement.value = option;
+                optionElement.textContent = option;
+                if (option === param.default_value) {
+                    optionElement.selected = true;
+                }
+                input.appendChild(optionElement);
+            });
+        } else if (param.type === 'column') {
+            console.log('🔧 DEBUG: Creating column parameter');
+            input = document.createElement('select');
+            input.className = 'form-select';
+            input.name = param.name;
+            
+            // Add default option
+            const columnDefaultOption = document.createElement('option');
+            columnDefaultOption.value = '';
+            columnDefaultOption.textContent = 'Select a column...';
+            input.appendChild(columnDefaultOption);
+            
+            // Add column options with type information
+            if (param.column_options && param.column_options.length > 0) {
+                console.log('🔧 DEBUG: Adding column options:', param.column_options);
+                param.column_options.forEach(column => {
+                    const optionElement = document.createElement('option');
+                    optionElement.value = column.name;
+                    optionElement.textContent = `${column.name} (${column.type})`;
+                    optionElement.title = `Type: ${column.dtype} | Sample: ${column.sample_values.join(', ')}`;
+                    input.appendChild(optionElement);
+                    console.log('🔧 DEBUG: Added column option:', column.name, column.type);
+                });
+            } else if (param.options) {
+                console.log('🔧 DEBUG: Using fallback options:', param.options);
+                // Fallback to simple options
+                param.options.forEach(option => {
+                    const optionElement = document.createElement('option');
+                    optionElement.value = option;
+                    optionElement.textContent = option;
+                    input.appendChild(optionElement);
+                });
+            } else {
+                console.log('🔧 DEBUG: No column options or fallback options available');
+            }
+        } else if (param.type === 'multicolumn') {
+            console.log('🔧 DEBUG: Creating multicolumn parameter');
+            input = document.createElement('select');
+            input.className = 'form-select';
+            input.name = param.name;
+            input.multiple = true;
+            input.size = 4;
+            
+            // Add column options with type information
+            if (param.column_options && param.column_options.length > 0) {
+                console.log('🔧 DEBUG: Adding multicolumn options:', param.column_options);
+                param.column_options.forEach(column => {
+                    const optionElement = document.createElement('option');
+                    optionElement.value = column.name;
+                    optionElement.textContent = `${column.name} (${column.type})`;
+                    optionElement.title = `Type: ${column.dtype} | Sample: ${column.sample_values.join(', ')}`;
+                    input.appendChild(optionElement);
+                    console.log('🔧 DEBUG: Added multicolumn option:', column.name, column.type);
+                });
+            } else if (param.options) {
+                console.log('🔧 DEBUG: Using fallback multicolumn options:', param.options);
+                // Fallback to simple options
+                param.options.forEach(option => {
+                    const optionElement = document.createElement('option');
+                    optionElement.value = option;
+                    optionElement.textContent = option;
+                    input.appendChild(optionElement);
+                });
+            } else {
+                console.log('🔧 DEBUG: No multicolumn options or fallback options available');
+            }
+        } else if (param.type === 'boolean') {
+            input = document.createElement('div');
+            input.className = 'form-check';
+            input.innerHTML = `
+                <input class="form-check-input" type="checkbox" name="${param.name}" id="${param.name}" ${param.default_value ? 'checked' : ''}>
+                <label class="form-check-label" for="${param.name}">
+                    ${param.label}
+                </label>
+            `;
+        } else if (param.type === 'integer' || param.type === 'float') {
+            input = document.createElement('input');
+            input.type = 'number';
+            input.className = 'form-control';
+            input.name = param.name;
+            input.value = param.default_value || '';
+            if (param.min_value !== null) input.min = param.min_value;
+            if (param.max_value !== null) input.max = param.max_value;
+        } else {
+            input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'form-control';
+            input.name = param.name;
+            input.value = param.default_value || '';
+        }
+        
+        if (param.type !== 'boolean') {
+            div.appendChild(input);
+        } else {
+            div.appendChild(input);
+        }
+        
+        return div;
+    }
+    
+    updateToolParameters() {
+        const form = document.getElementById('toolConfigurationForm');
+        const formData = new FormData(form);
+        
+        this.toolParameters = {};
+        
+        // Handle regular form inputs
+        for (const [key, value] of formData.entries()) {
+            this.toolParameters[key] = value;
+        }
+        
+        // Handle multicolumn selections (multiselect dropdowns)
+        const multiselectInputs = form.querySelectorAll('select[name="columns"]');
+        if (multiselectInputs.length > 0) {
+            const selectedOptions = Array.from(multiselectInputs[0].selectedOptions);
+            this.toolParameters.columns = selectedOptions.map(option => option.value);
+            console.log('🔧 DEBUG: Collected multiselect selections:', this.toolParameters.columns);
+            console.log('🔧 DEBUG: Number of selected columns:', this.toolParameters.columns.length);
+        }
+        
+        // Handle multicolumn selections (checkboxes) - fallback
+        const multicolumnInputs = form.querySelectorAll('input[name="columns"]:checked');
+        if (multicolumnInputs.length > 0) {
+            this.toolParameters.columns = Array.from(multicolumnInputs).map(input => input.value);
+            console.log('🔧 DEBUG: Collected multicolumn checkbox selections:', this.toolParameters.columns);
+        }
+        
+        console.log('🔧 DEBUG: Final tool parameters:', this.toolParameters);
+    }
+    
+    async executeAnalysis() {
+        if (!this.selectedTool) return;
+        
+        this.updateToolParameters();
+        
+        console.log('🔧 DEBUG: Executing analysis with tool:', this.selectedTool);
+        console.log('🔧 DEBUG: Tool parameters:', this.toolParameters);
+        console.log('🔧 DEBUG: Parameters type:', typeof this.toolParameters);
+        console.log('🔧 DEBUG: Parameters columns:', this.toolParameters.columns);
+        console.log('🔧 DEBUG: Columns type:', typeof this.toolParameters.columns);
+        console.log('🔧 DEBUG: Columns length:', this.toolParameters.columns ? this.toolParameters.columns.length : 'undefined');
+        
+        // Show execution status
+        this.showExecutionStatus('Executing analysis...');
+        
+        try {
+            const response = await fetch('/api/tools/execute/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': this.getCSRFToken()
+                },
+                body: JSON.stringify({
+                    tool_id: this.selectedTool,
+                    parameters: this.toolParameters
+                })
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Analysis executed successfully:', data);
+                this.displayAnalysisResult(data.result);
+                this.hideExecutionStatus();
+                
+                // Close modals
+                bootstrap.Modal.getInstance(document.getElementById('toolConfigurationModal')).hide();
+                bootstrap.Modal.getInstance(document.getElementById('analysisToolsModal')).hide();
+            } else {
+                console.error('Analysis execution failed:', response.status, response.statusText);
+                const errorData = await response.text();
+                console.error('Error response:', errorData);
+                this.hideExecutionStatus();
+            }
+        } catch (error) {
+            console.error('Error executing analysis:', error);
+            this.hideExecutionStatus();
+        }
+    }
+    
+    showExecutionStatus(message) {
+        const statusDiv = document.getElementById('analysisResultsContainer').querySelector('.analysis-execution-status');
+        if (statusDiv) {
+            statusDiv.style.display = 'block';
+            statusDiv.querySelector('.execution-status-text').textContent = message;
+        }
+    }
+    
+    hideExecutionStatus() {
+        const statusDiv = document.getElementById('analysisResultsContainer').querySelector('.analysis-execution-status');
+        if (statusDiv) {
+            statusDiv.style.display = 'none';
+        }
+    }
+    
+    displayAnalysisResult(result) {
+        console.log('🔧 DEBUG: Displaying analysis result:', result);
+        const container = document.getElementById('analysisResultsContainer');
+        console.log('🔧 DEBUG: Container found:', container);
+        
+        if (!container) {
+            console.error('🔧 DEBUG: analysisResultsContainer not found!');
+            return;
+        }
+        
+        // Check if result has pre-rendered HTML
+        if (result.html) {
+            console.log('🔧 DEBUG: Using pre-rendered HTML from backend');
+            const resultElement = document.createElement('div');
+            resultElement.innerHTML = result.html;
+            container.appendChild(resultElement);
+            console.log('🔧 DEBUG: Pre-rendered HTML appended to container');
+            return;
+        }
+        
+        // Fallback: Create result element based on type
+        let resultElement;
+        console.log('🔧 DEBUG: Result type:', result.type);
+        
+        if (result.type === 'text') {
+            resultElement = this.createTextResult(result);
+        } else if (result.type === 'table') {
+            resultElement = this.createTableResult(result);
+        } else if (result.type === 'chart') {
+            resultElement = this.createChartResult(result);
+        } else {
+            console.error('🔧 DEBUG: Unknown result type:', result.type);
+        }
+        
+        console.log('🔧 DEBUG: Result element created:', resultElement);
+        
+        if (resultElement) {
+            container.appendChild(resultElement);
+            console.log('🔧 DEBUG: Result element appended to container');
+        } else {
+            console.error('🔧 DEBUG: No result element created!');
+        }
+    }
+    
+    createTextResult(result) {
+        const div = document.createElement('div');
+        div.className = 'analysis-result-container text-analysis-result';
+        div.innerHTML = `
+            <div class="analysis-header">
+                <div class="analysis-title-section">
+                    <div class="analysis-icon">
+                        <i class="bi bi-file-text"></i>
+                    </div>
+                    <div class="analysis-title-info">
+                        <h4 class="analysis-title">${result.title}</h4>
+                        <p class="analysis-description">${result.description}</p>
+                    </div>
+                </div>
+                <div class="analysis-actions">
+                    <button class="btn btn-sm btn-outline-primary" onclick="copyAnalysisResult('${result.analysis_id}')" title="Copy Result">
+                        <i class="bi bi-clipboard"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="downloadAnalysisResult('${result.analysis_id}', 'text')" title="Download">
+                        <i class="bi bi-download"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-success" onclick="interpretAnalysisResult('${result.analysis_id}', 'text')" title="Interpret with AI">
+                        <i class="bi bi-robot"></i> Interpret Data
+                    </button>
+                </div>
+            </div>
+            <div class="analysis-content">
+                <div class="text-analysis-content">
+                    ${result.detailed_analysis || result.content || 'No analysis content available.'}
+                </div>
+            </div>
+        `;
+        return div;
+    }
+    
+    createTableResult(result) {
+        console.log('🔧 DEBUG: Creating table result:', result);
+        const div = document.createElement('div');
+        div.className = 'analysis-result-container table-analysis-result';
+        
+        // Create table HTML
+        let tableHtml = '';
+        if (result.table_data && result.table_data.columns && result.table_data.rows) {
+            tableHtml = `
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            ${result.table_data.columns.map(col => `<th>${col}</th>`).join('')}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${result.table_data.rows.map(row => 
+                            `<tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>`
+                        ).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+        
+        div.innerHTML = `
+            <div class="analysis-header">
+                <div class="analysis-title-section">
+                    <div class="analysis-icon">
+                        <i class="bi bi-table"></i>
+                    </div>
+                    <div class="analysis-title-info">
+                        <h3 class="analysis-title">${result.title || 'Table Analysis'}</h3>
+                        <p class="analysis-description">${result.description || ''}</p>
+                    </div>
+                </div>
+                <div class="analysis-actions">
+                    <button class="btn btn-outline-primary btn-sm" onclick="this.interpretAnalysis('${result.analysis_id || ''}')">
+                        <i class="bi bi-robot"></i> Interpret Data by AI
+                    </button>
+                </div>
+            </div>
+            <div class="analysis-content">
+                ${tableHtml}
+                ${result.summary_stats ? `
+                    <div class="summary-stats mt-3">
+                        <h5>Summary Statistics</h5>
+                        <div class="row">
+                            ${result.summary_stats.map(stat => `
+                                <div class="col-md-4 mb-2">
+                                    <div class="stat-item">
+                                        <span class="stat-label">${stat.label}:</span>
+                                        <span class="stat-value">${stat.value}</span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+            </div>
+        `;
+        
+        console.log('🔧 DEBUG: Table HTML created:', div.innerHTML.substring(0, 200) + '...');
+        return div;
+    }
+    
+    createChartResult(result) {
+        // Similar implementation for chart results
+        const div = document.createElement('div');
+        div.className = 'analysis-result-container chart-analysis-result';
+        div.innerHTML = `<div>Chart result: ${result.title}</div>`;
+        return div;
+    }
+    
+    getCSRFToken() {
+        return document.querySelector('[name=csrfmiddlewaretoken]').value;
+    }
+}
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    new AnalysisToolsModal();
+});
+</script>

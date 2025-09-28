@@ -1,0 +1,395 @@
+<!-- Base Analysis Result Template -->
+<!-- This template provides common functionality for all analysis result types -->
+
+<style>
+/* Common Analysis Result Styles */
+.analysis-result-container {
+    background-color: var(--cursor-bg-secondary);
+    border: 1px solid var(--cursor-border);
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+
+.analysis-result-container:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: var(--cursor-accent-blue);
+}
+
+.analysis-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1rem;
+    background-color: var(--cursor-bg-tertiary);
+    border-bottom: 1px solid var(--cursor-border);
+}
+
+.analysis-title-section {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    flex: 1;
+}
+
+.analysis-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    background-color: var(--cursor-accent-blue);
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.analysis-icon i {
+    color: white;
+    font-size: 1.25rem;
+}
+
+.analysis-title-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.analysis-title {
+    margin: 0 0 0.25rem 0;
+    color: var(--cursor-text-primary);
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.analysis-description {
+    margin: 0;
+    color: var(--cursor-text-muted);
+    font-size: 0.875rem;
+    line-height: 1.4;
+}
+
+.analysis-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.analysis-actions .btn {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    border-radius: 0.375rem;
+    transition: all 0.2s ease;
+}
+
+.analysis-actions .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.analysis-content {
+    padding: 1.5rem;
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 1rem 0;
+    color: var(--cursor-text-primary);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.section-title i {
+    color: var(--cursor-accent-blue);
+    font-size: 0.875rem;
+}
+
+/* Common Modal Styles */
+.analysis-modal .modal-content {
+    background-color: var(--cursor-bg-tertiary);
+    border: 1px solid var(--cursor-border);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.analysis-modal .modal-header {
+    background-color: var(--cursor-bg-quaternary);
+    border-bottom: 1px solid var(--cursor-border);
+}
+
+.analysis-modal .modal-body {
+    background-color: var(--cursor-bg-tertiary);
+    color: var(--cursor-text-primary);
+}
+
+.analysis-modal .modal-footer {
+    background-color: var(--cursor-bg-quaternary);
+    border-top: 1px solid var(--cursor-border);
+}
+
+/* Loading States */
+.analysis-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    color: var(--cursor-text-muted);
+}
+
+.analysis-loading .spinner-border {
+    width: 2rem;
+    height: 2rem;
+    margin-bottom: 1rem;
+}
+
+/* Error States */
+.analysis-error {
+    background-color: rgba(220, 53, 69, 0.1);
+    border: 1px solid var(--cursor-accent-red);
+    border-radius: 0.375rem;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+.analysis-error .error-icon {
+    color: var(--cursor-accent-red);
+    margin-right: 0.5rem;
+}
+
+.analysis-error .error-message {
+    color: var(--cursor-text-primary);
+    font-weight: 500;
+}
+
+/* Success States */
+.analysis-success {
+    background-color: rgba(25, 135, 84, 0.1);
+    border: 1px solid var(--cursor-accent-green);
+    border-radius: 0.375rem;
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+.analysis-success .success-icon {
+    color: var(--cursor-accent-green);
+    margin-right: 0.5rem;
+}
+
+.analysis-success .success-message {
+    color: var(--cursor-text-primary);
+    font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .analysis-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .analysis-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+    
+    .analysis-content {
+        padding: 1rem;
+    }
+}
+</style>
+
+<script>
+// Common Analysis Result JavaScript Functions
+
+// Copy analysis result to clipboard
+function copyAnalysisResult(analysisId) {
+    const container = document.querySelector(`[data-analysis-id="${analysisId}"]`);
+    if (container) {
+        const textContent = container.innerText;
+        navigator.clipboard.writeText(textContent).then(() => {
+            showNotification('Analysis result copied to clipboard!', 'success');
+        }).catch(err => {
+            console.error('Failed to copy: ', err);
+            showNotification('Failed to copy result', 'error');
+        });
+    }
+}
+
+// Download analysis result
+function downloadAnalysisResult(analysisId, type) {
+    const container = document.querySelector(`[data-analysis-id="${analysisId}"]`);
+    if (container) {
+        const textContent = container.innerText;
+        const blob = new Blob([textContent], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `analysis_${analysisId}_${new Date().toISOString().split('T')[0]}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+}
+
+// Interpret analysis result with AI
+function interpretAnalysisResult(analysisId, type) {
+    const modal = new bootstrap.Modal(document.getElementById(`aiInterpretationModal-${analysisId}`));
+    modal.show();
+    
+    // Show loading state
+    document.getElementById(`interpretationLoading-${analysisId}`).style.display = 'block';
+    document.getElementById(`interpretationResult-${analysisId}`).innerHTML = '';
+    
+    // Get analysis data
+    const container = document.querySelector(`[data-analysis-id="${analysisId}"]`);
+    const analysisData = {
+        type: type,
+        title: container.querySelector('.analysis-title').textContent,
+        content: container.innerText,
+        timestamp: new Date().toISOString()
+    };
+    
+    // Send to AI for interpretation
+    fetch('/api/ai/interpret-analysis/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCSRFToken()
+        },
+        body: JSON.stringify(analysisData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById(`interpretationLoading-${analysisId}`).style.display = 'none';
+        document.getElementById(`interpretationResult-${analysisId}`).innerHTML = `
+            <div class="ai-interpretation">
+                <h6><i class="bi bi-robot"></i> AI Interpretation</h6>
+                <div class="interpretation-text">${data.interpretation}</div>
+                <div class="interpretation-meta">
+                    <small class="text-muted">Generated at ${new Date().toLocaleString()}</small>
+                </div>
+            </div>
+        `;
+    })
+    .catch(error => {
+        console.error('Error getting AI interpretation:', error);
+        document.getElementById(`interpretationLoading-${analysisId}`).style.display = 'none';
+        document.getElementById(`interpretationResult-${analysisId}`).innerHTML = `
+            <div class="alert alert-danger">
+                <i class="bi bi-exclamation-triangle"></i>
+                Failed to get AI interpretation. Please try again.
+            </div>
+        `;
+    });
+}
+
+// Copy AI interpretation
+function copyInterpretation(analysisId) {
+    const interpretation = document.getElementById(`interpretationResult-${analysisId}`).innerText;
+    navigator.clipboard.writeText(interpretation).then(() => {
+        showNotification('AI interpretation copied to clipboard!', 'success');
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+        showNotification('Failed to copy interpretation', 'error');
+    });
+}
+
+// Get CSRF token
+function getCSRFToken() {
+    return document.querySelector('[name=csrfmiddlewaretoken]').value;
+}
+
+// Show notification
+function showNotification(message, type) {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show position-fixed`;
+    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    notification.innerHTML = `
+        <i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-triangle'}"></i>
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 5000);
+}
+
+// Utility function to format numbers
+function formatNumber(num, decimals = 2) {
+    if (num === null || num === undefined) return '—';
+    return parseFloat(num).toFixed(decimals);
+}
+
+// Utility function to format file sizes
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+// Utility function to get status badge class
+function getStatusBadgeClass(status) {
+    const statusMap = {
+        'active': 'bg-success',
+        'inactive': 'bg-secondary',
+        'pending': 'bg-warning',
+        'error': 'bg-danger',
+        'completed': 'bg-success',
+        'processing': 'bg-info'
+    };
+    return statusMap[status?.toLowerCase()] || 'bg-secondary';
+}
+
+// Utility function to debounce function calls
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Utility function to throttle function calls
+function throttle(func, limit) {
+    let inThrottle;
+    return function() {
+        const args = arguments;
+        const context = this;
+        if (!inThrottle) {
+            func.apply(context, args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+        }
+    };
+}
+
+// Export functions for use in other templates
+window.AnalysisResultUtils = {
+    copyAnalysisResult,
+    downloadAnalysisResult,
+    interpretAnalysisResult,
+    copyInterpretation,
+    getCSRFToken,
+    showNotification,
+    formatNumber,
+    formatFileSize,
+    getStatusBadgeClass,
+    debounce,
+    throttle
+};
+</script>
