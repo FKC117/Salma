@@ -1,0 +1,745 @@
+<!-- Compact Dataset Switcher for Top Bar -->
+<div class="compact-dataset-switcher" id="compactDatasetSwitcher">
+    <div class="dataset-info-compact">
+        <div class="dataset-icon-small">
+            <i class="bi bi-database-fill"></i>
+        </div>
+        <div class="dataset-details-compact">
+            <div class="dataset-name-compact" id="compactDatasetName">No Dataset</div>
+            <div class="dataset-stats-compact" id="compactDatasetStats">
+                <span class="stat-compact" id="compactRows">0 rows</span>
+                <span class="stat-compact" id="compactColumns">0 cols</span>
+                <span class="stat-compact" id="compactSize">0 MB</span>
+            </div>
+        </div>
+        <div class="dataset-actions-compact">
+            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#compactDatasetSwitcherModal" title="Switch Dataset">
+                <i class="bi bi-arrow-repeat"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Compact Dataset Switcher Modal - Moved outside container -->
+
+<!-- Compact Dataset Card Template -->
+<template id="compactDatasetCardTemplate">
+    <div class="compact-dataset-card" data-dataset-id="">
+        <div class="card-header-compact">
+            <div class="dataset-icon-card">
+                <i class="bi bi-database"></i>
+            </div>
+            <div class="dataset-info-card">
+                <h6 class="dataset-name-card"></h6>
+                <p class="dataset-description-card text-muted"></p>
+            </div>
+            <div class="dataset-actions-card">
+                <button class="btn btn-sm btn-outline-primary select-dataset-compact">
+                    <i class="bi bi-check-circle"></i>
+                </button>
+            </div>
+        </div>
+        <div class="card-body-compact">
+            <div class="dataset-stats-card">
+                <div class="stat-compact-card">
+                    <i class="bi bi-table"></i>
+                    <span class="stat-value-card rows"></span>
+                </div>
+                <div class="stat-compact-card">
+                    <i class="bi bi-columns"></i>
+                    <span class="stat-value-card columns"></span>
+                </div>
+                <div class="stat-compact-card">
+                    <i class="bi bi-hdd"></i>
+                    <span class="stat-value-card size"></span>
+                </div>
+            </div>
+            <div class="dataset-meta-card">
+                <span class="badge bg-success status-badge-card"></span>
+                <span class="text-muted created-date-card"></span>
+            </div>
+        </div>
+    </div>
+</template>
+
+<style>
+/* Compact Dataset Switcher Styles */
+.compact-dataset-switcher {
+    background-color: var(--cursor-bg-secondary);
+    border: 1px solid var(--cursor-border);
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    margin: 0;
+    min-width: 200px;
+    max-width: 300px;
+    flex-shrink: 0;
+}
+
+.dataset-info-compact {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.dataset-icon-small {
+    width: 1.5rem;
+    height: 1.5rem;
+    background-color: var(--cursor-accent-blue);
+    border-radius: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.dataset-icon-small i {
+    color: white;
+    font-size: 0.75rem;
+}
+
+.dataset-details-compact {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+
+.dataset-name-compact {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--cursor-text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.2;
+}
+
+.dataset-stats-compact {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.stat-compact {
+    font-size: 0.75rem;
+    color: var(--cursor-text-muted);
+    background-color: var(--cursor-bg-tertiary);
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    white-space: nowrap;
+}
+
+.dataset-actions-compact {
+    flex-shrink: 0;
+}
+
+.dataset-actions-compact .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    border-radius: 0.25rem;
+}
+
+/* Modal Styles */
+.modal {
+    z-index: 1055 !important;
+}
+
+.modal-backdrop {
+    z-index: 1050 !important;
+    background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+.modal-content {
+    background-color: var(--cursor-bg-tertiary);
+    border: 1px solid var(--cursor-border);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.modal-header {
+    background-color: var(--cursor-bg-quaternary);
+    border-bottom: 1px solid var(--cursor-border);
+}
+
+.modal-title {
+    color: var(--cursor-text-primary);
+    font-weight: 600;
+}
+
+.modal-body {
+    background-color: var(--cursor-bg-tertiary);
+    color: var(--cursor-text-primary);
+}
+
+.modal-footer {
+    background-color: var(--cursor-bg-quaternary);
+    border-top: 1px solid var(--cursor-border);
+}
+
+/* Ensure modal is clickable */
+.modal.show {
+    display: block !important;
+}
+
+.modal-dialog {
+    pointer-events: auto;
+}
+
+.modal-content {
+    pointer-events: auto;
+}
+
+/* Dataset Grid Styles */
+.dataset-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.compact-dataset-card {
+    background-color: var(--cursor-bg-secondary);
+    border: 1px solid var(--cursor-border);
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    height: fit-content;
+}
+
+.compact-dataset-card:hover {
+    border-color: var(--cursor-accent-blue);
+    box-shadow: 0 2px 8px rgba(88, 166, 255, 0.1);
+}
+
+.compact-dataset-card.selected {
+    border-color: var(--cursor-accent-blue);
+    background-color: rgba(88, 166, 255, 0.1);
+}
+
+.card-header-compact {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.dataset-icon-card {
+    width: 1.5rem;
+    height: 1.5rem;
+    background-color: var(--cursor-bg-tertiary);
+    border-radius: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.dataset-icon-card i {
+    color: var(--cursor-accent-blue);
+    font-size: 0.75rem;
+}
+
+.dataset-info-card {
+    flex: 1;
+    min-width: 0;
+}
+
+.dataset-name-card {
+    margin: 0 0 0.125rem 0;
+    color: var(--cursor-text-primary);
+    font-size: 0.875rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dataset-description-card {
+    margin: 0;
+    font-size: 0.75rem;
+    line-height: 1.3;
+    color: var(--cursor-text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dataset-actions-card {
+    flex-shrink: 0;
+}
+
+.dataset-actions-card .btn {
+    padding: 0.125rem 0.375rem;
+    font-size: 0.75rem;
+    border-radius: 0.25rem;
+}
+
+.card-body-compact {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.dataset-stats-card {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.stat-compact-card {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+}
+
+.stat-compact-card i {
+    color: var(--cursor-accent-blue);
+    font-size: 0.75rem;
+}
+
+.stat-value-card {
+    color: var(--cursor-text-primary);
+    font-weight: 500;
+}
+
+.dataset-meta-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+}
+
+.status-badge-card {
+    font-size: 0.625rem;
+    padding: 0.125rem 0.375rem;
+}
+
+.created-date-card {
+    font-size: 0.625rem;
+}
+
+/* Search Styles */
+.dataset-search .input-group-text {
+    background-color: var(--cursor-bg-quaternary);
+    border-color: var(--cursor-border);
+    color: var(--cursor-text-muted);
+}
+
+.dataset-search .form-control {
+    background-color: var(--cursor-bg-quaternary);
+    border-color: var(--cursor-border);
+    color: var(--cursor-text-primary);
+}
+
+.dataset-search .form-control:focus {
+    background-color: var(--cursor-bg-quaternary);
+    border-color: var(--cursor-accent-blue);
+    color: var(--cursor-text-primary);
+    box-shadow: 0 0 0 0.2rem rgba(88, 166, 255, 0.25);
+}
+
+/* Empty State */
+.dataset-grid .empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 2rem;
+    color: var(--cursor-text-muted);
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .compact-dataset-switcher {
+        min-width: 150px;
+        max-width: 200px;
+    }
+    
+    .dataset-stats-compact {
+        gap: 0.25rem;
+    }
+    
+    .stat-compact {
+        font-size: 0.625rem;
+        padding: 0.125rem 0.25rem;
+    }
+    
+    .dataset-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .compact-dataset-switcher {
+        min-width: 120px;
+        max-width: 150px;
+    }
+    
+    .dataset-name-compact {
+        font-size: 0.75rem;
+    }
+    
+    .dataset-stats-compact {
+        flex-direction: column;
+        gap: 0.125rem;
+    }
+}
+</style>
+
+<script>
+// Compact Dataset Switcher JavaScript
+class CompactDatasetSwitcher {
+    constructor() {
+        this.currentDataset = null;
+        this.selectedDataset = null;
+        this.datasets = [];
+        this.init();
+    }
+    
+    init() {
+        this.setupEventListeners();
+        this.loadCurrentDataset();
+    }
+    
+    setupEventListeners() {
+        // Search functionality
+        const searchInput = document.getElementById('compactDatasetSearch');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                this.filterDatasets(e.target.value);
+            });
+        }
+        
+        // Confirm switch button
+        const confirmBtn = document.getElementById('confirmCompactDatasetSwitch');
+        if (confirmBtn) {
+            confirmBtn.addEventListener('click', () => {
+                this.switchDataset();
+            });
+        }
+        
+        // Cancel button
+        const cancelBtn = document.querySelector('#compactDatasetSwitcherModal .btn-secondary');
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', () => {
+                this.resetSelection();
+            });
+        }
+        
+        // Modal events
+        const modal = document.getElementById('compactDatasetSwitcherModal');
+        if (modal) {
+            modal.addEventListener('show.bs.modal', () => {
+                console.log('Modal showing event triggered');
+                this.loadDatasets();
+            });
+            
+            modal.addEventListener('shown.bs.modal', () => {
+                console.log('Modal shown event triggered');
+            });
+            
+            modal.addEventListener('hidden.bs.modal', () => {
+                console.log('Modal hidden event triggered');
+                this.resetSelection();
+            });
+            
+            // Ensure close button works
+            const closeButton = modal.querySelector('.btn-close');
+            if (closeButton) {
+                closeButton.addEventListener('click', () => {
+                    console.log('Close button clicked');
+                    this.resetSelection();
+                });
+            }
+            
+            // Handle escape key
+            modal.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    console.log('Escape key pressed');
+                    this.resetSelection();
+                }
+            });
+        }
+    }
+    
+    async loadCurrentDataset() {
+        try {
+            // Get current session info
+            const response = await fetch('/api/sessions/current/');
+            if (response.ok) {
+                const data = await response.json();
+                this.currentDataset = data.dataset;
+                this.updateCurrentDatasetDisplay();
+            } else {
+                this.showEmptyState();
+            }
+        } catch (error) {
+            console.error('Failed to load current dataset:', error);
+            this.showEmptyState();
+        }
+    }
+    
+    async loadDatasets() {
+        try {
+            const response = await fetch('/api/datasets/');
+            if (response.ok) {
+                const data = await response.json();
+                this.datasets = data.datasets || [];
+                this.renderDatasetGrid();
+            } else {
+                this.showError('Failed to load datasets');
+            }
+        } catch (error) {
+            console.error('Failed to load datasets:', error);
+            this.showError('Failed to load datasets');
+        }
+    }
+    
+    renderDatasetGrid() {
+        const container = document.getElementById('compactDatasetGrid');
+        if (!container) return;
+        
+        if (this.datasets.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="bi bi-database"></i>
+                    <h6>No Datasets Available</h6>
+                    <p>Upload a dataset to get started with analysis.</p>
+                </div>
+            `;
+            return;
+        }
+        
+        const template = document.getElementById('compactDatasetCardTemplate');
+        container.innerHTML = '';
+        
+        this.datasets.forEach(dataset => {
+            const card = template.content.cloneNode(true);
+            const cardElement = card.querySelector('.compact-dataset-card');
+            
+            // Set dataset ID
+            cardElement.setAttribute('data-dataset-id', dataset.id);
+            
+            // Fill in dataset info
+            card.querySelector('.dataset-name-card').textContent = dataset.name;
+            card.querySelector('.dataset-description-card').textContent = dataset.description || 'No description';
+            card.querySelector('.rows').textContent = dataset.row_count.toLocaleString();
+            card.querySelector('.columns').textContent = dataset.column_count;
+            card.querySelector('.size').textContent = this.formatFileSize(dataset.file_size_bytes);
+            card.querySelector('.created-date-card').textContent = new Date(dataset.created_at).toLocaleDateString();
+            
+            // Set status badge
+            const statusBadge = card.querySelector('.status-badge-card');
+            statusBadge.textContent = dataset.processing_status;
+            statusBadge.className = `badge ${this.getStatusBadgeClass(dataset.processing_status)}`;
+            
+            // Add click handler
+            cardElement.addEventListener('click', () => {
+                this.selectDataset(dataset);
+            });
+            
+            // Add select button handler
+            const selectBtn = card.querySelector('.select-dataset-compact');
+            selectBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.selectDataset(dataset);
+            });
+            
+            container.appendChild(card);
+        });
+    }
+    
+    selectDataset(dataset) {
+        // Remove previous selection
+        document.querySelectorAll('.compact-dataset-card.selected').forEach(card => {
+            card.classList.remove('selected');
+        });
+        
+        // Add selection to clicked card
+        const card = document.querySelector(`[data-dataset-id="${dataset.id}"]`);
+        if (card) {
+            card.classList.add('selected');
+            
+            // Add visual feedback
+            card.style.transform = 'scale(0.98)';
+            setTimeout(() => {
+                card.style.transform = '';
+            }, 150);
+        }
+        
+        this.selectedDataset = dataset;
+        
+        // Enable confirm button and update its text
+        const confirmBtn = document.getElementById('confirmCompactDatasetSwitch');
+        if (confirmBtn) {
+            confirmBtn.disabled = false;
+            confirmBtn.innerHTML = `<i class="bi bi-check-circle"></i> Switch to "${dataset.name}"`;
+        }
+    }
+    
+    async switchDataset() {
+        if (!this.selectedDataset) return;
+        
+        // Show loading state
+        const confirmBtn = document.getElementById('confirmCompactDatasetSwitch');
+        if (confirmBtn) {
+            const originalText = confirmBtn.innerHTML;
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Switching...';
+            
+            try {
+                const response = await fetch('/api/sessions/create/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': this.getCSRFToken()
+                    },
+                    body: JSON.stringify({
+                        dataset_id: this.selectedDataset.id,
+                        session_name: `Analysis - ${this.selectedDataset.name}`
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Close modal immediately
+                    const modalElement = document.getElementById('compactDatasetSwitcherModal');
+                    const modal = bootstrap.Modal.getInstance(modalElement);
+                    if (modal) {
+                        modal.hide();
+                    }
+                    
+                    // Update the compact display with new dataset info
+                    this.currentDataset = this.selectedDataset;
+                    this.updateCurrentDatasetDisplay();
+                    
+                    // Dispatch custom event to notify other components
+                    document.dispatchEvent(new CustomEvent('datasetChanged', {
+                        detail: { dataset: this.selectedDataset }
+                    }));
+                    
+                    // Show success message
+                    this.showSuccess(`Switched to dataset: ${this.selectedDataset.name}`);
+                    
+                } else {
+                    const error = await response.json();
+                    this.showError(error.error || 'Failed to switch dataset');
+                }
+            } catch (error) {
+                console.error('Failed to switch dataset:', error);
+                this.showError('Failed to switch dataset');
+            } finally {
+                // Restore button state
+                if (confirmBtn) {
+                    confirmBtn.innerHTML = originalText;
+                    confirmBtn.disabled = false;
+                }
+            }
+        }
+    }
+    
+    filterDatasets(searchTerm) {
+        const cards = document.querySelectorAll('.compact-dataset-card');
+        const term = searchTerm.toLowerCase();
+        
+        cards.forEach(card => {
+            const name = card.querySelector('.dataset-name-card').textContent.toLowerCase();
+            const description = card.querySelector('.dataset-description-card').textContent.toLowerCase();
+            
+            if (name.includes(term) || description.includes(term)) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+    
+    updateCurrentDatasetDisplay() {
+        if (!this.currentDataset) {
+            this.showEmptyState();
+            return;
+        }
+        
+        document.getElementById('compactDatasetName').textContent = this.currentDataset.name;
+        document.getElementById('compactRows').textContent = `${this.currentDataset.row_count.toLocaleString()} rows`;
+        document.getElementById('compactColumns').textContent = `${this.currentDataset.column_count} cols`;
+        document.getElementById('compactSize').textContent = this.formatFileSize(this.currentDataset.file_size_bytes);
+    }
+    
+    showEmptyState() {
+        document.getElementById('compactDatasetName').textContent = 'No Dataset';
+        document.getElementById('compactRows').textContent = '0 rows';
+        document.getElementById('compactColumns').textContent = '0 cols';
+        document.getElementById('compactSize').textContent = '0 MB';
+    }
+    
+    resetSelection() {
+        this.selectedDataset = null;
+        document.querySelectorAll('.compact-dataset-card.selected').forEach(card => {
+            card.classList.remove('selected');
+        });
+        
+        const confirmBtn = document.getElementById('confirmCompactDatasetSwitch');
+        if (confirmBtn) {
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = '<i class="bi bi-check-circle"></i> Switch Dataset';
+        }
+    }
+    
+    formatFileSize(bytes) {
+        if (bytes === 0) return '0 B';
+        const k = 1024;
+        const sizes = ['B', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+    }
+    
+    getStatusBadgeClass(status) {
+        switch (status) {
+            case 'completed': return 'bg-success';
+            case 'processing': return 'bg-warning';
+            case 'failed': return 'bg-danger';
+            default: return 'bg-secondary';
+        }
+    }
+    
+    getCSRFToken() {
+        return document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
+    }
+    
+    showError(message) {
+        // You can implement a toast notification here
+        console.error(message);
+        alert(message); // Fallback to alert
+    }
+    
+    showSuccess(message) {
+        // You can implement a toast notification here
+        console.log(message);
+        // For now, we'll just log it. You can add a toast notification later
+    }
+}
+
+// Initialize compact dataset switcher when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('Initializing CompactDatasetSwitcher...');
+    console.log('Bootstrap available:', typeof bootstrap !== 'undefined');
+    console.log('Modal element exists:', !!document.getElementById('compactDatasetSwitcherModal'));
+    
+    try {
+        new CompactDatasetSwitcher();
+        console.log('CompactDatasetSwitcher initialized successfully');
+    } catch (error) {
+        console.error('Error initializing CompactDatasetSwitcher:', error);
+    }
+});
+</script>

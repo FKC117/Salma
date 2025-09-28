@@ -71,6 +71,23 @@
         align-items: center;
         justify-content: space-between;
         flex-shrink: 0;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    
+    .dashboard-header-left {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .dashboard-header-right {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-shrink: 0;
     }
 
     .dashboard-content {
@@ -310,6 +327,22 @@
             display: none !important;
         }
         
+        .dashboard-header {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.75rem;
+        }
+        
+        .dashboard-header-left {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.5rem;
+        }
+        
+        .dashboard-header-right {
+            justify-content: center;
+        }
+        
         .welcome-screen {
             padding: 20px;
         }
@@ -326,6 +359,14 @@
     @media (max-width: 480px) {
         .tools-panel, .chat-panel {
             height: 200px !important;
+        }
+        
+        .dashboard-header {
+            padding: 8px 12px;
+        }
+        
+        .dashboard-header-left h6 {
+            font-size: 0.875rem;
         }
         
         .welcome-icon {
@@ -365,6 +406,190 @@
         background-color: var(--cursor-bg-secondary);
         border-bottom: 1px solid var(--cursor-border);
         padding: 8px 16px;
+    }
+    
+    /* Modal Styles - Force proper z-index and interaction */
+    .modal {
+        z-index: 9999 !important;
+        position: fixed !important;
+    }
+    
+    .modal-backdrop {
+        z-index: 9998 !important;
+        background-color: rgba(0, 0, 0, 0.5) !important;
+    }
+    
+    .modal-dialog {
+        pointer-events: auto !important;
+        z-index: 10000 !important;
+    }
+    
+    .modal-content {
+        pointer-events: auto !important;
+        background-color: var(--cursor-bg-tertiary) !important;
+        border: 1px solid var(--cursor-border) !important;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+    
+    .modal-header {
+        background-color: var(--cursor-bg-quaternary) !important;
+        border-bottom: 1px solid var(--cursor-border) !important;
+    }
+    
+    .modal-body {
+        background-color: var(--cursor-bg-tertiary) !important;
+        color: var(--cursor-text-primary) !important;
+    }
+    
+    .modal-footer {
+        background-color: var(--cursor-bg-quaternary) !important;
+        border-top: 1px solid var(--cursor-border) !important;
+    }
+    
+    /* Ensure buttons are clickable */
+    .modal .btn {
+        pointer-events: auto !important;
+        opacity: 1 !important;
+        cursor: pointer !important;
+    }
+    
+    .modal .form-control {
+        pointer-events: auto !important;
+        opacity: 1 !important;
+    }
+    
+    /* Dataset Grid Styles */
+    .dataset-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1rem;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    
+    .compact-dataset-card {
+        background-color: var(--cursor-bg-secondary);
+        border: 1px solid var(--cursor-border);
+        border-radius: 0.5rem;
+        padding: 0.75rem;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        height: fit-content;
+        pointer-events: auto !important;
+    }
+    
+    .compact-dataset-card:hover {
+        border-color: var(--cursor-accent-blue);
+        box-shadow: 0 2px 8px rgba(88, 166, 255, 0.1);
+    }
+    
+    .compact-dataset-card.selected {
+        border-color: var(--cursor-accent-blue);
+        background-color: rgba(88, 166, 255, 0.1);
+    }
+    
+    .card-header-compact {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .dataset-icon-card {
+        width: 1.5rem;
+        height: 1.5rem;
+        background-color: var(--cursor-bg-tertiary);
+        border-radius: 0.25rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    
+    .dataset-icon-card i {
+        color: var(--cursor-accent-blue);
+        font-size: 0.75rem;
+    }
+    
+    .dataset-info-card {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .dataset-name-card {
+        margin: 0 0 0.125rem 0;
+        color: var(--cursor-text-primary);
+        font-size: 0.875rem;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .dataset-description-card {
+        margin: 0;
+        font-size: 0.75rem;
+        line-height: 1.3;
+        color: var(--cursor-text-muted);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .dataset-actions-card {
+        flex-shrink: 0;
+    }
+    
+    .dataset-actions-card .btn {
+        padding: 0.125rem 0.375rem;
+        font-size: 0.75rem;
+        border-radius: 0.25rem;
+        pointer-events: auto !important;
+    }
+    
+    .card-body-compact {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .dataset-stats-card {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+    
+    .stat-compact-card {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.75rem;
+    }
+    
+    .stat-compact-card i {
+        color: var(--cursor-accent-blue);
+        font-size: 0.75rem;
+    }
+    
+    .stat-value-card {
+        color: var(--cursor-text-primary);
+        font-weight: 500;
+    }
+    
+    .dataset-meta-card {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.75rem;
+    }
+    
+    .status-badge-card {
+        font-size: 0.625rem;
+        padding: 0.125rem 0.375rem;
+    }
+    
+    .created-date-card {
+        font-size: 0.625rem;
     }
 </style>
 {% endblock %}
@@ -479,8 +704,12 @@
     <!-- Main Content Area -->
     <div class="dashboard-panel" id="dashboard-panel">
         <div class="dashboard-header">
-            <h6 class="mb-0 fw-semibold">Analytical Dashboard</h6>
-            <div class="d-flex gap-2">
+            <div class="dashboard-header-left">
+                <h6 class="mb-0 fw-semibold">Analytical Dashboard</h6>
+                <!-- Compact Dataset Switcher -->
+                {% include 'analytics/partials/compact_dataset_switcher.html' %}
+            </div>
+            <div class="dashboard-header-right">
                 <button class="btn btn-outline" data-bs-toggle="modal" data-bs-target="#uploadModal">
                     <i class="bi bi-upload"></i>
                     <span class="d-none d-md-inline ms-1">Upload</span>
@@ -500,9 +729,6 @@
                 </div>
             </div>
         </div>
-        
-        <!-- Current Dataset Display -->
-        {% include 'analytics/partials/current_dataset.html' %}
         
         <div class="dashboard-content">
             <div id="dashboard-content">
@@ -589,6 +815,122 @@
         </div>
     </div>
 </div>
+
+<!-- Move modals outside the main container to avoid CSS conflicts -->
+
+<!-- Compact Dataset Switcher Modal -->
+<div class="modal fade" id="compactDatasetSwitcherModal" tabindex="-1" aria-labelledby="compactDatasetSwitcherModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark text-light">
+            <div class="modal-header bg-secondary">
+                <h5 class="modal-title" id="compactDatasetSwitcherModalLabel">
+                    <i class="bi bi-database"></i> Switch Dataset
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Search and Filter -->
+                <div class="dataset-search mb-3">
+                    <div class="input-group">
+                        <span class="input-group-text bg-dark text-light border-secondary">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="text" class="form-control bg-dark text-light border-secondary" id="compactDatasetSearch" placeholder="Search datasets...">
+                    </div>
+                </div>
+                
+                <!-- Dataset Grid -->
+                <div class="dataset-grid" id="compactDatasetGrid">
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading datasets...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer bg-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="confirmCompactDatasetSwitch" disabled>
+                    <i class="bi bi-check-circle"></i> Switch Dataset
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Upload Modal -->
+<div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark text-light">
+            <div class="modal-header bg-secondary">
+                <h5 class="modal-title" id="uploadModalLabel">
+                    <i class="bi bi-upload"></i> Upload Dataset
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="uploadForm" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="datasetFile" class="form-label">Select Dataset File</label>
+                        <input type="file" class="form-control bg-dark text-light border-secondary" id="datasetFile" name="file" accept=".csv,.xlsx,.xls,.json,.parquet" required>
+                        <div class="form-text text-muted">Supported formats: CSV, Excel, JSON, Parquet</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="datasetName" class="form-label">Dataset Name (Optional)</label>
+                        <input type="text" class="form-control bg-dark text-light border-secondary" id="datasetName" name="name" placeholder="Leave empty to use filename">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer bg-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="uploadBtn">
+                    <i class="bi bi-upload"></i> Upload Dataset
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Compact Dataset Card Template -->
+<template id="compactDatasetCardTemplate">
+    <div class="compact-dataset-card" data-dataset-id="">
+        <div class="card-header-compact">
+            <div class="dataset-icon-card">
+                <i class="bi bi-database"></i>
+            </div>
+            <div class="dataset-info-card">
+                <h6 class="dataset-name-card"></h6>
+                <p class="dataset-description-card text-muted"></p>
+            </div>
+            <div class="dataset-actions-card">
+                <button class="btn btn-sm btn-outline-primary select-dataset-compact">
+                    <i class="bi bi-check-circle"></i>
+                </button>
+            </div>
+        </div>
+        <div class="card-body-compact">
+            <div class="dataset-stats-card">
+                <div class="stat-compact-card">
+                    <i class="bi bi-table"></i>
+                    <span class="stat-value-card rows"></span>
+                </div>
+                <div class="stat-compact-card">
+                    <i class="bi bi-columns"></i>
+                    <span class="stat-value-card columns"></span>
+                </div>
+                <div class="stat-compact-card">
+                    <i class="bi bi-hdd"></i>
+                    <span class="stat-value-card size"></span>
+                </div>
+            </div>
+            <div class="dataset-meta-card">
+                <span class="badge bg-success status-badge-card"></span>
+                <span class="text-muted created-date-card"></span>
+            </div>
+        </div>
+    </div>
+</template>
 
 <!-- Panel Resizers will be created by JavaScript -->
 {% endblock %}
