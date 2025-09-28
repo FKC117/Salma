@@ -95,11 +95,103 @@ class AIImterpretationService:
             
         except Exception as e:
             logger.error(f"Error generating AI interpretation: {str(e)}")
-            return {
-                'success': False,
-                'error': str(e),
-                'analysis_type': analysis_type
-            }
+            
+            # Try to provide a basic fallback even if LLM completely fails
+            try:
+                fallback_text = self._generate_basic_fallback(analysis_data, analysis_type)
+                return {
+                    'success': True,
+                    'interpretation': fallback_text,
+                    'analysis_type': analysis_type,
+                    'timestamp': analysis_data.get('timestamp'),
+                    'confidence': 0.3,  # Low confidence for fallback
+                    'interpretation_id': None,
+                    'token_count': 0,
+                    'is_fallback': True,
+                    'error': str(e)
+                }
+            except Exception as fallback_error:
+                logger.error(f"Fallback generation also failed: {str(fallback_error)}")
+                return {
+                    'success': False,
+                    'error': str(e),
+                    'analysis_type': analysis_type
+                }
+    
+    def _generate_basic_fallback(self, analysis_data: Dict[str, Any], analysis_type: str) -> str:
+        """
+        Generate a basic fallback response when AI service is completely unavailable
+        """
+        title = analysis_data.get('title', 'Analysis')
+        
+        if analysis_type == 'table':
+            return f"""I apologize, but I'm experiencing technical difficulties with the AI service. However, I can provide some basic insights about your {title}:
+
+**Table Analysis Summary:**
+- This appears to be a statistical analysis with tabular data
+- Review the summary statistics for key metrics and trends
+- Check the data quality indicators for completeness
+- Examine any visualizations for patterns and outliers
+
+**Key Areas to Focus On:**
+- Mean, median, and standard deviation values
+- Data distribution patterns
+- Outlier detection results
+- Correlation coefficients if available
+
+**Next Steps:**
+- Try the AI interpretation again in a few minutes
+- Review the statistical summaries manually
+- Look for patterns in the visualizations
+- Consider the data quality metrics
+
+Please try again later for more detailed AI-powered insights."""
+        
+        elif analysis_type == 'chart':
+            return f"""I apologize, but I'm experiencing technical difficulties with the AI service. However, I can provide some basic insights about your {title}:
+
+**Chart Analysis Summary:**
+- This appears to be a visualization analysis
+- Review the chart patterns and trends
+- Look for outliers and anomalies
+- Check the data distribution
+
+**Key Areas to Focus On:**
+- Trend lines and patterns
+- Data clustering or grouping
+- Outlier points
+- Scale and range of values
+
+**Next Steps:**
+- Try the AI interpretation again in a few minutes
+- Examine the chart manually for patterns
+- Look for correlations between variables
+- Consider the data context and domain knowledge
+
+Please try again later for more detailed AI-powered insights."""
+        
+        else:
+            return f"""I apologize, but I'm experiencing technical difficulties with the AI service. However, I can provide some basic insights about your {title}:
+
+**Analysis Summary:**
+- This appears to be a data analysis result
+- Review the key findings and metrics
+- Check for patterns and trends
+- Examine any statistical measures
+
+**Key Areas to Focus On:**
+- Summary statistics and key metrics
+- Data quality indicators
+- Patterns and trends in the data
+- Any recommendations or insights provided
+
+**Next Steps:**
+- Try the AI interpretation again in a few minutes
+- Review the analysis results manually
+- Look for patterns and correlations
+- Consider the business context
+
+Please try again later for more detailed AI-powered insights."""
     
     def get_interpretations_for_analysis(self, analysis_result_id: int, user) -> List[Dict[str, Any]]:
         """

@@ -1529,6 +1529,10 @@ class AIInterpretation(models.Model):
         blank=True,
         help_text="User feedback on interpretation helpfulness"
     )
+    is_fallback = models.BooleanField(
+        default=False,
+        help_text="Whether this is a fallback response due to AI service issues"
+    )
     
     # Relationships
     user = models.ForeignKey(

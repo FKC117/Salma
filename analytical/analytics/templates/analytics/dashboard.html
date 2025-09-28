@@ -1280,6 +1280,118 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
+    // Function to interpret analysis results
+    function interpretAnalysisResult(analysisId) {
+        console.log('Interpreting analysis result:', analysisId);
+        
+        // Get the analysis data from the result container
+        const resultContainer = document.querySelector(`[data-analysis-id="${analysisId}"]`);
+        if (!resultContainer) {
+            console.error('Analysis result container not found:', analysisId);
+            return;
+        }
+        
+        // Extract analysis data
+        const analysisTitle = resultContainer.querySelector('.analysis-title')?.textContent || 'Analysis Result';
+        const analysisType = resultContainer.classList.contains('table-analysis-result') ? 'table' : 'text';
+        
+        // Get CSRF token
+        const csrfToken = getCookie('csrftoken') || document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+        
+        if (!csrfToken) {
+            console.error('CSRF token not found');
+            return;
+        }
+        
+        // Send interpretation request to chat
+        const analysisData = {
+            title: analysisTitle,
+            type: analysisType,
+            analysis_id: analysisId
+        };
+        
+        sendInterpretationToChat(analysisData, analysisType, analysisId, csrfToken);
+    }
+    
+    // Function to send interpretation to chat
+    function sendInterpretationToChat(analysisData, analysisType, analysisId, csrfToken) {
+        const userMessage = `Please interpret this ${analysisType} analysis: "${analysisData.title}"`;
+        addMessageToChat(userMessage, 'user');
+        
+        fetch('/api/ai/interpret-analysis/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({
+                analysis_result_id: analysisId,
+                analysis_data: analysisData
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                let message = data.interpretation;
+                if (data.is_fallback) {
+                    message = `⚠️ **AI Service Temporarily Unavailable**\n\n${data.interpretation}`;
+                }
+                addMessageToChat(message, 'assistant');
+            } else {
+                addMessageToChat(`Sorry, I couldn't interpret this analysis. Error: ${data.error || 'Unknown error'}`, 'assistant');
+            }
+        })
+        .catch(error => {
+            console.error('Error interpreting analysis:', error);
+            addMessageToChat('Sorry, I encountered an error while interpreting this analysis.', 'assistant');
+        })
+        .finally(() => {
+            resetInterpretationButton(analysisId);
+        });
+    }
+    
+    // Function to add message to chat
+    function addMessageToChat(message, sender) {
+        const chatMessages = document.getElementById('chat-messages');
+        if (!chatMessages) {
+            console.error('Chat messages container not found');
+            return;
+        }
+        
+        const messageElement = document.createElement('div');
+        messageElement.className = `chat-message slide-in ${sender === 'user' ? 'user-message' : 'ai-message'}`;
+        
+        const messageContent = document.createElement('div');
+        messageContent.className = 'message-content';
+        messageContent.textContent = message;
+        
+        const messageTime = document.createElement('div');
+        messageTime.className = 'message-time';
+        messageTime.textContent = new Date().toLocaleTimeString();
+        
+        messageElement.appendChild(messageContent);
+        messageElement.appendChild(messageTime);
+        
+        chatMessages.appendChild(messageElement);
+        
+        // Scroll to bottom
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        
+        // Process the message for formatting
+        if (window.smartFormatter) {
+            window.smartFormatter.processMessage(messageElement);
+        }
+    }
+    
+    // Function to reset interpretation button
+    function resetInterpretationButton(analysisId) {
+        const button = document.querySelector(`[onclick*="interpretAnalysisResult('${analysisId}')"]`);
+        if (button) {
+            button.disabled = false;
+            button.innerHTML = '<i class="bi bi-robot me-1"></i>Interpret Data by AI';
+        }
+    }
+    
     // Clear current dataset
     window.clearCurrentDataset = function() {
         const datasetInfoDisplay = document.getElementById('dataset-info-display');
@@ -1297,6 +1409,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 JSON: 'json',
                 LIST: 'list',
                 QUOTE: 'quote',
+                AI_INTERPRETATION: 'ai_interpretation',
                 TEXT: 'text'
             };
             
@@ -1342,6 +1455,15 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('Input text:', text);
             console.log('Text length:', text.length);
             
+            // Check if it's an AI interpretation response (should be text)
+            if (text.includes('interpretation') || text.includes('analysis') || text.includes('insights') || 
+                text.includes('recommendations') || text.includes('summary') || text.includes('conclusion') ||
+                text.includes('Based on the data') || text.includes('The analysis shows') || 
+                text.includes('Key findings') || text.includes('This suggests')) {
+                console.log('🎯 AI interpretation detected, formatting as text');
+                return this.contentTypes.AI_INTERPRETATION;
+            }
+            
             // Check if it contains metadata (not a real table)
             if (text.includes('tokens') || text.includes('$0.') || text.includes('04:')) {
                 console.log('❌ Contains metadata, not a real table');
@@ -1357,8 +1479,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 const hasPipe = trimmed.includes('|');
                 const notMetadata = !trimmed.includes('tokens') && !trimmed.includes('$0.') && !trimmed.includes('04:');
                 const longEnough = trimmed.length > 5;
-                const result = hasPipe && notMetadata && longEnough;
-                console.log(`Line: "${trimmed}" - hasPipe: ${hasPipe}, notMetadata: ${notMetadata}, longEnough: ${longEnough}, result: ${result}`);
+                const notAIResponse = !trimmed.toLowerCase().includes('interpretation') && 
+                                   !trimmed.toLowerCase().includes('analysis') && 
+                                   !trimmed.toLowerCase().includes('insights');
+                const result = hasPipe && notMetadata && longEnough && notAIResponse;
+                console.log(`Line: "${trimmed}" - hasPipe: ${hasPipe}, notMetadata: ${notMetadata}, longEnough: ${longEnough}, notAIResponse: ${notAIResponse}, result: ${result}`);
                 return result;
             });
             
@@ -1378,6 +1503,23 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (!hasMultipleColumns) {
                 console.log('❌ No multiple columns found');
+                return this.contentTypes.TEXT;
+            }
+            
+            // Additional check: make sure it's not just a single line with pipes
+            if (tableLines.length < 2) {
+                console.log('❌ Not enough table lines for a real table');
+                return this.contentTypes.TEXT;
+            }
+            
+            // Check if it's a real data table (not just formatting)
+            const hasDataRows = tableLines.filter(line => {
+                const cells = line.split('|').filter(cell => cell.trim().length > 0);
+                return cells.length >= 2 && !line.includes('---') && !line.includes('===');
+            }).length >= 1;
+            
+            if (!hasDataRows) {
+                console.log('❌ No data rows found, not a real table');
                 return this.contentTypes.TEXT;
             }
             
@@ -1425,6 +1567,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     return this.formatList(text);
                 case this.contentTypes.QUOTE:
                     return this.formatQuote(text);
+                case this.contentTypes.AI_INTERPRETATION:
+                    return this.formatAIInterpretation(text);
                 default:
                     return this.formatText(text);
             }
@@ -1660,12 +1804,83 @@ document.addEventListener('DOMContentLoaded', () => {
             return html;
         }
         
+        formatAIInterpretation(text) {
+            let html = text;
+            
+            // Handle base64 images first
+            html = html.replace(/data:image\/[^;]+;base64,([A-Za-z0-9+/=]+)/g, '<div class="image-container mb-3"><img src="data:image/png;base64,$1" alt="Chart" class="img-fluid rounded" style="max-width: 100%; height: auto; background: white; padding: 10px; border: 1px solid #ddd;"></div>');
+            
+            // Handle markdown formatting
+            html = html.replace(/\*\*(.*?)\*\*/g, '<strong class="text-warning">$1</strong>');
+            html = html.replace(/\*(.*?)\*/g, '<em class="text-info">$1</em>');
+            html = html.replace(/`([^`]+)`/g, '<code class="bg-dark text-light px-2 py-1 rounded">$1</code>');
+            
+            // Handle links
+            html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" class="text-info">$1</a>');
+            
+            // Handle headers with special styling for AI interpretations
+            html = html.replace(/^### (.*$)/gm, '<h5 class="mt-4 mb-3 text-warning border-bottom border-warning pb-2">$1</h5>');
+            html = html.replace(/^## (.*$)/gm, '<h4 class="mt-4 mb-3 text-warning border-bottom border-warning pb-2">$1</h4>');
+            html = html.replace(/^# (.*$)/gm, '<h3 class="mt-4 mb-3 text-warning border-bottom border-warning pb-2">$1</h3>');
+            
+            // Handle lists with better styling
+            html = html.replace(/^[-*+]\s+(.*$)/gm, '<li class="mb-2"><i class="bi bi-arrow-right text-info me-2"></i>$1</li>');
+            html = html.replace(/(<li class="mb-2"><i class="bi bi-arrow-right text-info me-2"><\/i>.*?<\/li>)/gs, '<ul class="list-unstyled ms-3">$1</ul>');
+            
+            html = html.replace(/^\d+\.\s+(.*$)/gm, '<li class="mb-2"><span class="badge bg-primary me-2">$1</span></li>');
+            html = html.replace(/(<li class="mb-2"><span class="badge bg-primary me-2">.*?<\/span><\/li>)/gs, '<ol class="ms-3">$1</ol>');
+            
+            // Handle paragraphs and line breaks
+            html = html.replace(/\n\n/g, '</p><p class="mb-3">');
+            html = html.replace(/\n/g, '<br>');
+            
+            // Wrap in a special AI interpretation container
+            html = '<div class="ai-interpretation-container p-3 rounded" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-left: 4px solid #ffc107;">' + 
+                   '<div class="ai-interpretation-header mb-3">' +
+                   '<i class="bi bi-robot text-warning me-2"></i>' +
+                   '<span class="text-warning fw-bold">AI Interpretation</span>' +
+                   '</div>' +
+                   '<div class="ai-interpretation-content">' + html + '</div>' +
+                   '</div>';
+            
+            return html;
+        }
+        
         formatText(text) {
             let html = text;
+            
+            // Handle base64 images first
+            html = html.replace(/data:image\/[^;]+;base64,([A-Za-z0-9+/=]+)/g, '<div class="image-container mb-3"><img src="data:image/png;base64,$1" alt="Chart" class="img-fluid rounded" style="max-width: 100%; height: auto; background: white; padding: 10px; border: 1px solid #ddd;"></div>');
+            
+            // Handle markdown formatting
             html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
             html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
-            html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+            html = html.replace(/`([^`]+)`/g, '<code class="bg-dark text-light px-2 py-1 rounded">$1</code>');
+            
+            // Handle links
+            html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" class="text-info">$1</a>');
+            
+            // Handle headers
+            html = html.replace(/^### (.*$)/gm, '<h5 class="mt-3 mb-2 text-primary">$1</h5>');
+            html = html.replace(/^## (.*$)/gm, '<h4 class="mt-4 mb-3 text-primary">$1</h4>');
+            html = html.replace(/^# (.*$)/gm, '<h3 class="mt-4 mb-3 text-primary">$1</h3>');
+            
+            // Handle lists
+            html = html.replace(/^[-*+]\s+(.*$)/gm, '<li class="mb-1">$1</li>');
+            html = html.replace(/(<li class="mb-1">.*?<\/li>)/gs, '<ul class="list-unstyled ms-3">$1</ul>');
+            
+            html = html.replace(/^\d+\.\s+(.*$)/gm, '<li class="mb-1">$1</li>');
+            html = html.replace(/(<li class="mb-1">.*?<\/li>)/gs, '<ol class="ms-3">$1</ol>');
+            
+            // Handle paragraphs and line breaks
+            html = html.replace(/\n\n/g, '</p><p class="mb-2">');
             html = html.replace(/\n/g, '<br>');
+            
+            // Wrap in paragraph if not already wrapped
+            if (!html.startsWith('<')) {
+                html = '<p class="mb-2">' + html + '</p>';
+            }
+            
             return html;
         }
         
