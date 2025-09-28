@@ -4,6 +4,7 @@
 {% block title %}Dashboard - Data Analysis System{% endblock %}
 
 {% block extra_css %}
+<link rel="stylesheet" href="{% static 'analytics/css/chat-formatting.css' %}">
 <style>
     /* Cursor-style Dashboard Layout */
     .dashboard-container {
@@ -918,6 +919,646 @@ document.addEventListener('DOMContentLoaded', () => {
         if (welcomeScreen) {
             welcomeScreen.style.display = 'flex';
         }
+    };
+    
+    // Smart Content Formatter
+    class SmartContentFormatter {
+        constructor() {
+            this.contentTypes = {
+                TABLE: 'table',
+                CHART: 'chart',
+                CODE: 'code',
+                JSON: 'json',
+                LIST: 'list',
+                QUOTE: 'quote',
+                TEXT: 'text'
+            };
+            
+            this.patterns = {
+                table: [
+                    /^\s*\|[^|]+\|[^|]+\|[^|]+\|[^|]+\|\s*$/m,  // At least 3 columns
+                    /^\s*\|[^|]+\|[^|]+\|[^|]+\|\s*$/m,  // At least 2 columns
+                    /^\s*\|[^|]+\|[^|]+\|\s*$/m  // At least 1 column
+                ],
+                chart: [
+                    /chart|graph|plot|visualization/i,
+                    /bar chart|line chart|pie chart|scatter plot/i,
+                    /histogram|heatmap|correlation matrix/i
+                ],
+                code: [
+                    /```[\s\S]*?```/g,
+                    /`[^`]+`/g,
+                    /def\s+\w+|function\s+\w+|class\s+\w+/i
+                ],
+                json: [
+                    /^\s*[\{\[].*[\}\]]\s*$/s,
+                    /"[\w\s]+"\s*:\s*["\d\w\s,{}[\]]+/
+                ],
+                list: [
+                    /^\s*[-*+]\s+.+$/m,
+                    /^\s*\d+\.\s+.+$/m,
+                    /^\s*•\s+.+$/m
+                ],
+                quote: [
+                    /^>\s+.+$/m,
+                    /^"[\s\S]*"$/m,
+                    /^'[\s\S]*'$/m
+                ]
+            };
+        }
+        
+        detectContentType(text) {
+            if (!text || typeof text !== 'string') {
+                return this.contentTypes.TEXT;
+            }
+            
+            console.log('=== DETECTING CONTENT TYPE ===');
+            console.log('Input text:', text);
+            console.log('Text length:', text.length);
+            
+            // Check if it contains metadata (not a real table)
+            if (text.includes('tokens') || text.includes('$0.') || text.includes('04:')) {
+                console.log('❌ Contains metadata, not a real table');
+                return this.contentTypes.TEXT;
+            }
+            
+            // Look for markdown table pattern: | col1 | col2 | col3 |
+            const lines = text.split('\n');
+            console.log('All lines:', lines);
+            
+            const tableLines = lines.filter(line => {
+                const trimmed = line.trim();
+                const hasPipe = trimmed.includes('|');
+                const notMetadata = !trimmed.includes('tokens') && !trimmed.includes('$0.') && !trimmed.includes('04:');
+                const longEnough = trimmed.length > 5;
+                const result = hasPipe && notMetadata && longEnough;
+                console.log(`Line: "${trimmed}" - hasPipe: ${hasPipe}, notMetadata: ${notMetadata}, longEnough: ${longEnough}, result: ${result}`);
+                return result;
+            });
+            
+            console.log('✅ Found table lines:', tableLines);
+            
+            if (tableLines.length < 2) {
+                console.log('❌ Not enough table lines found (need at least 2)');
+                return this.contentTypes.TEXT;
+            }
+            
+            // Check if it looks like a proper table (has multiple columns)
+            const hasMultipleColumns = tableLines.some(line => {
+                const cells = line.split('|').filter(cell => cell.trim().length > 0);
+                console.log(`Line "${line}" has ${cells.length} cells:`, cells);
+                return cells.length >= 2;
+            });
+            
+            if (!hasMultipleColumns) {
+                console.log('❌ No multiple columns found');
+                return this.contentTypes.TEXT;
+            }
+            
+            console.log('✅ TABLE DETECTED!');
+            return this.contentTypes.TABLE;
+            
+            if (this.patterns.chart.some(pattern => pattern.test(text))) {
+                return this.contentTypes.CHART;
+            }
+            
+            if (this.patterns.code.some(pattern => pattern.test(text))) {
+                return this.contentTypes.CODE;
+            }
+            
+            if (this.patterns.json.some(pattern => pattern.test(text))) {
+                return this.contentTypes.JSON;
+            }
+            
+            if (this.patterns.list.some(pattern => pattern.test(text))) {
+                return this.contentTypes.LIST;
+            }
+            
+            if (this.patterns.quote.some(pattern => pattern.test(text))) {
+                return this.contentTypes.QUOTE;
+            }
+            
+            return this.contentTypes.TEXT;
+        }
+        
+        formatContent(text, contentType = null) {
+            if (!contentType) {
+                contentType = this.detectContentType(text);
+            }
+            
+            switch (contentType) {
+                case this.contentTypes.TABLE:
+                    return this.formatTable(text);
+                case this.contentTypes.CHART:
+                    return this.formatChart(text);
+                case this.contentTypes.CODE:
+                    return this.formatCode(text);
+                case this.contentTypes.JSON:
+                    return this.formatJSON(text);
+                case this.contentTypes.LIST:
+                    return this.formatList(text);
+                case this.contentTypes.QUOTE:
+                    return this.formatQuote(text);
+                default:
+                    return this.formatText(text);
+            }
+        }
+        
+        formatTable(text) {
+            console.log('formatTable called with text:', text);
+            const lines = text.trim().split('\n');
+            const tableRows = lines.filter(line => line.includes('|'));
+            
+            console.log('Found table rows:', tableRows);
+            
+            if (tableRows.length < 2) {
+                console.log('Not enough table rows, falling back to text');
+                return this.formatText(text);
+            }
+            
+            const tableData = this.extractTableData(tableRows);
+            
+            if (tableData.headers.length === 0 || tableData.rows.length === 0) {
+                console.log('No valid table data found, falling back to text formatting');
+                return this.formatText(text);
+            }
+            
+            let html = '<div class="table-container">';
+            html += '<div class="table-header">';
+            html += '<div class="table-title">';
+            html += '<h6><i class="bi bi-table"></i> Data Table</h6>';
+            html += `<span class="table-meta">${tableData.rows.length} rows × ${tableData.headers.length} columns</span>`;
+            html += '</div>';
+            html += '<div class="table-actions">';
+            html += '<div class="btn-group" role="group">';
+            html += '<button class="btn btn-sm btn-outline-secondary" onclick="exportTable(this, \'csv\')">';
+            html += '<i class="bi bi-file-earmark-spreadsheet"></i> CSV</button>';
+            html += '<button class="btn btn-sm btn-outline-secondary" onclick="exportTable(this, \'json\')">';
+            html += '<i class="bi bi-file-earmark-code"></i> JSON</button>';
+            html += '<button class="btn btn-sm btn-outline-secondary" onclick="fullscreenTable(this)">';
+            html += '<i class="bi bi-arrows-fullscreen"></i> Fullscreen</button>';
+            html += '</div></div></div>';
+            
+            html += '<div class="table-content">';
+            html += '<div class="table-responsive">';
+            html += '<table class="table table-striped table-hover table-sm">';
+            html += '<thead class="table-dark">';
+            html += '<tr>';
+            tableData.headers.forEach(header => {
+                html += `<th scope="col">${this.escapeHtml(header)}</th>`;
+            });
+            html += '</tr></thead>';
+            html += '<tbody>';
+            
+            tableData.rows.forEach(row => {
+                html += '<tr>';
+                row.forEach(cell => {
+                    html += `<td>${this.escapeHtml(cell)}</td>`;
+                });
+                html += '</tr>';
+            });
+            
+            html += '</tbody></table>';
+            html += '</div></div>';
+            html += '<div class="table-footer">';
+            html += '<div class="pagination-info">';
+            html += `Showing 1 to ${Math.min(10, tableData.rows.length)} of ${tableData.rows.length} entries`;
+            html += '</div></div></div>';
+            
+            return html;
+        }
+        
+        extractTableData(tableRows) {
+            console.log('Extracting table data from rows:', tableRows);
+            
+            // Filter out separator rows and metadata rows
+            const dataRows = tableRows.filter(row => {
+                const trimmed = row.trim();
+                return trimmed.includes('|') && 
+                       !trimmed.includes('tokens') && 
+                       !trimmed.includes('$0.') && 
+                       !trimmed.includes('04:') &&
+                       !trimmed.match(/^:?-+:?$/) &&  // Not separator rows like | :--- | :--- |
+                       trimmed.length > 5; // Not just a single pipe
+            });
+            
+            console.log('Filtered data rows:', dataRows);
+            
+            if (dataRows.length === 0) {
+                console.log('No valid data rows found');
+                return { headers: [], rows: [] };
+            }
+            
+            // Extract headers from first row
+            const headers = dataRows[0].split('|')
+                .map(cell => cell.trim())
+                .filter(cell => cell && cell.length > 0);
+            
+            console.log('Raw headers from first row:', dataRows[0].split('|'));
+            console.log('Processed headers:', headers);
+            
+            const rows = [];
+            
+            // Extract data rows (skip first row which is headers)
+            for (let i = 1; i < dataRows.length; i++) {
+                const cells = dataRows[i].split('|')
+                    .map(cell => cell.trim())
+                    .filter(cell => cell && cell.length > 0);
+                
+                console.log(`Row ${i} cells:`, cells);
+                
+                if (cells.length >= 2) { // At least 2 columns
+                    rows.push(cells);
+                }
+            }
+            
+            console.log('Final extracted headers:', headers);
+            console.log('Final extracted rows:', rows);
+            
+            return { headers, rows };
+        }
+        
+        formatChart(text) {
+            const chartType = this.detectChartType(text);
+            const chartId = 'chart_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            
+            return `
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h6><i class="bi bi-bar-chart"></i> ${chartType}</h6>
+                        <div class="chart-actions">
+                            <button class="btn btn-sm btn-outline-secondary" onclick="exportChart('${chartId}')">
+                                <i class="bi bi-download"></i> Export
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="fullscreenChart('${chartId}')">
+                                <i class="bi bi-arrows-fullscreen"></i> Fullscreen
+                            </button>
+                        </div>
+                    </div>
+                    <div class="chart-content">
+                        <canvas id="${chartId}" width="400" height="200"></canvas>
+                    </div>
+                    <div class="chart-description">
+                        <p class="text-muted">${this.extractChartDescription(text)}</p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        formatCode(text) {
+            let html = text.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
+                const language = lang || 'text';
+                return `<pre class="code-block"><code class="language-${language}">${this.escapeHtml(code.trim())}</code></pre>`;
+            });
+            
+            html = html.replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>');
+            
+            return html;
+        }
+        
+        formatJSON(text) {
+            try {
+                const jsonObj = JSON.parse(text);
+                const formatted = JSON.stringify(jsonObj, null, 2);
+                return `<pre class="json-block"><code>${this.escapeHtml(formatted)}</code></pre>`;
+            } catch (e) {
+                return this.formatCode(text);
+            }
+        }
+        
+        formatList(text) {
+            const lines = text.split('\n');
+            let html = '';
+            let inList = false;
+            let listType = 'ul';
+            
+            lines.forEach(line => {
+                const trimmed = line.trim();
+                
+                if (trimmed.match(/^\d+\.\s+/)) {
+                    if (!inList || listType !== 'ol') {
+                        if (inList) html += `</${listType}>`;
+                        html += '<ol class="list-group list-group-flush">';
+                        inList = true;
+                        listType = 'ol';
+                    }
+                    const content = trimmed.replace(/^\d+\.\s+/, '');
+                    html += `<li class="list-group-item">${this.escapeHtml(content)}</li>`;
+                } else if (trimmed.match(/^[-*+•]\s+/)) {
+                    if (!inList || listType !== 'ul') {
+                        if (inList) html += `</${listType}>`;
+                        html += '<ul class="list-group list-group-flush">';
+                        inList = true;
+                        listType = 'ul';
+                    }
+                    const content = trimmed.replace(/^[-*+•]\s+/, '');
+                    html += `<li class="list-group-item">${this.escapeHtml(content)}</li>`;
+                } else if (trimmed === '') {
+                    if (inList) {
+                        html += '<li class="list-group-item">&nbsp;</li>';
+                    }
+                } else {
+                    if (inList) {
+                        html += `</${listType}>`;
+                        inList = false;
+                    }
+                    html += `<p>${this.escapeHtml(trimmed)}</p>`;
+                }
+            });
+            
+            if (inList) {
+                html += `</${listType}>`;
+            }
+            
+            return html;
+        }
+        
+        formatQuote(text) {
+            const lines = text.split('\n');
+            let html = '<blockquote class="blockquote">';
+            
+            lines.forEach(line => {
+                const trimmed = line.trim();
+                if (trimmed.startsWith('>')) {
+                    const content = trimmed.substring(1).trim();
+                    html += `<p class="mb-0">${this.escapeHtml(content)}</p>`;
+                } else if (trimmed.startsWith('"') && trimmed.endsWith('"')) {
+                    const content = trimmed.substring(1, trimmed.length - 1);
+                    html += `<p class="mb-0">${this.escapeHtml(content)}</p>`;
+                } else {
+                    html += `<p class="mb-0">${this.escapeHtml(trimmed)}</p>`;
+                }
+            });
+            
+            html += '</blockquote>';
+            return html;
+        }
+        
+        formatText(text) {
+            let html = text;
+            html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+            html = html.replace(/\n/g, '<br>');
+            return html;
+        }
+        
+        detectChartType(text) {
+            const lowerText = text.toLowerCase();
+            
+            if (lowerText.includes('bar chart') || lowerText.includes('bar graph')) {
+                return 'Bar Chart';
+            } else if (lowerText.includes('line chart') || lowerText.includes('line graph')) {
+                return 'Line Chart';
+            } else if (lowerText.includes('pie chart')) {
+                return 'Pie Chart';
+            } else if (lowerText.includes('scatter plot')) {
+                return 'Scatter Plot';
+            } else if (lowerText.includes('histogram')) {
+                return 'Histogram';
+            } else if (lowerText.includes('heatmap')) {
+                return 'Heatmap';
+            } else if (lowerText.includes('correlation')) {
+                return 'Correlation Matrix';
+            } else {
+                return 'Chart';
+            }
+        }
+        
+        extractChartDescription(text) {
+            const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 10);
+            return sentences[0] ? sentences[0].trim() : 'Data visualization';
+        }
+        
+        escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        processMessage(messageElement) {
+            console.log('=== PROCESSING MESSAGE ===');
+            console.log('Processing message element:', messageElement);
+            
+            const content = messageElement.querySelector('.message-content');
+            if (!content) {
+                console.log('❌ No message-content found in message element');
+                return;
+            }
+            
+            // Check if content is already formatted (contains HTML tags)
+            const innerHTML = content.innerHTML;
+            if (innerHTML.includes('<div class="table-container">') || 
+                innerHTML.includes('<pre>') || 
+                innerHTML.includes('<code>') ||
+                innerHTML.includes('<strong>') ||
+                innerHTML.includes('<em>')) {
+                console.log('✅ Content already formatted, skipping processing');
+                return;
+            }
+            
+            const text = content.textContent || content.innerText;
+            console.log('📝 Message text:', text);
+            console.log('📏 Text length:', text.length);
+            
+            const contentType = this.detectContentType(text);
+            console.log('🎯 Detected content type:', contentType);
+            
+            const formatted = this.formatContent(text, contentType);
+            console.log('✅ Final formatted content:', formatted);
+            
+            content.innerHTML = formatted;
+            messageElement.classList.add(`content-${contentType}`);
+            
+            if (contentType === this.contentTypes.CHART) {
+                this.initializeCharts(messageElement);
+            }
+            
+            console.log('=== MESSAGE PROCESSING COMPLETE ===');
+        }
+        
+        initializeCharts(messageElement) {
+            const canvases = messageElement.querySelectorAll('canvas');
+            canvases.forEach(canvas => {
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#58a6ff';
+                ctx.font = '14px Inter';
+                ctx.textAlign = 'center';
+                ctx.fillText('Chart will be rendered here', canvas.width / 2, canvas.height / 2);
+            });
+        }
+    }
+    
+    // Initialize formatter
+    const contentFormatter = new SmartContentFormatter();
+    
+    // Format existing messages
+    const messages = document.querySelectorAll('.chat-message');
+    console.log('Found existing messages:', messages.length);
+    messages.forEach(message => {
+        contentFormatter.processMessage(message);
+    });
+    
+    // Watch for new messages
+    const observer = new MutationObserver((mutations) => {
+        console.log('Mutation detected:', mutations);
+        mutations.forEach((mutation) => {
+            mutation.addedNodes.forEach((node) => {
+                if (node.nodeType === Node.ELEMENT_NODE && node.classList.contains('chat-message')) {
+                    console.log('New chat message detected:', node);
+                    contentFormatter.processMessage(node);
+                }
+            });
+        });
+    });
+    
+    const chatMessages = document.getElementById('chat-messages');
+    if (chatMessages) {
+        console.log('Setting up mutation observer on chat-messages');
+        observer.observe(chatMessages, { childList: true });
+    } else {
+        console.log('chat-messages element not found');
+    }
+    
+    // Export functions
+    window.exportTable = function(button, format) {
+        console.log('Exporting table as', format);
+        const tableContainer = button.closest('.table-container');
+        const table = tableContainer.querySelector('table');
+        
+        if (!table) {
+            console.error('Table not found');
+            return;
+        }
+        
+        const data = [];
+        const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.textContent.trim());
+        const rows = Array.from(table.querySelectorAll('tbody tr'));
+        
+        rows.forEach(row => {
+            const cells = Array.from(row.querySelectorAll('td')).map(td => td.textContent.trim());
+            if (cells.length === headers.length) {
+                data.push(cells);
+            }
+        });
+        
+        if (format === 'csv') {
+            const csvContent = [
+                headers.join(','),
+                ...data.map(row => row.map(cell => `"${cell}"`).join(','))
+            ].join('\n');
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `table_export_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        } else if (format === 'json') {
+            const jsonData = data.map(row => {
+                const obj = {};
+                headers.forEach((header, index) => {
+                    obj[header] = row[index];
+                });
+                return obj;
+            });
+            
+            const jsonContent = JSON.stringify(jsonData, null, 2);
+            const blob = new Blob([jsonContent], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `table_export_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+    };
+    
+    window.fullscreenTable = function(button) {
+        console.log('Opening table in fullscreen');
+        const tableContainer = button.closest('.table-container');
+        const table = tableContainer.querySelector('table');
+        
+        if (!table) {
+            console.error('Table not found');
+            return;
+        }
+        
+        // Create fullscreen modal
+        const modal = document.createElement('div');
+        modal.className = 'modal fade';
+        modal.innerHTML = `
+            <div class="modal-dialog modal-fullscreen">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="bi bi-table"></i> Table View - Fullscreen</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="table-responsive">
+                            ${table.outerHTML}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        const bsModal = new bootstrap.Modal(modal);
+        bsModal.show();
+        
+        // Clean up when modal is hidden
+        modal.addEventListener('hidden.bs.modal', () => {
+            document.body.removeChild(modal);
+        });
+    };
+    
+    window.exportChart = function(chartId) {
+        console.log('Exporting chart', chartId);
+        const canvas = document.getElementById(chartId);
+        if (canvas) {
+            const link = document.createElement('a');
+            link.download = `chart_${chartId}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+    };
+    
+    window.fullscreenChart = function(chartId) {
+        console.log('Opening chart in fullscreen', chartId);
+        const chartContainer = document.getElementById(chartId).closest('.chart-container');
+        
+        if (!chartContainer) {
+            console.error('Chart container not found');
+            return;
+        }
+        
+        // Create fullscreen modal
+        const modal = document.createElement('div');
+        modal.className = 'modal fade';
+        modal.innerHTML = `
+            <div class="modal-dialog modal-fullscreen">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="bi bi-bar-chart"></i> Chart View - Fullscreen</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        ${chartContainer.outerHTML}
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        const bsModal = new bootstrap.Modal(modal);
+        bsModal.show();
+        
+        // Clean up when modal is hidden
+        modal.addEventListener('hidden.bs.modal', () => {
+            document.body.removeChild(modal);
+        });
     };
 });
 </script>

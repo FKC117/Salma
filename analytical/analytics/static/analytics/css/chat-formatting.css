@@ -10,13 +10,13 @@ Industry-standard typography and spacing for analytical platform
     --font-family-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
     --font-family-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', 'Courier New', monospace;
     
-    /* Font Sizes - Professional Scale (12px-20px) */
-    --font-size-xs: 0.75rem;    /* 12px - Small labels, metadata */
-    --font-size-sm: 0.875rem;   /* 14px - Body text, descriptions */
-    --font-size-base: 1rem;     /* 16px - Primary content */
-    --font-size-lg: 1.125rem;   /* 18px - Headings, important text */
-    --font-size-xl: 1.25rem;    /* 20px - Large headings */
-    --font-size-2xl: 1.5rem;    /* 24px - Page titles */
+    /* Font Sizes - Match Existing Interface */
+    --font-size-xs: 0.75rem;    /* 12px - Small labels, metadata (matches message-time) */
+    --font-size-sm: 0.875rem;   /* 14px - Body text, descriptions (matches search-input) */
+    --font-size-base: 0.875rem; /* 14px - Primary content (match existing) */
+    --font-size-lg: 1rem;       /* 16px - Headings, important text (matches welcome-subtitle) */
+    --font-size-xl: 1.125rem;   /* 18px - Large headings */
+    --font-size-2xl: 1.5rem;    /* 24px - Page titles (matches welcome-title) */
     
     /* Line Heights - Optimal for Readability */
     --line-height-tight: 1.25;   /* For headings and short text */
@@ -61,7 +61,7 @@ Industry-standard typography and spacing for analytical platform
 
 .message-content {
     font-family: var(--font-family-primary);
-    font-size: var(--font-size-base);
+    font-size: var(--font-size-sm); /* Match existing interface */
     line-height: var(--line-height-normal);
     letter-spacing: var(--letter-spacing-tight);
     color: var(--text-primary);
