@@ -24,6 +24,7 @@ from analytics.services.analysis_executor import AnalysisExecutor
 from analytics.services.rag_service import RAGService
 from analytics.services.llm_processor import LLMProcessor
 from analytics.services.agentic_ai_controller import AgenticAIController
+from analytics.services.ai_interpretation_service import ai_interpretation_service
 from analytics.tools.tool_registry import ToolRegistry
 
 
@@ -1675,4 +1676,218 @@ def execute_analysis_tool(request):
         return Response({
             'success': False,
             'error': 'Failed to execute analysis tool'
+        }, status=500)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def interpret_analysis_result(request):
+    """
+    AI interpretation endpoint for analysis results
+    """
+    try:
+        data = request.data
+        analysis_data = data.get('analysis_data', {})
+        analysis_type = data.get('analysis_type', 'text')
+        context = data.get('context', {})
+        
+        if not analysis_data:
+            return Response({
+                'success': False,
+                'error': 'Analysis data is required'
+            }, status=400)
+        
+        # Get AI interpretation
+        interpretation_result = ai_interpretation_service.interpret_analysis_result(
+            analysis_data=analysis_data,
+            analysis_type=analysis_type,
+            context=context,
+            user=request.user,
+            analysis_result_id=context.get('analysis_result_id'),
+            session_id=context.get('session_id')
+        )
+        
+        if interpretation_result['success']:
+            return Response({
+                'success': True,
+                'interpretation': interpretation_result['interpretation'],
+                'confidence': interpretation_result.get('confidence', 0.5),
+                'analysis_type': analysis_type
+            })
+        else:
+            return Response({
+                'success': False,
+                'error': interpretation_result.get('error', 'Failed to generate interpretation')
+            }, status=500)
+            
+    except Exception as e:
+        logger.error(f"Error in AI interpretation: {str(e)}")
+        return Response({
+            'success': False,
+            'error': 'Failed to generate AI interpretation'
+        }, status=500)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_analysis_history(request, session_id):
+    """
+    Get analysis history for a session including AI interpretations
+    """
+    try:
+        from analytics.services.session_manager import SessionManager
+        from analytics.services.ai_interpretation_service import ai_interpretation_service
+        
+        session_manager = SessionManager()
+        
+        # Get analysis results for the session
+        analysis_results = session_manager.get_session_analysis_history(
+            session_id=session_id,
+            user=request.user,
+            limit=50
+        )
+        
+        # Get AI interpretations for the session
+        interpretations = ai_interpretation_service.get_interpretations_for_session(
+            session_id=session_id,
+            user=request.user,
+            limit=100
+        )
+        
+        # Format analysis results with interpretations
+        history = []
+        for result in analysis_results:
+            result_data = {
+                'id': result.id,
+                'name': result.name,
+                'description': result.description,
+                'tool_used': result.tool_used.name,
+                'output_type': result.output_type,
+                'created_at': result.created_at,
+                'confidence_score': result.confidence_score,
+                'execution_time_ms': result.execution_time_ms,
+                'parameters_used': result.parameters_used,
+                'ai_interpretations': [
+                    interp for interp in interpretations 
+                    if interp.get('analysis_result_id') == result.id
+                ]
+            }
+            history.append(result_data)
+        
+        return Response({
+            'success': True,
+            'history': history,
+            'total_count': len(history),
+            'interpretations_count': len(interpretations)
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting analysis history: {str(e)}")
+        return Response({
+            'success': False,
+            'error': 'Failed to retrieve analysis history'
+        }, status=500)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_ai_interpretations(request, analysis_result_id):
+    """
+    Get AI interpretations for a specific analysis result
+    """
+    try:
+        from analytics.services.ai_interpretation_service import ai_interpretation_service
+        
+        interpretations = ai_interpretation_service.get_interpretations_for_analysis(
+            analysis_result_id=analysis_result_id,
+            user=request.user
+        )
+        
+        return Response({
+            'success': True,
+            'interpretations': interpretations,
+            'count': len(interpretations)
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting AI interpretations: {str(e)}")
+        return Response({
+            'success': False,
+            'error': 'Failed to retrieve AI interpretations'
+        }, status=500)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_interpretation_detail(request, interpretation_id):
+    """
+    Get detailed information about a specific AI interpretation
+    """
+    try:
+        from analytics.services.ai_interpretation_service import ai_interpretation_service
+        
+        interpretation = ai_interpretation_service.get_interpretation_by_id(
+            interpretation_id=interpretation_id,
+            user=request.user
+        )
+        
+        if interpretation:
+            return Response({
+                'success': True,
+                'interpretation': interpretation
+            })
+        else:
+            return Response({
+                'success': False,
+                'error': 'Interpretation not found'
+            }, status=404)
+        
+    except Exception as e:
+        logger.error(f"Error getting interpretation detail: {str(e)}")
+        return Response({
+            'success': False,
+            'error': 'Failed to retrieve interpretation'
+        }, status=500)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def update_interpretation_feedback(request, interpretation_id):
+    """
+    Update user feedback for an AI interpretation
+    """
+    try:
+        from analytics.services.ai_interpretation_service import ai_interpretation_service
+        
+        data = request.data
+        is_helpful = data.get('is_helpful', None)
+        
+        if is_helpful is None:
+            return Response({
+                'success': False,
+                'error': 'is_helpful field is required'
+            }, status=400)
+        
+        success = ai_interpretation_service.update_interpretation_feedback(
+            interpretation_id=interpretation_id,
+            user=request.user,
+            is_helpful=is_helpful
+        )
+        
+        if success:
+            return Response({
+                'success': True,
+                'message': 'Feedback updated successfully'
+            })
+        else:
+            return Response({
+                'success': False,
+                'error': 'Failed to update feedback'
+            }, status=500)
+        
+    except Exception as e:
+        logger.error(f"Error updating interpretation feedback: {str(e)}")
+        return Response({
+            'success': False,
+            'error': 'Failed to update feedback'
         }, status=500)

@@ -1,0 +1,631 @@
+{% load static %}
+{% load dict_filters %}
+
+<div class="analysis-history-container">
+    <div class="analysis-history-header">
+        <h5 class="mb-0">
+            <i class="bi bi-clock-history"></i> Analysis History
+        </h5>
+        <div class="history-actions">
+            <button class="btn btn-sm btn-outline-primary" onclick="refreshAnalysisHistory()">
+                <i class="bi bi-arrow-clockwise"></i> Refresh
+            </button>
+            <button class="btn btn-sm btn-outline-secondary" onclick="toggleHistoryView()">
+                <i class="bi bi-list-ul"></i> Toggle View
+            </button>
+        </div>
+    </div>
+    
+    <div class="analysis-history-content">
+        <div id="historyLoading" class="text-center py-4" style="display: none;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2 text-muted">Loading analysis history...</p>
+        </div>
+        
+        <div id="historyContent" class="history-results">
+            <!-- History items will be loaded here -->
+        </div>
+        
+        <div id="historyEmpty" class="text-center py-5" style="display: none;">
+            <i class="bi bi-inbox display-1 text-muted"></i>
+            <h5 class="text-muted mt-3">No Analysis History</h5>
+            <p class="text-muted">Run some analysis tools to see your history here.</p>
+        </div>
+    </div>
+</div>
+
+<style>
+.analysis-history-container {
+    background: var(--bs-dark);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.analysis-history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--bs-gray-700);
+}
+
+.history-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.history-results {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.history-item {
+    background: var(--bs-gray-800);
+    border: 1px solid var(--bs-gray-700);
+    border-radius: 6px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    transition: all 0.2s ease;
+}
+
+.history-item:hover {
+    background: var(--bs-gray-750);
+    border-color: var(--bs-primary);
+    transform: translateY(-1px);
+}
+
+.history-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+}
+
+.history-item-title {
+    font-weight: 600;
+    color: var(--bs-light);
+    margin: 0;
+    font-size: 1rem;
+}
+
+.history-item-meta {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    font-size: 0.875rem;
+    color: var(--bs-gray-400);
+}
+
+.history-item-description {
+    color: var(--bs-gray-300);
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+}
+
+.history-item-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.history-item-tool {
+    background: var(--bs-primary);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.history-item-type {
+    background: var(--bs-secondary);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.history-item-confidence {
+    background: var(--bs-success);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.history-item-time {
+    color: var(--bs-gray-500);
+    font-size: 0.75rem;
+}
+
+.interpretations-section {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--bs-gray-700);
+}
+
+.interpretations-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.interpretations-count {
+    background: var(--bs-info);
+    color: white;
+    padding: 0.2rem 0.4rem;
+    border-radius: 3px;
+    font-size: 0.7rem;
+    font-weight: 500;
+}
+
+.interpretation-item {
+    background: var(--bs-gray-900);
+    border: 1px solid var(--bs-gray-600);
+    border-radius: 4px;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.interpretation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.interpretation-title {
+    font-weight: 500;
+    color: var(--bs-light);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.interpretation-confidence {
+    background: var(--bs-warning);
+    color: var(--bs-dark);
+    padding: 0.2rem 0.4rem;
+    border-radius: 3px;
+    font-size: 0.7rem;
+    font-weight: 500;
+}
+
+.interpretation-content {
+    color: var(--bs-gray-300);
+    font-size: 0.85rem;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+}
+
+.interpretation-actions {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.interpretation-feedback {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.feedback-btn {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.7rem;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.feedback-btn.helpful {
+    background: var(--bs-success);
+    color: white;
+}
+
+.feedback-btn.not-helpful {
+    background: var(--bs-danger);
+    color: white;
+}
+
+.feedback-btn.neutral {
+    background: var(--bs-secondary);
+    color: white;
+}
+
+.feedback-btn:hover {
+    opacity: 0.8;
+    transform: scale(1.05);
+}
+
+.feedback-btn.active {
+    box-shadow: 0 0 0 2px var(--bs-primary);
+}
+
+.history-view-toggle {
+    display: none;
+}
+
+.history-view-toggle.active {
+    display: block;
+}
+
+/* Compact view styles */
+.history-compact .history-item {
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.history-compact .history-item-header {
+    margin-bottom: 0.5rem;
+}
+
+.history-compact .history-item-description {
+    display: none;
+}
+
+.history-compact .interpretations-section {
+    display: none;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .analysis-history-header {
+        flex-direction: column;
+        gap: 0.75rem;
+        align-items: stretch;
+    }
+    
+    .history-actions {
+        justify-content: center;
+    }
+    
+    .history-item-header {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
+    }
+    
+    .history-item-meta {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .history-item-actions {
+        justify-content: center;
+    }
+}
+</style>
+
+<script>
+let currentHistoryView = 'detailed';
+let currentSessionId = null;
+
+// Initialize analysis history
+function initializeAnalysisHistory() {
+    console.log('📊 Initializing Analysis History...');
+    
+    // Get current session ID
+    const sessionId = localStorage.getItem('current_session_id');
+    if (sessionId) {
+        currentSessionId = sessionId;
+        loadAnalysisHistory();
+    } else {
+        console.log('⚠️ No session ID found, waiting for session creation...');
+    }
+    
+    // Listen for session changes
+    document.addEventListener('datasetChanged', function(event) {
+        if (event.detail && event.detail.session_id) {
+            currentSessionId = event.detail.session_id;
+            loadAnalysisHistory();
+        }
+    });
+}
+
+// Load analysis history
+function loadAnalysisHistory() {
+    if (!currentSessionId) {
+        console.log('⚠️ No session ID available for loading history');
+        return;
+    }
+    
+    console.log('📊 Loading analysis history for session:', currentSessionId);
+    
+    const loadingEl = document.getElementById('historyLoading');
+    const contentEl = document.getElementById('historyContent');
+    const emptyEl = document.getElementById('historyEmpty');
+    
+    // Show loading state
+    loadingEl.style.display = 'block';
+    contentEl.style.display = 'none';
+    emptyEl.style.display = 'none';
+    
+    // Make API request
+    fetch(`/api/sessions/${currentSessionId}/history/`)
+        .then(response => response.json())
+        .then(data => {
+            console.log('📊 History response:', data);
+            
+            loadingEl.style.display = 'none';
+            
+            if (data.success && data.history && data.history.length > 0) {
+                renderAnalysisHistory(data.history);
+                contentEl.style.display = 'block';
+            } else {
+                emptyEl.style.display = 'block';
+            }
+        })
+        .catch(error => {
+            console.error('❌ Error loading analysis history:', error);
+            loadingEl.style.display = 'none';
+            emptyEl.style.display = 'block';
+        });
+}
+
+// Render analysis history
+function renderAnalysisHistory(history) {
+    const contentEl = document.getElementById('historyContent');
+    
+    if (history.length === 0) {
+        contentEl.innerHTML = '<div class="text-center py-3 text-muted">No analysis results found</div>';
+        return;
+    }
+    
+    const historyHtml = history.map(item => createHistoryItemHtml(item)).join('');
+    contentEl.innerHTML = historyHtml;
+}
+
+// Create history item HTML
+function createHistoryItemHtml(item) {
+    const createdDate = new Date(item.created_at).toLocaleString();
+    const confidencePercent = Math.round((item.confidence_score || 0) * 100);
+    
+    let interpretationsHtml = '';
+    if (item.ai_interpretations && item.ai_interpretations.length > 0) {
+        interpretationsHtml = `
+            <div class="interpretations-section">
+                <div class="interpretations-header">
+                    <span class="text-muted small">AI Interpretations</span>
+                    <span class="interpretations-count">${item.ai_interpretations.length}</span>
+                </div>
+                ${item.ai_interpretations.map(interp => createInterpretationHtml(interp)).join('')}
+            </div>
+        `;
+    }
+    
+    return `
+        <div class="history-item">
+            <div class="history-item-header">
+                <h6 class="history-item-title">${item.name}</h6>
+                <div class="history-item-meta">
+                    <span class="history-item-tool">${item.tool_used}</span>
+                    <span class="history-item-type">${item.output_type}</span>
+                    <span class="history-item-confidence">${confidencePercent}%</span>
+                    <span class="history-item-time">${createdDate}</span>
+                </div>
+            </div>
+            <div class="history-item-description">${item.description || 'No description available'}</div>
+            <div class="history-item-actions">
+                <button class="btn btn-sm btn-outline-primary" onclick="viewAnalysisResult(${item.id})">
+                    <i class="bi bi-eye"></i> View
+                </button>
+                <button class="btn btn-sm btn-outline-info" onclick="downloadAnalysisResult(${item.id})">
+                    <i class="bi bi-download"></i> Download
+                </button>
+                <button class="btn btn-sm btn-outline-success" onclick="shareAnalysisResult(${item.id})">
+                    <i class="bi bi-share"></i> Share
+                </button>
+            </div>
+            ${interpretationsHtml}
+        </div>
+    `;
+}
+
+// Create interpretation HTML
+function createInterpretationHtml(interp) {
+    const confidencePercent = Math.round((interp.confidence_score || 0) * 100);
+    const createdDate = new Date(interp.created_at).toLocaleString();
+    
+    return `
+        <div class="interpretation-item">
+            <div class="interpretation-header">
+                <h6 class="interpretation-title">${interp.title}</h6>
+                <span class="interpretation-confidence">${confidencePercent}%</span>
+            </div>
+            <div class="interpretation-content">${interp.content_preview}</div>
+            <div class="interpretation-actions">
+                <button class="btn btn-sm btn-outline-primary" onclick="viewInterpretation(${interp.id})">
+                    <i class="bi bi-eye"></i> View Full
+                </button>
+                <div class="interpretation-feedback">
+                    <button class="feedback-btn helpful ${interp.is_helpful === true ? 'active' : ''}" 
+                            onclick="updateInterpretationFeedback(${interp.id}, true)">
+                        <i class="bi bi-hand-thumbs-up"></i>
+                    </button>
+                    <button class="feedback-btn not-helpful ${interp.is_helpful === false ? 'active' : ''}" 
+                            onclick="updateInterpretationFeedback(${interp.id}, false)">
+                        <i class="bi bi-hand-thumbs-down"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Refresh analysis history
+function refreshAnalysisHistory() {
+    console.log('🔄 Refreshing analysis history...');
+    loadAnalysisHistory();
+}
+
+// Toggle history view
+function toggleHistoryView() {
+    const contentEl = document.getElementById('historyContent');
+    currentHistoryView = currentHistoryView === 'detailed' ? 'compact' : 'detailed';
+    
+    if (currentHistoryView === 'compact') {
+        contentEl.classList.add('history-compact');
+    } else {
+        contentEl.classList.remove('history-compact');
+    }
+    
+    console.log('🔄 Switched to', currentHistoryView, 'view');
+}
+
+// View analysis result
+function viewAnalysisResult(resultId) {
+    console.log('👁️ Viewing analysis result:', resultId);
+    // TODO: Implement result viewing
+    alert('View analysis result: ' + resultId);
+}
+
+// Download analysis result
+function downloadAnalysisResult(resultId) {
+    console.log('📥 Downloading analysis result:', resultId);
+    // TODO: Implement result download
+    alert('Download analysis result: ' + resultId);
+}
+
+// Share analysis result
+function shareAnalysisResult(resultId) {
+    console.log('📤 Sharing analysis result:', resultId);
+    // TODO: Implement result sharing
+    alert('Share analysis result: ' + resultId);
+}
+
+// View interpretation
+function viewInterpretation(interpretationId) {
+    console.log('👁️ Viewing interpretation:', interpretationId);
+    
+    fetch(`/api/ai/interpretation/${interpretationId}/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showInterpretationModal(data.interpretation);
+            } else {
+                alert('Error loading interpretation: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('❌ Error loading interpretation:', error);
+            alert('Error loading interpretation');
+        });
+}
+
+// Show interpretation modal
+function showInterpretationModal(interpretation) {
+    const modal = document.createElement('div');
+    modal.className = 'modal fade';
+    modal.innerHTML = `
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-robot"></i> ${interpretation.title}
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="interpretation-detail">
+                        <div class="confidence-badge mb-3">
+                            <span class="badge bg-${interpretation.confidence_score > 0.7 ? 'success' : interpretation.confidence_score > 0.4 ? 'warning' : 'secondary'}">
+                                Confidence: ${Math.round(interpretation.confidence_score * 100)}%
+                            </span>
+                        </div>
+                        <div class="interpretation-text">
+                            ${interpretation.content.replace(/\n/g, '<br>')}
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="copyInterpretationText('${interpretation.content}')">
+                        <i class="bi bi-clipboard"></i> Copy
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    const bsModal = new bootstrap.Modal(modal);
+    bsModal.show();
+    
+    // Clean up when modal is hidden
+    modal.addEventListener('hidden.bs.modal', () => {
+        document.body.removeChild(modal);
+    });
+}
+
+// Update interpretation feedback
+function updateInterpretationFeedback(interpretationId, isHelpful) {
+    console.log('👍 Updating feedback for interpretation:', interpretationId, 'isHelpful:', isHelpful);
+    
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
+                     getCookie('csrftoken') || 
+                     '{{ csrf_token }}';
+    
+    fetch(`/api/ai/interpretation/${interpretationId}/feedback/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({
+            is_helpful: isHelpful
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update UI to reflect feedback
+            const feedbackBtns = document.querySelectorAll(`[onclick*="updateInterpretationFeedback(${interpretationId}"]`);
+            feedbackBtns.forEach(btn => btn.classList.remove('active'));
+            
+            const targetBtn = document.querySelector(`[onclick="updateInterpretationFeedback(${interpretationId}, ${isHelpful})"]`);
+            if (targetBtn) {
+                targetBtn.classList.add('active');
+            }
+            
+            console.log('✅ Feedback updated successfully');
+        } else {
+            console.error('❌ Error updating feedback:', data.error);
+            alert('Error updating feedback: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('❌ Error updating feedback:', error);
+        alert('Error updating feedback');
+    });
+}
+
+// Copy interpretation text
+function copyInterpretationText(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        // Show success message
+        const button = document.querySelector('[onclick="copyInterpretationText(\'' + text + '\')"]');
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="bi bi-check"></i> Copied!';
+        button.classList.add('btn-success');
+        button.classList.remove('btn-primary');
+        
+        setTimeout(() => {
+            button.innerHTML = originalText;
+            button.classList.remove('btn-success');
+            button.classList.add('btn-primary');
+        }, 2000);
+    });
+}
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    initializeAnalysisHistory();
+});
+</script>

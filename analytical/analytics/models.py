@@ -1461,6 +1461,123 @@ class AnalysisResult(models.Model):
         }
 
 
+class AIInterpretation(models.Model):
+    """
+    AI Interpretation model for storing AI-generated analysis interpretations
+    """
+    # Basic Information
+    title = models.CharField(
+        max_length=255,
+        help_text="Interpretation title"
+    )
+    content = models.TextField(
+        help_text="AI-generated interpretation content"
+    )
+    
+    # Analysis Context
+    analysis_result = models.ForeignKey(
+        AnalysisResult,
+        on_delete=models.CASCADE,
+        related_name='ai_interpretations',
+        help_text="Analysis result this interpretation relates to"
+    )
+    analysis_type = models.CharField(
+        max_length=50,
+        choices=[
+            ('text', 'Text Analysis'),
+            ('table', 'Table Analysis'),
+            ('chart', 'Chart Analysis'),
+            ('mixed', 'Mixed Analysis'),
+        ],
+        help_text="Type of analysis being interpreted"
+    )
+    
+    # AI Context
+    llm_model = models.CharField(
+        max_length=100,
+        help_text="LLM model used for interpretation"
+    )
+    confidence_score = models.FloatField(
+        default=0.0,
+        validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],
+        help_text="Confidence score for the interpretation"
+    )
+    token_count = models.PositiveIntegerField(
+        default=0,
+        help_text="Number of tokens used for interpretation"
+    )
+    
+    # Interpretation Metadata
+    interpretation_data = models.JSONField(
+        default=dict,
+        help_text="Original analysis data that was interpreted"
+    )
+    context = models.JSONField(
+        default=dict,
+        help_text="Additional context used for interpretation"
+    )
+    
+    # Quality Metrics
+    quality_score = models.FloatField(
+        default=0.0,
+        validators=[MinValueValidator(0.0), MaxValueValidator(1.0)],
+        help_text="Quality score for the interpretation"
+    )
+    is_helpful = models.BooleanField(
+        default=None,
+        null=True,
+        blank=True,
+        help_text="User feedback on interpretation helpfulness"
+    )
+    
+    # Relationships
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='ai_interpretations',
+        help_text="User who requested this interpretation"
+    )
+    session = models.ForeignKey(
+        AnalysisSession,
+        on_delete=models.CASCADE,
+        related_name='ai_interpretations',
+        help_text="Session this interpretation belongs to"
+    )
+    
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        db_table = 'analytics_ai_interpretation'
+        verbose_name = 'AI Interpretation'
+        verbose_name_plural = 'AI Interpretations'
+        indexes = [
+            models.Index(fields=['user', 'created_at']),
+            models.Index(fields=['analysis_result']),
+            models.Index(fields=['session']),
+            models.Index(fields=['analysis_type']),
+            models.Index(fields=['confidence_score']),
+        ]
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"AI Interpretation for {self.analysis_result.name} ({self.analysis_type})"
+    
+    def get_summary(self):
+        """Get a summary of the interpretation"""
+        return {
+            'id': self.id,
+            'title': self.title,
+            'content_preview': self.content[:200] + '...' if len(self.content) > 200 else self.content,
+            'analysis_type': self.analysis_type,
+            'confidence_score': self.confidence_score,
+            'quality_score': self.quality_score,
+            'created_at': self.created_at,
+            'is_helpful': self.is_helpful
+        }
+
+
 class ChatMessage(models.Model):
     """
     ChatMessage model with LLM context for AI chat functionality

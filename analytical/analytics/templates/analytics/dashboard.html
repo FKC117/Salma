@@ -235,36 +235,6 @@
         margin-top: 4px;
     }
 
-    /* Cursor-style Welcome Screen */
-    .welcome-screen {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 100%;
-        text-align: center;
-        padding: 40px;
-    }
-
-    .welcome-icon {
-        font-size: 64px;
-        color: var(--cursor-text-muted);
-        margin-bottom: 24px;
-    }
-
-    .welcome-title {
-        font-size: 24px;
-        font-weight: 600;
-        color: var(--cursor-text-primary);
-        margin-bottom: 12px;
-    }
-
-    .welcome-subtitle {
-        font-size: 16px;
-        color: var(--cursor-text-secondary);
-        margin-bottom: 32px;
-        max-width: 400px;
-    }
 
     /* Cursor-style Search */
     .search-box {
@@ -343,17 +313,6 @@
             justify-content: center;
         }
         
-        .welcome-screen {
-            padding: 20px;
-        }
-        
-        .welcome-title {
-            font-size: 20px;
-        }
-        
-        .welcome-subtitle {
-            font-size: 14px;
-        }
     }
 
     @media (max-width: 480px) {
@@ -369,17 +328,6 @@
             font-size: 0.875rem;
         }
         
-        .welcome-icon {
-            font-size: 48px;
-        }
-        
-        .welcome-title {
-            font-size: 18px;
-        }
-        
-        .welcome-subtitle {
-            font-size: 13px;
-        }
     }
 
     /* Cursor-style Animations */
@@ -716,6 +664,7 @@
 {% endblock %}
 
 {% block content %}
+{% csrf_token %}
 <div class="dashboard-container">
     <!-- Left Sidebar: Tools Panel -->
     <div class="tools-panel" id="tools-panel">
@@ -789,27 +738,20 @@
         
         <div class="dashboard-content">
             <div id="dashboard-content">
-                <!-- Welcome Screen -->
-                <div class="welcome-screen fade-in">
-                    <div class="welcome-icon">
-                        <i class="bi bi-graph-up"></i>
-                    </div>
-                    <div class="welcome-title">Welcome to Analytical</div>
-                    <div class="welcome-subtitle">
-                        Upload your dataset and start analyzing with powerful statistical tools and AI assistance.
-                    </div>
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadModal">
-                        <i class="bi bi-upload me-2"></i>
-                        Upload Dataset
-                    </button>
-                </div>
                 
                 <!-- Analysis Results will be loaded here via HTMX -->
                 
-                <!-- Analysis Results Container -->
-                <div id="analysisResultsContainer" class="analysis-results-container">
-                    <!-- Analysis results will be displayed here -->
-                </div>
+        <!-- Analysis History Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                {% include 'analytics/partials/analysis_history.html' %}
+            </div>
+        </div>
+        
+        <!-- Analysis Results Container -->
+        <div id="analysisResultsContainer" class="analysis-results-container">
+            <!-- Analysis results will be displayed here -->
+        </div>
             </div>
         </div>
     </div>
@@ -1297,11 +1239,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 datasetStats.textContent = `${response.columns.length} columns`;
             }
             
-            // Hide welcome screen if it's visible
-            const welcomeScreen = document.querySelector('.welcome-screen');
-            if (welcomeScreen) {
-                welcomeScreen.style.display = 'none';
-            }
         }
     };
     
@@ -1310,11 +1247,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const datasetInfoDisplay = document.getElementById('dataset-info-display');
         datasetInfoDisplay.style.display = 'none';
         
-        // Show welcome screen
-        const welcomeScreen = document.querySelector('.welcome-screen');
-        if (welcomeScreen) {
-            welcomeScreen.style.display = 'flex';
-        }
     };
     
     // Smart Content Formatter
@@ -1957,6 +1889,228 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 });
+
+// AI Interpretation Function
+function interpretAnalysisResult(analysisId) {
+    console.log('🔍 Starting AI interpretation for analysis:', analysisId);
+    
+    // Find the analysis result container
+    const analysisContainer = document.querySelector(`[data-analysis-id="${analysisId}"]`);
+    if (!analysisContainer) {
+        console.error('Analysis container not found:', analysisId);
+        return;
+    }
+    
+    // Extract analysis data from the container
+    const analysisData = extractAnalysisData(analysisContainer);
+    const analysisType = analysisContainer.classList.contains('table-analysis-result') ? 'table' : 
+                        analysisContainer.classList.contains('chart-analysis-result') ? 'chart' : 'text';
+    
+    console.log('📊 Analysis data extracted:', analysisData);
+    console.log('📈 Analysis type:', analysisType);
+    
+    // Show loading state
+    showInterpretationLoading(analysisId);
+    
+    // Get CSRF token
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
+                     getCookie('csrftoken') || 
+                     '{{ csrf_token }}';
+    
+    // Make API request
+    fetch('/api/ai/interpret-analysis/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({
+            analysis_data: analysisData,
+            analysis_type: analysisType,
+            context: {
+                analysis_id: analysisId,
+                timestamp: new Date().toISOString()
+            }
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('🤖 AI interpretation response:', data);
+        
+        if (data.success) {
+            showInterpretationResult(analysisId, data.interpretation, data.confidence);
+        } else {
+            showInterpretationError(analysisId, data.error || 'Failed to generate interpretation');
+        }
+    })
+    .catch(error => {
+        console.error('❌ Error getting AI interpretation:', error);
+        showInterpretationError(analysisId, 'Network error occurred');
+    });
+}
+
+function extractAnalysisData(container) {
+    const title = container.querySelector('.analysis-title')?.textContent || 'Untitled Analysis';
+    const description = container.querySelector('.analysis-description')?.textContent || '';
+    
+    // Extract table data if it's a table analysis
+    let content = '';
+    const table = container.querySelector('table');
+    if (table) {
+        const rows = Array.from(table.querySelectorAll('tr')).map(row => 
+            Array.from(row.querySelectorAll('th, td')).map(cell => cell.textContent.trim())
+        );
+        content = `Table Data:\n${rows.map(row => row.join('\t')).join('\n')}`;
+    } else {
+        // Extract text content
+        const textElements = container.querySelectorAll('p, div, span');
+        content = Array.from(textElements).map(el => el.textContent.trim()).join('\n');
+    }
+    
+    return {
+        title: title,
+        description: description,
+        content: content,
+        timestamp: new Date().toISOString()
+    };
+}
+
+function showInterpretationLoading(analysisId) {
+    const button = document.querySelector(`[onclick="interpretAnalysisResult('${analysisId}')"]`);
+    if (button) {
+        button.innerHTML = '<i class="bi bi-hourglass-split"></i> Analyzing...';
+        button.disabled = true;
+    }
+}
+
+function showInterpretationResult(analysisId, interpretation, confidence) {
+    // Create interpretation modal
+    const modal = document.createElement('div');
+    modal.className = 'modal fade';
+    modal.innerHTML = `
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-robot"></i> AI Interpretation
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="interpretation-content">
+                        <div class="confidence-badge mb-3">
+                            <span class="badge bg-${confidence > 0.7 ? 'success' : confidence > 0.4 ? 'warning' : 'secondary'}">
+                                Confidence: ${Math.round(confidence * 100)}%
+                            </span>
+                        </div>
+                        <div class="interpretation-text">
+                            ${interpretation.replace(/\n/g, '<br>')}
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="copyInterpretation('${analysisId}')">
+                        <i class="bi bi-clipboard"></i> Copy
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    const bsModal = new bootstrap.Modal(modal);
+    bsModal.show();
+    
+    // Clean up when modal is hidden
+    modal.addEventListener('hidden.bs.modal', () => {
+        document.body.removeChild(modal);
+    });
+    
+    // Reset button
+    resetInterpretationButton(analysisId);
+}
+
+function showInterpretationError(analysisId, error) {
+    // Create error modal
+    const modal = document.createElement('div');
+    modal.className = 'modal fade';
+    modal.innerHTML = `
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-danger">
+                        <i class="bi bi-exclamation-triangle"></i> Interpretation Error
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Sorry, we couldn't generate an AI interpretation at this time.</p>
+                    <p class="text-muted small">Error: ${error}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    const bsModal = new bootstrap.Modal(modal);
+    bsModal.show();
+    
+    // Clean up when modal is hidden
+    modal.addEventListener('hidden.bs.modal', () => {
+        document.body.removeChild(modal);
+    });
+    
+    // Reset button
+    resetInterpretationButton(analysisId);
+}
+
+function resetInterpretationButton(analysisId) {
+    const button = document.querySelector(`[onclick="interpretAnalysisResult('${analysisId}')"]`);
+    if (button) {
+        button.innerHTML = '<i class="bi bi-robot"></i> Interpret Data by AI';
+        button.disabled = false;
+    }
+}
+
+function copyInterpretation(analysisId) {
+    const interpretationText = document.querySelector('.interpretation-text')?.textContent;
+    if (interpretationText) {
+        navigator.clipboard.writeText(interpretationText).then(() => {
+            // Show success message
+            const button = document.querySelector('[onclick="copyInterpretation(\'' + analysisId + '\')"]');
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="bi bi-check"></i> Copied!';
+            button.classList.add('btn-success');
+            button.classList.remove('btn-primary');
+            
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.classList.remove('btn-success');
+                button.classList.add('btn-primary');
+            }, 2000);
+        });
+    }
+}
+
+// Utility function to get CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 </script>
 
 <!-- Dataset Switcher Modal -->
