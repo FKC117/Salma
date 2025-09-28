@@ -426,6 +426,26 @@ class ChatViewSet(viewsets.ViewSet):
     Chat message endpoints
     """
     
+    def _format_message_content(self, content):
+        """
+        Format message content with professional styling
+        """
+        import re
+        
+        # Convert markdown-style formatting to HTML
+        # Bold text
+        content = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', content)
+        # Italic text
+        content = re.sub(r'\*(.*?)\*', r'<em>\1</em>', content)
+        # Code blocks
+        content = re.sub(r'```(.*?)```', r'<pre><code>\1</code></pre>', content, flags=re.DOTALL)
+        # Inline code
+        content = re.sub(r'`(.*?)`', r'<code>\1</code>', content)
+        # Line breaks
+        content = content.replace('\n', '<br>')
+        
+        return content
+    
     @action(detail=False, methods=['post'])
     def messages(self, request):
         """
@@ -465,25 +485,60 @@ class ChatViewSet(viewsets.ViewSet):
             )
             
             if result['success']:
-                return Response({
-                    'success': True,
-                    'response': result['response'],
-                    'message_id': result['message_id'],
-                    'token_usage': result.get('token_usage', {}),
-                    'message': 'Message processed successfully'
-                }, status=status.HTTP_200_OK)
+                # Return formatted HTML response for HTMX
+                from django.template.loader import render_to_string
+                from django.utils import timezone
+                from django.http import HttpResponse
+                
+                # Format the response content
+                formatted_content = self._format_message_content(result['response'])
+                
+                # Render the chat message partial
+                html_response = render_to_string('analytics/partials/chat_message.html', {
+                    'message_type': 'assistant',
+                    'message_content': formatted_content,
+                    'timestamp': timezone.now().strftime('%H:%M'),
+                    'message_metadata': True,
+                    'token_count': result.get('total_tokens', 0),
+                    'cost': result.get('cost', 0.0)
+                })
+                
+                return HttpResponse(html_response, content_type='text/html')
             else:
-                return Response({
-                    'success': False,
-                    'error': result.get('error', 'Message processing failed')
-                }, status=status.HTTP_400_BAD_REQUEST)
+                # Return error as HTML
+                from django.utils import timezone
+                from django.http import HttpResponse
+                
+                error_html = f'''
+                <div class="chat-message slide-in">
+                    <div class="message-content assistant error">
+                        <div class="message-body">
+                            <i class="bi bi-exclamation-triangle text-warning"></i>
+                            <strong>Error:</strong> {result.get('error', 'Message processing failed')}
+                        </div>
+                    </div>
+                    <div class="message-time">{timezone.now().strftime('%H:%M')}</div>
+                </div>
+                '''
+                return HttpResponse(error_html, content_type='text/html')
                 
         except Exception as e:
             logger.error(f"Chat message error: {str(e)}", exc_info=True)
-            return Response({
-                'success': False,
-                'error': 'Internal server error'
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            from django.utils import timezone
+            from django.http import HttpResponse
+            
+            error_html = f'''
+            <div class="chat-message slide-in">
+                <div class="message-content assistant error">
+                    <div class="message-body">
+                        <i class="bi bi-exclamation-triangle text-danger"></i>
+                        <strong>System Error:</strong> Internal server error. Please try again.
+                    </div>
+                </div>
+                <div class="message-time">{timezone.now().strftime('%H:%M')}</div>
+            </div>
+            '''
+            return HttpResponse(error_html, content_type='text/html', status=500)
 
 
 class ToolsViewSet(viewsets.ViewSet):

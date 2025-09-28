@@ -1,0 +1,22 @@
+<!-- Professional Chat Message Partial -->
+<div class="chat-message slide-in">
+    <div class="message-content {{ message_type }}">
+        <div class="message-body">
+            {{ message_content|safe }}
+        </div>
+        {% if message_metadata %}
+        <div class="message-metadata">
+            <small class="text-muted">
+                <i class="bi bi-clock"></i> {{ timestamp }}
+                {% if token_count %}
+                | <i class="bi bi-cpu"></i> {{ token_count }} tokens
+                {% endif %}
+                {% if cost %}
+                | <i class="bi bi-currency-dollar"></i> ${{ cost|floatformat:4 }}
+                {% endif %}
+            </small>
+        </div>
+        {% endif %}
+    </div>
+    <div class="message-time">{{ timestamp }}</div>
+</div>

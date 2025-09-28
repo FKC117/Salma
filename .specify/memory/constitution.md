@@ -90,6 +90,9 @@ Agentic AI MUST be implemented for end-to-end autonomous analysis; Agent control
 ### XXIX. RAG (Retrieval-Augmented Generation) System with Redis Vector Database (NON-NEGOTIABLE)
 RAG system MUST be implemented using Redis as the vector database; Redis MUST store all vector embeddings with 'analytical:rag:' key prefix; Dataset-aware indexing MUST be implemented for per-dataset knowledge; Global knowledge indexing MUST be implemented for tool documentation and patterns; VectorNote model MUST store embeddings, metadata, and content; RAG retrieval MUST be integrated into agent planning and execution phases; All RAG queries MUST be logged in audit trail with correlation IDs; RAG token usage MUST be tracked in existing token management system; Multi-tenancy MUST be enforced with dataset_id filtering; PII masking MUST be implemented for all indexed content; RAG search results MUST be integrated into LLM context; This is CRITICAL for grounding agent outputs in real facts and reducing hallucinations.
 
+### XXX. UI Development Feedback Loop (NON-NEGOTIABLE)
+All UI development MUST follow a structured feedback loop process; Each UI task MUST be implemented incrementally; User MUST test each implementation step and provide feedback; Feedback MUST be incorporated before proceeding to next step; UI testing MUST be performed in real browser environment; Visual feedback MUST be validated against design requirements; User experience MUST be validated at each step; Implementation MUST be adjusted based on user feedback; This is CRITICAL for ensuring UI quality and user satisfaction.
+
 ## Technology Stack & Configuration
 
 ### Backend Requirements
