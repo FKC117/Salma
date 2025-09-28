@@ -415,6 +415,13 @@ function openUploadModal() {
 
 // Initialize dataset list when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    new DatasetList();
+    window.datasetList = new DatasetList();
+    
+    // Global refresh function
+    window.refreshDatasetList = function() {
+        if (window.datasetList) {
+            window.datasetList.loadDatasets();
+        }
+    };
 });
 </script>

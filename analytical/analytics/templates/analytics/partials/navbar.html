@@ -284,30 +284,68 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Handle upload response
-    document.body.addEventListener('htmx:afterOnLoad', function(evt) {
-        if (evt.detail.elt.id === 'upload-results') {
-            try {
-                const response = JSON.parse(evt.detail.xhr.responseText);
-                if (response.success) {
-                    // Close modal after successful upload
-                    const uploadModal = bootstrap.Modal.getInstance(document.getElementById('uploadModal'));
-                    if (uploadModal) {
-                        uploadModal.hide();
-                    }
-                    
-                    // Show success notification
-                    showNotification('Dataset uploaded successfully!', 'success');
-                    
-                    // Update dashboard with dataset info
-                    updateDashboardDatasetInfo(response);
-                }
-            } catch (e) {
-                // Handle non-JSON responses
-                console.log('Upload response:', evt.detail.xhr.responseText);
-            }
+    // Handle upload response - use multiple event listeners
+    document.body.addEventListener('htmx:afterRequest', function(evt) {
+        console.log('HTMX afterRequest event:', evt.detail);
+        if (evt.detail.target && evt.detail.target.id === 'upload-results') {
+            console.log('Upload response received:', evt.detail.xhr.responseText);
+            handleUploadResponse(evt.detail.xhr.responseText);
         }
     });
+    
+    document.body.addEventListener('htmx:afterOnLoad', function(evt) {
+        console.log('HTMX afterOnLoad event:', evt.detail);
+        if (evt.detail.elt && evt.detail.elt.id === 'upload-results') {
+            console.log('Upload response received (afterOnLoad):', evt.detail.xhr.responseText);
+            handleUploadResponse(evt.detail.xhr.responseText);
+        }
+    });
+    
+    function handleUploadResponse(responseText) {
+        try {
+            const response = JSON.parse(responseText);
+            console.log('Parsed response:', response);
+            if (response.success) {
+                // Close modal after successful upload
+                const uploadModal = bootstrap.Modal.getInstance(document.getElementById('uploadModal'));
+                if (uploadModal) {
+                    uploadModal.hide();
+                }
+                
+                // Show success notification
+                showNotification('Dataset uploaded successfully!', 'success');
+                
+                // Update dashboard with dataset info
+                updateDashboardDatasetInfo(response);
+                
+                // Dispatch dataset uploaded event to refresh lists
+                document.dispatchEvent(new CustomEvent('datasetUploaded', {
+                    detail: { 
+                        dataset: response.dataset_info,
+                        dataset_id: response.dataset_id,
+                        session_id: response.session_id
+                    }
+                }));
+                
+                // Refresh dataset switcher
+                if (typeof window.refreshDatasetSwitcher === 'function') {
+                    window.refreshDatasetSwitcher();
+                }
+                
+                // Refresh dataset list
+                if (typeof window.refreshDatasetList === 'function') {
+                    window.refreshDatasetList();
+                }
+            } else {
+                console.error('Upload failed:', response.error);
+                showNotification('Upload failed: ' + response.error, 'error');
+            }
+        } catch (e) {
+            console.error('Error parsing upload response:', e);
+            console.log('Raw response:', responseText);
+            showNotification('Upload failed: Invalid response', 'error');
+        }
+    }
     
     // Show notification function
     function showNotification(message, type) {

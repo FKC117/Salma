@@ -503,6 +503,12 @@ class CompactDatasetSwitcher {
         }
     }
     
+    // Refresh datasets (called after upload)
+    async refreshDatasets() {
+        console.log('🔄 Refreshing dataset switcher...');
+        await this.loadDatasets();
+    }
+    
     renderDatasetGrid() {
         const container = document.getElementById('compactDatasetGrid');
         if (!container) return;
@@ -742,8 +748,23 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Modal element exists:', !!document.getElementById('compactDatasetSwitcherModal'));
     
     try {
-        new CompactDatasetSwitcher();
+        window.compactDatasetSwitcher = new CompactDatasetSwitcher();
         console.log('CompactDatasetSwitcher initialized successfully');
+        
+        // Global refresh function
+        window.refreshDatasetSwitcher = function() {
+            if (window.compactDatasetSwitcher) {
+                window.compactDatasetSwitcher.refreshDatasets();
+            }
+        };
+        
+        // Listen for dataset upload events
+        document.addEventListener('datasetUploaded', function(event) {
+            console.log('📊 Dataset uploaded, refreshing switcher...');
+            if (window.compactDatasetSwitcher) {
+                window.compactDatasetSwitcher.refreshDatasets();
+            }
+        });
     } catch (error) {
         console.error('Error initializing CompactDatasetSwitcher:', error);
     }

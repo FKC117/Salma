@@ -1222,25 +1222,63 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Update dashboard with dataset info
     window.updateDashboardDatasetInfo = function(response) {
-        const datasetInfoDisplay = document.getElementById('dataset-info-display');
-        const datasetName = document.getElementById('current-dataset-name');
-        const datasetStats = document.getElementById('current-dataset-stats');
+        console.log('Updating dashboard with dataset info:', response);
         
         if (response && response.dataset_id) {
-            // Show dataset info
-            datasetInfoDisplay.style.display = 'block';
-            
-            // Use dataset info if available, otherwise fallback to message parsing
-            if (response.dataset_info) {
-                datasetName.textContent = response.dataset_info.name;
-                datasetStats.textContent = `${response.dataset_info.row_count || 0} rows × ${response.dataset_info.column_count || 0} columns`;
-            } else {
-                datasetName.textContent = response.message.replace('Dataset "', '').replace('" uploaded successfully', '');
-                datasetStats.textContent = `${response.columns.length} columns`;
+            // Store session ID if available
+            if (response.session_id) {
+                localStorage.setItem('current_session_id', response.session_id);
+                // Update the session in the backend
+                updateSessionInBackend(response.session_id);
             }
             
+            // Refresh analysis history
+            if (typeof window.loadAnalysisHistory === 'function') {
+                window.loadAnalysisHistory();
+            }
+            
+            // Refresh dataset switcher to show new dataset
+            if (typeof window.refreshDatasetSwitcher === 'function') {
+                window.refreshDatasetSwitcher();
+            }
         }
     };
+    
+    // Function to get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    // Function to update session in backend
+    function updateSessionInBackend(sessionId) {
+        // Update the session ID in the backend session
+        fetch('/api/sessions/update-current/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({ session_id: sessionId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Session updated in backend:', data);
+        })
+        .catch(error => {
+            console.error('Error updating session in backend:', error);
+        });
+    }
     
     // Clear current dataset
     window.clearCurrentDataset = function() {
@@ -1890,7 +1928,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 });
 
-// AI Interpretation Function
+// AI Interpretation Function - Send to Chat
 function interpretAnalysisResult(analysisId) {
     console.log('🔍 Starting AI interpretation for analysis:', analysisId);
     
@@ -1914,39 +1952,11 @@ function interpretAnalysisResult(analysisId) {
     
     // Get CSRF token
     const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
-                     getCookie('csrftoken') || 
-                     '{{ csrf_token }}';
+                       getCookie('csrftoken') || 
+                       '{{ csrf_token }}';
     
-    // Make API request
-    fetch('/api/ai/interpret-analysis/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': csrfToken
-        },
-        body: JSON.stringify({
-            analysis_data: analysisData,
-            analysis_type: analysisType,
-            context: {
-                analysis_id: analysisId,
-                timestamp: new Date().toISOString()
-            }
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('🤖 AI interpretation response:', data);
-        
-        if (data.success) {
-            showInterpretationResult(analysisId, data.interpretation, data.confidence);
-        } else {
-            showInterpretationError(analysisId, data.error || 'Failed to generate interpretation');
-        }
-    })
-    .catch(error => {
-        console.error('❌ Error getting AI interpretation:', error);
-        showInterpretationError(analysisId, 'Network error occurred');
-    });
+    // Send interpretation request to chat
+    sendInterpretationToChat(analysisData, analysisType, analysisId, csrfToken);
 }
 
 function extractAnalysisData(container) {
@@ -1983,89 +1993,72 @@ function showInterpretationLoading(analysisId) {
     }
 }
 
-function showInterpretationResult(analysisId, interpretation, confidence) {
-    // Create interpretation modal
-    const modal = document.createElement('div');
-    modal.className = 'modal fade';
-    modal.innerHTML = `
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">
-                        <i class="bi bi-robot"></i> AI Interpretation
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="interpretation-content">
-                        <div class="confidence-badge mb-3">
-                            <span class="badge bg-${confidence > 0.7 ? 'success' : confidence > 0.4 ? 'warning' : 'secondary'}">
-                                Confidence: ${Math.round(confidence * 100)}%
-                            </span>
-                        </div>
-                        <div class="interpretation-text">
-                            ${interpretation.replace(/\n/g, '<br>')}
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="copyInterpretation('${analysisId}')">
-                        <i class="bi bi-clipboard"></i> Copy
-                    </button>
-                </div>
-            </div>
-        </div>
-    `;
+function sendInterpretationToChat(analysisData, analysisType, analysisId, csrfToken) {
+    // Create a user message in chat
+    const userMessage = `Please interpret this ${analysisType} analysis: "${analysisData.title}"`;
     
-    document.body.appendChild(modal);
-    const bsModal = new bootstrap.Modal(modal);
-    bsModal.show();
+    // Add user message to chat
+    addMessageToChat(userMessage, 'user');
     
-    // Clean up when modal is hidden
-    modal.addEventListener('hidden.bs.modal', () => {
-        document.body.removeChild(modal);
+    // Send to AI interpretation API
+    fetch('/api/ai/interpret-analysis/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({
+            analysis_data: analysisData,
+            analysis_type: analysisType,
+            context: {
+                analysis_id: analysisId,
+                timestamp: new Date().toISOString()
+            }
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('🤖 AI interpretation response:', data);
+        
+        if (data.success) {
+            // Add AI response to chat
+            addMessageToChat(data.interpretation, 'assistant');
+        } else {
+            addMessageToChat(`Sorry, I couldn't interpret this analysis. Error: ${data.error || 'Unknown error'}`, 'assistant');
+        }
+    })
+    .catch(error => {
+        console.error('❌ Error getting AI interpretation:', error);
+        addMessageToChat('Sorry, I encountered an error while interpreting this analysis.', 'assistant');
+    })
+    .finally(() => {
+        // Reset button
+        resetInterpretationButton(analysisId);
     });
-    
-    // Reset button
-    resetInterpretationButton(analysisId);
 }
 
-function showInterpretationError(analysisId, error) {
-    // Create error modal
-    const modal = document.createElement('div');
-    modal.className = 'modal fade';
-    modal.innerHTML = `
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title text-danger">
-                        <i class="bi bi-exclamation-triangle"></i> Interpretation Error
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Sorry, we couldn't generate an AI interpretation at this time.</p>
-                    <p class="text-muted small">Error: ${error}</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    `;
+function addMessageToChat(message, sender) {
+    const chatMessages = document.getElementById('chat-messages');
+    if (!chatMessages) return;
     
-    document.body.appendChild(modal);
-    const bsModal = new bootstrap.Modal(modal);
-    bsModal.show();
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'chat-message slide-in';
     
-    // Clean up when modal is hidden
-    modal.addEventListener('hidden.bs.modal', () => {
-        document.body.removeChild(modal);
-    });
+    const messageContent = document.createElement('div');
+    messageContent.className = `message-content ${sender}`;
+    messageContent.innerHTML = `<p class="mb-0">${message}</p>`;
     
-    // Reset button
-    resetInterpretationButton(analysisId);
+    const messageTime = document.createElement('div');
+    messageTime.className = 'message-time';
+    messageTime.textContent = 'Just now';
+    
+    messageDiv.appendChild(messageContent);
+    messageDiv.appendChild(messageTime);
+    
+    chatMessages.appendChild(messageDiv);
+    
+    // Scroll to bottom
+    chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
 function resetInterpretationButton(analysisId) {
@@ -2073,26 +2066,6 @@ function resetInterpretationButton(analysisId) {
     if (button) {
         button.innerHTML = '<i class="bi bi-robot"></i> Interpret Data by AI';
         button.disabled = false;
-    }
-}
-
-function copyInterpretation(analysisId) {
-    const interpretationText = document.querySelector('.interpretation-text')?.textContent;
-    if (interpretationText) {
-        navigator.clipboard.writeText(interpretationText).then(() => {
-            // Show success message
-            const button = document.querySelector('[onclick="copyInterpretation(\'' + analysisId + '\')"]');
-            const originalText = button.innerHTML;
-            button.innerHTML = '<i class="bi bi-check"></i> Copied!';
-            button.classList.add('btn-success');
-            button.classList.remove('btn-primary');
-            
-            setTimeout(() => {
-                button.innerHTML = originalText;
-                button.classList.remove('btn-success');
-                button.classList.add('btn-primary');
-            }, 2000);
-        });
     }
 }
 

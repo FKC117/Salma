@@ -366,6 +366,12 @@ class AnalysisToolsModal {
                 this.updateToolParameters();
             }
         });
+        
+        // Listen for dataset changes to refresh tool configurations
+        document.addEventListener('datasetChanged', (event) => {
+            console.log('Dataset changed, refreshing tool configurations...');
+            this.refreshToolConfigurations();
+        });
     }
     
     async loadTools() {
@@ -389,6 +395,14 @@ class AnalysisToolsModal {
             }
         } catch (error) {
             console.error('Error loading tools:', error);
+        }
+    }
+    
+    async refreshToolConfigurations() {
+        // If a tool is currently selected, refresh its configuration
+        if (this.selectedTool) {
+            console.log('Refreshing configuration for tool:', this.selectedTool);
+            await this.openToolConfiguration();
         }
     }
     

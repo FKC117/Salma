@@ -35,6 +35,7 @@ urlpatterns = [
     path('upload/', views.UploadViewSet.as_view({'post': 'upload'}), name='upload_file'),
     path('api/datasets/', views.api_datasets_list, name='api_datasets_list'),
     path('api/sessions/create/', views.api_create_session, name='api_create_session'),
+    path('api/sessions/update-current/', views.api_update_current_session, name='api_update_current_session'),
     path('api/sessions/current/', views.api_current_session, name='api_current_session'),
     path('analysis/execute/', views.AnalysisViewSet.as_view({'post': 'execute'}), name='analysis_execute'),
     path('rag/upsert/', views.RAGViewSet.as_view({'post': 'upsert'}), name='rag_upsert'),
