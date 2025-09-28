@@ -159,32 +159,6 @@
             <h5 class="section-title">
                 <i class="bi bi-graph-up"></i> Data Visualizations
             </h5>
-            <!-- Debug: Visualizations data -->
-            <div style="background: #f8f9fa; padding: 10px; margin: 10px 0; border-radius: 5px; font-size: 12px;">
-                <strong>Debug Info:</strong><br>
-                Visualizations type: {{ visualizations|default:"None" }}<br>
-                Histograms count: {{ visualizations.histograms|length|default:"0" }}<br>
-                Box plots count: {{ visualizations.boxplots|length|default:"0" }}<br>
-                Outliers count: {{ visualizations.outliers|length|default:"0" }}<br>
-                {% if visualizations.histograms %}
-                    Histogram keys: {{ visualizations.histograms.keys|join:", " }}<br>
-                    First row key: {{ table_data.rows.0.0|default:"No rows" }}<br>
-                    First histogram preview: {{ visualizations.histograms|get_item:table_data.rows.0.0|slice:":50" }}...<br>
-                    <br><strong>Template Filter Test:</strong><br>
-                    Test dict access: {{ visualizations.histograms|get_item:"radius_mean"|slice:":20" }}...<br>
-                    <br><strong>Test Image Display:</strong><br>
-                    {% for column_name, histogram_data in visualizations.histograms.items %}
-                        {% if forloop.first %}
-                        <img src="data:image/png;base64,{{ histogram_data }}" 
-                             alt="Test histogram for {{ column_name }}" 
-                             style="max-width: 200px; height: auto; border: 1px solid #ccc; margin: 5px;">
-                        <br><small>Base64 length: {{ histogram_data|length }} for {{ column_name }}</small>
-                        {% endif %}
-                    {% empty %}
-                    <p style="color: red;">No histogram data found</p>
-                    {% endfor %}
-                {% endif %}
-            </div>
                 <div class="visualization-tabs">
                     <ul class="nav nav-tabs" id="vizTabs-{{ analysis_id|default:'new' }}" role="tablist">
                         <li class="nav-item" role="presentation">
@@ -209,12 +183,6 @@
                                 {% for column_name, histogram_data in visualizations.histograms.items %}
                                 <div class="histogram-card">
                                     <h6>{{ column_name }}</h6>
-                                    <!-- Debug for this specific column -->
-                                    <div style="font-size: 10px; color: #666; margin: 5px 0;">
-                                        Debug: {{ column_name }} - 
-                                        Has histograms: {{ visualizations.histograms|yesno:"Yes,No" }} - 
-                                        Has data: {{ histogram_data|yesno:"Yes,No" }}
-                                    </div>
                                 <div class="chart-container">
                                     {% if histogram_data %}
                                     <img src="data:image/png;base64,{{ histogram_data }}" 
@@ -238,12 +206,6 @@
                                 {% for column_name, boxplot_data in visualizations.boxplots.items %}
                                 <div class="boxplot-card">
                                     <h6>{{ column_name }}</h6>
-                                    <!-- Debug for this specific column -->
-                                    <div style="font-size: 10px; color: #666; margin: 5px 0;">
-                                        Debug: {{ column_name }} - 
-                                        Has boxplots: {{ visualizations.boxplots|yesno:"Yes,No" }} - 
-                                        Has data: {{ boxplot_data|yesno:"Yes,No" }}
-                                    </div>
                                 <div class="chart-container">
                                     {% if boxplot_data %}
                                     <img src="data:image/png;base64,{{ boxplot_data }}" 
