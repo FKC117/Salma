@@ -21,12 +21,15 @@ import bleach
 import openpyxl
 import json
 import re
+from django.contrib.auth import get_user_model
 
-from analytics.models import Dataset, DatasetColumn, User, AuditTrail
+from analytics.models import Dataset, DatasetColumn, AuditTrail, AnalysisSession
 from analytics.services.audit_trail_manager import AuditTrailManager
 from analytics.services.vector_note_manager import VectorNoteManager
+from analytics.services.session_manager import SessionManager
 
 logger = logging.getLogger(__name__)
+User = get_user_model()
 
 
 class FileProcessingService:
@@ -85,8 +88,25 @@ class FileProcessingService:
             existing_dataset = Dataset.objects.filter(file_hash=file_hash, user=user).first()
             if existing_dataset:
                 logger.info(f"File with hash {file_hash} already exists for user {user.id}")
+                
+                # Get or create session for existing dataset
+                session_manager = SessionManager()
+                existing_session = AnalysisSession.objects.filter(
+                    user=user, primary_dataset=existing_dataset
+                ).first()
+                
+                if not existing_session:
+                    existing_session = session_manager.create_session(
+                        user=user,
+                        dataset=existing_dataset,
+                        session_name=f"Session for {existing_dataset.name}",
+                        description=f"Analysis session for existing dataset: {existing_dataset.name}"
+                    )
+                
                 return {
+                    'success': True,
                     'dataset_id': existing_dataset.id,
+                    'session_id': existing_session.id,
                     'file_path': existing_dataset.parquet_path,
                     'columns_info': self._get_columns_info(existing_dataset),
                     'row_count': existing_dataset.row_count,
@@ -140,8 +160,19 @@ class FileProcessingService:
             # RAG Indexing: Create vector notes for the dataset
             self._index_dataset_for_rag(dataset, df, user)
             
+            # Create a session for this dataset
+            session_manager = SessionManager()
+            session = session_manager.create_session(
+                user=user,
+                dataset=dataset,
+                session_name=f"Session for {dataset.name}",
+                description=f"Analysis session created for dataset: {dataset.name}"
+            )
+            
             return {
+                'success': True,
                 'dataset_id': dataset.id,
+                'session_id': session.id,
                 'file_path': parquet_path,
                 'columns_info': self._get_columns_info(dataset),
                 'row_count': len(df),
@@ -165,7 +196,10 @@ class FileProcessingService:
                 correlation_id=correlation_id
             )
             
-            raise
+            return {
+                'success': False,
+                'error': str(e)
+            }
     
     def _validate_file_security(self, uploaded_file: UploadedFile) -> None:
         """Validate file for security threats"""
@@ -377,6 +411,9 @@ class FileProcessingService:
                               df: pd.DataFrame, parquet_path: str, 
                               file_hash: str, dataset_name: Optional[str]) -> Dataset:
         """Create Dataset record in database"""
+        # Convert dtypes to serializable format
+        data_types_dict = {col: str(dtype) for col, dtype in df.dtypes.items()}
+        
         return Dataset.objects.create(
             name=dataset_name or Path(uploaded_file.name).stem,
             description=f"Dataset uploaded from {uploaded_file.name}",
@@ -388,7 +425,7 @@ class FileProcessingService:
             parquet_size_bytes=Path(parquet_path).stat().st_size,
             row_count=len(df),
             column_count=len(df.columns),
-            data_types=df.dtypes.to_dict(),
+            data_types=data_types_dict,
             processing_status='completed',
             security_scan_passed=True,
             sanitized=True,
@@ -411,6 +448,20 @@ class FileProcessingService:
             column_data = df[column_name]
             detected_type = column_manager.detect_column_type(column_data)
             
+            # Get statistics and filter to only include valid DatasetColumn fields
+            stats = column_manager.calculate_statistics(column_data, detected_type)
+            
+            # Only include fields that exist in DatasetColumn model
+            valid_fields = {
+                'min_value', 'max_value', 'mean_value', 'median_value', 'std_deviation',
+                'top_values', 'value_counts', 'date_format', 'timezone',
+                'has_outliers', 'has_duplicates', 'is_primary_key', 'is_foreign_key',
+                'suitable_for_correlation', 'suitable_for_regression', 
+                'suitable_for_clustering', 'suitable_for_classification'
+            }
+            
+            filtered_stats = {k: v for k, v in stats.items() if k in valid_fields}
+            
             DatasetColumn.objects.create(
                 name=column_name,
                 display_name=column_name.replace('_', ' ').title(),
@@ -423,7 +474,7 @@ class FileProcessingService:
                 unique_count=column_data.nunique(),
                 unique_percentage=(column_data.nunique() / len(column_data)) * 100,
                 dataset=dataset,
-                **column_manager.calculate_statistics(column_data, detected_type)
+                **filtered_stats
             )
     
     def _get_columns_info(self, dataset: Dataset) -> List[Dict[str, Any]]:

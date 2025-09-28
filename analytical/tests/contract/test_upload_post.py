@@ -8,7 +8,8 @@ import json
 import tempfile
 import os
 from django.test import TestCase, Client
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+User = get_user_model()
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 from rest_framework import status

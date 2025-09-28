@@ -13,7 +13,8 @@ sys.path.append(os.path.join(os.path.dirname(__file__), 'analytical'))
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'analytical.settings')
 django.setup()
 
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 # Set admin password
 try:

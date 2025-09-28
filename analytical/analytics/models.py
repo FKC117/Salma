@@ -37,7 +37,7 @@ class User(AbstractUser):
         help_text="When token usage was last reset"
     )
     max_tokens_per_month = models.PositiveIntegerField(
-        default=1000000,  # 1M tokens per month
+        default=10000000,  # Increased to 10M tokens per month
         help_text="Maximum tokens allowed per month"
     )
     
@@ -1506,7 +1506,9 @@ class ChatMessage(models.Model):
         AnalysisSession,
         on_delete=models.CASCADE,
         related_name='chat_messages',
-        help_text="Session this message belongs to"
+        help_text="Session this message belongs to",
+        null=True,
+        blank=True
     )
     
     # Timestamps

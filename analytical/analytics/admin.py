@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.utils.html import format_html
 from django.urls import reverse
 from django.utils.safestring import mark_safe
+from django import forms
 from .models import (
     User, Dataset, DatasetColumn, AnalysisTool, AnalysisSession, 
     AnalysisResult, ChatMessage, AuditTrail, AgentRun, AgentStep,
@@ -112,8 +113,9 @@ class AnalysisResultAdmin(admin.ModelAdmin):
 
 @admin.register(ChatMessage)
 class ChatMessageAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user', 'message_type', 'session', 'token_count', 'created_at']
+    list_display = ['id_display', 'user_display', 'message_type_display', 'session_display', 'content_preview', 'token_count_display', 'created_at_display']
     list_filter = ['message_type', 'created_at', 'user']
+    ordering = ['-created_at']  # Order by created_at descending by default
     search_fields = ['user__username', 'content']
     readonly_fields = ['created_at', 'token_count']
     fieldsets = (
@@ -124,6 +126,101 @@ class ChatMessageAdmin(admin.ModelAdmin):
             'fields': ('token_count', 'created_at')
         })
     )
+    list_per_page = 25  # Limit the number of items per page
+    list_max_show_all = 50  # Limit the maximum number of items shown in "Show all"
+    
+    def get_queryset(self, request):
+        """Optimize queryset to include related objects"""
+        qs = super().get_queryset(request)
+        return qs.select_related('user', 'session')
+    
+    def changelist_view(self, request, extra_context=None):
+        """Add extra context to the changelist view"""
+        extra_context = extra_context or {}
+        extra_context['title'] = 'Chat Messages'
+        return super().changelist_view(request, extra_context=extra_context)
+    
+    @admin.display(description='User', ordering='user')
+    def user_display(self, obj):
+        """Display user information"""
+        try:
+            if obj.user:
+                return f"{obj.user.username} ({obj.user.email})" if obj.user.email else obj.user.username
+            return "No User"
+        except Exception as e:
+            return f"Error: {str(e)}"
+    
+    @admin.display(description='Session', ordering='session')
+    def session_display(self, obj):
+        try:
+            # Debug information
+            if not hasattr(obj, 'session'):
+                return "No session attribute"
+            if obj.session is None:
+                return "No Session"
+            if hasattr(obj.session, 'id') and hasattr(obj.session, 'name'):
+                session_name = obj.session.name if obj.session.name else 'Unnamed Session'
+                return f"Session {obj.session.id} - {session_name}"
+            elif hasattr(obj.session, 'id'):
+                return f"Session {obj.session.id} - [No Name]"
+            else:
+                return f"Session [Unknown]"
+        except Exception as e:
+            return f"Error: {str(e)}"
+    
+    @admin.display(description='Content')
+    def content_preview(self, obj):
+        """Show a preview of the content"""
+        try:
+            if obj.content:
+                # Limit content preview to 100 characters
+                content = str(obj.content)
+                return content[:100] + '...' if len(content) > 100 else content
+            return "(No content)"
+        except Exception as e:
+            return f"Error: {str(e)}"
+    
+    @admin.display(description='Type')
+    def message_type_display(self, obj):
+        """Display message type with better formatting"""
+        try:
+            type_labels = {
+                'user': 'User',
+                'assistant': 'Assistant',
+                'system': 'System',
+                'tool': 'Tool'
+            }
+            return type_labels.get(obj.message_type, obj.message_type.title())
+        except Exception as e:
+            return f"Error: {str(e)}"
+    
+    @admin.display(description='Created', ordering='created_at')
+    def created_at_display(self, obj):
+        """Display created at timestamp in a readable format"""
+        try:
+            if obj.created_at:
+                return obj.created_at.strftime('%Y-%m-%d %H:%M')
+            return "Unknown"
+        except Exception as e:
+            return f"Error: {str(e)}"
+    
+    @admin.display(description='Tokens')
+    def token_count_display(self, obj):
+        """Display token count with formatting"""
+        try:
+            if obj.token_count:
+                return f"{obj.token_count:,}"
+            return "0"
+        except Exception as e:
+            return f"Error: {str(e)}"
+    
+    @admin.display(description='ID')
+    def id_display(self, obj):
+        """Display ID with better formatting"""
+        try:
+            return f"#{obj.id}" if obj.id else "-"
+        except Exception as e:
+            return f"Error: {str(e)}"
 
 
 @admin.register(AuditTrail)
@@ -199,9 +296,9 @@ class GeneratedImageAdmin(admin.ModelAdmin):
     search_fields = ['name', 'user__username']
     readonly_fields = ['created_at', 'file_size_bytes']
     
+    @admin.display(description='File Size')
     def file_size_kb(self, obj):
         return f"{obj.file_size_bytes / 1024:.1f} KB"
-    file_size_kb.short_description = 'File Size'
 
 
 @admin.register(SandboxExecution)

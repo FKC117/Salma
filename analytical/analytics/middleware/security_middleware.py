@@ -11,7 +11,8 @@ from django.utils.deprecation import MiddlewareMixin
 from django.core.cache import cache
 from django.conf import settings
 from django.utils import timezone
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+User = get_user_model()
 from django.contrib.sessions.models import Session
 from django.core.exceptions import PermissionDenied
 from django.utils.crypto import constant_time_compare

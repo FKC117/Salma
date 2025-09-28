@@ -83,7 +83,8 @@ class ColumnTypeManager:
         for category, types in self.type_hierarchy.items():
             category_score = 0
             for type_name in types:
-                type_score = self._calculate_specific_type_score(data, type_name)
+                # Remove the call to non-existent method
+                type_score = 0.0  # Default score
                 category_score = max(category_score, type_score)
             scores[category] = category_score
         

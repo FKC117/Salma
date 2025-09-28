@@ -358,6 +358,13 @@
         from { transform: translateX(-10px); opacity: 0; }
         to { transform: translateX(0); opacity: 1; }
     }
+    
+    /* Dataset Info Display */
+    .dataset-info-display {
+        background-color: var(--cursor-bg-secondary);
+        border-bottom: 1px solid var(--cursor-border);
+        padding: 8px 16px;
+    }
 </style>
 {% endblock %}
 
@@ -486,6 +493,23 @@
                             <i class="bi bi-trash me-2"></i>Clear Results
                         </a></li>
                     </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dataset Info Display -->
+        <div id="dataset-info-display" class="dataset-info-display bg-dark border-bottom border-secondary p-2" style="display: none;">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-database me-2 text-primary"></i>
+                    <span id="current-dataset-name" class="text-light fw-semibold">No dataset loaded</span>
+                    <span class="text-muted mx-2">•</span>
+                    <small id="current-dataset-stats" class="text-muted">0 rows × 0 columns</small>
+                </div>
+                <div>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="clearCurrentDataset()">
+                        <i class="bi bi-x"></i> Clear
+                    </button>
                 </div>
             </div>
         </div>
@@ -856,6 +880,45 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         document.body.style.opacity = '1';
     }, 100);
+    
+    // Update dashboard with dataset info
+    window.updateDashboardDatasetInfo = function(response) {
+        const datasetInfoDisplay = document.getElementById('dataset-info-display');
+        const datasetName = document.getElementById('current-dataset-name');
+        const datasetStats = document.getElementById('current-dataset-stats');
+        
+        if (response && response.dataset_id) {
+            // Show dataset info
+            datasetInfoDisplay.style.display = 'block';
+            
+            // Use dataset info if available, otherwise fallback to message parsing
+            if (response.dataset_info) {
+                datasetName.textContent = response.dataset_info.name;
+                datasetStats.textContent = `${response.dataset_info.row_count || 0} rows × ${response.dataset_info.column_count || 0} columns`;
+            } else {
+                datasetName.textContent = response.message.replace('Dataset "', '').replace('" uploaded successfully', '');
+                datasetStats.textContent = `${response.columns.length} columns`;
+            }
+            
+            // Hide welcome screen if it's visible
+            const welcomeScreen = document.querySelector('.welcome-screen');
+            if (welcomeScreen) {
+                welcomeScreen.style.display = 'none';
+            }
+        }
+    };
+    
+    // Clear current dataset
+    window.clearCurrentDataset = function() {
+        const datasetInfoDisplay = document.getElementById('dataset-info-display');
+        datasetInfoDisplay.style.display = 'none';
+        
+        // Show welcome screen
+        const welcomeScreen = document.querySelector('.welcome-screen');
+        if (welcomeScreen) {
+            welcomeScreen.style.display = 'flex';
+        }
+    };
 });
 </script>
 {% endblock %}

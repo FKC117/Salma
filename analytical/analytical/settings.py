@@ -100,8 +100,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'analytical.wsgi.application'
 
-# Use Django's default User model for admin authentication
-# AUTH_USER_MODEL = 'analytics.User'  # Commented out to use default Django User
+# Use custom User model for analytics
+AUTH_USER_MODEL = 'analytics.User'  # Use custom User model
 
 
 # Database
@@ -343,13 +343,13 @@ MATPLOTLIB_BACKEND = 'Agg'  # NON-NEGOTIABLE - Use Agg backend for matplotlib
 
 # Google AI API Configuration (No .env - Direct Configuration)
 # All configuration is directly in settings.py as per project requirements
-GOOGLE_AI_API_KEY = 'AIzaSyAGnjTMByOzymQHGmFM7P6gLhfO87XPm0I'
-GOOGLE_AI_MODEL = 'gemini-1.5-flash'
+GOOGLE_AI_API_KEY = 'AIzaSyDKU6cZTFq-PyuNsedFSEQLavmXpVM1Oc4'
+GOOGLE_AI_MODEL = 'gemini-flash-latest'
 GOOGLE_AI_GENERATION_CONFIG = {
     'temperature': 0.7,
     'top_p': 0.8,
     'top_k': 40,
-    'max_output_tokens': 2048,
+    'max_output_tokens': 8192,  # Increased from 2048 to 8192 tokens
 }
 GOOGLE_AI_SAFETY_SETTINGS = [
     {
@@ -371,7 +371,7 @@ GOOGLE_AI_SAFETY_SETTINGS = [
 ]
 
 # Token Management
-MAX_TOKENS_PER_USER = 1000000  # Maximum tokens per user per month
+MAX_TOKENS_PER_USER = 10000000  # Increased to 10M tokens per user per month
 TOKEN_COST_PER_INPUT = 0.0005  # Cost per input token
 TOKEN_COST_PER_OUTPUT = 0.0015  # Cost per output token
 

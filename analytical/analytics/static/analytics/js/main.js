@@ -53,6 +53,12 @@ function handleHTMXResponse(evt) {
         
         // Handle chat messages
         if (target.id === 'chat-messages') {
+            // Process chat message response
+            if (data.success) {
+                addChatMessage(data.response || data.message || 'Response received', false);
+            } else {
+                addChatMessage(data.error || 'Sorry, I encountered an error processing your request.', false);
+            }
             scrollChatToBottom();
         }
         
@@ -444,4 +450,63 @@ function updateAgentProgress(data) {
     `;
     
     agentStatus.innerHTML = progressHtml;
+}
+
+// Add chat message function for dashboard chat
+function addChatMessage(content, isUser = false) {
+    const messagesContainer = document.getElementById('chat-messages');
+    if (!messagesContainer) return;
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'chat-message slide-in';
+    
+    const now = new Date();
+    const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    
+    // Simple formatting for chat messages (basic markdown support)
+    const formattedContent = formatChatMessage(content);
+    
+    messageDiv.innerHTML = `
+        <div class="message-content ${isUser ? 'user' : 'assistant'}">
+            <p class="mb-0">${formattedContent}</p>
+        </div>
+        <div class="message-time">${timeString}</div>
+    `;
+    
+    messagesContainer.appendChild(messageDiv);
+    scrollChatToBottom();
+}
+
+// Simple markdown formatting for chat messages
+function formatChatMessage(content) {
+    // Handle code blocks
+    content = content.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
+    
+    // Handle inline code
+    content = content.replace(/`(.*?)`/g, '<code>$1</code>');
+    
+    // Handle headers
+    content = content.replace(/^###### (.*$)/gim, '<h6>$1</h6>');
+    content = content.replace(/^##### (.*$)/gim, '<h5>$1</h5>');
+    content = content.replace(/^#### (.*$)/gim, '<h4>$1</h4>');
+    content = content.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+    content = content.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+    content = content.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+    
+    // Handle bold and italic
+    content = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    content = content.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    
+    // Handle unordered lists
+    content = content.replace(/^\* (.*$)/gim, '<li>$1</li>');
+    content = content.replace(/(<li>.*<\/li>)+/gim, '<ul>$&</ul>');
+    
+    // Handle ordered lists
+    content = content.replace(/^\d+\. (.*$)/gim, '<li>$1</li>');
+    content = content.replace(/(<li>.*<\/li>)+/gim, '<ol>$&</ol>');
+    
+    // Handle line breaks
+    content = content.replace(/\n/g, '<br>');
+    
+    return content;
 }

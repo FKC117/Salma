@@ -2,6 +2,7 @@
 URL configuration for analytics app
 """
 from django.urls import path, include
+from django.shortcuts import redirect
 from rest_framework.routers import DefaultRouter
 from . import views
 
@@ -20,8 +21,12 @@ router.register(r'audit', views.AuditViewSet, basename='audit')
 
 urlpatterns = [
     # Template views (must come first to avoid API router conflicts)
-    path('', views.dashboard_view, name='dashboard'),
+    path('', lambda request: redirect('login'), name='home'),
+    path('dashboard/', views.dashboard_view, name='dashboard'),
     path('upload-form/', views.upload_form_view, name='upload_form'),
+    path('register/', views.register_view, name='register'),
+    path('my-datasets/', views.my_datasets_view, name='my_datasets'),
+    path('api/datasets/', views.list_datasets_view, name='list_datasets'),
     
     # CSRF token endpoint
     path('api/csrf-token/', views.get_csrf_token, name='csrf_token'),

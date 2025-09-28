@@ -14,20 +14,26 @@ from django.conf import settings
 from django.utils import timezone
 from django.db import transaction
 from django.core.cache import cache
+from django.contrib.auth import get_user_model
 import google.generativeai as genai
 import tiktoken
 from io import BytesIO
 import base64
 
 from analytics.models import (
-    User, ChatMessage, AnalysisResult, AgentRun, AgentStep,
-    AuditTrail, GeneratedImage
+    ChatMessage, AnalysisResult, AgentRun, AgentStep,
+    AuditTrail, GeneratedImage, AnalysisSession
 )
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from analytics.models import User
 from django.db import models
 from analytics.services.audit_trail_manager import AuditTrailManager
 from analytics.services.rag_service import RAGService
 
 logger = logging.getLogger(__name__)
+User = get_user_model()
 
 
 class LLMProcessor:
@@ -65,12 +71,25 @@ class LLMProcessor:
             )
             logger.info(f"Google AI initialized with model: {self.model_name}")
         except Exception as e:
-            logger.error(f"Failed to initialize Google AI: {str(e)}")
-            raise ValueError(f"Failed to initialize Google AI: {str(e)}")
+            logger.error(f"Failed to initialize Google AI model '{self.model_name}': {str(e)}")
+            # Try a fallback model
+            try:
+                fallback_model = 'gemini-pro'
+                logger.info(f"Trying fallback model: {fallback_model}")
+                self.model = genai.GenerativeModel(
+                    model_name=fallback_model,
+                    generation_config=self.generation_config,
+                    safety_settings=self.safety_settings
+                )
+                logger.info(f"Google AI initialized with fallback model: {fallback_model}")
+            except Exception as fallback_e:
+                logger.error(f"Failed to initialize fallback Google AI model: {str(fallback_e)}")
+                raise ValueError(f"Failed to initialize Google AI: {str(e)}. Fallback model also failed: {str(fallback_e)}")
     
-    def generate_text(self, prompt: str, user: User, context_messages: Optional[List[Dict]] = None,
+    def generate_text(self, prompt: str, user, context_messages: Optional[List[Dict]] = None,
                      analysis_result: Optional[AnalysisResult] = None, 
-                     include_images: bool = False, rag_context: Optional[str] = None) -> Dict[str, Any]:
+                     include_images: bool = False, rag_context: Optional[str] = None,
+                     session: Optional[AnalysisSession] = None) -> Dict[str, Any]:
         """
         Generate text using Google AI with context and token tracking
         
@@ -81,6 +100,7 @@ class LLMProcessor:
             analysis_result: Associated analysis result
             include_images: Whether to include images in the generation
             rag_context: Optional RAG context for enhanced responses
+            session: Optional AnalysisSession for context
             
         Returns:
             Dict containing generated text, token usage, and metadata
@@ -119,7 +139,7 @@ class LLMProcessor:
             # Create chat message record
             chat_message = self._create_chat_message(
                 user, generated_text, 'ai', input_tokens, output_tokens,
-                analysis_result, correlation_id
+                analysis_result, correlation_id, session
             )
             
             # Log audit trail
@@ -167,7 +187,96 @@ class LLMProcessor:
             
             raise ValueError(f"Text generation failed: {str(e)}")
     
-    def analyze_data(self, data: Dict[str, Any], analysis_type: str, user: User,
+    def process_message(self, user, message: str, session_id: Optional[str] = None, 
+                       context: Optional[Dict] = None) -> Dict[str, Any]:
+        """
+        Process chat message and generate AI response
+        
+        Args:
+            user: User sending the message
+            message: User's message
+            session_id: Optional session ID for context
+            context: Optional additional context
+            
+        Returns:
+            Dict containing response and metadata
+        """
+        try:
+            # Get or create session if session_id provided
+            session = None
+            if session_id:
+                try:
+                    session = AnalysisSession.objects.get(id=int(session_id))
+                except (AnalysisSession.DoesNotExist, ValueError):
+                    # If session doesn't exist or session_id is not a valid integer, 
+                    # we'll create chat messages without session
+                    pass
+            
+            # Get context messages from database
+            context_messages = self.get_context_messages(int(session_id) if session_id else 0, user) if session_id else []
+            
+            # Add current message to context
+            context_messages.append({
+                'role': 'user',
+                'content': message,
+                'timestamp': timezone.now().isoformat()
+            })
+            
+            # Get RAG context if available
+            rag_context = None
+            if session_id:
+                try:
+                    # Use search_vectors_by_text method
+                    rag_results = self.rag_service.search_vectors_by_text(
+                        query=message,
+                        user=user,
+                        top_k=5
+                    )
+                    rag_context = '\n'.join([result.get('data', {}).get('text', '') for result in rag_results])
+                except Exception as e:
+                    logger.warning(f"RAG context retrieval failed: {str(e)}")
+            
+            # Generate response
+            result = self.generate_text(
+                prompt=message,
+                user=user,
+                context_messages=context_messages,
+                rag_context=rag_context,
+                session=session  # Pass the session to generate_text
+            )
+            
+            # Create chat message records
+            correlation_id = result.get('correlation_id', '') or str(int(timezone.now().timestamp()))
+            user_message = self._create_chat_message(
+                user, message, 'user', 0, 0, None, correlation_id, session
+            )
+            
+            ai_message = self._create_chat_message(
+                user, result['text'], 'ai', 
+                result['input_tokens'], result['output_tokens'], 
+                None, correlation_id, session
+            )
+            
+            return {
+                'success': True,
+                'message_id': ai_message.id if hasattr(ai_message, 'id') else 0,
+                'user_message': message,
+                'response': result['text'],
+                'input_tokens': result['input_tokens'],
+                'output_tokens': result['output_tokens'],
+                'total_tokens': result['input_tokens'] + result['output_tokens'],
+                'cost': result.get('total_cost', 0.0),
+                'created_at': timezone.now().isoformat()
+            }
+            
+        except Exception as e:
+            logger.error(f"Message processing failed: {str(e)}", exc_info=True)
+            return {
+                'success': False,
+                'error': str(e)
+            }
+    
+    def analyze_data(self, data: Dict[str, Any], analysis_type: str, user,
                     context: Optional[str] = None) -> Dict[str, Any]:
         """
         Analyze data using LLM with specialized prompts
@@ -210,7 +319,7 @@ class LLMProcessor:
             raise ValueError(f"Data analysis failed: {str(e)}")
     
     def generate_analysis_plan(self, dataset_info: Dict[str, Any], goal: str, 
-                              user: User, rag_context: Optional[str] = None) -> Dict[str, Any]:
+                              user, rag_context: Optional[str] = None) -> Dict[str, Any]:
         """
         Generate an analysis plan for autonomous AI agent
         
@@ -282,7 +391,7 @@ class LLMProcessor:
             logger.error(f"Analysis plan generation failed: {str(e)}")
             raise ValueError(f"Analysis plan generation failed: {str(e)}")
     
-    def process_batch_requests(self, requests: List[Dict[str, Any]], user: User) -> List[Dict[str, Any]]:
+    def process_batch_requests(self, requests: List[Dict[str, Any]], user) -> List[Dict[str, Any]]:
         """
         Process multiple LLM requests in batch for efficiency
         
@@ -345,13 +454,13 @@ class LLMProcessor:
                     'total_output_tokens': total_output_tokens,
                     'total_cost': total_cost
                 }
-            }
+            }  # type: ignore
             
         except Exception as e:
             logger.error(f"Batch processing failed: {str(e)}")
             raise ValueError(f"Batch processing failed: {str(e)}")
     
-    def get_context_messages(self, session_id: int, user: User, limit: int = 10) -> List[Dict[str, Any]]:
+    def get_context_messages(self, session_id: int, user, limit: int = 10):
         """Get recent context messages for a session"""
         try:
             # Try to get from cache first
@@ -385,7 +494,7 @@ class LLMProcessor:
             logger.error(f"Failed to get context messages: {str(e)}")
             return []
     
-    def clear_context_cache(self, session_id: int, user: User) -> None:
+    def clear_context_cache(self, session_id: int, user) -> None:
         """Clear context cache for a session"""
         try:
             cache_key = f"context_{session_id}_{user.id}"
@@ -414,11 +523,11 @@ class LLMProcessor:
             
             if analysis_result.result_data:
                 if analysis_result.output_type == 'table':
-                    data = analysis_result.result_data.get('data', [])
+                    data = analysis_result.result_data.get('data', []) if isinstance(analysis_result.result_data, dict) and 'data' in analysis_result.result_data else []
                     if data:
                         result_context += f"Data: {json.dumps(data[:5], indent=2)}...\n"  # First 5 rows
                 elif analysis_result.output_type == 'text':
-                    text = analysis_result.result_data.get('text', '')
+                    text = analysis_result.result_data.get('text', '') if isinstance(analysis_result.result_data, dict) and 'text' in analysis_result.result_data else ''
                     result_context += f"Text: {text[:500]}...\n"  # First 500 chars
             
             full_prompt += result_context
@@ -515,7 +624,7 @@ class LLMProcessor:
             # Fallback: rough estimation (1 token ≈ 4 characters)
             return len(text) // 4
     
-    def _check_token_limits(self, user: User, input_tokens: int) -> bool:
+    def _check_token_limits(self, user, input_tokens: int) -> bool:
         """Check if user has exceeded token limits"""
         try:
             # Get current month usage
@@ -544,7 +653,7 @@ class LLMProcessor:
             logger.error(f"Failed to check token limits: {str(e)}")
             return True  # Allow request if check fails
     
-    def _update_user_token_usage(self, user: User, input_tokens: int, 
+    def _update_user_token_usage(self, user, input_tokens: int, 
                                 output_tokens: int, total_cost: float) -> None:
         """Update user token usage and costs"""
         try:
@@ -555,10 +664,10 @@ class LLMProcessor:
         except Exception as e:
             logger.error(f"Failed to update user token usage: {str(e)}")
     
-    def _create_chat_message(self, user: User, content: str, message_type: str,
+    def _create_chat_message(self, user, content: str, message_type: str,
                            input_tokens: int, output_tokens: int,
                            analysis_result: Optional[AnalysisResult],
-                           correlation_id: str) -> ChatMessage:
+                           correlation_id: str, session: Optional[AnalysisSession]):
         """Create chat message record"""
         return ChatMessage.objects.create(
             content=content,
@@ -567,6 +676,7 @@ class LLMProcessor:
             token_count=input_tokens + output_tokens,
             analysis_result=analysis_result,
             user=user,
+            session=session,
             metadata={
                 'input_tokens': input_tokens,
                 'output_tokens': output_tokens,
@@ -575,7 +685,7 @@ class LLMProcessor:
             }
         )
     
-    def get_user_token_usage(self, user: User) -> Dict[str, Any]:
+    def get_user_token_usage(self, user) -> Dict[str, Any]:
         """Get comprehensive token usage information for a user"""
         try:
             current_month = timezone.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
@@ -602,7 +712,7 @@ class LLMProcessor:
             logger.error(f"Failed to get user token usage: {str(e)}")
             return {}
     
-    def reset_monthly_usage(self, user: User) -> bool:
+    def reset_monthly_usage(self, user) -> bool:
         """Reset user's monthly token usage (admin function)"""
         try:
             user.token_usage_current_month = 0
@@ -615,8 +725,8 @@ class LLMProcessor:
             logger.error(f"Failed to reset monthly usage: {str(e)}")
             return False
     
-    def _get_rag_context_for_prompt(self, prompt: str, user: User, 
-                                   analysis_result: Optional[AnalysisResult] = None) -> str:
+    def _get_rag_context_for_prompt(self, prompt: str, user, 
+                                   analysis_result = None) -> str:
         """
         Retrieve relevant RAG context for text generation
         
@@ -641,19 +751,20 @@ class LLMProcessor:
             
             # Add analysis result context if available
             if analysis_result:
-                dataset = analysis_result.session.primary_dataset
-                search_queries.extend([
-                    f"dataset {dataset.name}",
-                    f"analysis result {analysis_result.tool_used.name}",
-                    f"{analysis_result.tool_used.name} {dataset.name}"
-                ])
+                dataset = analysis_result.session.primary_dataset if analysis_result and analysis_result.session else None
+                if dataset:
+                    search_queries.extend([
+                        f"dataset {dataset.name}",
+                        f"analysis result {analysis_result.tool_used.name}",
+                        f"{analysis_result.tool_used.name} {dataset.name}"
+                    ])
             
             for query in search_queries:
                 if not query.strip():
                     continue
                     
                 # Search for global notes
-                global_results = self.rag_service.search_vectors(
+                global_results = self.rag_service.search_vectors_by_text(
                     query=query,
                     user=user,
                     dataset=None,
@@ -664,7 +775,7 @@ class LLMProcessor:
                 # Search for dataset-scoped notes if analysis result available
                 if analysis_result:
                     dataset = analysis_result.session.primary_dataset
-                    dataset_results = self.rag_service.search_vectors(
+                    dataset_results = self.rag_service.search_vectors_by_text(
                         query=query,
                         user=user,
                         dataset=dataset,
@@ -693,9 +804,9 @@ class LLMProcessor:
             logger.error(f"Failed to retrieve RAG context for prompt: {str(e)}")
             return ""
     
-    def generate_text_with_rag(self, prompt: str, user: User, 
-                             context_messages: Optional[List[Dict]] = None,
-                             analysis_result: Optional[AnalysisResult] = None, 
+    def generate_text_with_rag(self, prompt: str, user, 
+                             context_messages = None,
+                             analysis_result = None, 
                              include_images: bool = False) -> Dict[str, Any]:
         """
         Generate text with automatic RAG context retrieval

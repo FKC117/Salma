@@ -436,6 +436,78 @@
 .messages-container::-webkit-scrollbar-thumb:hover {
     background: #6c757d;
 }
+
+/* Formatted content styling */
+.message-text h1, .message-text h2, .message-text h3, 
+.message-text h4, .message-text h5, .message-text h6 {
+    color: #fff;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.message-text h1 { font-size: 1.5rem; }
+.message-text h2 { font-size: 1.4rem; }
+.message-text h3 { font-size: 1.3rem; }
+.message-text h4 { font-size: 1.2rem; }
+.message-text h5 { font-size: 1.1rem; }
+.message-text h6 { font-size: 1rem; }
+
+.message-text ul, .message-text ol {
+    margin: 0.5rem 0;
+    padding-left: 1.5rem;
+}
+
+.message-text li {
+    margin-bottom: 0.25rem;
+}
+
+.message-text blockquote {
+    border-left: 3px solid #0d6efd;
+    padding-left: 1rem;
+    margin: 0.5rem 0;
+    color: #adb5bd;
+    font-style: italic;
+}
+
+.message-text hr {
+    border: 0;
+    border-top: 1px solid #495057;
+    margin: 1rem 0;
+}
+
+.message-text a {
+    color: #6ea8fe;
+    text-decoration: underline;
+}
+
+.message-text a:hover {
+    color: #8bb9fe;
+}
+
+.message-text img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    margin: 0.5rem 0;
+}
+
+.message-text .table-responsive {
+    margin: 0.5rem 0;
+}
+
+.message-text .table {
+    color: #fff;
+    margin-bottom: 0;
+}
+
+.message-text .table th {
+    border-top: none;
+    border-bottom: 2px solid #495057;
+}
+
+.message-text .table td {
+    border-top: 1px solid #495057;
+}
 </style>
 
 <script>
@@ -496,12 +568,82 @@ function addMessage(content, isUser = false) {
 }
 
 function formatMessageContent(content) {
-    // Convert markdown-like formatting to HTML
-    return content
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\*(.*?)\*/g, '<em>$1</em>')
-        .replace(/`(.*?)`/g, '<code>$1</code>')
-        .replace(/\n/g, '<br>');
+    // Convert markdown-like formatting to HTML with better support for tables, images, and lists
+    
+    // Handle code blocks first (triple backticks)
+    content = content.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
+    
+    // Handle inline code (single backticks)
+    content = content.replace(/`(.*?)`/g, '<code>$1</code>');
+    
+    // Handle headers
+    content = content.replace(/^###### (.*$)/gim, '<h6>$1</h6>');
+    content = content.replace(/^##### (.*$)/gim, '<h5>$1</h5>');
+    content = content.replace(/^#### (.*$)/gim, '<h4>$1</h4>');
+    content = content.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+    content = content.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+    content = content.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+    
+    // Handle bold and italic
+    content = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    content = content.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    
+    // Handle unordered lists
+    content = content.replace(/^\* (.*$)/gim, '<li>$1</li>');
+    content = content.replace(/(<li>.*<\/li>)+/gim, '<ul>$&</ul>');
+    
+    // Handle ordered lists
+    content = content.replace(/^\d+\. (.*$)/gim, '<li>$1</li>');
+    content = content.replace(/(<li>.*<\/li>)+/gim, '<ol>$&</ol>');
+    
+    // Handle blockquotes
+    content = content.replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>');
+    
+    // Handle horizontal rules
+    content = content.replace(/^---$/gim, '<hr>');
+    
+    // Handle images (markdown format)
+    content = content.replace(/!\[(.*?)\]\((.*?)\)/g, '<div class="image-container"><img src="$2" alt="$1" class="img-fluid rounded" style="max-width: 100%; height: auto;"></div>');
+    
+    // Handle links
+    content = content.replace(/\[([^\]]+)\]\(([^\)]+)\)/g, '<a href="$2" target="_blank" class="text-info">$1</a>');
+    
+    // Handle tables (simple markdown table format)
+    content = content.replace(/(\|.*\|\r?\n\|[-|: ]+\|\r?\n(\|.*\|\r?\n?)*)/g, function(match) {
+        const lines = match.split('\n').filter(line => line.trim() !== '');
+        if (lines.length < 2) return match;
+        
+        // Parse header
+        const headers = lines[0].split('|').map(h => h.trim()).filter(h => h !== '');
+        
+        // Create table HTML
+        let tableHtml = '<div class="table-responsive"><table class="table table-dark table-striped table-hover"><thead><tr>';
+        
+        // Add headers
+        headers.forEach(header => {
+            tableHtml += `<th>${header}</th>`;
+        });
+        
+        tableHtml += '</tr></thead><tbody>';
+        
+        // Add rows (skip header separator line)
+        for (let i = 2; i < lines.length; i++) {
+            const cells = lines[i].split('|').map(c => c.trim()).filter(c => c !== '');
+            tableHtml += '<tr>';
+            cells.forEach(cell => {
+                tableHtml += `<td>${cell}</td>`;
+            });
+            tableHtml += '</tr>';
+        }
+        
+        tableHtml += '</tbody></table></div>';
+        return tableHtml;
+    });
+    
+    // Handle line breaks (but not inside code blocks)
+    content = content.replace(/\n/g, '<br>');
+    
+    return content;
 }
 
 function scrollToBottom() {
@@ -622,7 +764,11 @@ document.body.addEventListener('htmx:afterRequest', function(e) {
         if (e.detail.xhr.status === 200) {
             try {
                 const response = JSON.parse(e.detail.xhr.response);
-                addMessage(response.message || 'Response received', false);
+                if (response.success) {
+                    addMessage(response.response || response.message || 'Response received', false);
+                } else {
+                    addMessage(response.error || 'Sorry, I encountered an error processing your request.', false);
+                }
             } catch (error) {
                 addMessage('Sorry, I encountered an error processing your request.', false);
             }

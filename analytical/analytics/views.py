@@ -11,8 +11,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
+from django.contrib.auth import get_user_model
 
-from analytics.models import Dataset, DatasetColumn, User, AuditTrail
+from analytics.models import Dataset, DatasetColumn, AuditTrail
 from analytics.services.file_processing import FileProcessingService
 from analytics.services.audit_trail_manager import AuditTrailManager
 from analytics.services.session_manager import SessionManager
@@ -23,6 +24,7 @@ from analytics.services.agentic_ai_controller import AgenticAIController
 from analytics.tools.tool_registry import ToolRegistry
 
 logger = logging.getLogger(__name__)
+User = get_user_model()
 
 
 class UploadViewSet(viewsets.ViewSet):
@@ -44,29 +46,18 @@ class UploadViewSet(viewsets.ViewSet):
                     'error': 'No file provided'
                 }, status=status.HTTP_400_BAD_REQUEST)
             
-            if 'name' not in request.data:
-                return Response({
-                    'success': False,
-                    'error': 'Dataset name is required'
-                }, status=status.HTTP_400_BAD_REQUEST)
-            
             file = request.FILES['file']
-            dataset_name = request.data['name']
+            # Make dataset name optional - will default to filename in service
+            dataset_name = request.data.get('name', '') or None
             
-            # Get user (for now, use first user or create one)
-            try:
-                user = User.objects.first()
-                if not user:
-                    user = User.objects.create(
-                        username='default_user',
-                        email='user@example.com'
-                    )
-            except Exception as e:
-                logger.error(f"User creation failed: {str(e)}")
+            # Get authenticated user
+            if not request.user.is_authenticated:
                 return Response({
                     'success': False,
-                    'error': 'User authentication failed'
-                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                    'error': 'Authentication required'
+                }, status=status.HTTP_401_UNAUTHORIZED)
+            
+            user = request.user
             
             # Process file
             try:
@@ -76,6 +67,13 @@ class UploadViewSet(viewsets.ViewSet):
                     user=user,
                     dataset_name=dataset_name
                 )
+                
+                # Check if processing was successful
+                if not result.get('success', False):
+                    return Response({
+                        'success': False,
+                        'error': result.get('error', 'File processing failed')
+                    }, status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
                 logger.error(f"File processing error: {str(e)}")
                 return Response({
@@ -83,30 +81,42 @@ class UploadViewSet(viewsets.ViewSet):
                     'error': f'File processing failed: {str(e)}'
                 }, status=status.HTTP_400_BAD_REQUEST)
             
-            if result['success']:
-                # Log audit trail
-                audit_manager = AuditTrailManager()
-                audit_manager.log_user_action(
-                    user_id=user.id,
-                    action_type='file_upload',
-                    resource_type='dataset',
-                    resource_id=result['dataset_id'],
-                    resource_name=dataset_name,
-                    action_description=f"Uploaded dataset: {dataset_name}",
-                    success=True
-                )
-                
-                return Response({
-                    'success': True,
-                    'dataset_id': result['dataset_id'],
-                    'message': f'Dataset "{dataset_name}" uploaded successfully',
-                    'columns': result['columns']
-                }, status=status.HTTP_200_OK)
-            else:
-                return Response({
-                    'success': False,
-                    'error': result.get('error', 'File processing failed')
-                }, status=status.HTTP_400_BAD_REQUEST)
+            # If we get here, processing was successful
+            # Log audit trail
+            audit_manager = AuditTrailManager()
+            actual_dataset_name = result.get('dataset_name', dataset_name or file.name)
+            audit_manager.log_user_action(
+                user_id=user.id,
+                action_type='file_upload',
+                resource_type='dataset',
+                resource_id=result['dataset_id'],
+                resource_name=actual_dataset_name,
+                action_description=f"Uploaded dataset: {actual_dataset_name}",
+                success=True
+            )
+            
+            # Get the dataset object to include more details
+            try:
+                dataset = Dataset.objects.get(id=result['dataset_id'])
+                dataset_info = {
+                    'id': dataset.id,
+                    'name': dataset.name,
+                    'row_count': dataset.row_count,
+                    'column_count': dataset.column_count,
+                    'file_size_bytes': dataset.file_size_bytes,
+                    'created_at': dataset.created_at.strftime('%Y-%m-%d %H:%M'),
+                }
+            except Dataset.DoesNotExist:
+                dataset_info = {}
+            
+            return Response({
+                'success': True,
+                'dataset_id': result['dataset_id'],
+                'session_id': result.get('session_id'),
+                'dataset_info': dataset_info,
+                'message': f'Dataset "{actual_dataset_name}" uploaded successfully',
+                'columns': result.get('columns', [])
+            }, status=status.HTTP_200_OK)
                 
         except Exception as e:
             logger.error(f"Upload endpoint error: {str(e)}", exc_info=True)
@@ -150,25 +160,28 @@ class SessionViewSet(viewsets.ViewSet):
                     'error': 'User authentication failed'
                 }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             
+            # Get dataset
+            try:
+                dataset = Dataset.objects.get(id=dataset_id)
+            except Dataset.DoesNotExist:
+                return Response({
+                    'success': False,
+                    'error': 'Dataset not found'
+                }, status=status.HTTP_404_NOT_FOUND)
+            
             # Create session
             session_manager = SessionManager()
-            result = session_manager.create_session(
+            session = session_manager.create_session(
                 user=user,
-                dataset_id=dataset_id,
+                dataset=dataset,
                 session_name=request.data.get('session_name', f'Session {timezone.now().strftime("%Y-%m-%d %H:%M")}')
             )
             
-            if result['success']:
-                return Response({
-                    'success': True,
-                    'session_id': result['session_id'],
-                    'message': 'Analysis session created successfully'
-                }, status=status.HTTP_200_OK)
-            else:
-                return Response({
-                    'success': False,
-                    'error': result.get('error', 'Session creation failed')
-                }, status=status.HTTP_400_BAD_REQUEST)
+            return Response({
+                'success': True,
+                'session_id': session.id,
+                'message': 'Analysis session created successfully'
+            }, status=status.HTTP_200_OK)
                 
         except Exception as e:
             logger.error(f"Session creation error: {str(e)}", exc_info=True)
@@ -213,28 +226,31 @@ class AnalysisViewSet(viewsets.ViewSet):
                     'error': 'User authentication failed'
                 }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             
+            # Get session
+            from analytics.models import AnalysisSession
+            try:
+                session = AnalysisSession.objects.get(id=request.data['session_id'])
+            except AnalysisSession.DoesNotExist:
+                return Response({
+                    'success': False,
+                    'error': 'Session not found'
+                }, status=status.HTTP_404_NOT_FOUND)
+            
             # Execute analysis
             executor = AnalysisExecutor()
             result = executor.execute_analysis(
-                user=user,
-                session_id=request.data['session_id'],
                 tool_name=request.data['tool_name'],
-                parameters=request.data['parameters']
+                parameters=request.data['parameters'],
+                session=session,
+                user=user
             )
             
-            if result['success']:
-                return Response({
-                    'success': True,
-                    'result_id': result['result_id'],
-                    'message': 'Analysis executed successfully',
-                    'output': result.get('output', {}),
-                    'visualizations': result.get('visualizations', [])
-                }, status=status.HTTP_200_OK)
-            else:
-                return Response({
-                    'success': False,
-                    'error': result.get('error', 'Analysis execution failed')
-                }, status=status.HTTP_400_BAD_REQUEST)
+            return Response({
+                'success': True,
+                'result_id': result['analysis_id'],
+                'message': 'Analysis executed successfully',
+                'output': result.get('result_data', {}),
+            }, status=status.HTTP_200_OK)
                 
         except Exception as e:
             logger.error(f"Analysis execution error: {str(e)}", exc_info=True)
@@ -281,22 +297,26 @@ class RAGViewSet(viewsets.ViewSet):
             
             # Upsert to RAG
             rag_service = RAGService()
-            result = rag_service.upsert_content(
-                content=request.data['content'],
-                metadata=request.data['metadata'],
-                user_id=user.id
+            # Use the correct method name
+            vector_note = rag_service.create_vector_note(
+                title=request.data.get('title', 'Untitled'),
+                text=request.data['content'],
+                scope=request.data.get('scope', 'global'),
+                content_type=request.data.get('content_type', 'user_content'),
+                user=user,
+                metadata=request.data['metadata']
             )
             
-            if result['success']:
+            if vector_note:
                 return Response({
                     'success': True,
-                    'vector_id': result['vector_id'],
+                    'vector_id': vector_note.id,
                     'message': 'Content upserted successfully'
                 }, status=status.HTTP_200_OK)
             else:
                 return Response({
                     'success': False,
-                    'error': result.get('error', 'RAG upsert failed')
+                    'error': 'RAG upsert failed'
                 }, status=status.HTTP_400_BAD_REQUEST)
                 
         except Exception as e:
@@ -336,23 +356,18 @@ class RAGViewSet(viewsets.ViewSet):
             
             # Search RAG
             rag_service = RAGService()
-            result = rag_service.search_content(
+            # Use the correct method name
+            results = rag_service.search_vectors_by_text(
                 query=query,
-                user_id=user.id,
-                limit=int(request.query_params.get('limit', 10))
+                user=user,
+                top_k=int(request.query_params.get('limit', 10))
             )
             
-            if result['success']:
-                return Response({
-                    'success': True,
-                    'results': result['results'],
-                    'message': f'Found {len(result["results"])} results'
-                }, status=status.HTTP_200_OK)
-            else:
-                return Response({
-                    'success': False,
-                    'error': result.get('error', 'RAG search failed')
-                }, status=status.HTTP_400_BAD_REQUEST)
+            return Response({
+                'success': True,
+                'results': results,
+                'message': f'Found {len(results)} results'
+            }, status=status.HTTP_200_OK)
                 
         except Exception as e:
             logger.error(f"RAG search error: {str(e)}", exc_info=True)
@@ -384,9 +399,10 @@ class RAGViewSet(viewsets.ViewSet):
             
             # Clear RAG
             rag_service = RAGService()
-            result = rag_service.clear_user_content(user_id=user.id)
+            # Use the correct method name
+            result = rag_service.clear_user_data(user)
             
-            if result['success']:
+            if result:
                 return Response({
                     'success': True,
                     'message': 'RAG content cleared successfully'
@@ -394,7 +410,7 @@ class RAGViewSet(viewsets.ViewSet):
             else:
                 return Response({
                     'success': False,
-                    'error': result.get('error', 'RAG clear failed')
+                    'error': 'RAG clear failed'
                 }, status=status.HTTP_400_BAD_REQUEST)
                 
         except Exception as e:
@@ -440,6 +456,7 @@ class ChatViewSet(viewsets.ViewSet):
             
             # Process message
             llm_processor = LLMProcessor()
+            # Use the correct method name
             result = llm_processor.process_message(
                 user=user,
                 message=request.data['message'],
@@ -485,7 +502,12 @@ class ToolsViewSet(viewsets.ViewSet):
             
             return Response({
                 'success': True,
-                'tools': tools,
+                'tools': [{
+                    'name': tool.name,
+                    'display_name': tool.display_name,
+                    'description': tool.description,
+                    'category': tool.category
+                } for tool in tools],
                 'message': f'Found {len(tools)} tools'
             }, status=status.HTTP_200_OK)
                 
@@ -530,26 +552,39 @@ class AgentViewSet(viewsets.ViewSet):
                     'error': 'User authentication failed'
                 }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             
+            # Get session
+            from analytics.models import AnalysisSession
+            try:
+                session = AnalysisSession.objects.get(id=request.data['session_id'])
+            except AnalysisSession.DoesNotExist:
+                return Response({
+                    'success': False,
+                    'error': 'Session not found'
+                }, status=status.HTTP_404_NOT_FOUND)
+            
             # Run agent
             agent_controller = AgenticAIController()
-            result = agent_controller.run_agent(
+            # Use the correct method name
+            agent_run = agent_controller.start_agent_run(
                 user=user,
-                session_id=request.data['session_id'],
-                objective=request.data.get('objective', 'Analyze the dataset'),
-                max_steps=int(request.data.get('max_steps', 10))
+                dataset=session.primary_dataset,
+                goal=request.data.get('objective', 'Analyze the dataset'),
+                constraints={
+                    'max_steps': int(request.data.get('max_steps', 10))
+                }
             )
             
-            if result['success']:
+            if agent_run:
                 return Response({
                     'success': True,
-                    'agent_run_id': result['agent_run_id'],
+                    'agent_run_id': agent_run.id,
                     'message': 'Agent run started successfully',
-                    'status': result.get('status', 'running')
+                    'status': agent_run.status
                 }, status=status.HTTP_200_OK)
             else:
                 return Response({
                     'success': False,
-                    'error': result.get('error', 'Agent run failed')
+                    'error': 'Agent run failed'
                 }, status=status.HTTP_400_BAD_REQUEST)
                 
         except Exception as e:
@@ -588,24 +623,32 @@ class AuditViewSet(viewsets.ViewSet):
             
             # Get audit trail
             audit_manager = AuditTrailManager()
-            result = audit_manager.get_user_audit_trail(
+            # Use the correct method name
+            audit_entries = audit_manager.get_audit_trail(
                 user_id=user.id,
                 limit=int(request.query_params.get('limit', 50)),
                 action_type=request.query_params.get('action_type'),
                 resource_type=request.query_params.get('resource_type')
             )
             
-            if result['success']:
-                return Response({
-                    'success': True,
-                    'audit_entries': result['audit_entries'],
-                    'message': f'Found {len(result["audit_entries"])} audit entries'
-                }, status=status.HTTP_200_OK)
-            else:
-                return Response({
-                    'success': False,
-                    'error': result.get('error', 'Audit trail retrieval failed')
-                }, status=status.HTTP_400_BAD_REQUEST)
+            formatted_entries = []
+            for entry in audit_entries:
+                formatted_entries.append({
+                    'id': entry.id,
+                    'action_type': entry.action_type,
+                    'action_category': entry.action_category,
+                    'resource_type': entry.resource_type,
+                    'resource_name': entry.resource_name,
+                    'action_description': entry.action_description,
+                    'success': entry.success,
+                    'created_at': entry.created_at
+                })
+            
+            return Response({
+                'success': True,
+                'audit_entries': formatted_entries,
+                'message': f'Found {len(formatted_entries)} audit entries'
+            }, status=status.HTTP_200_OK)
                 
         except Exception as e:
             logger.error(f"Audit trail error: {str(e)}", exc_info=True)
@@ -618,41 +661,29 @@ class AuditViewSet(viewsets.ViewSet):
 # Template Views for Frontend
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
-from django.contrib.auth.models import User
 
 def dashboard_view(request):
     """Main dashboard view with three-panel layout"""
-    # Auto-login with test user if not authenticated
+    # Require authentication - redirect to login if not authenticated
     if not request.user.is_authenticated:
-        try:
-            user = User.objects.get(username='testuser')
-            login(request, user)
-        except User.DoesNotExist:
-            # Create test user if doesn't exist
-            user = User.objects.create_user(username='testuser', password='testpass123')
-            login(request, user)
+        from django.contrib.auth.views import redirect_to_login
+        return redirect_to_login(request.get_full_path())
     
     return render(request, 'analytics/dashboard.html')
 
 
 def upload_form_view(request):
     """Upload form modal content"""
-    # For demo purposes, auto-login with test user if not authenticated
+    # Require authentication - redirect to login if not authenticated
     if not request.user.is_authenticated:
-        try:
-            user = User.objects.get(username='testuser')
-            login(request, user)
-        except User.DoesNotExist:
-            # Create test user if doesn't exist
-            user = User.objects.create_user(username='testuser', password='testpass123')
-            login(request, user)
+        from django.contrib.auth.views import redirect_to_login
+        return redirect_to_login(request.get_full_path())
     
     return render(request, 'analytics/upload_form.html')
 
 
 def csrf_failure(request, reason=""):
-    """
-    Custom CSRF failure handler (T108)
+    """Custom CSRF failure handler (T108)
     
     Provides user-friendly error messages for CSRF failures
     and logs security events for monitoring.
@@ -696,3 +727,78 @@ def get_csrf_token(request):
         'cookie_name': 'analytical_csrftoken',
         'header_name': 'X-CSRFToken',
     })
+
+
+# Dataset listing view
+from django.core.paginator import Paginator
+from django.db.models import Q
+
+def list_datasets_view(request):
+    """List user's datasets with pagination"""
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
+    
+    # Get user's datasets
+    datasets = Dataset.objects.filter(user=request.user).order_by('-created_at')
+    
+    # Pagination
+    paginator = Paginator(datasets, 10)  # Show 10 datasets per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    # Format dataset data
+    dataset_list = []
+    for dataset in page_obj:
+        dataset_list.append({
+            'id': dataset.id,
+            'name': dataset.name,
+            'description': dataset.description,
+            'original_filename': dataset.original_filename,
+            'file_size_bytes': dataset.file_size_bytes,
+            'row_count': dataset.row_count,
+            'column_count': dataset.column_count,
+            'created_at': dataset.created_at.strftime('%Y-%m-%d %H:%M'),
+            'processing_status': dataset.processing_status,
+        })
+    
+    return JsonResponse({
+        'success': True,
+        'datasets': dataset_list,
+        'has_next': page_obj.has_next(),
+        'has_previous': page_obj.has_previous(),
+        'current_page': page_obj.number,
+        'total_pages': paginator.num_pages,
+    })
+
+
+def my_datasets_view(request):
+    """Render the My Datasets template"""
+    if not request.user.is_authenticated:
+        from django.contrib.auth.views import redirect_to_login
+        return redirect_to_login(request.get_full_path())
+    
+    # Get user's datasets
+    datasets = Dataset.objects.filter(user=request.user).order_by('-created_at')
+    
+    return render(request, 'analytics/my_datasets.html', {'datasets': datasets})
+
+
+# Custom Registration View
+from django.shortcuts import render, redirect
+from django.contrib.auth import login
+from django.contrib import messages
+from .forms import CustomUserCreationForm
+
+def register_view(request):
+    """User registration view"""
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            username = form.cleaned_data.get('username')
+            messages.success(request, f'Account created for {username}!')
+            login(request, user)
+            return redirect('dashboard')
+    else:
+        form = CustomUserCreationForm()
+    return render(request, 'registration/register.html', {'form': form})
