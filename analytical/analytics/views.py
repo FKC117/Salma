@@ -2,18 +2,21 @@
 API Views for Analytics System
 """
 import logging
+import re
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.permissions import AllowAny
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.contrib.auth import get_user_model
+from django.views.decorators.http import require_http_methods
 
-from analytics.models import Dataset, DatasetColumn, AuditTrail
+from analytics.models import Dataset, DatasetColumn, AuditTrail, AnalysisSession
 from analytics.services.file_processing import FileProcessingService
 from analytics.services.audit_trail_manager import AuditTrailManager
 from analytics.services.session_manager import SessionManager
@@ -23,6 +26,7 @@ from analytics.services.llm_processor import LLMProcessor
 from analytics.services.agentic_ai_controller import AgenticAIController
 from analytics.tools.tool_registry import ToolRegistry
 
+
 logger = logging.getLogger(__name__)
 User = get_user_model()
 
@@ -31,6 +35,7 @@ class UploadViewSet(viewsets.ViewSet):
     """
     File upload endpoint for dataset processing
     """
+    permission_classes = [AllowAny]
     parser_classes = [MultiPartParser, FormParser]
     
     @action(detail=False, methods=['post'])
@@ -125,13 +130,68 @@ class UploadViewSet(viewsets.ViewSet):
                 'error': 'Internal server error'
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+    @action(detail=False, methods=['get'], permission_classes=[AllowAny])
+    def list_datasets(self, request):
+        """
+        List all datasets for the current user
+        """
+        try:
+            # Get user (for now, use first user since we don't have authentication)
+            try:
+                user = User.objects.first()
+                if not user:
+                    # Create a default user if none exists
+                    user = User.objects.create(
+                        username='default_user',
+                        email='user@example.com'
+                    )
+            except Exception as e:
+                logger.error(f"User retrieval failed: {str(e)}")
+                return Response({
+                    'success': False,
+                    'error': 'User authentication failed'
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
+            # Get all datasets for the user
+            datasets = Dataset.objects.filter(user=user).order_by('-created_at')
+            
+            datasets_list = []
+            for dataset in datasets:
+                datasets_list.append({
+                    'id': dataset.id,
+                    'name': dataset.name,
+                    'description': dataset.description or '',
+                    'row_count': dataset.row_count,
+                    'column_count': dataset.column_count,
+                    'file_size_bytes': dataset.file_size_bytes,
+                    'processing_status': dataset.processing_status,
+                    'data_quality_score': dataset.data_quality_score,
+                    'created_at': dataset.created_at.isoformat(),
+                    'original_filename': dataset.original_filename
+                })
+            
+            return Response({
+                'success': True,
+                'datasets': datasets_list,
+                'count': len(datasets_list),
+                'message': 'Datasets retrieved successfully'
+            }, status=status.HTTP_200_OK)
+                
+        except Exception as e:
+            logger.error(f"List datasets error: {str(e)}", exc_info=True)
+            return Response({
+                'success': False,
+                'error': 'Internal server error'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 class SessionViewSet(viewsets.ViewSet):
     """
     Analysis session management
     """
+    permission_classes = [AllowAny]
     
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=['post'], permission_classes=[AllowAny])
     def create_session(self, request):
         """
         Create new analysis session
@@ -185,6 +245,84 @@ class SessionViewSet(viewsets.ViewSet):
                 
         except Exception as e:
             logger.error(f"Session creation error: {str(e)}", exc_info=True)
+            return Response({
+                'success': False,
+                'error': 'Internal server error'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    @action(detail=False, methods=['get'], permission_classes=[AllowAny])
+    def current(self, request):
+        """
+        Get current active session info
+        """
+        try:
+            # Get user (for now, use first user since we don't have authentication)
+            try:
+                user = User.objects.first()
+                if not user:
+                    # Create a default user if none exists
+                    user = User.objects.create(
+                        username='default_user',
+                        email='user@example.com'
+                    )
+            except Exception as e:
+                logger.error(f"User retrieval failed: {str(e)}")
+                return Response({
+                    'success': False,
+                    'error': 'User authentication failed'
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
+            # Get current active session
+            try:
+                session = AnalysisSession.objects.filter(
+                    user=user, 
+                    is_active=True
+                ).order_by('-last_accessed').first()
+                
+                if not session:
+                    return Response({
+                        'success': True,
+                        'session': None,
+                        'dataset': None,
+                        'message': 'No active session'
+                    }, status=status.HTTP_200_OK)
+                
+                # Get dataset info
+                dataset_info = {
+                    'id': session.primary_dataset.id,
+                    'name': session.primary_dataset.name,
+                    'description': session.primary_dataset.description or '',
+                    'row_count': session.primary_dataset.row_count,
+                    'column_count': session.primary_dataset.column_count,
+                    'file_size_bytes': session.primary_dataset.file_size_bytes,
+                    'processing_status': session.primary_dataset.processing_status,
+                    'data_quality_score': session.primary_dataset.data_quality_score,
+                    'created_at': session.primary_dataset.created_at.isoformat()
+                }
+                
+                return Response({
+                    'success': True,
+                    'session': {
+                        'id': session.id,
+                        'name': session.name,
+                        'description': session.description,
+                        'created_at': session.created_at.isoformat(),
+                        'last_accessed': session.last_accessed.isoformat()
+                    },
+                    'dataset': dataset_info,
+                    'message': 'Current session retrieved successfully'
+                }, status=status.HTTP_200_OK)
+                
+            except AnalysisSession.DoesNotExist:
+                return Response({
+                    'success': True,
+                    'session': None,
+                    'dataset': None,
+                    'message': 'No active session'
+                }, status=status.HTTP_200_OK)
+                
+        except Exception as e:
+            logger.error(f"Current session error: {str(e)}", exc_info=True)
             return Response({
                 'success': False,
                 'error': 'Internal server error'
@@ -430,8 +568,6 @@ class ChatViewSet(viewsets.ViewSet):
         """
         Format message content with professional styling including table detection
         """
-        import re
-        
         # First, detect and format tables
         content = self._format_tables(content)
         
@@ -462,8 +598,6 @@ class ChatViewSet(viewsets.ViewSet):
         """
         Format markdown tables to HTML
         """
-        import re
-        
         # Split content into lines
         lines = content.split('\n')
         result_lines = []
@@ -993,3 +1127,168 @@ def register_view(request):
     else:
         form = CustomUserCreationForm()
     return render(request, 'registration/register.html', {'form': form})
+
+
+# Simple API endpoints for dataset switching
+@csrf_exempt
+@require_http_methods(["GET"])
+def api_current_session(request):
+    """Get current active session info"""
+    try:
+        # Get user (for now, use first user since we don't have authentication)
+        user = User.objects.first()
+        if not user:
+            # Create a default user if none exists
+            user = User.objects.create(
+                username='default_user',
+                email='user@example.com'
+            )
+        
+        # Get current active session
+        session = AnalysisSession.objects.filter(
+            user=user, 
+            is_active=True
+        ).order_by('-last_accessed').first()
+        
+        if not session:
+            return JsonResponse({
+                'success': True,
+                'session': None,
+                'dataset': None,
+                'message': 'No active session'
+            })
+        
+        # Get dataset info
+        dataset_info = {
+            'id': session.primary_dataset.id,
+            'name': session.primary_dataset.name,
+            'description': session.primary_dataset.description or '',
+            'row_count': session.primary_dataset.row_count,
+            'column_count': session.primary_dataset.column_count,
+            'file_size_bytes': session.primary_dataset.file_size_bytes,
+            'processing_status': session.primary_dataset.processing_status,
+            'data_quality_score': session.primary_dataset.data_quality_score,
+            'created_at': session.primary_dataset.created_at.isoformat()
+        }
+        
+        return JsonResponse({
+            'success': True,
+            'session': {
+                'id': session.id,
+                'name': session.name,
+                'description': session.description,
+                'created_at': session.created_at.isoformat(),
+                'last_accessed': session.last_accessed.isoformat()
+            },
+            'dataset': dataset_info,
+            'message': 'Current session retrieved successfully'
+        })
+        
+    except Exception as e:
+        logger.error(f"Current session error: {str(e)}", exc_info=True)
+        return JsonResponse({
+            'success': False,
+            'error': 'Internal server error'
+        }, status=500)
+
+
+@csrf_exempt
+@require_http_methods(["GET"])
+def api_datasets_list(request):
+    """List all datasets for the current user"""
+    try:
+        # Get user (for now, use first user since we don't have authentication)
+        user = User.objects.first()
+        if not user:
+            # Create a default user if none exists
+            user = User.objects.create(
+                username='default_user',
+                email='user@example.com'
+            )
+        
+        # Get all datasets for the user
+        datasets = Dataset.objects.filter(user=user).order_by('-created_at')
+        
+        datasets_list = []
+        for dataset in datasets:
+            datasets_list.append({
+                'id': dataset.id,
+                'name': dataset.name,
+                'description': dataset.description or '',
+                'row_count': dataset.row_count,
+                'column_count': dataset.column_count,
+                'file_size_bytes': dataset.file_size_bytes,
+                'processing_status': dataset.processing_status,
+                'data_quality_score': dataset.data_quality_score,
+                'created_at': dataset.created_at.isoformat(),
+                'original_filename': dataset.original_filename
+            })
+        
+        return JsonResponse({
+            'success': True,
+            'datasets': datasets_list,
+            'count': len(datasets_list),
+            'message': 'Datasets retrieved successfully'
+        })
+            
+    except Exception as e:
+        logger.error(f"List datasets error: {str(e)}", exc_info=True)
+        return JsonResponse({
+            'success': False,
+            'error': 'Internal server error'
+        }, status=500)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def api_create_session(request):
+    """Create new analysis session"""
+    try:
+        import json
+        data = json.loads(request.body)
+        
+        # Validate request
+        dataset_id = data.get('dataset_id')
+        if not dataset_id:
+            return JsonResponse({
+                'success': False,
+                'error': 'Dataset ID is required'
+            }, status=400)
+        
+        # Get user
+        user = User.objects.first()
+        if not user:
+            user = User.objects.create(
+                username='default_user',
+                email='user@example.com'
+            )
+        
+        # Get dataset
+        try:
+            dataset = Dataset.objects.get(id=dataset_id)
+        except Dataset.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'error': 'Dataset not found'
+            }, status=404)
+        
+        # Create session
+        session_manager = SessionManager()
+        session = session_manager.create_session(
+            user=user,
+            dataset=dataset,
+            session_name=data.get('session_name', f'Session {timezone.now().strftime("%Y-%m-%d %H:%M")}')
+        )
+        
+        return JsonResponse({
+            'success': True,
+            'session_id': session.id,
+            'message': 'Analysis session created successfully'
+        })
+            
+    except Exception as e:
+        logger.error(f"Session creation error: {str(e)}", exc_info=True)
+        return JsonResponse({
+            'success': False,
+            'error': 'Internal server error'
+        }, status=500)

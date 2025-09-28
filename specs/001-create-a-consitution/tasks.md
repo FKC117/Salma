@@ -13,13 +13,14 @@
   - ✅ Tools Registry (5/5) - Statistical, visualization, ML, survival analysis, and registry manager
   - ✅ RAG Integration (8/8) - Complete RAG system with Redis vector operations, automatic indexing, intelligent retrieval, PII masking, multi-tenancy, and audit trail logging
   - ✅ API Endpoints (9/9) - Complete REST API implementation with authentication, validation, and error handling
-- **Phase 3.4**: 🔄 IN PROGRESS (36/40 tasks) - Frontend Implementation (HTMX + Bootstrap)
+- **Phase 3.4**: 🔄 IN PROGRESS (36/44 tasks) - Frontend Implementation (HTMX + Bootstrap)
   - ✅ Three-Panel UI Layout (T079-T084) - Base template, CSS Grid layout, tools panel, dashboard panel, chat panel, panel resizing
   - ✅ File Upload Interface (T085-T088) - Upload form, drag-and-drop, progress indicators, validation
   - ✅ Analysis Interface (T089-T092) - Analysis results, parameter modal, visualization, analysis history
   - ✅ AI Chat Interface (T093-T096) - Chat messages, chat input, LLM response, chat content
   - ✅ Professional Chat Formatting (T097-T100) - Typography, content detection, table/chart display
   - ⏳ Agentic AI Interface (T101-T104) - Analyze button, agent progress, agent controls, agent status
+  - ⏳ Dataset Switching UI (T105-T108) - Current dataset display, dataset switcher modal, dataset list panel, dataset switching logic
 - **Phase 3.5**: ✅ COMPLETED (12/12 tasks) - Celery Integration & Background Tasks
   - ✅ Celery Task Implementation (T088-T095) - File processing, analysis execution, LLM processing, agent execution, report generation, image processing, sandbox execution, maintenance tasks
   - ✅ Celery Configuration (T096-T099) - Worker processes, Flower monitoring, task routing, periodic tasks
@@ -30,7 +31,7 @@
   - ✅ Performance Tests (5/5) - Performance and optimization tests
 - **Phase 3.8**: ⏳ PENDING (11 tasks) - Documentation & Polish
 
-**Overall Progress**: 145/173 tasks completed (83.8%)
+**Overall Progress**: 145/177 tasks completed (81.9%)
 
 ## 🎉 MAJOR MILESTONES ACHIEVED! ✅ Frontend, Celery, Security, Unit Tests & Testing COMPLETED (100%)
 
@@ -824,6 +825,182 @@ def get_sandbox_status(request, execution_id):
         
     except SandboxExecution.DoesNotExist:
         return JsonResponse({'error': 'Execution not found'}, status=404)
+```
+
+### Dataset Switching UI ⏳ PENDING
+#### T105: Current Dataset Display Component
+**File**: `analytics/templates/analytics/partials/current_dataset.html`
+**Requirements**:
+- [ ] Display current dataset information
+- [ ] Show dataset statistics (rows, columns, size)
+- [ ] Display data quality score
+- [ ] Switch dataset button
+- [ ] Responsive design
+- [ ] Empty state handling
+**Implementation**:
+```html
+<div class="current-dataset-display">
+    <div class="dataset-info-card">
+        <div class="dataset-header">
+            <div class="dataset-icon">
+                <i class="bi bi-database-fill"></i>
+            </div>
+            <div class="dataset-details">
+                <h6 class="dataset-name">Current Dataset</h6>
+                <p class="dataset-description">Ready for analysis</p>
+            </div>
+            <div class="dataset-actions">
+                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#datasetSwitcherModal">
+                    <i class="bi bi-arrow-repeat"></i> Switch
+                </button>
+            </div>
+        </div>
+        <div class="dataset-stats">
+            <div class="stat-row">
+                <div class="stat-item">
+                    <span class="stat-icon"><i class="bi bi-table"></i></span>
+                    <div class="stat-content">
+                        <span class="stat-value">1,000</span>
+                        <span class="stat-label">Rows</span>
+                    </div>
+                </div>
+                <!-- More stats... -->
+            </div>
+        </div>
+    </div>
+</div>
+```
+
+#### T106: Dataset Switcher Modal
+**File**: `analytics/templates/analytics/partials/dataset_switcher.html`
+**Requirements**:
+- [ ] Modal with dataset list
+- [ ] Search and filter functionality
+- [ ] Dataset selection
+- [ ] Dataset statistics display
+- [ ] Create new session on switch
+- [ ] Responsive modal design
+**Implementation**:
+```html
+<div class="modal fade" id="datasetSwitcherModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-database"></i> Switch Dataset
+                </h5>
+            </div>
+            <div class="modal-body">
+                <div class="dataset-search mb-3">
+                    <input type="text" class="form-control" placeholder="Search datasets...">
+                </div>
+                <div class="dataset-list" id="datasetList">
+                    <!-- Dataset cards will be loaded here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="confirmDatasetSwitch">
+                    <i class="bi bi-check-circle"></i> Switch Dataset
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+```
+
+#### T107: Dataset List Panel
+**File**: `analytics/templates/analytics/partials/dataset_list.html`
+**Requirements**:
+- [ ] Compact dataset list for tools panel
+- [ ] Dataset selection functionality
+- [ ] Dataset statistics badges
+- [ ] Upload button integration
+- [ ] Empty state handling
+- [ ] Scrollable list
+**Implementation**:
+```html
+<div class="dataset-list-panel">
+    <div class="panel-header">
+        <h6 class="panel-title">
+            <i class="bi bi-database"></i> My Datasets
+        </h6>
+        <button class="btn btn-sm btn-outline-primary" onclick="openUploadModal()">
+            <i class="bi bi-plus"></i> Upload
+        </button>
+    </div>
+    <div class="dataset-list-content">
+        <div class="dataset-item">
+            <div class="dataset-item-header">
+                <div class="dataset-icon">
+                    <i class="bi bi-file-earmark-spreadsheet"></i>
+                </div>
+                <div class="dataset-info">
+                    <h6 class="dataset-name">Dataset Name</h6>
+                    <p class="dataset-meta">1,000 rows • 10 columns</p>
+                </div>
+                <div class="dataset-actions">
+                    <button class="btn btn-sm btn-outline-primary select-dataset">
+                        <i class="bi bi-check-circle"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="dataset-stats">
+                <span class="stat-badge">
+                    <i class="bi bi-table"></i>
+                    <span class="stat-value">1,000</span>
+                </span>
+                <!-- More stats... -->
+            </div>
+        </div>
+    </div>
+</div>
+```
+
+#### T108: Dataset Switching Logic
+**File**: `analytics/static/analytics/js/dataset-manager.js`
+**Requirements**:
+- [ ] Load current dataset info
+- [ ] Load available datasets
+- [ ] Handle dataset selection
+- [ ] Create new session on switch
+- [ ] Update UI components
+- [ ] Error handling
+- [ ] Event dispatching
+**Implementation**:
+```javascript
+class DatasetManager {
+    constructor() {
+        this.currentDataset = null;
+        this.datasets = [];
+        this.init();
+    }
+    
+    async loadCurrentDataset() {
+        const response = await fetch('/api/sessions/current/');
+        const data = await response.json();
+        this.currentDataset = data.dataset;
+        this.updateDisplay();
+    }
+    
+    async switchDataset(datasetId) {
+        const response = await fetch('/api/sessions/create/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ dataset_id: datasetId })
+        });
+        
+        if (response.ok) {
+            window.location.reload(); // Refresh to new session
+        }
+    }
+    
+    updateDisplay() {
+        // Update all UI components with current dataset
+        document.dispatchEvent(new CustomEvent('datasetChanged', {
+            detail: { dataset: this.currentDataset }
+        }));
+    }
+}
 ```
 
 ### Performance & Polish ⏳ PENDING

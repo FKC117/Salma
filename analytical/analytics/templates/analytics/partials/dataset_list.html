@@ -1,0 +1,420 @@
+<!-- Dataset List Component for Tools Panel -->
+<div class="dataset-list-panel" id="datasetListPanel">
+    <div class="panel-header">
+        <h6 class="panel-title">
+            <i class="bi bi-database"></i> My Datasets
+        </h6>
+        <button class="btn btn-sm btn-outline-primary" onclick="openUploadModal()">
+            <i class="bi bi-plus"></i> Upload
+        </button>
+    </div>
+    
+    <div class="dataset-list-content" id="datasetListContent">
+        <div class="text-center py-3">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading datasets...</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dataset Item Template -->
+<template id="datasetItemTemplate">
+    <div class="dataset-item" data-dataset-id="">
+        <div class="dataset-item-header">
+            <div class="dataset-icon">
+                <i class="bi bi-file-earmark-spreadsheet"></i>
+            </div>
+            <div class="dataset-info">
+                <h6 class="dataset-name"></h6>
+                <p class="dataset-meta"></p>
+            </div>
+            <div class="dataset-actions">
+                <button class="btn btn-sm btn-outline-primary select-dataset" title="Select Dataset">
+                    <i class="bi bi-check-circle"></i>
+                </button>
+            </div>
+        </div>
+        <div class="dataset-stats">
+            <span class="stat-badge">
+                <i class="bi bi-table"></i>
+                <span class="stat-value rows"></span>
+            </span>
+            <span class="stat-badge">
+                <i class="bi bi-columns"></i>
+                <span class="stat-value columns"></span>
+            </span>
+            <span class="stat-badge">
+                <i class="bi bi-hdd"></i>
+                <span class="stat-value size"></span>
+            </span>
+        </div>
+    </div>
+</template>
+
+<!-- Empty State Template -->
+<template id="emptyStateTemplate">
+    <div class="empty-state">
+        <div class="empty-icon">
+            <i class="bi bi-database"></i>
+        </div>
+        <h6 class="empty-title">No Datasets</h6>
+        <p class="empty-description">Upload your first dataset to get started with analysis.</p>
+        <button class="btn btn-primary btn-sm" onclick="openUploadModal()">
+            <i class="bi bi-upload"></i> Upload Dataset
+        </button>
+    </div>
+</template>
+
+<style>
+/* Dataset List Panel Styles */
+.dataset-list-panel {
+    background-color: var(--cursor-bg-secondary);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.panel-title {
+    margin: 0;
+    color: var(--cursor-text-primary);
+    font-size: 0.875rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.panel-title i {
+    color: var(--cursor-accent-blue);
+}
+
+.dataset-list-content {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* Dataset Item Styles */
+.dataset-item {
+    background-color: var(--cursor-bg-tertiary);
+    border: 1px solid var(--cursor-border);
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.dataset-item:hover {
+    border-color: var(--cursor-accent-blue);
+    box-shadow: 0 2px 4px rgba(88, 166, 255, 0.1);
+}
+
+.dataset-item.selected {
+    border-color: var(--cursor-accent-blue);
+    background-color: rgba(88, 166, 255, 0.1);
+}
+
+.dataset-item-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.dataset-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    background-color: var(--cursor-accent-blue);
+    border-radius: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.dataset-icon i {
+    color: white;
+    font-size: 0.75rem;
+}
+
+.dataset-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.dataset-name {
+    margin: 0 0 0.25rem 0;
+    color: var(--cursor-text-primary);
+    font-size: 0.875rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dataset-meta {
+    margin: 0;
+    color: var(--cursor-text-muted);
+    font-size: 0.75rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dataset-actions {
+    flex-shrink: 0;
+}
+
+.dataset-stats {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.stat-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    background-color: var(--cursor-bg-quaternary);
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    color: var(--cursor-text-muted);
+}
+
+.stat-badge i {
+    color: var(--cursor-accent-blue);
+    font-size: 0.625rem;
+}
+
+.stat-value {
+    font-weight: 600;
+    color: var(--cursor-text-primary);
+}
+
+/* Empty State Styles */
+.empty-state {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: var(--cursor-text-muted);
+}
+
+.empty-icon {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+    opacity: 0.5;
+}
+
+.empty-title {
+    margin: 0 0 0.5rem 0;
+    color: var(--cursor-text-muted);
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.empty-description {
+    margin: 0 0 1rem 0;
+    font-size: 0.75rem;
+    line-height: 1.4;
+}
+
+/* Scrollbar Styling */
+.dataset-list-content::-webkit-scrollbar {
+    width: 4px;
+}
+
+.dataset-list-content::-webkit-scrollbar-track {
+    background: var(--cursor-bg-tertiary);
+    border-radius: 2px;
+}
+
+.dataset-list-content::-webkit-scrollbar-thumb {
+    background: var(--cursor-border);
+    border-radius: 2px;
+}
+
+.dataset-list-content::-webkit-scrollbar-thumb:hover {
+    background: var(--cursor-text-muted);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .dataset-item-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .dataset-actions {
+        width: 100%;
+    }
+    
+    .dataset-actions .btn {
+        width: 100%;
+    }
+    
+    .dataset-stats {
+        justify-content: space-between;
+    }
+}
+</style>
+
+<script>
+// Dataset List JavaScript
+class DatasetList {
+    constructor() {
+        this.datasets = [];
+        this.currentDataset = null;
+        this.init();
+    }
+    
+    init() {
+        this.loadDatasets();
+        this.setupEventListeners();
+    }
+    
+    setupEventListeners() {
+        // Listen for dataset changes
+        document.addEventListener('datasetChanged', (event) => {
+            this.updateCurrentDataset(event.detail.dataset);
+        });
+        
+        // Listen for new dataset uploads
+        document.addEventListener('datasetUploaded', (event) => {
+            this.loadDatasets();
+        });
+    }
+    
+    async loadDatasets() {
+        try {
+            const response = await fetch('/api/datasets/');
+            if (response.ok) {
+                const data = await response.json();
+                this.datasets = data.datasets || [];
+                this.renderDatasetList();
+            } else {
+                this.showEmptyState();
+            }
+        } catch (error) {
+            console.error('Failed to load datasets:', error);
+            this.showEmptyState();
+        }
+    }
+    
+    renderDatasetList() {
+        const container = document.getElementById('datasetListContent');
+        if (!container) return;
+        
+        if (this.datasets.length === 0) {
+            this.showEmptyState();
+            return;
+        }
+        
+        const template = document.getElementById('datasetItemTemplate');
+        container.innerHTML = '';
+        
+        this.datasets.forEach(dataset => {
+            const item = template.content.cloneNode(true);
+            const itemElement = item.querySelector('.dataset-item');
+            
+            // Set dataset ID
+            itemElement.setAttribute('data-dataset-id', dataset.id);
+            
+            // Fill in dataset info
+            item.querySelector('.dataset-name').textContent = dataset.name;
+            item.querySelector('.dataset-meta').textContent = 
+                `${dataset.row_count.toLocaleString()} rows • ${dataset.column_count} columns`;
+            
+            // Fill in stats
+            item.querySelector('.rows').textContent = dataset.row_count.toLocaleString();
+            item.querySelector('.columns').textContent = dataset.column_count;
+            item.querySelector('.size').textContent = this.formatFileSize(dataset.file_size_bytes);
+            
+            // Add click handler
+            itemElement.addEventListener('click', () => {
+                this.selectDataset(dataset);
+            });
+            
+            // Add select button handler
+            const selectBtn = item.querySelector('.select-dataset');
+            selectBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.selectDataset(dataset);
+            });
+            
+            container.appendChild(item);
+        });
+    }
+    
+    selectDataset(dataset) {
+        // Remove previous selection
+        document.querySelectorAll('.dataset-item.selected').forEach(item => {
+            item.classList.remove('selected');
+        });
+        
+        // Add selection to clicked item
+        const item = document.querySelector(`[data-dataset-id="${dataset.id}"]`);
+        if (item) {
+            item.classList.add('selected');
+        }
+        
+        this.currentDataset = dataset;
+        
+        // Dispatch dataset change event
+        const event = new CustomEvent('datasetChanged', {
+            detail: { dataset: dataset }
+        });
+        document.dispatchEvent(event);
+    }
+    
+    updateCurrentDataset(dataset) {
+        // Remove all selections
+        document.querySelectorAll('.dataset-item.selected').forEach(item => {
+            item.classList.remove('selected');
+        });
+        
+        // Add selection to current dataset
+        if (dataset) {
+            const item = document.querySelector(`[data-dataset-id="${dataset.id}"]`);
+            if (item) {
+                item.classList.add('selected');
+            }
+        }
+    }
+    
+    showEmptyState() {
+        const container = document.getElementById('datasetListContent');
+        const template = document.getElementById('emptyStateTemplate');
+        container.innerHTML = '';
+        container.appendChild(template.content.cloneNode(true));
+    }
+    
+    formatFileSize(bytes) {
+        if (bytes === 0) return '0 B';
+        const k = 1024;
+        const sizes = ['B', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+    }
+}
+
+// Global function for upload modal (if needed)
+function openUploadModal() {
+    // This would open the upload modal
+    // You can implement this based on your existing upload system
+    console.log('Open upload modal');
+}
+
+// Initialize dataset list when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    new DatasetList();
+});
+</script>

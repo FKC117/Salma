@@ -1,0 +1,426 @@
+<!-- Current Dataset Display Component -->
+<div class="current-dataset-display" id="currentDatasetDisplay">
+    <div class="dataset-info-card">
+        <div class="dataset-header">
+            <div class="dataset-icon">
+                <i class="bi bi-database-fill"></i>
+            </div>
+            <div class="dataset-details">
+                <h6 class="dataset-name" id="currentDatasetName">No Dataset Selected</h6>
+                <p class="dataset-description" id="currentDatasetDescription">Upload a dataset to begin analysis</p>
+            </div>
+            <div class="dataset-actions">
+                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#datasetSwitcherModal">
+                    <i class="bi bi-arrow-repeat"></i> Switch
+                </button>
+            </div>
+        </div>
+        
+        <div class="dataset-stats" id="datasetStats" style="display: none;">
+            <div class="stat-row">
+                <div class="stat-item">
+                    <span class="stat-icon">
+                        <i class="bi bi-table"></i>
+                    </span>
+                    <div class="stat-content">
+                        <span class="stat-value" id="datasetRows">0</span>
+                        <span class="stat-label">Rows</span>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">
+                        <i class="bi bi-columns"></i>
+                    </span>
+                    <div class="stat-content">
+                        <span class="stat-value" id="datasetColumns">0</span>
+                        <span class="stat-label">Columns</span>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">
+                        <i class="bi bi-hdd"></i>
+                    </span>
+                    <div class="stat-content">
+                        <span class="stat-value" id="datasetSize">0 MB</span>
+                        <span class="stat-label">Size</span>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">
+                        <i class="bi bi-check-circle"></i>
+                    </span>
+                    <div class="stat-content">
+                        <span class="stat-value" id="datasetStatus">Ready</span>
+                        <span class="stat-label">Status</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="dataset-quality" id="datasetQuality" style="display: none;">
+            <div class="quality-score">
+                <span class="quality-label">Data Quality:</span>
+                <div class="quality-bar">
+                    <div class="quality-fill" id="qualityFill" style="width: 0%"></div>
+                </div>
+                <span class="quality-value" id="qualityValue">0%</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Current Dataset Display Styles */
+.current-dataset-display {
+    margin-bottom: 1rem;
+}
+
+.dataset-info-card {
+    background-color: var(--cursor-bg-secondary);
+    border: 1px solid var(--cursor-border);
+    border-radius: 0.75rem;
+    padding: 1rem;
+    transition: all 0.2s ease;
+}
+
+.dataset-info-card:hover {
+    border-color: var(--cursor-accent-blue);
+    box-shadow: 0 2px 8px rgba(88, 166, 255, 0.1);
+}
+
+.dataset-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.dataset-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    background-color: var(--cursor-accent-blue);
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.dataset-icon i {
+    color: white;
+    font-size: 1.25rem;
+}
+
+.dataset-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.dataset-name {
+    margin: 0 0 0.25rem 0;
+    color: var(--cursor-text-primary);
+    font-size: 1rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dataset-description {
+    margin: 0;
+    color: var(--cursor-text-muted);
+    font-size: 0.875rem;
+    line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dataset-actions {
+    flex-shrink: 0;
+}
+
+.dataset-stats {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--cursor-border);
+}
+
+.stat-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.stat-icon {
+    width: 2rem;
+    height: 2rem;
+    background-color: var(--cursor-bg-tertiary);
+    border-radius: 0.375rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.stat-icon i {
+    color: var(--cursor-accent-blue);
+    font-size: 0.875rem;
+}
+
+.stat-content {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.stat-value {
+    font-weight: 600;
+    color: var(--cursor-text-primary);
+    font-size: 0.875rem;
+    line-height: 1.2;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: var(--cursor-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    line-height: 1.2;
+}
+
+.dataset-quality {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--cursor-border);
+}
+
+.quality-score {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.quality-label {
+    font-size: 0.875rem;
+    color: var(--cursor-text-muted);
+    white-space: nowrap;
+}
+
+.quality-bar {
+    flex: 1;
+    height: 0.5rem;
+    background-color: var(--cursor-bg-tertiary);
+    border-radius: 0.25rem;
+    overflow: hidden;
+}
+
+.quality-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--cursor-accent-red) 0%, var(--cursor-accent-orange) 50%, var(--cursor-accent-green) 100%);
+    border-radius: 0.25rem;
+    transition: width 0.3s ease;
+}
+
+.quality-value {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--cursor-text-primary);
+    white-space: nowrap;
+}
+
+/* Empty State */
+.dataset-info-card.empty {
+    text-align: center;
+    padding: 2rem;
+}
+
+.dataset-info-card.empty .dataset-icon {
+    background-color: var(--cursor-bg-tertiary);
+    margin: 0 auto 1rem;
+}
+
+.dataset-info-card.empty .dataset-icon i {
+    color: var(--cursor-text-muted);
+}
+
+.dataset-info-card.empty .dataset-name {
+    color: var(--cursor-text-muted);
+    font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .dataset-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .dataset-actions {
+        width: 100%;
+    }
+    
+    .dataset-actions .btn {
+        width: 100%;
+    }
+    
+    .stat-row {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+    
+    .quality-score {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .quality-bar {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .stat-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .stat-item {
+        justify-content: space-between;
+    }
+}
+</style>
+
+<script>
+// Current Dataset Display JavaScript
+class CurrentDatasetDisplay {
+    constructor() {
+        this.currentDataset = null;
+        this.init();
+    }
+    
+    init() {
+        this.loadCurrentDataset();
+        this.setupEventListeners();
+    }
+    
+    setupEventListeners() {
+        // Listen for dataset changes from other components
+        document.addEventListener('datasetChanged', (event) => {
+            this.updateDisplay(event.detail.dataset);
+        });
+        
+        // Listen for session changes
+        document.addEventListener('sessionChanged', (event) => {
+            this.loadCurrentDataset();
+        });
+    }
+    
+    async loadCurrentDataset() {
+        try {
+            // Get current session info
+            const response = await fetch('/api/sessions/current/');
+            if (response.ok) {
+                const data = await response.json();
+                this.currentDataset = data.dataset;
+                this.updateDisplay(this.currentDataset);
+            } else {
+                this.showEmptyState();
+            }
+        } catch (error) {
+            console.error('Failed to load current dataset:', error);
+            this.showEmptyState();
+        }
+    }
+    
+    updateDisplay(dataset) {
+        if (!dataset) {
+            this.showEmptyState();
+            return;
+        }
+        
+        this.currentDataset = dataset;
+        
+        // Update basic info
+        document.getElementById('currentDatasetName').textContent = dataset.name;
+        document.getElementById('currentDatasetDescription').textContent = 
+            dataset.description || 'Ready for analysis';
+        
+        // Show stats
+        const statsElement = document.getElementById('datasetStats');
+        statsElement.style.display = 'block';
+        
+        // Update stats
+        document.getElementById('datasetRows').textContent = dataset.row_count.toLocaleString();
+        document.getElementById('datasetColumns').textContent = dataset.column_count;
+        document.getElementById('datasetSize').textContent = this.formatFileSize(dataset.file_size_bytes);
+        document.getElementById('datasetStatus').textContent = this.getStatusText(dataset.processing_status);
+        
+        // Update quality score if available
+        if (dataset.data_quality_score !== undefined) {
+            this.updateQualityScore(dataset.data_quality_score);
+        }
+        
+        // Remove empty state class
+        const card = document.querySelector('.dataset-info-card');
+        card.classList.remove('empty');
+    }
+    
+    showEmptyState() {
+        document.getElementById('currentDatasetName').textContent = 'No Dataset Selected';
+        document.getElementById('currentDatasetDescription').textContent = 'Upload a dataset to begin analysis';
+        
+        // Hide stats
+        document.getElementById('datasetStats').style.display = 'none';
+        document.getElementById('datasetQuality').style.display = 'none';
+        
+        // Add empty state class
+        const card = document.querySelector('.dataset-info-card');
+        card.classList.add('empty');
+    }
+    
+    updateQualityScore(score) {
+        const qualityElement = document.getElementById('datasetQuality');
+        const qualityFill = document.getElementById('qualityFill');
+        const qualityValue = document.getElementById('qualityValue');
+        
+        if (score !== undefined && score !== null) {
+            qualityElement.style.display = 'block';
+            qualityFill.style.width = `${score}%`;
+            qualityValue.textContent = `${Math.round(score)}%`;
+        } else {
+            qualityElement.style.display = 'none';
+        }
+    }
+    
+    formatFileSize(bytes) {
+        if (bytes === 0) return '0 B';
+        const k = 1024;
+        const sizes = ['B', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+    }
+    
+    getStatusText(status) {
+        switch (status) {
+            case 'completed': return 'Ready';
+            case 'processing': return 'Processing';
+            case 'failed': return 'Failed';
+            case 'pending': return 'Pending';
+            default: return 'Unknown';
+        }
+    }
+}
+
+// Initialize current dataset display when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    new CurrentDatasetDisplay();
+});
+</script>
