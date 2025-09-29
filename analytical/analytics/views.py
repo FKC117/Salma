@@ -56,15 +56,19 @@ class UploadViewSet(viewsets.ViewSet):
             # Make dataset name optional - will default to filename in service
             dataset_name = request.data.get('name', '') or None
             
-            # Get user (for now, use first user since we don't have authentication)
+            # Get user - use authenticated user if available, otherwise fallback
             try:
-                user = User.objects.first()
-                if not user:
-                    # Create a default user if none exists
-                    user = User.objects.create(
-                        username='default_user',
-                        email='user@example.com'
-                    )
+                if request.user.is_authenticated:
+                    user = request.user
+                else:
+                    # Fallback for development/testing - use first user
+                    user = User.objects.first()
+                    if not user:
+                        # Create a default user if none exists
+                        user = User.objects.create(
+                            username='default_user',
+                            email='user@example.com'
+                        )
             except Exception as e:
                 logger.error(f"User retrieval failed: {str(e)}")
                 return Response({
@@ -144,8 +148,11 @@ class UploadViewSet(viewsets.ViewSet):
         List all datasets for the current user
         """
         try:
-            # Get user (for now, use first user since we don't have authentication)
-            try:
+            # Get the authenticated user
+            if request.user.is_authenticated:
+                user = request.user
+            else:
+                # Fallback for development/testing - use first user
                 user = User.objects.first()
                 if not user:
                     # Create a default user if none exists
@@ -153,15 +160,10 @@ class UploadViewSet(viewsets.ViewSet):
                         username='default_user',
                         email='user@example.com'
                     )
-            except Exception as e:
-                logger.error(f"User retrieval failed: {str(e)}")
-                return Response({
-                    'success': False,
-                    'error': 'User authentication failed'
-                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             
             # Get all datasets for the user
             datasets = Dataset.objects.filter(user=user).order_by('-created_at')
+            logger.info(f"DEBUG: Found {datasets.count()} datasets for user {user.id}")
             
             datasets_list = []
             for dataset in datasets:
@@ -213,14 +215,18 @@ class SessionViewSet(viewsets.ViewSet):
                     'error': 'Dataset ID is required'
                 }, status=status.HTTP_400_BAD_REQUEST)
             
-            # Get user
+            # Get user - use authenticated user if available, otherwise fallback
             try:
-                user = User.objects.first()
-                if not user:
-                    user = User.objects.create(
-                        username='default_user',
-                        email='user@example.com'
-                    )
+                if request.user.is_authenticated:
+                    user = request.user
+                else:
+                    # Fallback for development/testing - use first user
+                    user = User.objects.first()
+                    if not user:
+                        user = User.objects.create(
+                            username='default_user',
+                            email='user@example.com'
+                        )
             except Exception as e:
                 logger.error(f"User creation failed: {str(e)}")
                 return Response({
@@ -270,15 +276,19 @@ class SessionViewSet(viewsets.ViewSet):
         Get current active session info
         """
         try:
-            # Get user (for now, use first user since we don't have authentication)
+            # Get user - use authenticated user if available, otherwise fallback
             try:
-                user = User.objects.first()
-                if not user:
-                    # Create a default user if none exists
-                    user = User.objects.create(
-                        username='default_user',
-                        email='user@example.com'
-                    )
+                if request.user.is_authenticated:
+                    user = request.user
+                else:
+                    # Fallback for development/testing - use first user
+                    user = User.objects.first()
+                    if not user:
+                        # Create a default user if none exists
+                        user = User.objects.create(
+                            username='default_user',
+                            email='user@example.com'
+                        )
             except Exception as e:
                 logger.error(f"User retrieval failed: {str(e)}")
                 return Response({
@@ -1149,14 +1159,18 @@ def register_view(request):
 def api_current_session(request):
     """Get current active session info"""
     try:
-        # Get user (for now, use first user since we don't have authentication)
-        user = User.objects.first()
-        if not user:
-            # Create a default user if none exists
-            user = User.objects.create(
-                username='default_user',
-                email='user@example.com'
-            )
+        # Get the authenticated user
+        if request.user.is_authenticated:
+            user = request.user
+        else:
+            # Fallback for development/testing - use first user
+            user = User.objects.first()
+            if not user:
+                # Create a default user if none exists
+                user = User.objects.create(
+                    username='default_user',
+                    email='user@example.com'
+                )
         
         # Get current active session
         session = AnalysisSession.objects.filter(
@@ -1211,17 +1225,22 @@ def api_current_session(request):
 def api_datasets_list(request):
     """List all datasets for the current user"""
     try:
-        # Get user (for now, use first user since we don't have authentication)
-        user = User.objects.first()
-        if not user:
-            # Create a default user if none exists
-            user = User.objects.create(
-                username='default_user',
-                email='user@example.com'
-            )
+        # Get the authenticated user
+        if request.user.is_authenticated:
+            user = request.user
+        else:
+            # Fallback for development/testing - use first user
+            user = User.objects.first()
+            if not user:
+                # Create a default user if none exists
+                user = User.objects.create(
+                    username='default_user',
+                    email='user@example.com'
+                )
         
         # Get all datasets for the user
         datasets = Dataset.objects.filter(user=user).order_by('-created_at')
+        logger.info(f"DEBUG: Found {datasets.count()} datasets for user {user.id}")
         
         datasets_list = []
         for dataset in datasets:
@@ -1304,13 +1323,17 @@ def api_create_session(request):
                 'error': 'Dataset ID is required'
             }, status=400)
         
-        # Get user
-        user = User.objects.first()
-        if not user:
-            user = User.objects.create(
-                username='default_user',
-                email='user@example.com'
-            )
+        # Get user - use authenticated user if available, otherwise fallback
+        if request.user.is_authenticated:
+            user = request.user
+        else:
+            # Fallback for development/testing - use first user
+            user = User.objects.first()
+            if not user:
+                user = User.objects.create(
+                    username='default_user',
+                    email='user@example.com'
+                )
         
         # Get dataset
         try:
@@ -1459,20 +1482,17 @@ def get_tool_configuration(request, tool_id):
                 'error': 'Tool not found'
             }, status=404)
         
-        # Get user (for now, use first user since we don't have authentication)
-        try:
+        # Get the authenticated user
+        if request.user.is_authenticated:
+            user = request.user
+        else:
+            # Fallback for development/testing - use first user
             user = User.objects.first()
             if not user:
                 user = User.objects.create(
                     username='default_user',
                     email='user@example.com'
                 )
-        except Exception as e:
-            logger.error(f"User retrieval failed: {str(e)}")
-            return Response({
-                'success': False,
-                'error': 'User authentication failed'
-            }, status=500)
         
         # Get current session and dataset information
         session_id = request.session.get('current_session_id')
@@ -1663,20 +1683,17 @@ def execute_analysis_tool(request):
                 'error': 'Tool ID is required'
             }, status=400)
         
-        # Get user (for now, use first user since we don't have authentication)
-        try:
+        # Get the authenticated user
+        if request.user.is_authenticated:
+            user = request.user
+        else:
+            # Fallback for development/testing - use first user
             user = User.objects.first()
             if not user:
                 user = User.objects.create(
                     username='default_user',
                     email='user@example.com'
                 )
-        except Exception as e:
-            logger.error(f"User retrieval failed: {str(e)}")
-            return Response({
-                'success': False,
-                'error': 'User authentication failed'
-            }, status=500)
         
         # Get current session and dataset
         session_id = request.session.get('current_session_id')
@@ -1738,23 +1755,85 @@ def execute_analysis_tool(request):
             
             # Save analysis result to database
             try:
-                analysis_result = AnalysisResult.objects.create(
-                    name=title,
-                    description=description,
-                    result_type=result_type,
-                    result_data=execution_result.result_data,
-                    html_content=result_html,
-                    execution_id=execution_result.execution_id,
-                    tool_id=tool_id,
-                    parameters=parameters,
-                    status='completed',
-                    user=user,
-                    session=session,
-                    created_by=user
-                )
-                logger.info(f"Saved analysis result {analysis_result.id} to database")
+                logger.info(f"DEBUG: Attempting to save analysis result for tool_id: {tool_id}")
+                
+                # Get the tool from registry (tool_id is actually the tool name)
+                from analytics.services.tool_registry import tool_registry
+                tool_info = tool_registry.get_tool(tool_id)
+                
+                if not tool_info:
+                    logger.error(f"Tool {tool_id} not found in registry")
+                    # Continue without saving to database
+                else:
+                    logger.info(f"DEBUG: Found tool info: {tool_info.name}")
+                    # Try to get or create the AnalysisTool in database
+                    from analytics.models import AnalysisTool
+                    logger.info(f"DEBUG: Creating/updating AnalysisTool for {tool_id}")
+                    
+                    tool, created = AnalysisTool.objects.get_or_create(
+                        name=tool_id,
+                        defaults={
+                            'display_name': tool_info.name,
+                            'description': tool_info.description,
+                            'category': 'statistical',  # Default category
+                            'langchain_tool_name': tool_id,
+                            'tool_class': 'analytics.services.tool_executor',
+                            'tool_function': tool_info.execution_function,
+                            'is_active': True,
+                            'is_premium': False,
+                            'parameters_schema': {},
+                            'required_parameters': [],
+                            'optional_parameters': [],
+                            'required_column_types': tool_info.required_column_types or [],
+                            'min_columns': tool_info.min_columns or 1,
+                            'max_columns': tool_info.max_columns,
+                            'min_rows': 1,
+                            'execution_timeout': 300,
+                            'memory_limit_mb': 512,
+                            'output_types': [tool_info.result_type],
+                            'generates_images': tool_info.result_type == 'chart',
+                            'generates_tables': tool_info.result_type == 'table',
+                            'generates_text': tool_info.result_type == 'text',
+                            'version': '1.0.0',
+                            'tags': tool_info.tags or []
+                        }
+                    )
+                    logger.info(f"DEBUG: AnalysisTool {'created' if created else 'found'}: {tool.id}")
+                    
+                    # Get the dataset from session
+                    dataset = session.primary_dataset
+                    logger.info(f"DEBUG: Dataset: {dataset}")
+                    
+                    # Generate cache key
+                    import hashlib
+                    cache_key = hashlib.md5(f"{tool_id}_{session_id}_{str(parameters)}".encode()).hexdigest()
+                    logger.info(f"DEBUG: Cache key: {cache_key}")
+                    
+                    logger.info(f"DEBUG: Creating AnalysisResult with:")
+                    logger.info(f"  - name: {title}")
+                    logger.info(f"  - tool_used: {tool.id}")
+                    logger.info(f"  - session: {session.id}")
+                    logger.info(f"  - dataset: {dataset.id}")
+                    logger.info(f"  - user: {user.id}")
+                    
+                    analysis_result = AnalysisResult.objects.create(
+                        name=title,
+                        description=description,
+                        tool_used=tool,
+                        session=session,
+                        dataset=dataset,
+                        result_data=execution_result.result_data,
+                        parameters_used=parameters,
+                        output_type=result_type,
+                        cache_key=cache_key,
+                        confidence_score=0.8,  # Default confidence
+                        quality_score=0.8,    # Default quality
+                        user=user
+                    )
+                    logger.info(f"DEBUG: Successfully saved analysis result {analysis_result.id} to database")
             except Exception as e:
                 logger.error(f"Failed to save analysis result to database: {str(e)}")
+                logger.error(f"Error details: {str(e)}", exc_info=True)
                 # Continue even if database save fails
             
             return Response({
@@ -1801,20 +1880,17 @@ def interpret_analysis_result(request):
                 'error': 'Analysis data or analysis result ID is required'
             }, status=400)
         
-        # Get user (for now, use first user since we don't have authentication)
-        try:
+        # Get the authenticated user
+        if request.user.is_authenticated:
+            user = request.user
+        else:
+            # Fallback for development/testing - use first user
             user = User.objects.first()
             if not user:
                 user = User.objects.create(
                     username='default_user',
                     email='user@example.com'
                 )
-        except Exception as e:
-            logger.error(f"User retrieval failed: {str(e)}")
-            return Response({
-                'success': False,
-                'error': 'User authentication failed'
-            }, status=500)
         
         # Get session ID from request
         session_id = request.session.get('current_session_id')
@@ -1857,25 +1933,32 @@ def interpret_analysis_result(request):
 def get_analysis_history(request, session_id):
     """
     Get analysis history for a session including AI interpretations
+    Enhanced to filter by authenticated user and provide dataset-specific results
     """
     try:
-        from analytics.models import AnalysisResult, AIInterpretation
+        from analytics.models import AnalysisResult, AIInterpretation, AnalysisSession
         from analytics.services.ai_interpretation_service import ai_interpretation_service
         
-        # Get user (for now, use first user since we don't have authentication)
-        try:
+        # Get the authenticated user
+        if request.user.is_authenticated:
+            user = request.user
+        else:
+            # Fallback for development/testing - use first user
             user = User.objects.first()
             if not user:
                 user = User.objects.create(
                     username='default_user',
                     email='user@example.com'
                 )
-        except Exception as e:
-            logger.error(f"User retrieval failed: {str(e)}")
+        
+        # Verify the session belongs to the user
+        try:
+            session = AnalysisSession.objects.get(id=session_id, user=user)
+        except AnalysisSession.DoesNotExist:
             return Response({
                 'success': False,
-                'error': 'User authentication failed'
-            }, status=500)
+                'error': 'Session not found or access denied'
+            }, status=404)
         
         # Get analysis results for the session
         analysis_results = AnalysisResult.objects.filter(
@@ -1883,25 +1966,33 @@ def get_analysis_history(request, session_id):
             user=user
         ).order_by('-created_at')[:50]
         
+        logger.info(f"DEBUG: Found {analysis_results.count()} analysis results for session {session_id} (user: {user.username})")
+        
         # Get AI interpretations for the session
         interpretations = AIInterpretation.objects.filter(
             session_id=session_id,
             user=user
         ).order_by('-created_at')[:100]
         
-        # Format analysis results with interpretations
+        # Format analysis results with interpretations and dataset info
         history = []
         for result in analysis_results:
             result_data = {
                 'id': result.id,
                 'name': result.name,
                 'description': result.description,
-                'result_type': result.result_type,
-                'tool_id': result.tool_id,
-                'execution_id': result.execution_id,
-                'status': result.status,
+                'result_type': result.output_type,
+                'tool_name': result.tool_used.name if result.tool_used else 'Unknown Tool',
+                'tool_display_name': result.tool_used.display_name if result.tool_used else 'Unknown Tool',
+                'dataset_name': result.dataset.name,
+                'dataset_id': result.dataset.id,
+                'execution_time_ms': result.execution_time_ms,
+                'status': 'completed',  # Default status
                 'created_at': result.created_at.isoformat(),
-                'parameters': result.parameters,
+                'parameters': result.parameters_used,
+                'result_data': result.result_data,
+                'confidence_score': result.confidence_score,
+                'quality_score': result.quality_score,
                 'ai_interpretations': [
                     {
                         'id': interp.id,
@@ -1918,11 +2009,26 @@ def get_analysis_history(request, session_id):
             }
             history.append(result_data)
         
+        # Get session info
+        session_info = {
+            'id': session.id,
+            'name': session.name,
+            'description': session.description,
+            'dataset_name': session.primary_dataset.name,
+            'dataset_id': session.primary_dataset.id,
+            'analysis_count': session.analysis_count,
+            'last_analysis_at': session.last_analysis_at.isoformat() if session.last_analysis_at else None,
+            'created_at': session.created_at.isoformat(),
+            'last_accessed': session.last_accessed.isoformat()
+        }
+        
         return Response({
             'success': True,
+            'session_info': session_info,
             'history': history,
             'total_count': len(history),
-            'interpretations_count': len(interpretations)
+            'interpretations_count': len(interpretations),
+            'message': f'Found {len(history)} analysis results for session {session_id}'
         })
         
     except Exception as e:
@@ -1930,6 +2036,116 @@ def get_analysis_history(request, session_id):
         return Response({
             'success': False,
             'error': 'Failed to retrieve analysis history'
+        }, status=500)
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_dataset_analysis_history(request, dataset_id):
+    """
+    Get analysis history for a specific dataset across all sessions for the authenticated user
+    """
+    try:
+        from analytics.models import AnalysisResult, AIInterpretation, Dataset
+        
+        # Get the authenticated user
+        if request.user.is_authenticated:
+            user = request.user
+        else:
+            # Fallback for development/testing - use first user
+            user = User.objects.first()
+            if not user:
+                user = User.objects.create(
+                    username='default_user',
+                    email='user@example.com'
+                )
+        
+        # Verify the dataset belongs to the user
+        try:
+            dataset = Dataset.objects.get(id=dataset_id, user=user)
+        except Dataset.DoesNotExist:
+            return Response({
+                'success': False,
+                'error': 'Dataset not found or access denied'
+            }, status=404)
+        
+        # Get analysis results for the dataset across all sessions
+        analysis_results = AnalysisResult.objects.filter(
+            dataset_id=dataset_id,
+            user=user
+        ).order_by('-created_at')[:100]
+        
+        logger.info(f"DEBUG: Found {analysis_results.count()} analysis results for dataset {dataset_id} (user: {user.username})")
+        
+        # Get AI interpretations for the dataset
+        interpretations = AIInterpretation.objects.filter(
+            analysis_result__dataset_id=dataset_id,
+            user=user
+        ).order_by('-created_at')[:200]
+        
+        # Format analysis results with interpretations and session info
+        history = []
+        for result in analysis_results:
+            result_data = {
+                'id': result.id,
+                'name': result.name,
+                'description': result.description,
+                'result_type': result.output_type,
+                'tool_name': result.tool_used.name if result.tool_used else 'Unknown Tool',
+                'tool_display_name': result.tool_used.display_name if result.tool_used else 'Unknown Tool',
+                'session_id': result.session.id,
+                'session_name': result.session.name,
+                'execution_time_ms': result.execution_time_ms,
+                'status': 'completed',  # Default status
+                'created_at': result.created_at.isoformat(),
+                'parameters': result.parameters_used,
+                'result_data': result.result_data,
+                'confidence_score': result.confidence_score,
+                'quality_score': result.quality_score,
+                'ai_interpretations': [
+                    {
+                        'id': interp.id,
+                        'title': interp.title,
+                        'content': interp.content,
+                        'analysis_type': interp.analysis_type,
+                        'confidence_score': interp.confidence_score,
+                        'is_fallback': interp.is_fallback,
+                        'created_at': interp.created_at.isoformat()
+                    }
+                    for interp in interpretations 
+                    if interp.analysis_result_id == result.id
+                ]
+            }
+            history.append(result_data)
+        
+        # Get dataset info
+        dataset_info = {
+            'id': dataset.id,
+            'name': dataset.name,
+            'description': dataset.description,
+            'row_count': dataset.row_count,
+            'column_count': dataset.column_count,
+            'file_size_bytes': dataset.file_size_bytes,
+            'processing_status': dataset.processing_status,
+            'data_quality_score': dataset.data_quality_score,
+            'created_at': dataset.created_at.isoformat(),
+            'original_filename': dataset.original_filename
+        }
+        
+        return Response({
+            'success': True,
+            'dataset_info': dataset_info,
+            'history': history,
+            'total_count': len(history),
+            'interpretations_count': len(interpretations),
+            'message': f'Found {len(history)} analysis results for dataset {dataset.name}'
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting dataset analysis history: {str(e)}")
+        return Response({
+            'success': False,
+            'error': 'Failed to retrieve dataset analysis history'
         }, status=500)
 
 

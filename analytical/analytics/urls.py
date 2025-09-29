@@ -50,6 +50,7 @@ urlpatterns = [
     path('api/ai/interpretation/<int:interpretation_id>/', views.get_interpretation_detail, name='get_interpretation_detail'),
     path('api/ai/interpretation/<int:interpretation_id>/feedback/', views.update_interpretation_feedback, name='update_interpretation_feedback'),
     path('api/sessions/<int:session_id>/history/', views.get_analysis_history, name='get_analysis_history'),
+    path('api/datasets/<int:dataset_id>/history/', views.get_dataset_analysis_history, name='get_dataset_analysis_history'),
     path('api/tools/list/', views.list_analysis_tools, name='list_analysis_tools'),
     path('api/tools/configure/<str:tool_id>/', views.get_tool_configuration, name='get_tool_configuration'),
     path('api/tools/execute/', views.execute_analysis_tool, name='execute_analysis_tool'),

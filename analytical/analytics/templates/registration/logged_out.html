@@ -1,0 +1,41 @@
+{% extends 'analytics/base.html' %}
+{% load static %}
+
+{% block title %}Logged Out - Data Analysis System{% endblock %}
+
+{% block content %}
+<div class="container-fluid d-flex align-items-center justify-content-center" style="min-height: calc(100vh - 200px);">
+    <div class="row w-100">
+        <div class="col-md-6 col-lg-4 mx-auto">
+            <div class="card shadow-lg">
+                <div class="card-header text-center">
+                    <h3 class="mb-0 text-white">
+                        <i class="bi bi-check-circle text-success"></i>
+                        Successfully Logged Out
+                    </h3>
+                </div>
+                <div class="card-body text-center">
+                    <p class="text-white mb-4">You have been successfully logged out of the Data Analysis System.</p>
+                    <div class="d-grid">
+                        <a href="{% url 'login' %}" class="btn btn-primary">
+                            <i class="bi bi-box-arrow-in-right"></i> Sign In Again
+                        </a>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <small class="text-muted">
+                        Thank you for using our Data Analysis System
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Auto-redirect to login page after 3 seconds
+setTimeout(function() {
+    window.location.href = "{% url 'login' %}";
+}, 3000);
+</script>
+{% endblock %}

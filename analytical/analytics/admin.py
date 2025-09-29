@@ -103,7 +103,7 @@ class AnalysisResultAdmin(admin.ModelAdmin):
             'fields': ('tool_used', 'user', 'session')
         }),
         ('Execution', {
-            'fields': ('parameters_json', 'result_data', 'output_type', 'execution_time_ms')
+            'fields': ('parameters_used', 'result_data', 'output_type', 'execution_time_ms')
         }),
         ('Timestamps', {
             'fields': ('created_at',)

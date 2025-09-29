@@ -575,7 +575,7 @@ class AnalysisExecutor:
             Analysis Result: {tool.display_name}
             Dataset: {dataset.name}
             Tool: {tool.name}
-            Parameters: {analysis_result.parameters_json}
+            Parameters: {analysis_result.parameters_used}
             Output Type: {result_data.get('output_type', 'unknown')}
             Execution Time: {analysis_result.execution_time_ms}ms
             Created: {analysis_result.created_at.strftime('%Y-%m-%d %H:%M:%S')}
@@ -616,7 +616,7 @@ class AnalysisExecutor:
                     'tool_display_name': tool.display_name,
                     'output_type': result_data.get('output_type'),
                     'execution_time_ms': analysis_result.execution_time_ms,
-                    'parameters': analysis_result.parameters_json
+                    'parameters': analysis_result.parameters_used
                 },
                 confidence_score=0.9
             )
