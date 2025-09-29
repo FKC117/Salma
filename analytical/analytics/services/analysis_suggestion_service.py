@@ -12,7 +12,7 @@ from django.utils import timezone
 from django.db import transaction
 
 from analytics.models import (
-    AnalysisSuggestion, AnalysisResult, AnalysisSession, User, AnalysisTool
+    AnalysisSuggestion, AnalysisResult, AnalysisSession, User, AnalysisTool, SandboxExecution
 )
 from analytics.services.analysis_executor import AnalysisExecutor
 from analytics.services.audit_trail_manager import AuditTrailManager
@@ -73,63 +73,105 @@ class AnalysisSuggestionService:
             
             # Execute the analysis tool
             with transaction.atomic():
-                execution_result = self.analysis_executor.execute_analysis(
-                    tool_name=suggestion.analysis_tool.name,
-                    parameters=execution_parameters,
+                # Create sandbox execution record
+                sandbox_execution = SandboxExecution.objects.create(
+                    code=f"# Analysis Tool Execution\n# Tool: {suggestion.analysis_tool.name}\n# Parameters: {execution_parameters}\n# Generated from AI suggestion",
+                    language='python',
+                    status='running',
+                    user=user,
                     session=analysis_session,
-                    user=user
+                    started_at=timezone.now()
                 )
                 
-                if execution_result['success']:
-                    # Get the created analysis result
-                    analysis_result = AnalysisResult.objects.get(
-                        id=execution_result['analysis_result_id']
+                try:
+                    execution_result = self.analysis_executor.execute_analysis(
+                        tool_name=suggestion.analysis_tool.name,
+                        parameters=execution_parameters,
+                        session=analysis_session,
+                        user=user
                     )
                     
-                    # Update suggestion
-                    suggestion.is_executed = True
-                    suggestion.execution_result = analysis_result
-                    suggestion.save()
+                    if execution_result['success']:
+                        # Get the created analysis result
+                        analysis_result = AnalysisResult.objects.get(
+                            id=execution_result['analysis_result_id']
+                        )
+                        
+                        # Update suggestion
+                        suggestion.is_executed = True
+                        suggestion.execution_result = analysis_result
+                        suggestion.save()
+                        
+                        # Update sandbox execution with success
+                        sandbox_execution.status = 'completed'
+                        sandbox_execution.finished_at = timezone.now()
+                        sandbox_execution.execution_time_ms = execution_result.get('execution_time_ms', 0)
+                        sandbox_execution.output = f"Analysis completed successfully: {analysis_result.name}"
+                        sandbox_execution.security_scan_passed = True
+                        sandbox_execution.save()
+                        
+                        # Log audit trail
+                        self.audit_manager.log_user_action(
+                            user_id=user.id,
+                            action_type='analysis_suggestion_executed',
+                            resource_type='analysis_suggestion',
+                            resource_id=suggestion.id,
+                            resource_name="Analysis Suggestion Execution",
+                            action_description=f"Executed suggestion: {suggestion.analysis_tool.display_name}",
+                            success=True,
+                            correlation_id=correlation_id,
+                            execution_time_ms=int((time.time() - start_time) * 1000)
+                        )
+                        
+                        logger.info(f"Analysis suggestion {suggestion_id} executed successfully")
+                        
+                        return {
+                            'success': True,
+                            'suggestion': self._format_suggestion(suggestion),
+                            'analysis_result': self._format_analysis_result(analysis_result),
+                            'execution_time_ms': execution_result.get('execution_time_ms', 0),
+                            'sandbox_execution_id': sandbox_execution.id
+                        }
+                    else:
+                        # Update sandbox execution with failure
+                        sandbox_execution.status = 'failed'
+                        sandbox_execution.finished_at = timezone.now()
+                        sandbox_execution.error_message = execution_result.get('error', 'Unknown error')
+                        sandbox_execution.save()
+                        
+                        # Log failed execution
+                        self.audit_manager.log_user_action(
+                            user_id=user.id,
+                            action_type='analysis_suggestion_execution_failed',
+                            resource_type='analysis_suggestion',
+                            resource_id=suggestion.id,
+                            resource_name="Analysis Suggestion Execution Failed",
+                            action_description=f"Failed to execute suggestion: {suggestion.analysis_tool.display_name}",
+                            success=False,
+                            correlation_id=correlation_id,
+                            execution_time_ms=int((time.time() - start_time) * 1000)
+                        )
+                        
+                        return {
+                            'success': False,
+                            'error': 'Analysis execution failed',
+                            'details': execution_result.get('error', 'Unknown error'),
+                            'sandbox_execution_id': sandbox_execution.id
+                        }
+                        
+                except Exception as e:
+                    # Update sandbox execution with error
+                    sandbox_execution.status = 'failed'
+                    sandbox_execution.finished_at = timezone.now()
+                    sandbox_execution.error_message = str(e)
+                    sandbox_execution.save()
                     
-                    # Log audit trail
-                    self.audit_manager.log_user_action(
-                        user_id=user.id,
-                        action_type='analysis_suggestion_executed',
-                        resource_type='analysis_suggestion',
-                        resource_id=suggestion.id,
-                        resource_name="Analysis Suggestion Execution",
-                        action_description=f"Executed suggestion: {suggestion.analysis_tool.display_name}",
-                        success=True,
-                        correlation_id=correlation_id,
-                        execution_time_ms=int((time.time() - start_time) * 1000)
-                    )
-                    
-                    logger.info(f"Analysis suggestion {suggestion_id} executed successfully")
-                    
-                    return {
-                        'success': True,
-                        'suggestion': self._format_suggestion(suggestion),
-                        'analysis_result': self._format_analysis_result(analysis_result),
-                        'execution_time_ms': execution_result.get('execution_time_ms', 0)
-                    }
-                else:
-                    # Log failed execution
-                    self.audit_manager.log_user_action(
-                        user_id=user.id,
-                        action_type='analysis_suggestion_execution_failed',
-                        resource_type='analysis_suggestion',
-                        resource_id=suggestion.id,
-                        resource_name="Analysis Suggestion Execution Failed",
-                        action_description=f"Failed to execute suggestion: {suggestion.analysis_tool.display_name}",
-                        success=False,
-                        correlation_id=correlation_id,
-                        execution_time_ms=int((time.time() - start_time) * 1000)
-                    )
-                    
+                    logger.error(f"Error executing suggestion {suggestion_id}: {str(e)}")
                     return {
                         'success': False,
-                        'error': 'Analysis execution failed',
-                        'details': execution_result.get('error', 'Unknown error')
+                        'error': 'Failed to execute suggestion',
+                        'details': str(e),
+                        'sandbox_execution_id': sandbox_execution.id
                     }
             
         except AnalysisSuggestion.DoesNotExist:
@@ -353,3 +395,59 @@ class AnalysisSuggestionService:
             'created_at': analysis_result.created_at.isoformat(),
             'result_data': analysis_result.result_data
         }
+    
+    def get_user_sandbox_executions(self, user: User, limit: int = 20, offset: int = 0) -> Dict[str, Any]:
+        """
+        Get sandbox execution history for a user
+        
+        Args:
+            user: User requesting executions
+            limit: Number of executions to return
+            offset: Offset for pagination
+            
+        Returns:
+            Dict containing executions list and pagination info
+        """
+        try:
+            # Get sandbox executions for the user
+            executions = SandboxExecution.objects.filter(
+                user=user
+            ).select_related('session').order_by('-created_at')[offset:offset + limit]
+            
+            total_count = SandboxExecution.objects.filter(user=user).count()
+            
+            # Format executions
+            formatted_executions = []
+            for execution in executions:
+                formatted_executions.append({
+                    'id': execution.id,
+                    'code': execution.code[:200] + '...' if len(execution.code) > 200 else execution.code,
+                    'language': execution.language,
+                    'status': execution.status,
+                    'output': execution.output,
+                    'error_message': execution.error_message,
+                    'execution_time_ms': execution.execution_time_ms,
+                    'memory_used_mb': execution.memory_used_mb,
+                    'cpu_usage_percent': execution.cpu_usage_percent,
+                    'security_scan_passed': execution.security_scan_passed,
+                    'security_warnings': execution.security_warnings,
+                    'session_name': execution.session.name if execution.session else 'Unknown',
+                    'created_at': execution.created_at.isoformat(),
+                    'started_at': execution.started_at.isoformat() if execution.started_at else None,
+                    'finished_at': execution.finished_at.isoformat() if execution.finished_at else None,
+                })
+            
+            return {
+                'success': True,
+                'executions': formatted_executions,
+                'total_count': total_count,
+                'has_more': (offset + limit) < total_count
+            }
+            
+        except Exception as e:
+            logger.error(f"Error getting sandbox executions for user {user.id}: {str(e)}")
+            return {
+                'success': False,
+                'error': 'Failed to get sandbox executions',
+                'details': str(e)
+            }

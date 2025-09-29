@@ -1114,6 +1114,60 @@ class EnhancedChatViewSet(viewsets.ViewSet):
                 'error': 'Failed to update chat session',
                 'details': str(e)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    @action(detail=False, methods=['get'])
+    def sandbox_executions(self, request):
+        """
+        Get sandbox execution history for the authenticated user
+        """
+        try:
+            user = request.user
+            if not user.is_authenticated:
+                return Response({
+                    'success': False,
+                    'error': 'Authentication required'
+                }, status=status.HTTP_401_UNAUTHORIZED)
+            
+            # Get pagination parameters
+            limit = int(request.GET.get('limit', 20))
+            offset = int(request.GET.get('offset', 0))
+            
+            # Get sandbox executions
+            result = self.suggestion_service.get_user_sandbox_executions(
+                user=user,
+                limit=limit,
+                offset=offset
+            )
+            
+            if result['success']:
+                return Response(result)
+            else:
+                return Response(result, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                
+        except Exception as e:
+            logger.error(f"Enhanced chat sandbox executions error: {str(e)}")
+            return Response({
+                'success': False,
+                'error': 'Failed to get sandbox executions',
+                'details': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class HealthViewSet(viewsets.ViewSet):
+    """
+    Health check endpoints
+    """
+    
+    @action(detail=False, methods=['get'])
+    def health(self, request):
+        """
+        Simple health check endpoint
+        """
+        return Response({
+            'status': 'healthy',
+            'timestamp': timezone.now().isoformat(),
+            'service': 'analytics'
+        })
 
 
 class ToolsViewSet(viewsets.ViewSet):

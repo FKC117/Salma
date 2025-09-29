@@ -140,56 +140,32 @@ class ToolExecutor:
         include_percentiles = parameters.get('include_percentiles', True)
         include_skewness = parameters.get('include_skewness', True)
         
-        print(f"🔧 DEBUG: Descriptive stats parameters: {parameters}")
-        print(f"🔧 DEBUG: Columns received: {columns}")
-        print(f"🔧 DEBUG: Columns type: {type(columns)}")
-        print(f"🔧 DEBUG: Dataset shape: {dataset.shape}")
-        print(f"🔧 DEBUG: Dataset columns: {dataset.columns.tolist()}")
         
         if not columns:
             columns = dataset.select_dtypes(include=[np.number]).columns.tolist()
-            print(f"🔧 DEBUG: Using all numeric columns: {columns}")
-        
-        print(f"🔧 DEBUG: Final columns to analyze: {columns}")
-        print(f"🔧 DEBUG: Columns count: {len(columns)}")
-        
         # Calculate descriptive statistics
         stats = dataset[columns].describe()
-        print(f"🔧 DEBUG: Initial stats shape: {stats.shape}")
-        print(f"🔧 DEBUG: Initial stats columns: {stats.columns.tolist()}")
         
         if include_percentiles:
             percentiles = dataset[columns].quantile([0.25, 0.5, 0.75])
             stats = pd.concat([stats, percentiles])
-            print(f"🔧 DEBUG: After percentiles - stats shape: {stats.shape}")
         
         if include_skewness:
             skewness = dataset[columns].skew()
             kurtosis = dataset[columns].kurtosis()
             stats.loc['skewness'] = skewness
             stats.loc['kurtosis'] = kurtosis
-            print(f"🔧 DEBUG: After skewness - stats shape: {stats.shape}")
         
         # Format results
         # Ensure stats is a DataFrame
         if isinstance(stats, pd.Series):
             stats = stats.to_frame().T
-            print(f"🔧 DEBUG: Converted Series to DataFrame - shape: {stats.shape}")
-        
-        print(f"🔧 DEBUG: Final stats shape: {stats.shape}")
-        print(f"🔧 DEBUG: Final stats columns: {stats.columns.tolist()}")
-        print(f"🔧 DEBUG: Final stats index: {stats.index.tolist()}")
         
         # Transpose the data so variables are rows and statistics are columns
         stats_transposed = stats.T
         
         # Generate visualizations automatically
-        print(f"🔧 DEBUG: About to generate visualizations for columns: {columns}")
         visualizations = self._generate_visualizations(dataset[columns], columns)
-        print(f"🔧 DEBUG: Visualizations generated: {type(visualizations)}")
-        print(f"🔧 DEBUG: Histograms count: {len(visualizations.get('histograms', {}))}")
-        print(f"🔧 DEBUG: Box plots count: {len(visualizations.get('boxplots', {}))}")
-        print(f"🔧 DEBUG: Outliers count: {len(visualizations.get('outliers', {}))}")
         
         result = {
             'type': 'table',
@@ -207,19 +183,11 @@ class ToolExecutor:
             'visualizations': visualizations
         }
         
-        print(f"🔧 DEBUG: Final result visualizations: {type(result.get('visualizations', {}))}")
-        print(f"🔧 DEBUG: Final result visualizations keys: {list(result.get('visualizations', {}).keys())}")
-        
-        print(f"🔧 DEBUG: Result table_data columns: {result['table_data']['columns']}")
-        print(f"🔧 DEBUG: Result table_data rows count: {len(result['table_data']['rows'])}")
-        print(f"🔧 DEBUG: First few rows: {result['table_data']['rows'][:3]}")
-        
         return result
     
     def _generate_visualizations(self, data: pd.DataFrame, columns: List[str]) -> Dict[str, Any]:
         """Generate histograms, box plots, and outlier detection automatically"""
         try:
-            print(f"🔧 DEBUG: Starting visualization generation for {len(columns)} columns")
             import matplotlib.pyplot as plt
             import seaborn as sns
             import io
@@ -238,7 +206,6 @@ class ToolExecutor:
             
             for i, column in enumerate(columns):
                 if column in data.columns:
-                    print(f"🔧 DEBUG: Processing column {i+1}/{len(columns)}: {column}")
                     
                     # Generate histogram
                     fig, ax = plt.subplots(figsize=(8, 6))
@@ -256,7 +223,6 @@ class ToolExecutor:
                     plt.close(fig)
                     
                     visualizations['histograms'][column] = histogram_base64
-                    print(f"🔧 DEBUG: Generated histogram for {column} (base64 length: {len(histogram_base64)})")
                     
                     # Generate box plot
                     fig, ax = plt.subplots(figsize=(8, 6))
@@ -291,18 +257,9 @@ class ToolExecutor:
                         'outlier_percentage': (len(outliers) / len(data)) * 100,
                         'bounds': {'lower': lower_bound, 'upper': upper_bound}
                     }
-                    print(f"🔧 DEBUG: Detected {len(outliers)} outliers for {column}")
-                else:
-                    print(f"🔧 DEBUG: Column {column} not found in data")
-            
-            print(f"🔧 DEBUG: Generated visualizations for {len(columns)} variables")
-            print(f"🔧 DEBUG: Histograms: {len(visualizations['histograms'])}")
-            print(f"🔧 DEBUG: Box plots: {len(visualizations['boxplots'])}")
-            print(f"🔧 DEBUG: Outliers: {len(visualizations['outliers'])}")
             return visualizations
             
         except Exception as e:
-            print(f"🔧 DEBUG: Error generating visualizations: {str(e)}")
             import traceback
             traceback.print_exc()
             return {'histograms': {}, 'boxplots': {}, 'outliers': {}}
@@ -778,6 +735,73 @@ class ToolExecutor:
         # In a real implementation, this would filter by session_id
         return list(self.execution_history.values())
 
+
+# Specific tool execution functions for analysis executor
+def execute_descriptive_stats(df: pd.DataFrame, parameters: Dict[str, Any], session) -> Dict[str, Any]:
+    """Execute descriptive statistics analysis"""
+    result = tool_executor.execute_tool("descriptive_stats", parameters, df, session)
+    if hasattr(result, 'to_dict'):
+        result_dict = result.to_dict()
+        # Return the result_data directly with output_type for analysis executor compatibility
+        if 'result_data' in result_dict and isinstance(result_dict['result_data'], dict):
+            result_data = result_dict['result_data']
+            result_data['output_type'] = result_data.get('type', 'table')
+            # Rename table_data to data for analysis executor compatibility
+            if 'table_data' in result_data:
+                result_data['data'] = result_data.pop('table_data')
+            return result_data
+        return result_dict
+    return result
+
+def execute_correlation_analysis(df: pd.DataFrame, parameters: Dict[str, Any], session) -> Dict[str, Any]:
+    """Execute correlation analysis"""
+    result = tool_executor.execute_tool("correlation_analysis", parameters, df, session)
+    return result.to_dict() if hasattr(result, 'to_dict') else result
+
+def execute_regression_analysis(df: pd.DataFrame, parameters: Dict[str, Any], session) -> Dict[str, Any]:
+    """Execute regression analysis"""
+    result = tool_executor.execute_tool("regression_analysis", parameters, df, session)
+    return result.to_dict() if hasattr(result, 'to_dict') else result
+
+def execute_scatter_plot(df: pd.DataFrame, parameters: Dict[str, Any], session) -> Dict[str, Any]:
+    """Execute scatter plot generation"""
+    result = tool_executor.execute_tool("scatter_plot", parameters, df, session)
+    return result.to_dict() if hasattr(result, 'to_dict') else result
+
+def execute_histogram(df: pd.DataFrame, parameters: Dict[str, Any], session) -> Dict[str, Any]:
+    """Execute histogram generation"""
+    result = tool_executor.execute_tool("histogram", parameters, df, session)
+    return result.to_dict() if hasattr(result, 'to_dict') else result
+
+def execute_box_plot(df: pd.DataFrame, parameters: Dict[str, Any], session) -> Dict[str, Any]:
+    """Execute box plot generation"""
+    result = tool_executor.execute_tool("box_plot", parameters, df, session)
+    return result.to_dict() if hasattr(result, 'to_dict') else result
+
+def execute_missing_data_analysis(df: pd.DataFrame, parameters: Dict[str, Any], session) -> Dict[str, Any]:
+    """Execute missing data analysis"""
+    result = tool_executor.execute_tool("missing_data_analysis", parameters, df, session)
+    return result.to_dict() if hasattr(result, 'to_dict') else result
+
+def execute_outlier_detection(df: pd.DataFrame, parameters: Dict[str, Any], session) -> Dict[str, Any]:
+    """Execute outlier detection"""
+    result = tool_executor.execute_tool("outlier_detection", parameters, df, session)
+    return result.to_dict() if hasattr(result, 'to_dict') else result
+
+def execute_kmeans_clustering(df: pd.DataFrame, parameters: Dict[str, Any], session) -> Dict[str, Any]:
+    """Execute K-means clustering"""
+    result = tool_executor.execute_tool("kmeans_clustering", parameters, df, session)
+    return result.to_dict() if hasattr(result, 'to_dict') else result
+
+def execute_time_series_plot(df: pd.DataFrame, parameters: Dict[str, Any], session) -> Dict[str, Any]:
+    """Execute time series plot generation"""
+    result = tool_executor.execute_tool("time_series_plot", parameters, df, session)
+    return result.to_dict() if hasattr(result, 'to_dict') else result
+
+def execute_kaplan_meier(df: pd.DataFrame, parameters: Dict[str, Any], session) -> Dict[str, Any]:
+    """Execute Kaplan-Meier survival analysis"""
+    result = tool_executor.execute_tool("kaplan_meier", parameters, df, session)
+    return result.to_dict() if hasattr(result, 'to_dict') else result
 
 # Global instance
 tool_executor = ToolExecutor()

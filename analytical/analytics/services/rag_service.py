@@ -677,7 +677,7 @@ class RAGService:
                 resource_name=resource_name,
                 action_description=f"RAG {operation} operation",
                 success=success,
-                metadata_json=metadata or {},
+                additional_details=metadata or {},
                 correlation_id=f"rag_{int(timezone.now().timestamp())}"
             )
         except Exception as e:

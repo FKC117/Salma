@@ -182,15 +182,23 @@ class AnalysisExecutor:
         
         # Check if required types are present
         for required_type in required_types:
-            if not any(required_type in col_type for col_type in column_types.values()):
-                raise ValueError(f"Tool requires at least one column of type '{required_type}'")
+            # Map numeric to actual detected types
+            if required_type == 'numeric':
+                numeric_types = ['integer', 'float', 'numeric', 'decimal', 'id']
+                has_numeric = any(any(nt in col_type for nt in numeric_types) for col_type in column_types.values())
+                logger.info(f"Column validation debug - Required: {required_type}, Detected: {column_types}, Has numeric: {has_numeric}")
+                if not has_numeric:
+                    raise ValueError(f"Tool requires at least one column of type '{required_type}'")
+            else:
+                if not any(required_type in col_type for col_type in column_types.values()):
+                    raise ValueError(f"Tool requires at least one column of type '{required_type}'")
     
     def _execute_tool_function(self, tool: AnalysisTool, parameters: Dict[str, Any], 
                               df: pd.DataFrame, session: AnalysisSession) -> Dict[str, Any]:
         """Execute the actual tool function"""
         try:
             # Import and execute tool function
-            tool_module = __import__(f'analytics.tools.{tool.tool_class}', fromlist=[tool.tool_function])
+            tool_module = __import__(tool.tool_class, fromlist=[tool.tool_function])
             tool_function = getattr(tool_module, tool.tool_function)
             
             # Execute with timeout

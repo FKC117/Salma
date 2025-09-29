@@ -17,7 +17,7 @@ from django.core.cache import cache
 
 from analytics.models import (
     ChatMessage, ChatSession, AnalysisSuggestion, AnalysisSession,
-    AnalysisTool, AnalysisResult, User, Dataset
+    AnalysisTool, AnalysisResult, User, Dataset, SandboxExecution
 )
 from analytics.services.llm_processor import LLMProcessor
 from analytics.services.rag_service import RAGService
@@ -429,7 +429,7 @@ class ChatService:
             message_type=message_type,
             session=session,
             analysis_context=analysis_context or {},
-            llm_model=self.llm_processor.model_name,
+            llm_model=self.llm_processor.ollama_model if self.llm_processor.use_ollama else getattr(self.llm_processor, 'model_name', 'unknown'),
             token_count=len(content.split())  # Simple token estimation
         )
     
@@ -512,6 +512,7 @@ class ChatService:
             # Parse suggestions and create AnalysisSuggestion objects
             suggestions = []
             try:
+                logger.info(f"Suggestions response: {suggestions_response['text'][:500]}...")
                 suggestions_data = json.loads(suggestions_response['text'])
                 
                 for suggestion_data in suggestions_data:

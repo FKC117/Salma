@@ -517,3 +517,13 @@ else:
         '/health/',
         '/metrics/',
     ]
+
+# Ollama Configuration (for development)
+USE_OLLAMA = True  # Set to False for production (use Google AI)
+OLLAMA_URL = 'http://localhost:11434'
+OLLAMA_MODEL = 'deepseek-r1:8b'  # Change to your preferred model
+OLLAMA_GENERATION_CONFIG = {
+    'temperature': 0.7,
+    'top_p': 0.9,
+    'max_tokens': 4000
+}

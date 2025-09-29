@@ -72,24 +72,19 @@ class ToolRegistry:
     def __init__(self):
         self.tools: Dict[str, AnalysisTool] = {}
         self.categories: Dict[ToolCategory, List[str]] = {cat: [] for cat in ToolCategory}
-        print("🔧 DEBUG: Initializing ToolRegistry")
         self._initialize_default_tools()
-        print(f"🔧 DEBUG: ToolRegistry initialized with {len(self.tools)} tools")
     
     def _initialize_default_tools(self):
         """Initialize default analysis tools"""
-        print("🔧 DEBUG: Initializing default tools")
         self._add_statistical_tools()
         self._add_visualization_tools()
         self._add_data_quality_tools()
         self._add_machine_learning_tools()
         self._add_time_series_tools()
         self._add_survival_analysis_tools()
-        print(f"🔧 DEBUG: Default tools initialized. Total tools: {len(self.tools)}")
     
     def _add_statistical_tools(self):
         """Add statistical analysis tools"""
-        print("🔧 DEBUG: Adding statistical tools")
         # Descriptive Statistics
         self.register_tool(AnalysisTool(
             id="descriptive_stats",
@@ -107,7 +102,6 @@ class ToolRegistry:
             tags=["statistics", "summary", "numeric"],
             required_column_types=["numeric"]
         ))
-        print("🔧 DEBUG: Descriptive stats tool registered")
         
         # Correlation Analysis
         self.register_tool(AnalysisTool(
@@ -128,7 +122,6 @@ class ToolRegistry:
             required_column_types=["numeric"],
             min_columns=2
         ))
-        print("🔧 DEBUG: Correlation analysis tool registered")
         
         # Regression Analysis
         self.register_tool(AnalysisTool(
@@ -314,18 +307,11 @@ class ToolRegistry:
         """Register a new analysis tool"""
         self.tools[tool.id] = tool
         self.categories[tool.category].append(tool.id)
-        print(f"🔧 DEBUG: Registered tool: {tool.name} ({tool.id}) in category {tool.category}")
         logger.info(f"Registered tool: {tool.name} ({tool.id})")
     
     def get_tool(self, tool_id: str) -> Optional[AnalysisTool]:
         """Get a tool by ID"""
-        print(f"🔧 DEBUG: Getting tool with ID: {tool_id}")
-        print(f"🔧 DEBUG: Available tools: {list(self.tools.keys())}")
         tool = self.tools.get(tool_id)
-        print(f"🔧 DEBUG: Tool found: {tool is not None}")
-        if tool:
-            print(f"🔧 DEBUG: Tool name: {tool.name}")
-            print(f"🔧 DEBUG: Tool parameters: {len(tool.parameters)}")
         return tool
     
     def get_tools_by_category(self, category: ToolCategory) -> List[AnalysisTool]:

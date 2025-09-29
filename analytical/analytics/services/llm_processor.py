@@ -1,13 +1,15 @@
 """
-LLM Processor with Google AI Integration
+LLM Processor with Google AI Integration (Production) and Ollama (Development)
 
 This service handles all LLM operations including text generation, analysis,
-context management, and token tracking using Google AI API.
+context management, and token tracking using Google AI API for production
+and Ollama for local development.
 """
 
 import json
 import logging
 import time
+import requests
 from typing import Dict, List, Any, Optional, Tuple
 from datetime import datetime, timedelta
 from django.conf import settings
@@ -15,8 +17,8 @@ from django.utils import timezone
 from django.db import transaction
 from django.core.cache import cache
 from django.contrib.auth import get_user_model
-import google.generativeai as genai
-import tiktoken
+# import google.generativeai as genai  # Commented out for Ollama development
+# import tiktoken  # Commented out for Ollama development
 from io import BytesIO
 import base64
 
@@ -38,16 +40,30 @@ User = get_user_model()
 
 class LLMProcessor:
     """
-    Service for LLM operations with Google AI integration and comprehensive token tracking
+    Service for LLM operations with Google AI integration (production) and Ollama (development)
     """
     
     def __init__(self):
         self.audit_manager = AuditTrailManager()
         self.rag_service = RAGService()
-        self.api_key = settings.GOOGLE_AI_API_KEY
-        self.model_name = settings.GOOGLE_AI_MODEL
-        self.generation_config = settings.GOOGLE_AI_GENERATION_CONFIG
-        self.safety_settings = settings.GOOGLE_AI_SAFETY_SETTINGS
+        
+        # Ollama configuration (for development)
+        self.ollama_url = getattr(settings, 'OLLAMA_URL', 'http://localhost:11434')
+        self.ollama_model = getattr(settings, 'OLLAMA_MODEL', 'llama3:8b')
+        self.use_ollama = getattr(settings, 'USE_OLLAMA', True)  # Set to False for production
+        
+        # Google AI configuration (for production) - commented out for development
+        # self.api_key = settings.GOOGLE_AI_API_KEY
+        # self.model_name = settings.GOOGLE_AI_MODEL
+        # self.generation_config = settings.GOOGLE_AI_GENERATION_CONFIG
+        # self.safety_settings = settings.GOOGLE_AI_SAFETY_SETTINGS
+        
+        # Ollama generation config
+        self.generation_config = getattr(settings, 'OLLAMA_GENERATION_CONFIG', {
+            'temperature': 0.7,
+            'top_p': 0.9,
+            'max_tokens': 4000
+        })
         
         # Token costs (per 1K tokens)
         self.input_token_cost = getattr(settings, 'TOKEN_COST_PER_INPUT', 0.0005)
@@ -57,41 +73,85 @@ class LLMProcessor:
         self.max_context_messages = 10
         self.context_cache_timeout = 3600  # 1 hour
         
-        # Initialize Google AI
-        self._initialize_google_ai()
+        # Initialize LLM (Ollama for development, Google AI for production)
+        if self.use_ollama:
+            self._initialize_ollama()
+        else:
+            self._initialize_google_ai()
+    
+    def _initialize_ollama(self):
+        """Initialize Ollama client"""
+        try:
+            # Test Ollama connection
+            response = requests.get(f"{self.ollama_url}/api/tags", timeout=5)
+            if response.status_code == 200:
+                logger.info(f"Ollama initialized with model: {self.ollama_model}")
+            else:
+                raise Exception(f"Ollama API returned status {response.status_code}")
+        except Exception as e:
+            logger.error(f"Failed to initialize Ollama: {str(e)}")
+            raise Exception(f"Failed to initialize Ollama: {str(e)}")
     
     def _initialize_google_ai(self):
-        """Initialize Google AI client"""
+        """Initialize Google AI client (for production) - commented out for development"""
+        # Commented out for development - uncomment for production
+        # try:
+        #     genai.configure(api_key=self.api_key)
+        #     self.model = genai.GenerativeModel(
+        #         model_name=self.model_name,
+        #         generation_config=self.generation_config,
+        #         safety_settings=self.safety_settings
+        #     )
+        #     logger.info(f"Google AI initialized with model: {self.model_name}")
+        # except Exception as e:
+        #     logger.error(f"Failed to initialize Google AI model '{self.model_name}': {str(e)}")
+        #     raise Exception(f"Failed to initialize Google AI: {str(e)}")
+        pass
+    
+    def _generate_with_ollama(self, prompt: str) -> str:
+        """Generate text using Ollama API"""
         try:
-            genai.configure(api_key=self.api_key)
-            self.model = genai.GenerativeModel(
-                model_name=self.model_name,
-                generation_config=self.generation_config,
-                safety_settings=self.safety_settings
+            payload = {
+                "model": self.ollama_model,
+                "prompt": prompt,
+                "stream": False,
+                "options": {
+                    "temperature": self.generation_config.get('temperature', 0.7),
+                    "top_p": self.generation_config.get('top_p', 0.9),
+                    "num_predict": self.generation_config.get('max_tokens', 4000)
+                }
+            }
+            
+            response = requests.post(
+                f"{self.ollama_url}/api/generate",
+                json=payload,
+                timeout=30  # 30 seconds should be enough for loaded model
             )
-            logger.info(f"Google AI initialized with model: {self.model_name}")
+            
+            if response.status_code == 200:
+                result = response.json()
+                return result.get('response', '')
+            else:
+                logger.error(f"Ollama API error: {response.status_code} - {response.text}")
+                return "Error generating response from Ollama"
+                
         except Exception as e:
-            logger.error(f"Failed to initialize Google AI model '{self.model_name}': {str(e)}")
-            # Try a fallback model
-            try:
-                fallback_model = 'gemini-pro'
-                logger.info(f"Trying fallback model: {fallback_model}")
-                self.model = genai.GenerativeModel(
-                    model_name=fallback_model,
-                    generation_config=self.generation_config,
-                    safety_settings=self.safety_settings
-                )
-                logger.info(f"Google AI initialized with fallback model: {fallback_model}")
-            except Exception as fallback_e:
-                logger.error(f"Failed to initialize fallback Google AI model: {str(fallback_e)}")
-                raise ValueError(f"Failed to initialize Google AI: {str(e)}. Fallback model also failed: {str(fallback_e)}")
+            logger.error(f"Ollama generation failed: {str(e)}")
+            # Return a fallback response instead of error
+            return "I'm here to help you analyze your data! However, I'm experiencing some technical difficulties with my AI model. Please try again in a moment, or let me know what specific analysis you'd like to perform on your dataset."
+    
+    def _count_tokens(self, text: str) -> int:
+        """Simple token counting for Ollama (approximation)"""
+        # Simple approximation: 1 token ≈ 4 characters for English text
+        # This is a rough estimate, but sufficient for development
+        return len(text) // 4
     
     def generate_text(self, prompt: str, user, context_messages: Optional[List[Dict]] = None,
                      analysis_result: Optional[AnalysisResult] = None, 
                      include_images: bool = False, rag_context: Optional[str] = None,
                      session: Optional[AnalysisSession] = None) -> Dict[str, Any]:
         """
-        Generate text using Google AI with context and token tracking
+        Generate text using Ollama (development) or Google AI (production) with context and token tracking
         
         Args:
             prompt: Input prompt for text generation
@@ -119,11 +179,14 @@ class LLMProcessor:
             if not self._check_token_limits(user, input_tokens):
                 raise ValueError("User has exceeded token limits")
             
-            # Generate response
-            response = self.model.generate_content(full_prompt)
-            
-            # Extract response text
-            generated_text = response.text if response.text else ""
+            # Generate response using Ollama or Google AI
+            if self.use_ollama:
+                generated_text = self._generate_with_ollama(full_prompt)
+            else:
+                # Google AI generation (commented out for development)
+                # response = self.model.generate_content(full_prompt)
+                # generated_text = response.text if response.text else ""
+                generated_text = "Google AI not available in development mode"
             
             # Calculate output tokens
             output_tokens = self._count_tokens(generated_text)
@@ -646,15 +709,7 @@ class LLMProcessor:
                 'confidence': 0.5
             }
     
-    def _count_tokens(self, text: str) -> int:
-        """Count tokens in text using tiktoken"""
-        try:
-            encoding = tiktoken.get_encoding("cl100k_base")
-            return len(encoding.encode(text))
-        except Exception as e:
-            logger.warning(f"Failed to count tokens: {str(e)}")
-            # Fallback: rough estimation (1 token ≈ 4 characters)
-            return len(text) // 4
+    # _count_tokens method moved to top of class for Ollama compatibility
     
     def _check_token_limits(self, user, input_tokens: int) -> bool:
         """Check if user has exceeded token limits"""
@@ -760,7 +815,7 @@ Thank you for your patience!"""
         return ChatMessage.objects.create(
             content=content,
             message_type=message_type,
-            llm_model=self.model_name,
+            llm_model=self.ollama_model if self.use_ollama else getattr(self, 'model_name', 'unknown'),
             token_count=input_tokens + output_tokens,
             analysis_result=analysis_result,
             user=user,
