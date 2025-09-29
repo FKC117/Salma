@@ -755,6 +755,9 @@ class ChatViewSet(viewsets.ViewSet):
                     'error': 'Message is required'
                 }, status=status.HTTP_400_BAD_REQUEST)
             
+            # Get selected AI model (default to ollama)
+            selected_model = request.data.get('ai_model', 'ollama')
+            
             # Get user
             try:
                 user = User.objects.first()
@@ -770,8 +773,8 @@ class ChatViewSet(viewsets.ViewSet):
                     'error': 'User authentication failed'
                 }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             
-            # Process message
-            llm_processor = LLMProcessor()
+            # Process message with selected model
+            llm_processor = LLMProcessor(model_name=selected_model)
             # Use the correct method name
             result = llm_processor.process_message(
                 user=user,
@@ -835,6 +838,24 @@ class ChatViewSet(viewsets.ViewSet):
             </div>
             '''
             return HttpResponse(error_html, content_type='text/html', status=500)
+                
+        except Exception as e:
+            logger.error(f"Chat message error: {str(e)}", exc_info=True)
+            from django.utils import timezone
+            from django.http import HttpResponse
+            
+            error_html = f'''
+            <div class="chat-message slide-in">
+                <div class="message-content assistant error">
+                    <div class="message-body">
+                        <i class="bi bi-exclamation-triangle text-danger"></i>
+                        <strong>System Error:</strong> Internal server error. Please try again.
+                    </div>
+                </div>
+                <div class="message-time">{timezone.now().strftime('%H:%M')}</div>
+            </div>
+            '''
+            return HttpResponse(error_html, content_type='text/html', status=500)
 
 
 class EnhancedChatViewSet(viewsets.ViewSet):
@@ -846,6 +867,158 @@ class EnhancedChatViewSet(viewsets.ViewSet):
         super().__init__(*args, **kwargs)
         self.chat_service = ChatService()
         self.suggestion_service = AnalysisSuggestionService()
+    
+    def _format_message_content(self, content):
+        """
+        Format message content with professional styling including table detection
+        """
+        # First, detect and format tables
+        content = self._format_tables(content)
+        
+        # Convert markdown-style formatting to HTML
+        # Bold text
+        content = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', content)
+        # Italic text
+        content = re.sub(r'\*(.*?)\*', r'<em>\1</em>', content)
+        # Code blocks
+        content = re.sub(r'```(.*?)```', r'<pre><code>\1</code></pre>', content, flags=re.DOTALL)
+        # Inline code
+        content = re.sub(r'`(.*?)`', r'<code>\1</code>', content)
+        # Line breaks (but not for table content)
+        if not self._contains_table(content):
+            content = content.replace('\n', '<br>')
+        
+        return content
+    
+    def _contains_table(self, content):
+        """
+        Check if content contains a table
+        """
+        lines = content.split('\n')
+        table_lines = [line for line in lines if '|' in line and len(line.strip()) > 5]
+        return len(table_lines) >= 2
+    
+    def _format_tables(self, content):
+        """
+        Format markdown tables to HTML
+        """
+        # Split content into lines
+        lines = content.split('\n')
+        result_lines = []
+        i = 0
+        
+        while i < len(lines):
+            line = lines[i]
+            
+            # Check if this line starts a table
+            if '|' in line and len(line.strip()) > 5:
+                # Collect table lines
+                table_lines = []
+                j = i
+                while j < len(lines) and '|' in lines[j] and len(lines[j].strip()) > 5:
+                    table_lines.append(lines[j])
+                    j += 1
+                
+                # If we have at least 2 table lines, format as table
+                if len(table_lines) >= 2:
+                    table_html = self._create_table_html(table_lines)
+                    result_lines.append(table_html)
+                    i = j  # Skip the table lines
+                else:
+                    result_lines.append(line)
+                    i += 1
+            else:
+                result_lines.append(line)
+                i += 1
+        
+        return '\n'.join(result_lines)
+    
+    def _create_table_html(self, table_lines):
+        """
+        Create HTML table from markdown table lines
+        """
+        # Filter out separator lines (like |---|---|---|)
+        data_lines = []
+        for line in table_lines:
+            if not re.match(r'^\s*\|[\s\-\|:]+\|\s*$', line):
+                data_lines.append(line)
+        
+        if len(data_lines) < 2:
+            return '\n'.join(table_lines)  # Return original if not enough data
+        
+        # Extract headers from first line
+        headers = [cell.strip() for cell in data_lines[0].split('|') if cell.strip()]
+        
+        # Extract data rows
+        rows = []
+        for i in range(1, len(data_lines)):
+            cells = [cell.strip() for cell in data_lines[i].split('|') if cell.strip()]
+            if len(cells) >= 2:  # At least 2 columns
+                rows.append(cells)
+        
+        if not headers or not rows:
+            return '\n'.join(table_lines)  # Return original if no valid data
+        
+        # Create HTML table
+        table_id = f'table_{hash(str(table_lines)) % 10000}'
+        
+        html = f'''
+        <div class="table-container">
+            <div class="table-header">
+                <div class="table-title">
+                    <h6><i class="bi bi-table"></i> Data Table</h6>
+                    <span class="table-meta">{len(rows)} rows × {len(headers)} columns</span>
+                </div>
+                <div class="table-actions">
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-sm btn-outline-secondary" onclick="exportTable(this, 'csv')">
+                            <i class="bi bi-file-earmark-spreadsheet"></i> CSV
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="exportTable(this, 'json')">
+                            <i class="bi bi-file-earmark-code"></i> JSON
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="fullscreenTable(this)">
+                            <i class="bi bi-arrows-fullscreen"></i> Fullscreen
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="table-content">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover table-sm">
+                        <thead class="table-dark">
+                            <tr>
+        '''
+        
+        for header in headers:
+            html += f'<th scope="col">{header}</th>'
+        
+        html += '''
+                            </tr>
+                        </thead>
+                        <tbody>
+        '''
+        
+        for row in rows:
+            html += '<tr>'
+            for cell in row:
+                html += f'<td>{cell}</td>'
+            html += '</tr>'
+        
+        html += '''
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="table-footer">
+                <div class="pagination-info">
+                    Showing 1 to ''' + str(len(rows)) + ''' of ''' + str(len(rows)) + ''' entries
+                </div>
+            </div>
+        </div>
+        '''
+        
+        return html
     
     @action(detail=False, methods=['post'])
     def send_message(self, request):
@@ -879,16 +1052,73 @@ class EnhancedChatViewSet(viewsets.ViewSet):
                     'error': 'Message too long (max 4000 characters)'
                 }, status=status.HTTP_400_BAD_REQUEST)
             
-            # Process message
-            session_id = request.data.get('session_id')
-            include_suggestions = request.data.get('include_suggestions', True)
+            # Get selected AI model (default to ollama)
+            selected_model = request.data.get('ai_model', 'ollama')
             
-            result = self.chat_service.send_message(
-                message=message,
+            # Process message with selected model
+            llm_processor = LLMProcessor(model_name=selected_model)
+            result = llm_processor.process_message(
                 user=user,
-                session_id=session_id,
-                include_suggestions=include_suggestions
+                message=message,
+                session_id=request.data.get('session_id'),
+                context=request.data.get('context', {})
             )
+            
+            if result['success']:
+                # Return formatted HTML response for HTMX
+                from django.template.loader import render_to_string
+                from django.utils import timezone
+                from django.http import HttpResponse
+                
+                # Format the response content
+                formatted_content = self._format_message_content(result['response'])
+                
+                # Render the chat message partial
+                html_response = render_to_string('analytics/partials/chat_message.html', {
+                    'message_type': 'assistant',
+                    'message_content': formatted_content,
+                    'timestamp': timezone.now().strftime('%H:%M'),
+                    'message_metadata': True,
+                    'token_count': result.get('total_tokens', 0),
+                    'cost': result.get('cost', 0.0)
+                })
+                
+                return HttpResponse(html_response, content_type='text/html')
+            else:
+                # Return error as HTML
+                from django.utils import timezone
+                from django.http import HttpResponse
+                
+                error_html = f'''
+                <div class="chat-message slide-in">
+                    <div class="message-content assistant error">
+                        <div class="message-body">
+                            <i class="bi bi-exclamation-triangle text-warning"></i>
+                            <strong>Error:</strong> {result.get('error', 'Message processing failed')}
+                        </div>
+                    </div>
+                    <div class="message-time">{timezone.now().strftime('%H:%M')}</div>
+                </div>
+                '''
+                return HttpResponse(error_html, content_type='text/html')
+                
+        except Exception as e:
+            logger.error(f"Chat message error: {str(e)}", exc_info=True)
+            from django.utils import timezone
+            from django.http import HttpResponse
+            
+            error_html = f'''
+            <div class="chat-message slide-in">
+                <div class="message-content assistant error">
+                    <div class="message-body">
+                        <i class="bi bi-exclamation-triangle text-danger"></i>
+                        <strong>System Error:</strong> Internal server error. Please try again.
+                    </div>
+                </div>
+                <div class="message-time">{timezone.now().strftime('%H:%M')}</div>
+            </div>
+            '''
+            return HttpResponse(error_html, content_type='text/html', status=500)
             
             if result['success']:
                 # Check if this is an HTMX request

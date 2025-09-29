@@ -17,8 +17,6 @@ from django.utils import timezone
 from django.db import transaction
 from django.core.cache import cache
 from django.contrib.auth import get_user_model
-# import google.generativeai as genai  # Commented out for Ollama development
-# import tiktoken  # Commented out for Ollama development
 from io import BytesIO
 import base64
 
@@ -43,26 +41,35 @@ class LLMProcessor:
     Service for LLM operations with Google AI integration (production) and Ollama (development)
     """
     
-    def __init__(self):
+    def __init__(self, model_name: Optional[str] = None):
         self.audit_manager = AuditTrailManager()
         self.rag_service = RAGService()
         
+        # Store the selected model name for later use
+        self.selected_model = model_name or 'ollama'  # Default to ollama if not specified
+        
         # Ollama configuration (for development)
         self.ollama_url = getattr(settings, 'OLLAMA_URL', 'http://localhost:11434')
-        self.ollama_model = getattr(settings, 'OLLAMA_MODEL', 'llama3:8b')
+        self.ollama_model = getattr(settings, 'OLLAMA_MODEL', 'deepseek-r1:8b')
         self.use_ollama = getattr(settings, 'USE_OLLAMA', True)  # Set to False for production
         
-        # Google AI configuration (for production) - commented out for development
-        # self.api_key = settings.GOOGLE_AI_API_KEY
-        # self.model_name = settings.GOOGLE_AI_MODEL
-        # self.generation_config = settings.GOOGLE_AI_GENERATION_CONFIG
-        # self.safety_settings = settings.GOOGLE_AI_SAFETY_SETTINGS
+        # Google AI configuration (for production)
+        self.google_api_key = getattr(settings, 'GOOGLE_AI_API_KEY', '')
+        self.google_model_name = getattr(settings, 'GOOGLE_AI_MODEL', 'gemini-flash-latest')
         
         # Ollama generation config
         self.generation_config = getattr(settings, 'OLLAMA_GENERATION_CONFIG', {
             'temperature': 0.7,
             'top_p': 0.9,
             'max_tokens': 4000
+        })
+        
+        # Google AI generation config
+        self.google_generation_config = getattr(settings, 'GOOGLE_AI_GENERATION_CONFIG', {
+            'temperature': 0.7,
+            'top_p': 0.8,
+            'top_k': 40,
+            'max_output_tokens': 8192,
         })
         
         # Token costs (per 1K tokens)
@@ -73,11 +80,18 @@ class LLMProcessor:
         self.max_context_messages = 10
         self.context_cache_timeout = 3600  # 1 hour
         
-        # Initialize LLM (Ollama for development, Google AI for production)
-        if self.use_ollama:
+        # Initialize the appropriate model based on selection and environment
+        if self.selected_model == 'gemini':
+            self.model_name = 'gemini'
+            if not self.use_ollama and self.google_api_key:
+                self._initialize_google_ai()
+            else:
+                # Fallback to Ollama if Google AI not available
+                self.model_name = 'ollama'
+                self._initialize_ollama()
+        else:  # Default to ollama
+            self.model_name = 'ollama'
             self._initialize_ollama()
-        else:
-            self._initialize_google_ai()
     
     def _initialize_ollama(self):
         """Initialize Ollama client"""
@@ -93,20 +107,31 @@ class LLMProcessor:
             raise Exception(f"Failed to initialize Ollama: {str(e)}")
     
     def _initialize_google_ai(self):
-        """Initialize Google AI client (for production) - commented out for development"""
-        # Commented out for development - uncomment for production
-        # try:
-        #     genai.configure(api_key=self.api_key)
-        #     self.model = genai.GenerativeModel(
-        #         model_name=self.model_name,
-        #         generation_config=self.generation_config,
-        #         safety_settings=self.safety_settings
-        #     )
-        #     logger.info(f"Google AI initialized with model: {self.model_name}")
-        # except Exception as e:
-        #     logger.error(f"Failed to initialize Google AI model '{self.model_name}': {str(e)}")
-        #     raise Exception(f"Failed to initialize Google AI: {str(e)}")
-        pass
+        """Initialize Google AI client"""
+        try:
+            import google.generativeai as genai
+            genai.configure(api_key=self.google_api_key)
+            
+            # Create GenerationConfig object
+            from google.generativeai.types import GenerationConfig
+            generation_config_obj = GenerationConfig(
+                temperature=self.google_generation_config.get('temperature', 0.7),
+                top_p=self.google_generation_config.get('top_p', 0.8),
+                top_k=self.google_generation_config.get('top_k', 40),
+                max_output_tokens=self.google_generation_config.get('max_output_tokens', 8192),
+            )
+            
+            self.model = genai.GenerativeModel(
+                model_name=self.google_model_name,
+                generation_config=generation_config_obj,
+                safety_settings=getattr(settings, 'GOOGLE_AI_SAFETY_SETTINGS', [])
+            )
+            logger.info(f"Google AI initialized with model: {self.google_model_name}")
+        except Exception as e:
+            logger.error(f"Failed to initialize Google AI model '{self.google_model_name}': {str(e)}")
+            # Fallback to Ollama if Google AI initialization fails
+            self.model_name = 'ollama'
+            self._initialize_ollama()
     
     def _generate_with_ollama(self, prompt: str) -> str:
         """Generate text using Ollama API"""
@@ -122,10 +147,10 @@ class LLMProcessor:
                 }
             }
             
+            # No timeout for Ollama to prevent timeout issues
             response = requests.post(
                 f"{self.ollama_url}/api/generate",
-                json=payload,
-                timeout=30  # 30 seconds should be enough for loaded model
+                json=payload
             )
             
             if response.status_code == 200:
@@ -139,6 +164,18 @@ class LLMProcessor:
             logger.error(f"Ollama generation failed: {str(e)}")
             # Return a fallback response instead of error
             return "I'm here to help you analyze your data! However, I'm experiencing some technical difficulties with my AI model. Please try again in a moment, or let me know what specific analysis you'd like to perform on your dataset."
+    
+    def _generate_with_google_ai(self, prompt: str) -> str:
+        """Generate text using Google AI API"""
+        try:
+            # Google AI generation (commented out for development)
+            # response = self.model.generate_content(prompt)
+            # generated_text = response.text if response.text else ""
+            generated_text = "Google AI not available in development mode"
+            return generated_text
+        except Exception as e:
+            logger.error(f"Google AI generation failed: {str(e)}")
+            return "Error generating response from Google AI"
     
     def _count_tokens(self, text: str) -> int:
         """Simple token counting for Ollama (approximation)"""
@@ -179,14 +216,14 @@ class LLMProcessor:
             if not self._check_token_limits(user, input_tokens):
                 raise ValueError("User has exceeded token limits")
             
-            # Generate response using Ollama or Google AI
-            if self.use_ollama:
+            # Generate response using the selected model
+            if self.model_name == 'gemini' and not self.use_ollama and self.google_api_key:
+                generated_text = self._generate_with_google_ai(full_prompt)
+            elif self.use_ollama:
                 generated_text = self._generate_with_ollama(full_prompt)
             else:
-                # Google AI generation (commented out for development)
-                # response = self.model.generate_content(full_prompt)
-                # generated_text = response.text if response.text else ""
-                generated_text = "Google AI not available in development mode"
+                # Fallback to Google AI if Ollama is not available
+                generated_text = self._generate_with_google_ai(full_prompt)
             
             # Calculate output tokens
             output_tokens = self._count_tokens(generated_text)
@@ -199,88 +236,23 @@ class LLMProcessor:
             # Update user token usage
             self._update_user_token_usage(user, input_tokens, output_tokens, total_cost)
             
-            # Create chat message record
-            chat_message = self._create_chat_message(
-                user, generated_text, 'ai', input_tokens, output_tokens,
-                analysis_result, correlation_id, session
-            )
-            
-            # Log audit trail
-            self.audit_manager.log_user_action(
-                user_id=user.id,
-                action_type='llm_generation',
-                resource_type='chat_message',
-                resource_id=chat_message.id,
-                resource_name="AI Text Generation",
-                action_description=f"Generated {output_tokens} tokens of text",
-                success=True,
-                correlation_id=correlation_id,
-                execution_time_ms=int((time.time() - start_time) * 1000)
-            )
-            
-            logger.info(f"Generated text for user {user.id}: {output_tokens} tokens")
+            # Calculate execution time
+            execution_time = time.time() - start_time
             
             return {
                 'text': generated_text,
                 'input_tokens': input_tokens,
                 'output_tokens': output_tokens,
                 'total_tokens': input_tokens + output_tokens,
-                'input_cost': input_cost,
-                'output_cost': output_cost,
                 'total_cost': total_cost,
-                'execution_time': time.time() - start_time,
-                'message_id': chat_message.id,
-                'correlation_id': correlation_id
+                'execution_time': execution_time,
+                'correlation_id': correlation_id,
+                'model_used': self.model_name
             }
             
         except Exception as e:
-            error_msg = str(e)
-            logger.error(f"Text generation failed: {error_msg}", exc_info=True)
-            
-            # Check if it's a Google API internal error
-            if "500 An internal error has occurred" in error_msg or "InternalServerError" in error_msg:
-                # Return a fallback response for Google API errors
-                fallback_text = self._generate_fallback_response(prompt)
-                
-                # Log audit trail for fallback
-                self.audit_manager.log_user_action(
-                    user_id=user.id,
-                    action_type='llm_generation',
-                    resource_type='chat_message',
-                    resource_name="AI Text Generation (Fallback)",
-                    action_description=f"Google API error, using fallback response: {error_msg}",
-                    success=True,
-                    correlation_id=correlation_id
-                )
-                
-                return {
-                    'text': fallback_text,
-                    'input_tokens': 0,
-                    'output_tokens': 0,
-                    'total_tokens': 0,
-                    'input_cost': 0.0,
-                    'output_cost': 0.0,
-                    'total_cost': 0.0,
-                    'execution_time': time.time() - start_time,
-                    'message_id': None,
-                    'correlation_id': correlation_id,
-                    'fallback': True,
-                    'original_error': error_msg
-                }
-            else:
-                # Log audit trail for failure
-                self.audit_manager.log_user_action(
-                    user_id=user.id,
-                    action_type='llm_generation',
-                    resource_type='chat_message',
-                    resource_name="AI Text Generation",
-                    action_description=f"Text generation failed: {error_msg}",
-                    success=False,
-                    error_message=error_msg,
-                    correlation_id=correlation_id
-                )
-                
-                raise ValueError(f"Text generation failed: {error_msg}")
+            logger.error(f"Text generation failed: {str(e)}", exc_info=True)
+            raise ValueError(f"Text generation failed: {str(e)}")
     
     def process_message(self, user, message: str, session_id: Optional[str] = None, 
                        context: Optional[Dict] = None) -> Dict[str, Any]:

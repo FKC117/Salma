@@ -53,6 +53,16 @@
               hx-swap="beforeend"
               hx-trigger="submit"
               hx-indicator="#chat-loading">
+            <!-- AI Model Selection -->
+            <div class="model-selection mb-2">
+                <label for="chatModelSelect" class="form-label text-light small">AI Model:</label>
+                <select class="form-select form-select-sm bg-dark text-light border-secondary" 
+                        id="chatModelSelect" name="ai_model">
+                    <option value="ollama" selected>Ollama (Llama)</option>
+                    <option value="gemini">Google Gemini</option>
+                </select>
+            </div>
+            
             <div class="chat-input-group">
                 <textarea id="chat-input" name="message" 
                          placeholder="Ask me anything about your dataset..." 

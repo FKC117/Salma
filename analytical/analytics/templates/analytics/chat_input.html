@@ -2,6 +2,16 @@
 <div id="chatInputForm" class="chat-input-form">
     <form id="messageForm" hx-post="/api/chat/messages/" hx-target="#messagesContainer" hx-swap="beforeend">
         <div class="input-container">
+            <!-- AI Model Selection -->
+            <div class="model-selection mb-2">
+                <label for="aiModelSelect" class="form-label text-light small">AI Model:</label>
+                <select class="form-select form-select-sm bg-dark text-light border-secondary" 
+                        id="aiModelSelect" name="ai_model">
+                    <option value="ollama" selected>Ollama (Llama)</option>
+                    <option value="gemini">Google Gemini</option>
+                </select>
+            </div>
+            
             <!-- Main Input Area -->
             <div class="input-group">
                 <div class="input-wrapper">
@@ -127,6 +137,22 @@
     padding: 1rem;
 }
 
+.model-selection {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.model-selection .form-label {
+    margin-bottom: 0;
+    font-weight: 500;
+}
+
+.model-selection .form-select {
+    width: auto;
+    min-width: 150px;
+}
+
 .input-container {
     max-width: 100%;
 }
@@ -196,13 +222,6 @@
 .send-button:hover {
     transform: translateY(-1px);
     box-shadow: 0 4px 8px rgba(13, 110, 253, 0.3);
-}
-
-.send-button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
 }
 
 .quick-actions {
@@ -308,6 +327,12 @@
 .file-size {
     font-size: 0.75rem;
     color: #6c757d;
+}
+
+.file-type {
+    font-size: 0.75rem;
+    color: #6c757d;
+    margin-top: 0.25rem;
 }
 
 .file-remove {
@@ -667,10 +692,28 @@ document.body.addEventListener('htmx:beforeRequest', function(e) {
             formData.append('context_type', document.getElementById('contextType').value);
             formData.append('include_context', document.getElementById('includeContext').value);
             
+            // Add selected AI model
+            const selectedModel = document.getElementById('aiModelSelect').value;
+            formData.append('ai_model', selectedModel);
+            
             attachedFiles.forEach(fileData => {
                 formData.append('files', fileData.file);
             });
             
+            e.detail.xhr.send(formData);
+            e.preventDefault();
+        } else {
+            // Even if no files are attached, we still need to include the AI model selection
+            const form = e.target;
+            const formData = new FormData(form);
+            
+            // Add selected AI model if not already in form data
+            if (!formData.has('ai_model')) {
+                const selectedModel = document.getElementById('aiModelSelect').value;
+                formData.append('ai_model', selectedModel);
+            }
+            
+            // Override the default form submission to include our custom data
             e.detail.xhr.send(formData);
             e.preventDefault();
         }
