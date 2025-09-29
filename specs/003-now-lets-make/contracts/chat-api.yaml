@@ -1,0 +1,289 @@
+# Chat API Contracts
+
+**Feature**: 003-now-lets-make  
+**Date**: 2025-09-29  
+**Status**: Complete
+
+## API Endpoints
+
+### 1. Send Chat Message
+**Endpoint**: `POST /api/chat/send/`
+**Purpose**: Send user message and receive AI response with analysis suggestions
+
+**Request Schema**:
+```json
+{
+  "message": "string (required, max 4000 chars)",
+  "session_id": "integer (optional, current analysis session)",
+  "include_suggestions": "boolean (optional, default true)"
+}
+```
+
+**Response Schema**:
+```json
+{
+  "success": true,
+  "chat_message": {
+    "id": "integer",
+    "content": "string",
+    "message_type": "user",
+    "created_at": "datetime",
+    "analysis_context": "object"
+  },
+  "ai_response": {
+    "id": "integer",
+    "content": "string",
+    "message_type": "assistant",
+    "created_at": "datetime",
+    "analysis_context": "object",
+    "suggestions": [
+      {
+        "id": "integer",
+        "tool_name": "string",
+        "tool_display_name": "string",
+        "suggested_parameters": "object",
+        "confidence_score": "float",
+        "reasoning": "string"
+      }
+    ]
+  },
+  "tokens_used": {
+    "input_tokens": "integer",
+    "output_tokens": "integer",
+    "total_cost": "float"
+  }
+}
+```
+
+**Error Responses**:
+- `400`: Invalid request data
+- `401`: Authentication required
+- `403`: Access denied to session
+- `429`: Token limit exceeded
+- `500`: Internal server error
+
+### 2. Get Chat History
+**Endpoint**: `GET /api/chat/history/`
+**Purpose**: Retrieve conversation history for current session
+
+**Query Parameters**:
+- `session_id`: integer (optional, current session if not provided)
+- `limit`: integer (optional, default 50, max 100)
+- `offset`: integer (optional, default 0)
+
+**Response Schema**:
+```json
+{
+  "success": true,
+  "messages": [
+    {
+      "id": "integer",
+      "content": "string",
+      "message_type": "user|assistant",
+      "created_at": "datetime",
+      "analysis_context": "object",
+      "suggestions": [
+        {
+          "id": "integer",
+          "tool_name": "string",
+          "tool_display_name": "string",
+          "suggested_parameters": "object",
+          "confidence_score": "float",
+          "reasoning": "string",
+          "is_executed": "boolean",
+          "execution_result_id": "integer|null"
+        }
+      ]
+    }
+  ],
+  "pagination": {
+    "total_count": "integer",
+    "limit": "integer",
+    "offset": "integer",
+    "has_next": "boolean"
+  },
+  "session_info": {
+    "id": "integer",
+    "name": "string",
+    "dataset_name": "string",
+    "dataset_id": "integer",
+    "is_active": "boolean"
+  }
+}
+```
+
+### 3. Execute Analysis Suggestion
+**Endpoint**: `POST /api/chat/execute-suggestion/`
+**Purpose**: Execute an AI-suggested analysis
+
+**Request Schema**:
+```json
+{
+  "suggestion_id": "integer (required)",
+  "parameters": "object (optional, override suggested parameters)"
+}
+```
+
+**Response Schema**:
+```json
+{
+  "success": true,
+  "suggestion": {
+    "id": "integer",
+    "tool_name": "string",
+    "tool_display_name": "string",
+    "suggested_parameters": "object",
+    "confidence_score": "float",
+    "reasoning": "string",
+    "is_executed": true,
+    "execution_result_id": "integer"
+  },
+  "analysis_result": {
+    "id": "integer",
+    "name": "string",
+    "description": "string",
+    "result_type": "string",
+    "result_data": "object",
+    "execution_time_ms": "integer",
+    "created_at": "datetime"
+  },
+  "execution_time_ms": "integer"
+}
+```
+
+### 4. Get Chat Context
+**Endpoint**: `GET /api/chat/context/`
+**Purpose**: Get current dataset and session context for AI
+
+**Response Schema**:
+```json
+{
+  "success": true,
+  "current_session": {
+    "id": "integer",
+    "name": "string",
+    "dataset_name": "string",
+    "dataset_id": "integer",
+    "analysis_count": "integer",
+    "last_analysis_at": "datetime|null"
+  },
+  "current_dataset": {
+    "id": "integer",
+    "name": "string",
+    "description": "string",
+    "row_count": "integer",
+    "column_count": "integer",
+    "column_types": "object",
+    "data_quality_score": "float"
+  },
+  "recent_analyses": [
+    {
+      "id": "integer",
+      "name": "string",
+      "tool_name": "string",
+      "created_at": "datetime",
+      "result_type": "string"
+    }
+  ],
+  "available_tools": [
+    {
+      "id": "integer",
+      "name": "string",
+      "display_name": "string",
+      "category": "string",
+      "description": "string"
+    }
+  ]
+}
+```
+
+### 5. Update Chat Session
+**Endpoint**: `PUT /api/chat/session/`
+**Purpose**: Update chat session context or state
+
+**Request Schema**:
+```json
+{
+  "session_id": "integer (required)",
+  "context_summary": "string (optional, max 1000 chars)",
+  "is_active": "boolean (optional)"
+}
+```
+
+**Response Schema**:
+```json
+{
+  "success": true,
+  "session": {
+    "id": "integer",
+    "user_id": "integer",
+    "analysis_session_id": "integer",
+    "is_active": "boolean",
+    "context_summary": "string",
+    "last_activity": "datetime",
+    "created_at": "datetime",
+    "updated_at": "datetime"
+  }
+}
+```
+
+## Error Handling
+
+### Standard Error Response
+```json
+{
+  "success": false,
+  "error": "string",
+  "error_code": "string",
+  "details": "object (optional)"
+}
+```
+
+### Common Error Codes
+- `INVALID_REQUEST`: Request data validation failed
+- `AUTHENTICATION_REQUIRED`: User not authenticated
+- `ACCESS_DENIED`: User cannot access requested resource
+- `TOKEN_LIMIT_EXCEEDED`: User has exceeded token limits
+- `SESSION_NOT_FOUND`: Analysis session not found
+- `SUGGESTION_NOT_FOUND`: Analysis suggestion not found
+- `TOOL_EXECUTION_FAILED`: Analysis tool execution failed
+- `INTERNAL_ERROR`: Unexpected server error
+
+## Rate Limiting
+
+### Limits
+- Chat messages: 60 requests per minute per user
+- Analysis execution: 10 requests per minute per user
+- Context requests: 30 requests per minute per user
+
+### Headers
+- `X-RateLimit-Limit`: Request limit per window
+- `X-RateLimit-Remaining`: Remaining requests in current window
+- `X-RateLimit-Reset`: Time when limit resets (Unix timestamp)
+
+## Authentication
+
+### Required Headers
+- `Authorization`: Bearer token or session cookie
+- `X-CSRFToken`: CSRF token for state-changing requests
+
+### Permissions
+- Users can only access their own chat sessions
+- Users can only execute suggestions for their own sessions
+- Users can only view context for their own datasets
+
+## HTMX Integration
+
+### HTMX Attributes
+- `hx-post="/api/chat/send/"`: Send message
+- `hx-get="/api/chat/history/"`: Load chat history
+- `hx-post="/api/chat/execute-suggestion/"`: Execute suggestion
+- `hx-target="#chat-messages"`: Update chat container
+- `hx-target="#analysis-results"`: Update results panel
+- `hx-indicator="#chat-loading"`: Show loading state
+
+### Response Handling
+- All responses return HTML fragments for HTMX targets
+- Error responses include user-friendly error messages
+- Success responses trigger UI updates via HTMX
+- Loading states managed through HTMX indicators

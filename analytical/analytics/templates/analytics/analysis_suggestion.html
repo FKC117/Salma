@@ -1,0 +1,470 @@
+<!-- Analysis Suggestion Display Template -->
+<div class="analysis-suggestion-card" data-suggestion-id="{{ suggestion.id }}">
+    <div class="suggestion-header">
+        <div class="suggestion-tool-info">
+            <div class="tool-icon">
+                <i class="bi bi-lightbulb-fill"></i>
+            </div>
+            <div class="tool-details">
+                <h6 class="tool-name">{{ suggestion.tool_display_name }}</h6>
+                <span class="tool-category">{{ suggestion.tool_category }}</span>
+            </div>
+        </div>
+        <div class="suggestion-confidence">
+            <div class="confidence-score">{{ suggestion.confidence_score|floatformat:2 }}</div>
+            <div class="confidence-label">Confidence</div>
+        </div>
+    </div>
+    
+    <div class="suggestion-content">
+        <div class="suggestion-reasoning">
+            <h6><i class="bi bi-chat-quote"></i> Why this analysis?</h6>
+            <p>{{ suggestion.reasoning }}</p>
+        </div>
+        
+        {% if suggestion.suggested_parameters %}
+            <div class="suggestion-parameters">
+                <h6><i class="bi bi-gear"></i> Suggested Parameters</h6>
+                <div class="parameters-preview">
+                    {% for key, value in suggestion.suggested_parameters.items %}
+                        <div class="parameter-item">
+                            <span class="param-key">{{ key }}:</span>
+                            <span class="param-value">{{ value|truncatechars:50 }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+                <button class="btn btn-sm btn-outline-secondary toggle-full-params" 
+                        data-target="full-params-{{ suggestion.id }}">
+                    <i class="bi bi-code"></i> View Full Parameters
+                </button>
+                <div class="full-parameters" id="full-params-{{ suggestion.id }}" style="display: none;">
+                    <pre class="parameters-json">{{ suggestion.suggested_parameters|pprint }}</pre>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    
+    <div class="suggestion-actions">
+        {% if suggestion.is_executed %}
+            <div class="execution-status executed">
+                <i class="bi bi-check-circle-fill"></i>
+                <span>Analysis Completed</span>
+                {% if suggestion.execution_result_id %}
+                    <button class="btn btn-sm btn-outline-primary view-result-btn" 
+                            data-result-id="{{ suggestion.execution_result_id }}">
+                        <i class="bi bi-eye"></i> View Result
+                    </button>
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="execution-actions">
+                <button class="btn btn-primary execute-suggestion-btn" 
+                        data-suggestion-id="{{ suggestion.id }}">
+                    <i class="bi bi-play-fill"></i> Execute Analysis
+                </button>
+                <button class="btn btn-outline-secondary modify-params-btn" 
+                        data-suggestion-id="{{ suggestion.id }}">
+                    <i class="bi bi-pencil"></i> Modify Parameters
+                </button>
+            </div>
+        {% endif %}
+    </div>
+    
+    <div class="suggestion-metadata">
+        <small class="text-muted">
+            <i class="bi bi-clock"></i> {{ suggestion.created_at|timesince }} ago
+        </small>
+    </div>
+</div>
+
+<style>
+.analysis-suggestion-card {
+    background: var(--bs-gray-800);
+    border: 1px solid var(--bs-gray-600);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.analysis-suggestion-card:hover {
+    border-color: var(--bs-primary);
+    box-shadow: 0 4px 12px rgba(var(--bs-primary-rgb), 0.15);
+    transform: translateY(-2px);
+}
+
+.analysis-suggestion-card.executed {
+    border-color: var(--bs-success);
+    background: linear-gradient(135deg, var(--bs-gray-800) 0%, rgba(var(--bs-success-rgb), 0.1) 100%);
+}
+
+.suggestion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.suggestion-tool-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.tool-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--bs-primary);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.25rem;
+}
+
+.tool-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.tool-name {
+    color: var(--bs-light);
+    margin: 0;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.tool-category {
+    color: var(--bs-gray-400);
+    font-size: 0.875rem;
+    text-transform: capitalize;
+}
+
+.suggestion-confidence {
+    text-align: center;
+    padding: 0.5rem;
+    background: var(--bs-gray-700);
+    border-radius: 8px;
+    min-width: 80px;
+}
+
+.confidence-score {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--bs-success);
+}
+
+.confidence-label {
+    font-size: 0.75rem;
+    color: var(--bs-gray-400);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.suggestion-content {
+    margin-bottom: 1.5rem;
+}
+
+.suggestion-reasoning h6,
+.suggestion-parameters h6 {
+    color: var(--bs-light);
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.suggestion-reasoning p {
+    color: var(--bs-gray-300);
+    line-height: 1.5;
+    margin: 0;
+}
+
+.parameters-preview {
+    background: var(--bs-gray-900);
+    border-radius: 6px;
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.parameter-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.25rem;
+    font-size: 0.875rem;
+}
+
+.param-key {
+    color: var(--bs-primary);
+    font-weight: 500;
+}
+
+.param-value {
+    color: var(--bs-gray-300);
+    font-family: monospace;
+}
+
+.full-parameters {
+    margin-top: 0.75rem;
+    background: var(--bs-gray-900);
+    border-radius: 6px;
+    padding: 1rem;
+}
+
+.parameters-json {
+    background: transparent;
+    color: var(--bs-gray-300);
+    font-size: 0.8rem;
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+.suggestion-actions {
+    margin-bottom: 1rem;
+}
+
+.execution-status {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: var(--bs-success);
+    color: white;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.execution-status i {
+    font-size: 1.25rem;
+}
+
+.execution-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.execute-suggestion-btn {
+    flex: 1;
+    min-width: 150px;
+}
+
+.modify-params-btn {
+    flex: 1;
+    min-width: 150px;
+}
+
+.suggestion-metadata {
+    text-align: right;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--bs-gray-700);
+}
+
+/* Loading state */
+.analysis-suggestion-card.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.analysis-suggestion-card.loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(var(--bs-primary-rgb), 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .suggestion-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .suggestion-confidence {
+        align-self: flex-end;
+    }
+    
+    .execution-actions {
+        flex-direction: column;
+    }
+    
+    .execute-suggestion-btn,
+    .modify-params-btn {
+        width: 100%;
+    }
+    
+    .parameter-item {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+}
+
+/* Animation for new suggestions */
+.analysis-suggestion-card {
+    animation: slideInUp 0.4s ease-out;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+
+<script>
+// Handle parameter toggle
+document.addEventListener('click', function(e) {
+    if (e.target.closest('.toggle-full-params')) {
+        const btn = e.target.closest('.toggle-full-params');
+        const targetId = btn.dataset.target;
+        const details = document.getElementById(targetId);
+        
+        if (details.style.display === 'none') {
+            details.style.display = 'block';
+            btn.innerHTML = '<i class="bi bi-code-slash"></i> Hide Full Parameters';
+        } else {
+            details.style.display = 'none';
+            btn.innerHTML = '<i class="bi bi-code"></i> View Full Parameters';
+        }
+    }
+});
+
+// Handle suggestion execution
+document.addEventListener('click', function(e) {
+    if (e.target.closest('.execute-suggestion-btn')) {
+        const btn = e.target.closest('.execute-suggestion-btn');
+        const suggestionId = btn.dataset.suggestionId;
+        const card = btn.closest('.analysis-suggestion-card');
+        
+        // Add loading state
+        card.classList.add('loading');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Executing...';
+        
+        // Execute suggestion
+        fetch('{% url "enhanced_chat_execute_suggestion" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({
+                suggestion_id: suggestionId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            card.classList.remove('loading');
+            
+            if (data.success) {
+                // Update card to show executed state
+                card.classList.add('executed');
+                card.querySelector('.suggestion-actions').innerHTML = `
+                    <div class="execution-status executed">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <span>Analysis Completed</span>
+                        <button class="btn btn-sm btn-outline-primary view-result-btn" 
+                                data-result-id="${data.analysis_result.id}">
+                            <i class="bi bi-eye"></i> View Result
+                        </button>
+                    </div>
+                `;
+                
+                // Show success notification
+                showNotification('Analysis completed successfully!', 'success');
+                
+                // Trigger analysis result display
+                if (data.analysis_result) {
+                    showAnalysisResult(data.analysis_result);
+                }
+            } else {
+                // Show error state
+                btn.innerHTML = '<i class="bi bi-x"></i> Failed';
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-danger');
+                
+                showNotification(data.error || 'Failed to execute suggestion', 'error');
+            }
+        })
+        .catch(error => {
+            card.classList.remove('loading');
+            btn.innerHTML = '<i class="bi bi-x"></i> Error';
+            btn.classList.remove('btn-primary');
+            btn.classList.add('btn-danger');
+            
+            console.error('Error executing suggestion:', error);
+            showNotification('Network error occurred', 'error');
+        });
+    }
+});
+
+// Handle parameter modification
+document.addEventListener('click', function(e) {
+    if (e.target.closest('.modify-params-btn')) {
+        const btn = e.target.closest('.modify-params-btn');
+        const suggestionId = btn.dataset.suggestionId;
+        
+        // Open parameter modification modal
+        openParameterModal(suggestionId);
+    }
+});
+
+// Handle result viewing
+document.addEventListener('click', function(e) {
+    if (e.target.closest('.view-result-btn')) {
+        const btn = e.target.closest('.view-result-btn');
+        const resultId = btn.dataset.resultId;
+        
+        // Open analysis result in modal or new tab
+        window.open(`/analysis/results/${resultId}/`, '_blank');
+    }
+});
+
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show`;
+    notification.style.position = 'fixed';
+    notification.style.top = '20px';
+    notification.style.right = '20px';
+    notification.style.zIndex = '9999';
+    notification.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        notification.remove();
+    }, 5000);
+}
+
+function openParameterModal(suggestionId) {
+    // This would open a modal for parameter modification
+    // For now, show a simple alert
+    alert('Parameter modification feature coming soon!');
+}
+
+function showAnalysisResult(result) {
+    // This will be handled by the analysis result display integration
+    console.log('Analysis result:', result);
+}
+</script>

@@ -8,7 +8,7 @@ from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
@@ -16,7 +16,7 @@ from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.views.decorators.http import require_http_methods
 
-from analytics.models import Dataset, DatasetColumn, AuditTrail, AnalysisSession
+from analytics.models import Dataset, DatasetColumn, AuditTrail, AnalysisSession, ChatSession, AnalysisSuggestion
 from analytics.services.file_processing import FileProcessingService
 from analytics.services.audit_trail_manager import AuditTrailManager
 from analytics.services.session_manager import SessionManager
@@ -25,6 +25,8 @@ from analytics.services.rag_service import RAGService
 from analytics.services.llm_processor import LLMProcessor
 from analytics.services.agentic_ai_controller import AgenticAIController
 from analytics.services.ai_interpretation_service import ai_interpretation_service
+from analytics.services.chat_service import ChatService
+from analytics.services.analysis_suggestion_service import AnalysisSuggestionService
 from analytics.tools.tool_registry import ToolRegistry
 
 
@@ -833,6 +835,285 @@ class ChatViewSet(viewsets.ViewSet):
             </div>
             '''
             return HttpResponse(error_html, content_type='text/html', status=500)
+
+
+class EnhancedChatViewSet(viewsets.ViewSet):
+    """
+    Enhanced Chat endpoints with analysis suggestions and context management
+    """
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.chat_service = ChatService()
+        self.suggestion_service = AnalysisSuggestionService()
+    
+    @action(detail=False, methods=['post'])
+    def send_message(self, request):
+        """
+        Send chat message and get AI response with analysis suggestions
+        """
+        try:
+            # Get the authenticated user
+            if request.user.is_authenticated:
+                user = request.user
+            else:
+                # Fallback for development/testing - use first user
+                user = User.objects.first()
+                if not user:
+                    user = User.objects.create(
+                        username='default_user',
+                        email='user@example.com'
+                    )
+            
+            # Validate request data
+            message = request.data.get('message', '').strip()
+            if not message:
+                return Response({
+                    'success': False,
+                    'error': 'Message is required'
+                }, status=status.HTTP_400_BAD_REQUEST)
+            
+            if len(message) > 4000:
+                return Response({
+                    'success': False,
+                    'error': 'Message too long (max 4000 characters)'
+                }, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Process message
+            session_id = request.data.get('session_id')
+            include_suggestions = request.data.get('include_suggestions', True)
+            
+            result = self.chat_service.send_message(
+                message=message,
+                user=user,
+                session_id=session_id,
+                include_suggestions=include_suggestions
+            )
+            
+            if result['success']:
+                # Check if this is an HTMX request
+                if request.headers.get('HX-Request'):
+                    # Return HTML response for HTMX
+                    from django.template.loader import render_to_string
+                    html_content = render_to_string('analytics/chat_message_response.html', {
+                        'chat_message': result['chat_message'],
+                        'ai_response': result['ai_response']
+                    })
+                    return HttpResponse(html_content)
+                else:
+                    # Return JSON response for API
+                    return Response(result)
+            else:
+                return Response(result, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                
+        except Exception as e:
+            logger.error(f"Enhanced chat message error: {str(e)}")
+            return Response({
+                'success': False,
+                'error': 'Failed to process chat message',
+                'details': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    @action(detail=False, methods=['get'])
+    def history(self, request):
+        """
+        Get chat history for current session
+        """
+        try:
+            # Get the authenticated user
+            if request.user.is_authenticated:
+                user = request.user
+            else:
+                user = User.objects.first()
+                if not user:
+                    return Response({
+                        'success': False,
+                        'error': 'User authentication required'
+                    }, status=status.HTTP_401_UNAUTHORIZED)
+            
+            # Get query parameters
+            session_id = request.GET.get('session_id')
+            limit = min(int(request.GET.get('limit', 50)), 100)
+            offset = int(request.GET.get('offset', 0))
+            
+            result = self.chat_service.get_chat_history(
+                user=user,
+                session_id=session_id,
+                limit=limit,
+                offset=offset
+            )
+            
+            if result['success']:
+                return Response(result)
+            else:
+                return Response(result, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                
+        except Exception as e:
+            logger.error(f"Chat history error: {str(e)}")
+            return Response({
+                'success': False,
+                'error': 'Failed to get chat history',
+                'details': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    @action(detail=False, methods=['post'])
+    def execute_suggestion(self, request):
+        """
+        Execute an analysis suggestion
+        """
+        try:
+            # Get the authenticated user
+            if request.user.is_authenticated:
+                user = request.user
+            else:
+                user = User.objects.first()
+                if not user:
+                    return Response({
+                        'success': False,
+                        'error': 'User authentication required'
+                    }, status=status.HTTP_401_UNAUTHORIZED)
+            
+            # Validate request data
+            suggestion_id = request.data.get('suggestion_id')
+            if not suggestion_id:
+                return Response({
+                    'success': False,
+                    'error': 'Suggestion ID is required'
+                }, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Execute suggestion
+            parameters = request.data.get('parameters')
+            result = self.suggestion_service.execute_suggestion(
+                suggestion_id=suggestion_id,
+                user=user,
+                parameters=parameters
+            )
+            
+            if result['success']:
+                return Response(result)
+            else:
+                return Response(result, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                
+        except Exception as e:
+            logger.error(f"Suggestion execution error: {str(e)}")
+            return Response({
+                'success': False,
+                'error': 'Failed to execute suggestion',
+                'details': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    @action(detail=False, methods=['get'])
+    def context(self, request):
+        """
+        Get current chat context including dataset and session info
+        """
+        try:
+            # Get the authenticated user
+            if request.user.is_authenticated:
+                user = request.user
+            else:
+                user = User.objects.first()
+                if not user:
+                    return Response({
+                        'success': False,
+                        'error': 'User authentication required'
+                    }, status=status.HTTP_401_UNAUTHORIZED)
+            
+            # Get context
+            session_id = request.GET.get('session_id')
+            result = self.chat_service.get_chat_context(
+                user=user,
+                session_id=session_id
+            )
+            
+            if result['success']:
+                return Response(result)
+            else:
+                return Response(result, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                
+        except Exception as e:
+            logger.error(f"Chat context error: {str(e)}")
+            return Response({
+                'success': False,
+                'error': 'Failed to get chat context',
+                'details': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    @action(detail=False, methods=['put'])
+    def update_session(self, request):
+        """
+        Update chat session context or state
+        """
+        try:
+            # Get the authenticated user
+            if request.user.is_authenticated:
+                user = request.user
+            else:
+                user = User.objects.first()
+                if not user:
+                    return Response({
+                        'success': False,
+                        'error': 'User authentication required'
+                    }, status=status.HTTP_401_UNAUTHORIZED)
+            
+            # Validate request data
+            session_id = request.data.get('session_id')
+            if not session_id:
+                return Response({
+                    'success': False,
+                    'error': 'Session ID is required'
+                }, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Update session
+            context_summary = request.data.get('context_summary', '').strip()
+            is_active = request.data.get('is_active')
+            
+            try:
+                chat_session = ChatSession.objects.get(
+                    id=session_id,
+                    user=user
+                )
+                
+                if context_summary:
+                    if len(context_summary) > 1000:
+                        return Response({
+                            'success': False,
+                            'error': 'Context summary too long (max 1000 characters)'
+                        }, status=status.HTTP_400_BAD_REQUEST)
+                    chat_session.context_summary = context_summary
+                
+                if is_active is not None:
+                    chat_session.is_active = bool(is_active)
+                
+                chat_session.save()
+                
+                return Response({
+                    'success': True,
+                    'session': {
+                        'id': chat_session.id,
+                        'user_id': chat_session.user.id,
+                        'analysis_session_id': chat_session.analysis_session.id,
+                        'is_active': chat_session.is_active,
+                        'context_summary': chat_session.context_summary,
+                        'last_activity': chat_session.last_activity.isoformat(),
+                        'created_at': chat_session.created_at.isoformat(),
+                        'updated_at': chat_session.updated_at.isoformat()
+                    }
+                })
+                
+            except ChatSession.DoesNotExist:
+                return Response({
+                    'success': False,
+                    'error': 'Chat session not found'
+                }, status=status.HTTP_404_NOT_FOUND)
+                
+        except Exception as e:
+            logger.error(f"Chat session update error: {str(e)}")
+            return Response({
+                'success': False,
+                'error': 'Failed to update chat session',
+                'details': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class ToolsViewSet(viewsets.ViewSet):

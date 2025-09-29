@@ -1,0 +1,92 @@
+<!-- Enhanced Chat Message Response Template for HTMX -->
+<div class="chat-message user" id="message-{{ chat_message.id }}">
+    <div class="message-content">
+        <div class="message-body">
+            <div class="user-message">
+                {{ chat_message.content|linebreaks }}
+            </div>
+        </div>
+        <div class="message-time">
+            {{ chat_message.created_at|date:"H:i" }}
+        </div>
+    </div>
+</div>
+
+<div class="chat-message assistant" id="message-{{ ai_response.id }}">
+    <div class="message-content">
+        <div class="message-body">
+            <div class="assistant-message">
+                <div class="ai-response">
+                    {{ ai_response.content|linebreaks }}
+                </div>
+                
+                <!-- Analysis Suggestions -->
+                {% if ai_response.suggestions %}
+                    <div class="suggestions-container">
+                        <h6 class="suggestions-title">
+                            <i class="bi bi-lightbulb"></i> Suggested Analysis
+                        </h6>
+                        {% for suggestion in ai_response.suggestions %}
+                            <div class="analysis-suggestion" data-suggestion-id="{{ suggestion.id }}">
+                                <div class="suggestion-header">
+                                    <div class="suggestion-tool">
+                                        <i class="bi bi-gear"></i>
+                                        <span class="tool-name">{{ suggestion.tool_display_name }}</span>
+                                        <span class="confidence-badge">{{ suggestion.confidence_score|floatformat:2 }}</span>
+                                    </div>
+                                    <div class="suggestion-actions">
+                                        <button class="btn btn-sm btn-primary execute-suggestion-btn" 
+                                                data-suggestion-id="{{ suggestion.id }}">
+                                            <i class="bi bi-play"></i> Execute
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="suggestion-content">
+                                    <div class="suggestion-reasoning">
+                                        {{ suggestion.reasoning }}
+                                    </div>
+                                    {% if suggestion.suggested_parameters %}
+                                        <div class="suggestion-parameters">
+                                            <button class="btn btn-sm btn-outline-secondary toggle-parameters" 
+                                                    data-target="params-{{ suggestion.id }}">
+                                                <i class="bi bi-code"></i> View Parameters
+                                            </button>
+                                            <div class="parameters-details" id="params-{{ suggestion.id }}" style="display: none;">
+                                                <pre class="parameters-json">{{ suggestion.suggested_parameters|pprint }}</pre>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="message-time">
+            {{ ai_response.created_at|date:"H:i" }}
+        </div>
+    </div>
+</div>
+
+<script>
+// Scroll to bottom after adding new messages
+document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
+
+// Handle parameter toggle for new suggestions
+document.addEventListener('click', function(e) {
+    if (e.target.closest('.toggle-parameters')) {
+        const btn = e.target.closest('.toggle-parameters');
+        const targetId = btn.dataset.target;
+        const details = document.getElementById(targetId);
+        
+        if (details.style.display === 'none') {
+            details.style.display = 'block';
+            btn.innerHTML = '<i class="bi bi-code-slash"></i> Hide Parameters';
+        } else {
+            details.style.display = 'none';
+            btn.innerHTML = '<i class="bi bi-code"></i> View Parameters';
+        }
+    }
+});
+</script>

@@ -1,0 +1,389 @@
+<!-- Chat Message Display Template -->
+<div class="chat-message {{ message.message_type }}" id="message-{{ message.id }}">
+    <div class="message-content">
+        <div class="message-body">
+            {% if message.message_type == 'user' %}
+                <div class="user-message">
+                    {{ message.content|linebreaks }}
+                </div>
+            {% elif message.message_type == 'assistant' %}
+                <div class="assistant-message">
+                    <div class="ai-response">
+                        {{ message.content|linebreaks }}
+                    </div>
+                    
+                    <!-- Analysis Suggestions -->
+                    {% if message.suggestions %}
+                        <div class="suggestions-container">
+                            <h6 class="suggestions-title">
+                                <i class="bi bi-lightbulb"></i> Suggested Analysis
+                            </h6>
+                            {% for suggestion in message.suggestions %}
+                                <div class="analysis-suggestion" data-suggestion-id="{{ suggestion.id }}">
+                                    <div class="suggestion-header">
+                                        <div class="suggestion-tool">
+                                            <i class="bi bi-gear"></i>
+                                            <span class="tool-name">{{ suggestion.tool_display_name }}</span>
+                                            <span class="confidence-badge">{{ suggestion.confidence_score|floatformat:2 }}</span>
+                                        </div>
+                                        <div class="suggestion-actions">
+                                            {% if not suggestion.is_executed %}
+                                                <button class="btn btn-sm btn-primary execute-suggestion-btn" 
+                                                        data-suggestion-id="{{ suggestion.id }}">
+                                                    <i class="bi bi-play"></i> Execute
+                                                </button>
+                                            {% else %}
+                                                <button class="btn btn-sm btn-success" disabled>
+                                                    <i class="bi bi-check"></i> Executed
+                                                </button>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="suggestion-content">
+                                        <div class="suggestion-reasoning">
+                                            {{ suggestion.reasoning }}
+                                        </div>
+                                        {% if suggestion.suggested_parameters %}
+                                            <div class="suggestion-parameters">
+                                                <button class="btn btn-sm btn-outline-secondary toggle-parameters" 
+                                                        data-target="params-{{ suggestion.id }}">
+                                                    <i class="bi bi-code"></i> View Parameters
+                                                </button>
+                                                <div class="parameters-details" id="params-{{ suggestion.id }}" style="display: none;">
+                                                    <pre class="parameters-json">{{ suggestion.suggested_parameters|pprint }}</pre>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% elif message.message_type == 'system' %}
+                <div class="system-message">
+                    <i class="bi bi-info-circle"></i>
+                    {{ message.content }}
+                </div>
+            {% elif message.message_type == 'tool' %}
+                <div class="tool-message">
+                    <div class="tool-header">
+                        <i class="bi bi-gear"></i>
+                        <span>Tool Output</span>
+                    </div>
+                    <div class="tool-content">
+                        {{ message.content|linebreaks }}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        <div class="message-time">
+            {{ message.created_at|date:"H:i" }}
+        </div>
+    </div>
+</div>
+
+<style>
+/* Message-specific styles */
+.user-message {
+    color: white;
+}
+
+.assistant-message {
+    color: var(--bs-light);
+}
+
+.system-message {
+    background: var(--bs-info);
+    color: white;
+    padding: 0.5rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    text-align: center;
+}
+
+.tool-message {
+    background: var(--bs-warning);
+    color: var(--bs-dark);
+    padding: 0.75rem;
+    border-radius: 6px;
+    margin-top: 0.5rem;
+}
+
+.tool-header {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tool-content {
+    font-family: monospace;
+    font-size: 0.875rem;
+}
+
+/* Suggestions styles */
+.suggestions-container {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--bs-gray-600);
+}
+
+.suggestions-title {
+    color: var(--bs-primary);
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.analysis-suggestion {
+    background: var(--bs-gray-800);
+    border: 1px solid var(--bs-gray-600);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    transition: all 0.2s ease;
+}
+
+.analysis-suggestion:hover {
+    border-color: var(--bs-primary);
+    box-shadow: 0 2px 8px rgba(var(--bs-primary-rgb), 0.1);
+}
+
+.suggestion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.suggestion-tool {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tool-name {
+    font-weight: 600;
+    color: var(--bs-light);
+}
+
+.confidence-badge {
+    background: var(--bs-success);
+    color: white;
+    padding: 0.125rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.suggestion-content {
+    color: var(--bs-gray-300);
+}
+
+.suggestion-reasoning {
+    margin-bottom: 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.4;
+}
+
+.suggestion-parameters {
+    margin-top: 0.5rem;
+}
+
+.parameters-details {
+    margin-top: 0.5rem;
+    background: var(--bs-gray-900);
+    border-radius: 4px;
+    padding: 0.75rem;
+}
+
+.parameters-json {
+    background: transparent;
+    color: var(--bs-gray-300);
+    font-size: 0.75rem;
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+/* Animation for new messages */
+.chat-message {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .suggestion-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .suggestion-actions {
+        width: 100%;
+    }
+    
+    .execute-suggestion-btn {
+        width: 100%;
+    }
+}
+</style>
+
+<script>
+// Handle parameter toggle
+document.addEventListener('click', function(e) {
+    if (e.target.closest('.toggle-parameters')) {
+        const btn = e.target.closest('.toggle-parameters');
+        const targetId = btn.dataset.target;
+        const details = document.getElementById(targetId);
+        
+        if (details.style.display === 'none') {
+            details.style.display = 'block';
+            btn.innerHTML = '<i class="bi bi-code-slash"></i> Hide Parameters';
+        } else {
+            details.style.display = 'none';
+            btn.innerHTML = '<i class="bi bi-code"></i> View Parameters';
+        }
+    }
+});
+
+// Handle suggestion execution
+document.addEventListener('click', function(e) {
+    if (e.target.closest('.execute-suggestion-btn')) {
+        const btn = e.target.closest('.execute-suggestion-btn');
+        const suggestionId = btn.dataset.suggestionId;
+        const suggestionDiv = btn.closest('.analysis-suggestion');
+        
+        // Disable button and show loading state
+        btn.disabled = true;
+        btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Executing...';
+        
+        // Make request to execute suggestion
+        fetch('{% url "enhanced_chat_execute_suggestion" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({
+                suggestion_id: suggestionId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update button to show success
+                btn.innerHTML = '<i class="bi bi-check"></i> Executed';
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-success');
+                
+                // Add executed indicator to suggestion
+                suggestionDiv.classList.add('executed');
+                
+                // Trigger analysis result display
+                if (data.analysis_result) {
+                    showAnalysisResult(data.analysis_result);
+                }
+            } else {
+                // Show error state
+                btn.innerHTML = '<i class="bi bi-x"></i> Failed';
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-danger');
+                
+                // Show error message
+                showErrorMessage(data.error || 'Failed to execute suggestion');
+            }
+        })
+        .catch(error => {
+            // Show error state
+            btn.innerHTML = '<i class="bi bi-x"></i> Error';
+            btn.classList.remove('btn-primary');
+            btn.classList.add('btn-danger');
+            
+            console.error('Error executing suggestion:', error);
+            showErrorMessage('Network error occurred');
+        });
+    }
+});
+
+function showAnalysisResult(result) {
+    // Create analysis result message
+    const resultMessage = document.createElement('div');
+    resultMessage.className = 'chat-message tool';
+    resultMessage.innerHTML = `
+        <div class="message-content">
+            <div class="message-body">
+                <div class="tool-message">
+                    <div class="tool-header">
+                        <i class="bi bi-check-circle"></i>
+                        <span>Analysis Completed: ${result.tool_display_name}</span>
+                    </div>
+                    <div class="tool-content">
+                        <p><strong>Result:</strong> ${result.name}</p>
+                        <p><strong>Execution Time:</strong> ${result.execution_time_ms}ms</p>
+                        <p><strong>Confidence:</strong> ${result.confidence_score || 'N/A'}</p>
+                        <div class="result-actions">
+                            <button class="btn btn-sm btn-outline-primary view-result-btn" 
+                                    data-result-id="${result.id}">
+                                <i class="bi bi-eye"></i> View Result
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="message-time">${new Date().toLocaleTimeString()}</div>
+        </div>
+    `;
+    
+    // Add to chat messages
+    const chatMessages = document.getElementById('chat-messages');
+    chatMessages.appendChild(resultMessage);
+    
+    // Scroll to bottom
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function showErrorMessage(message) {
+    // Create error message
+    const errorMessage = document.createElement('div');
+    errorMessage.className = 'chat-message system';
+    errorMessage.innerHTML = `
+        <div class="message-content">
+            <div class="message-body">
+                <div class="system-message" style="background: var(--bs-danger);">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    ${message}
+                </div>
+            </div>
+            <div class="message-time">${new Date().toLocaleTimeString()}</div>
+        </div>
+    `;
+    
+    // Add to chat messages
+    const chatMessages = document.getElementById('chat-messages');
+    chatMessages.appendChild(errorMessage);
+    
+    // Scroll to bottom
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    
+    // Remove after 5 seconds
+    setTimeout(() => {
+        errorMessage.remove();
+    }, 5000);
+}
+</script>

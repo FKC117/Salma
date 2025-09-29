@@ -1626,6 +1626,22 @@ class ChatMessage(models.Model):
         related_name='chat_messages',
         help_text="Analysis result this message relates to"
     )
+    analysis_context = models.JSONField(
+        default=dict,
+        help_text="Context about current dataset and analysis state"
+    )
+    suggested_analysis = models.JSONField(
+        default=dict,
+        help_text="AI-suggested analysis tools and parameters"
+    )
+    executed_analysis_id = models.ForeignKey(
+        AnalysisResult,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='executed_from_chat',
+        help_text="Reference to executed analysis result"
+    )
     
     # Message Metadata
     metadata = models.JSONField(
@@ -1671,6 +1687,130 @@ class ChatMessage(models.Model):
     
     def __str__(self):
         return f"{self.message_type}: {self.content[:50]}..."
+
+
+class ChatSession(models.Model):
+    """
+    ChatSession model for managing conversation context and state
+    """
+    # Basic Information
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='chat_sessions',
+        help_text="User who owns this chat session"
+    )
+    analysis_session = models.ForeignKey(
+        AnalysisSession,
+        on_delete=models.CASCADE,
+        related_name='chat_sessions',
+        help_text="Analysis session this chat belongs to"
+    )
+    
+    # Session State
+    is_active = models.BooleanField(
+        default=True,
+        help_text="Whether the session is currently active"
+    )
+    context_summary = models.TextField(
+        blank=True,
+        null=True,
+        max_length=1000,
+        help_text="AI-generated summary of conversation context"
+    )
+    last_activity = models.DateTimeField(
+        auto_now=True,
+        help_text="Last message timestamp"
+    )
+    
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        db_table = 'analytics_chat_session'
+        verbose_name = 'Chat Session'
+        verbose_name_plural = 'Chat Sessions'
+        indexes = [
+            models.Index(fields=['user', 'is_active']),
+            models.Index(fields=['analysis_session', 'is_active']),
+            models.Index(fields=['last_activity']),
+        ]
+        constraints = [
+            models.UniqueConstraint(
+                fields=['analysis_session'],
+                condition=models.Q(is_active=True),
+                name='unique_active_chat_session_per_analysis'
+            )
+        ]
+        ordering = ['-last_activity']
+    
+    def __str__(self):
+        return f"Chat Session for {self.analysis_session.name} ({self.user.username})"
+
+
+class AnalysisSuggestion(models.Model):
+    """
+    AnalysisSuggestion model for storing AI-generated analysis suggestions
+    """
+    # Basic Information
+    chat_message = models.ForeignKey(
+        ChatMessage,
+        on_delete=models.CASCADE,
+        related_name='analysis_suggestions',
+        help_text="Chat message that generated this suggestion"
+    )
+    analysis_tool = models.ForeignKey(
+        AnalysisTool,
+        on_delete=models.CASCADE,
+        related_name='suggestions',
+        help_text="Analysis tool suggested"
+    )
+    
+    # Suggestion Details
+    suggested_parameters = models.JSONField(
+        default=dict,
+        help_text="Suggested tool parameters"
+    )
+    confidence_score = models.FloatField(
+        help_text="AI confidence in suggestion (0.0-1.0)",
+        validators=[MinValueValidator(0.0), MaxValueValidator(1.0)]
+    )
+    reasoning = models.TextField(
+        max_length=500,
+        help_text="AI explanation for suggestion"
+    )
+    
+    # Execution Status
+    is_executed = models.BooleanField(
+        default=False,
+        help_text="Whether suggestion was executed"
+    )
+    execution_result = models.ForeignKey(
+        AnalysisResult,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='suggested_from',
+        help_text="Analysis result if executed"
+    )
+    
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        db_table = 'analytics_analysis_suggestion'
+        verbose_name = 'Analysis Suggestion'
+        verbose_name_plural = 'Analysis Suggestions'
+        indexes = [
+            models.Index(fields=['chat_message', 'is_executed']),
+            models.Index(fields=['analysis_tool', 'confidence_score']),
+            models.Index(fields=['created_at']),
+        ]
+        ordering = ['-confidence_score', '-created_at']
+    
+    def __str__(self):
+        return f"Suggestion: {self.analysis_tool.display_name} (confidence: {self.confidence_score:.2f})"
 
 
 class AuditTrail(models.Model):

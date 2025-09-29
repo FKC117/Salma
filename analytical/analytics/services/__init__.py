@@ -23,6 +23,8 @@ from .query_optimizer import QueryOptimizer, query_optimizer
 from .image_compression import ImageCompressionService, image_compression_service
 from .caching_strategy import CachingStrategyService, caching_strategy_service
 from .background_monitoring import BackgroundMonitoringService, background_monitoring_service
+from .chat_service import ChatService
+from .analysis_suggestion_service import AnalysisSuggestionService
 
 __all__ = [
     'FileProcessingService',
@@ -48,5 +50,7 @@ __all__ = [
     'CachingStrategyService',
     'caching_strategy_service',
     'BackgroundMonitoringService',
-    'background_monitoring_service'
+    'background_monitoring_service',
+    'ChatService',
+    'AnalysisSuggestionService'
 ]
