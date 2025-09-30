@@ -24,7 +24,6 @@ import signal
 import threading
 from contextlib import contextmanager
 
-from analytics.models import SandboxExecution, User, AnalysisSession, AuditTrail
 from analytics.services.audit_trail_manager import AuditTrailManager
 
 logger = logging.getLogger(__name__)
@@ -97,6 +96,8 @@ class SandboxExecutor:
         start_time = time.time()
         
         try:
+            # Import models here to avoid circular imports
+            from analytics.models import SandboxExecution
             # Create execution record
             execution = SandboxExecution.objects.create(
                 user_id=user_id,
@@ -175,6 +176,7 @@ class SandboxExecutor:
             # Update execution record with error
             if execution_id:
                 try:
+                    from analytics.models import SandboxExecution
                     execution = SandboxExecution.objects.get(id=execution_id)
                     execution.status = 'failed'
                     execution.error_message = str(e)
@@ -283,12 +285,16 @@ class SandboxExecutor:
             'error': None
         }
     
-    def _execute_python_code(self, code: str, execution: SandboxExecution, timeout: int, memory_limit: int) -> Dict[str, Any]:
+    def _execute_python_code(self, code: str, execution, timeout: int, memory_limit: int) -> Dict[str, Any]:
         """Execute Python code in isolated sandbox environment"""
         try:
+            # Modify code to handle matplotlib plots properly
+            # Add non-interactive backend and image saving
+            modified_code = self._modify_matplotlib_code(code)
+            
             # Create temporary file
             with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
-                f.write(code)
+                f.write(modified_code)
                 temp_file = f.name
             
             try:
@@ -311,7 +317,44 @@ class SandboxExecutor:
                 'status': 'failed'
             }
     
-    def _execute_r_code(self, code: str, execution: SandboxExecution, timeout: int) -> Dict[str, Any]:
+    def _modify_matplotlib_code(self, code: str) -> str:
+        """Modify code to handle matplotlib plots properly"""
+        # Add non-interactive backend and image saving
+        matplotlib_setup = '''
+import matplotlib
+matplotlib.use("Agg")  # Use non-interactive backend
+import matplotlib.pyplot as plt
+import os
+
+# Override plt.show to save the figure
+original_show = plt.show
+def custom_show(*args, **kwargs):
+    # Save the figure
+    fig = plt.gcf()
+    if fig.get_axes():  # Only save if there are axes
+        # Create output directory if it doesn't exist
+        output_dir = "/tmp"
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+        
+        # Save the figure
+        output_path = os.path.join(output_dir, "out.png")
+        plt.tight_layout()
+        plt.savefig(output_path, dpi=150, bbox_inches="tight")
+        print("__SANDBOX_IMAGE__/tmp/out.png")
+    original_show(*args, **kwargs)
+
+plt.show = custom_show
+'''
+        
+        # Check if the code uses matplotlib
+        if 'import matplotlib' in code or 'import seaborn' in code:
+            # Add the matplotlib setup at the beginning
+            return matplotlib_setup + '\n' + code
+        else:
+            return code
+    
+    def _execute_r_code(self, code: str, execution, timeout: int) -> Dict[str, Any]:
         """Execute R code in isolated sandbox environment"""
         # Add R-specific execution logic here
         return {
@@ -324,7 +367,7 @@ class SandboxExecutor:
             'status': 'failed'
         }
     
-    def _execute_javascript_code(self, code: str, execution: SandboxExecution, timeout: int) -> Dict[str, Any]:
+    def _execute_javascript_code(self, code: str, execution, timeout: int) -> Dict[str, Any]:
         """Execute JavaScript code in isolated sandbox environment"""
         # Add JavaScript-specific execution logic here
         return {
@@ -437,20 +480,23 @@ class SandboxExecutor:
                 'status': 'failed'
             }
     
-    def get_execution_result(self, execution_id: int, user: User) -> Optional[SandboxExecution]:
+    def get_execution_result(self, execution_id: int, user) -> Optional[Any]:
         """Get execution result by ID"""
         try:
+            from analytics.models import SandboxExecution
             return SandboxExecution.objects.get(id=execution_id, user=user)
-        except SandboxExecution.DoesNotExist:
+        except:
             return None
     
-    def list_user_executions(self, user: User, limit: int = 50) -> List[SandboxExecution]:
+    def list_user_executions(self, user, limit: int = 50) -> List[Any]:
         """List executions for a user"""
-        return SandboxExecution.objects.filter(user=user).order_by('-created_at')[:limit]
+        from analytics.models import SandboxExecution
+        return list(SandboxExecution.objects.filter(user=user).order_by('-created_at')[:limit])
     
     def cleanup_old_executions(self, days: int = 7) -> int:
         """Clean up old execution records"""
         try:
+            from analytics.models import SandboxExecution
             cutoff_date = timezone.now() - timedelta(days=days)
             old_executions = SandboxExecution.objects.filter(created_at__lt=cutoff_date)
             count = old_executions.count()

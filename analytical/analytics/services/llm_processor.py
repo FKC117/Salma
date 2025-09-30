@@ -643,7 +643,16 @@ class LLMProcessor:
                                    analysis_result: Optional[AnalysisResult], rag_context: Optional[str] = None,
                                    session: Optional[AnalysisSession] = None) -> str:
         """Prepare prompt with context, analysis results, and dataset information"""
-        full_prompt = prompt
+        # Add output contract instruction to ensure consistent code formatting
+        output_contract = """
+IMPORTANT: When you output Python code, always wrap it in a triple-backtick code block with the python language tag:
+```python
+# your code here
+```
+Do not include prose inside the code fence. This ensures the code can be detected and executed in the sandbox.
+"""
+        
+        full_prompt = prompt + output_contract
         
         # Add dataset context if session is provided
         if session:
