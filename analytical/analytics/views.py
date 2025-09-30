@@ -612,12 +612,13 @@ class EnhancedChatViewSet(viewsets.ViewSet):
         content = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', content)
         # Italic text
         content = re.sub(r'\*(.*?)\*', r'<em>\1</em>', content)
+        
         # Python code blocks with execute button
         def format_python_code_block(match):
             lang = match.group(1) if match.group(1) else ''
             code = match.group(2).strip()
             # Check if this is Python code
-            if lang.lower() == 'python' or code.startswith('python') or code.startswith('import ') or 'import pandas as pd' in code:
+            if lang.lower() == 'python' or code.startswith('python') or code.startswith('import ') or 'import pandas as pd' in code or 'import seaborn as sns' in code or 'import matplotlib.pyplot as plt' in code:
                 # Remove 'python' prefix if present
                 if code.startswith('python'):
                     code = code[6:].strip()
@@ -645,10 +646,47 @@ class EnhancedChatViewSet(viewsets.ViewSet):
                 # Regular code block
                 return f'<pre><code>{code}</code></pre>'
         
-        # Handle code blocks with language specification
+        # Handle code blocks with language specification (```
         content = re.sub(r'```(\w+)?\n(.*?)```', format_python_code_block, content, flags=re.DOTALL)
-        # Handle generic code blocks
+        # Handle generic code blocks (```
+
         content = re.sub(r'```(.*?)```', r'<pre><code>\1</code></pre>', content, flags=re.DOTALL)
+        
+        # Handle AI-generated Python code blocks (```
+
+        # This pattern matches code that starts with "python" on a new line
+        def format_ai_python_code_block(match):
+            code = match.group(1).strip()
+            # Remove 'python' prefix if present at the start
+            if code.startswith('python'):
+                code = code[6:].strip()
+            # Create executable code block
+            import urllib.parse
+            encoded_code = urllib.parse.quote(code)
+            return f'''
+            <div class="code-block-container">
+                <div class="code-header">
+                    <div class="code-title">
+                        <i class="fas fa-code"></i> Python Code
+                    </div>
+                    <div class="code-actions">
+                        <button class="btn btn-sm btn-outline-primary execute-code-btn" 
+                                onclick="executePythonCode(this)" 
+                                data-code="{encoded_code}">
+                            <i class="fas fa-play"></i> Execute
+                        </button>
+                    </div>
+                </div>
+                <pre class="code-block"><code class="language-python">{code}</code></pre>
+            </div>
+            '''
+        
+        # Pattern to match AI-generated Python code blocks
+        # This matches a line with "python" followed by indented code blocks
+        content = re.sub(r'\n\s*python\s*\n(.*?)(?=\n\s*[A-Z#]|\n\s*$)', format_ai_python_code_block, content, flags=re.DOTALL)
+        
+
+        
         # Inline code
         content = re.sub(r'`(.*?)`', r'<code>\1</code>', content)
         # Line breaks (but not for table content)
@@ -925,7 +963,54 @@ class EnhancedChatViewSet(viewsets.ViewSet):
         content = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', content)
         # Italic text
         content = re.sub(r'\*(.*?)\*', r'<em>\1</em>', content)
-        # Code blocks
+        
+        # Python code blocks with execute button
+        def format_python_code_block(code):
+            # Create executable code block
+            import urllib.parse
+            encoded_code = urllib.parse.quote(code)
+            return f'''
+            <div class="code-block-container">
+                <div class="code-header">
+                    <div class="code-title">
+                        <i class="fas fa-code"></i> Python Code
+                    </div>
+                    <div class="code-actions">
+                        <button class="btn btn-sm btn-outline-primary execute-code-btn" 
+                                onclick="executePythonCode(this)" 
+                                data-code="{encoded_code}">
+                            <i class="fas fa-play"></i> Execute
+                        </button>
+                    </div>
+                </div>
+                <pre class="code-block"><code class="language-python">{code}</code></pre>
+            </div>
+            '''
+        
+        # Handle AI-generated Python code blocks (non-markdown style)
+        # This pattern matches the specific format the AI generates:
+        # ### Header
+        # 
+        # python
+        # import pandas as pd
+        # ...
+        def replace_ai_code_block(match):
+            code_part = match.group(1).strip()
+            # Return just the formatted code block without the header
+            return format_python_code_block(code_part)
+        
+        content = re.sub(r'### [^\n]*\n\npython\n(.*?)(?=\n\n###|\s*$)', 
+                        replace_ai_code_block, 
+                        content, flags=re.DOTALL)
+        
+        # Handle markdown-style Python code blocks
+        def replace_markdown_code_block(match):
+            code_part = match.group(1).strip()
+            return format_python_code_block(code_part)
+        
+        content = re.sub(r'```python\n(.*?)```', replace_markdown_code_block, content, flags=re.DOTALL)
+        
+        # Handle generic markdown-style code blocks
         content = re.sub(r'```(.*?)```', r'<pre><code>\1</code></pre>', content, flags=re.DOTALL)
         # Inline code
         content = re.sub(r'`(.*?)`', r'<code>\1</code>', content)
