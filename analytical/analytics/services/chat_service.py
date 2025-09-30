@@ -62,6 +62,14 @@ class ChatService:
         correlation_id = f"chat_{int(timezone.now().timestamp())}"
         start_time = time.time()
         
+        # DEBUG: Log input parameters
+        print(f"=== CHAT SERVICE DEBUG ===")
+        print(f"User ID: {getattr(user, 'id', 'None')}")
+        print(f"Session ID: {session_id}")
+        print(f"Message: {message[:100]}{'...' if len(message) > 100 else ''}")
+        print(f"Include suggestions: {include_suggestions}")
+        print(f"========================")
+        
         try:
             # Get or create analysis session
             if session_id:
@@ -69,6 +77,12 @@ class ChatService:
             else:
                 # Get current active session or create default
                 analysis_session = self._get_or_create_active_session(user)
+            
+            # DEBUG: Log session info
+            print(f"=== SESSION INFO DEBUG ===")
+            print(f"Analysis Session ID: {getattr(analysis_session, 'id', 'None')}")
+            print(f"Dataset ID: {getattr(getattr(analysis_session, 'primary_dataset', None), 'id', 'None') if getattr(analysis_session, 'primary_dataset', None) else 'None'}")
+            print(f"=========================")
             
             # Get or create chat session
             chat_session = self._get_or_create_chat_session(user, analysis_session)
@@ -87,6 +101,7 @@ class ChatService:
             rag_context = self._get_rag_context(message, analysis_session, user)
             
             # Generate AI response with dataset context
+            print(f"=== CALLING LLM PROCESSOR ===")
             ai_response = self.llm_processor.generate_text(
                 prompt=message,
                 user=user,
@@ -94,6 +109,10 @@ class ChatService:
                 session=analysis_session,  # Pass session for dataset context
                 rag_context=rag_context
             )
+            print(f"=== LLM RESPONSE RECEIVED ===")
+            print(f"AI Response success: {ai_response.get('success', 'N/A')}")
+            print(f"AI Response text length: {len(ai_response.get('text', ''))}")
+            print(f"============================")
             
             # Create AI message
             ai_message = self._create_chat_message(
@@ -103,9 +122,9 @@ class ChatService:
                 session=analysis_session,
                 chat_session=chat_session,
                 analysis_context={
-                    'dataset_id': analysis_session.primary_dataset.id,
-                    'dataset_name': analysis_session.primary_dataset.name,
-                    'session_id': analysis_session.id,
+                    'dataset_id': getattr(getattr(analysis_session, 'primary_dataset', None), 'id', None) if getattr(analysis_session, 'primary_dataset', None) else None,
+                    'dataset_name': getattr(getattr(analysis_session, 'primary_dataset', None), 'name', None) if getattr(analysis_session, 'primary_dataset', None) else None,
+                    'session_id': getattr(analysis_session, 'id', None),
                     'tokens_used': {
                         'input_tokens': ai_response.get('input_tokens', 0),
                         'output_tokens': ai_response.get('output_tokens', 0),
@@ -117,9 +136,13 @@ class ChatService:
             # Generate analysis suggestions if requested
             suggestions = []
             if include_suggestions:
+                print(f"=== GENERATING SUGGESTIONS ===")
                 suggestions = self._generate_analysis_suggestions(
                     ai_message, analysis_session, user
                 )
+                print(f"=== SUGGESTIONS GENERATED ===")
+                print(f"Number of suggestions: {len(suggestions)}")
+                print(f"=============================")
             
             # Update chat session activity
             chat_session.last_activity = timezone.now()
@@ -127,10 +150,10 @@ class ChatService:
             
             # Log audit trail
             self.audit_manager.log_user_action(
-                user_id=user.id,
+                user_id=getattr(user, 'id', None),
                 action_type='chat_message_sent',
                 resource_type='chat_message',
-                resource_id=user_message.id,
+                resource_id=getattr(user_message, 'id', None),
                 resource_name="Chat Message",
                 action_description=f"Sent message: {message[:100]}...",
                 success=True,
@@ -138,28 +161,28 @@ class ChatService:
                 execution_time_ms=int((time.time() - start_time) * 1000)
             )
             
-            logger.info(f"Chat message processed successfully for user {user.id}")
+            logger.info(f"Chat message processed successfully for user {getattr(user, 'id', 'None')}")
             
-            return {
+            result = {
                 'success': True,
                 'chat_message': {
-                    'id': user_message.id,
+                    'id': getattr(user_message, 'id', None),
                     'content': user_message.content,
                     'message_type': user_message.message_type,
                     'created_at': user_message.created_at.isoformat(),
                     'analysis_context': user_message.analysis_context
                 },
                 'ai_response': {
-                    'id': ai_message.id,
+                    'id': getattr(ai_message, 'id', None),
                     'content': ai_message.content,
                     'message_type': ai_message.message_type,
                     'created_at': ai_message.created_at.isoformat(),
                     'analysis_context': ai_message.analysis_context,
                     'suggestions': [
                         {
-                            'id': suggestion.id,
-                            'tool_name': suggestion.analysis_tool.name,
-                            'tool_display_name': suggestion.analysis_tool.display_name,
+                            'id': getattr(suggestion, 'id', None),
+                            'tool_name': getattr(getattr(suggestion, 'analysis_tool', None), 'name', None) if getattr(suggestion, 'analysis_tool', None) else None,
+                            'tool_display_name': getattr(getattr(suggestion, 'analysis_tool', None), 'display_name', None) if getattr(suggestion, 'analysis_tool', None) else None,
                             'suggested_parameters': suggestion.suggested_parameters,
                             'confidence_score': suggestion.confidence_score,
                             'reasoning': suggestion.reasoning
@@ -173,15 +196,31 @@ class ChatService:
                     'total_tokens': ai_response.get('total_tokens', 0)
                 },
                 'session_info': {
-                    'id': analysis_session.id,
+                    'id': getattr(analysis_session, 'id', None),
                     'name': analysis_session.name,
-                    'dataset_name': analysis_session.primary_dataset.name,
-                    'dataset_id': analysis_session.primary_dataset.id
+                    'dataset_name': getattr(getattr(analysis_session, 'primary_dataset', None), 'name', None) if getattr(analysis_session, 'primary_dataset', None) else None,
+                    'dataset_id': getattr(getattr(analysis_session, 'primary_dataset', None), 'id', None) if getattr(analysis_session, 'primary_dataset', None) else None
                 }
             }
             
+            # DEBUG: Log final result
+            print(f"=== CHAT SERVICE FINAL RESULT ===")
+            print(f"Success: {result['success']}")
+            print(f"User message ID: {result['chat_message']['id']}")
+            print(f"AI response ID: {result['ai_response']['id']}")
+            print(f"Session ID: {result['session_info']['id']}")
+            print(f"Dataset ID: {result['session_info']['dataset_id']}")
+            print(f"================================")
+            
+            return result
+            
         except Exception as e:
             logger.error(f"Error processing chat message: {str(e)}")
+            print(f"=== ERROR IN CHAT SERVICE ===")
+            print(f"Error: {str(e)}")
+            print(f"User ID: {getattr(user, 'id', 'None')}")
+            print(f"Session ID: {session_id}")
+            print(f"=============================")
             return {
                 'success': False,
                 'error': 'Failed to process chat message',

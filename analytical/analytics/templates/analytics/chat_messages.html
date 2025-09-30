@@ -573,6 +573,11 @@ function executePythonCode(button) {
     const code = decodeURIComponent(button.getAttribute('data-code'));
     const codeBlockContainer = button.closest('.code-block-container');
     
+    console.log("=== SANDBOX EXECUTION DEBUG ===");
+    console.log("Executing Python code in sandbox");
+    console.log("Code length:", code.length);
+    console.log("Code preview:", code.substring(0, 200) + (code.length > 200 ? "..." : ""));
+    
     // Disable the execute button and show loading state
     button.disabled = true;
     button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Executing...';
@@ -590,6 +595,9 @@ function executePythonCode(button) {
     // Get CSRF token
     const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
     
+    console.log("Sending request to /api/sandbox/execute/");
+    console.log("CSRF Token:", csrfToken ? "Present" : "Missing");
+    
     // Execute code in sandbox
     fetch('/api/sandbox/execute/', {
         method: 'POST',
@@ -602,8 +610,17 @@ function executePythonCode(button) {
             language: 'python'
         })
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log("=== SANDBOX RESPONSE DEBUG ===");
+        console.log("Response status:", response.status);
+        console.log("Response OK:", response.ok);
+        return response.json();
+    })
     .then(data => {
+        console.log("=== SANDBOX RESULT DEBUG ===");
+        console.log("Success:", data.success);
+        console.log("Data:", data);
+        
         if (data.success) {
             // Format and display results
             formatExecutionResults(data, resultContainer);
@@ -618,6 +635,9 @@ function executePythonCode(button) {
         }
     })
     .catch(error => {
+        console.log("=== SANDBOX ERROR DEBUG ===");
+        console.log("Error:", error);
+        
         resultContainer.innerHTML = `
             <div class="alert alert-danger">
                 <h6><i class="fas fa-exclamation-triangle"></i> Execution Failed</h6>
@@ -629,11 +649,19 @@ function executePythonCode(button) {
         // Reset button state
         button.disabled = false;
         button.innerHTML = '<i class="fas fa-play"></i> Execute';
+        
+        console.log("=== EXECUTION COMPLETE ===");
     });
 }
 
 // Function to format execution results
 function formatExecutionResults(data, container) {
+    console.log("=== FORMATTING RESULTS DEBUG ===");
+    console.log("Data:", data);
+    console.log("Output:", data.output);
+    console.log("Plots:", data.plots);
+    console.log("Tables:", data.tables);
+    
     let html = '';
     
     // Add success message
@@ -645,6 +673,7 @@ function formatExecutionResults(data, container) {
     
     // Add output if available
     if (data.output) {
+        console.log("Adding output to results");
         html += `
             <div class="card bg-dark mb-3">
                 <div class="card-header">
@@ -659,6 +688,7 @@ function formatExecutionResults(data, container) {
     
     // Add plots if available
     if (data.plots && data.plots.length > 0) {
+        console.log("Adding plots to results");
         html += '<div class="card bg-dark mb-3">';
         html += '<div class="card-header"><i class="fas fa-chart-bar"></i> Plots</div>';
         html += '<div class="card-body">';
@@ -670,6 +700,7 @@ function formatExecutionResults(data, container) {
     
     // Add tables if available
     if (data.tables && data.tables.length > 0) {
+        console.log("Adding tables to results");
         data.tables.forEach(table => {
             html += '<div class="card bg-dark mb-3">';
             html += `<div class="card-header"><i class="fas fa-table"></i> ${table.title || 'Results'}</div>`;
@@ -708,5 +739,6 @@ function formatExecutionResults(data, container) {
     }
     
     container.innerHTML = html;
+    console.log("=== RESULTS FORMATTED ===");
 }
 </script>

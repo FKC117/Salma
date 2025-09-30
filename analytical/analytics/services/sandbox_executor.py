@@ -67,87 +67,157 @@ class SandboxExecutor:
         self.sandbox_dir = Path(settings.MEDIA_ROOT) / 'sandbox'
         self.sandbox_dir.mkdir(parents=True, exist_ok=True)
     
-    def execute_code(self, code: str, user: User, language: str = 'python',
-                    session: Optional[AnalysisSession] = None, 
-                    timeout: Optional[int] = None) -> SandboxExecution:
+    def execute_code(self, code: str, language: str = 'python', timeout: int = 30, 
+                    memory_limit: Optional[int] = None, user_id: Optional[int] = None, session_id: Optional[int] = None) -> Dict[str, Any]:
         """
-        Execute code in secure sandbox environment
+        Execute code in a secure sandbox environment
         
         Args:
             code: Code to execute
-            language: Programming language (currently only Python)
-            user: User executing code
-            session: Analysis session
-            timeout: Custom timeout in seconds
+            language: Programming language ('python', 'r', 'javascript')
+            timeout: Execution timeout in seconds
+            memory_limit: Memory limit in MB
+            user_id: User ID for tracking
+            session_id: Session ID for tracking
             
         Returns:
-            SandboxExecution object with results
+            Dict with execution results
         """
-        execution_id = f"exec_{int(timezone.now().timestamp())}"
+        print(f"=== SANDBOX EXECUTOR DEBUG ===")
+        print(f"User ID: {user_id}")
+        print(f"Session ID: {session_id}")
+        print(f"Language: {language}")
+        print(f"Timeout: {timeout}")
+        print(f"Memory limit: {memory_limit}")
+        print(f"Code length: {len(code)}")
+        print(f"Code preview: {code[:200]}{'...' if len(code) > 200 else ''}")
+        print(f"============================")
+        
+        execution_id = None
         start_time = time.time()
         
         try:
-            # Security validation
-            self._validate_code_security(code)
+            # Create execution record
+            execution = SandboxExecution.objects.create(
+                user_id=user_id,
+                session_id=session_id,
+                language=language,
+                code=code,
+                status='pending',
+                timeout_seconds=timeout,
+                max_memory_mb=memory_limit or self.max_memory_mb
+            )
+            execution_id = execution.id
             
-            # Create sandbox execution record
-            with transaction.atomic():
-                execution = SandboxExecution.objects.create(
-                    code=code,
-                    language=language,
-                    status='running',
-                    user=user,
-                    session=session,
-                    started_at=timezone.now()
-                )
+            print(f"=== EXECUTION RECORD CREATED ===")
+            print(f"Execution ID: {execution_id}")
+            print(f"Status: {execution.status}")
+            print(f"================================")
             
-            # Execute in sandbox
-            result = self._execute_in_sandbox(code, language, timeout or self.max_execution_time)
+            # Validate code before execution
+            validation_result = self._validate_code(code, language)
+            if not validation_result['valid']:
+                execution.status = 'failed'
+                execution.error_message = validation_result['error']
+                execution.save()
+                
+                print(f"=== CODE VALIDATION FAILED ===")
+                print(f"Error: {validation_result['error']}")
+                print(f"=============================")
+                
+                return {
+                    'success': False,
+                    'error': validation_result['error'],
+                    'execution_id': execution_id
+                }
             
-            # Update execution record
-            execution.status = 'completed' if result['success'] else 'failed'
-            execution.output = result['output']
-            execution.error_message = result.get('error_message')
-            execution.execution_time_ms = int((time.time() - start_time) * 1000)
-            execution.memory_used_mb = result.get('memory_used_mb', 0)
-            execution.cpu_usage_percent = result.get('cpu_usage_percent', 0)
-            execution.security_scan_passed = result.get('security_scan_passed', True)
-            execution.security_warnings = result.get('security_warnings', [])
-            execution.finished_at = timezone.now()
+            print(f"=== CODE VALIDATION PASSED ===")
+            
+            # Execute based on language
+            if language.lower() == 'python':
+                result = self._execute_python_code(code, execution, timeout, memory_limit or self.max_memory_mb)
+            elif language.lower() == 'r':
+                result = self._execute_r_code(code, execution, timeout)
+            elif language.lower() == 'javascript':
+                result = self._execute_javascript_code(code, execution, timeout)
+            else:
+                raise ValueError(f"Unsupported language: {language}")
+            
+            # Update execution record with results
+            execution.status = result['status']
+            execution.output = result.get('output', '')
+            execution.error_message = result.get('error', '')
+            execution.execution_time_ms = int(result.get('execution_time', 0) * 1000)
+            execution.memory_peak_mb = result.get('memory_peak', 0)
+            execution.cpu_time_ms = result.get('cpu_time', 0)
             execution.save()
             
-            # Log audit trail
-            self.audit_manager.log_user_action(
-                user_id=user.id,
-                action_type='sandbox_execution',
-                resource_type='sandbox_execution',
-                resource_id=execution.id,
-                resource_name=f"Code Execution: {language}",
-                action_description=f"Executed {language} code in sandbox",
-                success=result['success'],
-                execution_time_ms=execution.execution_time_ms
-            )
+            print(f"=== EXECUTION RECORD UPDATED ===")
+            print(f"Status: {execution.status}")
+            print(f"Output length: {len(execution.output) if execution.output else 0}")
+            print(f"Error: {execution.error_message}")
+            print(f"Execution time: {execution.execution_time_ms}ms")
+            print(f"Memory peak: {execution.memory_peak_mb}MB")
+            print(f"================================")
             
-            logger.info(f"Code execution completed for user {user.id}: {execution.status}")
-            return execution
+            # Add execution_id to result
+            result['execution_id'] = execution_id
+            
+            print(f"=== FINAL RESULT ===")
+            print(f"Success: {result.get('success', 'N/A')}")
+            print(f"Status: {result.get('status', 'N/A')}")
+            print(f"Output preview: {result.get('output', '')[:200] if result.get('output') else 'None'}{'...' if result.get('output', '') and len(result.get('output', '')) > 200 else ''}")
+            print(f"===================")
+            
+            return result
             
         except Exception as e:
-            logger.error(f"Sandbox execution failed: {str(e)}", exc_info=True)
-            
             # Update execution record with error
-            try:
-                execution.status = 'failed'
-                execution.error_message = str(e)
-                execution.execution_time_ms = int((time.time() - start_time) * 1000)
-                execution.finished_at = timezone.now()
-                execution.save()
-            except:
-                pass
+            if execution_id:
+                try:
+                    execution = SandboxExecution.objects.get(id=execution_id)
+                    execution.status = 'failed'
+                    execution.error_message = str(e)
+                    execution.execution_time_ms = int((time.time() - start_time) * 1000)
+                    execution.save()
+                except Exception as db_error:
+                    print(f"=== DATABASE ERROR ===")
+                    print(f"Failed to update execution record: {db_error}")
+                    print(f"======================")
             
-            raise ValueError(f"Sandbox execution failed: {str(e)}")
+            error_msg = f"Sandbox execution failed: {str(e)}"
+            print(f"=== SANDBOX EXECUTION ERROR ===")
+            print(f"Error: {error_msg}")
+            print(f"User ID: {user_id}")
+            print(f"Session ID: {session_id}")
+            print(f"Execution ID: {execution_id}")
+            print(f"================================")
+            
+            return {
+                'success': False,
+                'error': error_msg,
+                'execution_id': execution_id
+            }
     
-    def _validate_code_security(self, code: str) -> None:
+    def _validate_code(self, code: str, language: str) -> Dict[str, Any]:
         """Validate code for security threats"""
+        try:
+            if language.lower() == 'python':
+                return self._validate_python_code(code)
+            elif language.lower() == 'r':
+                return self._validate_r_code(code)
+            elif language.lower() == 'javascript':
+                return self._validate_javascript_code(code)
+            else:
+                raise ValueError(f"Unsupported language: {language}")
+        except Exception as e:
+            return {
+                'valid': False,
+                'error': str(e)
+            }
+    
+    def _validate_python_code(self, code: str) -> Dict[str, Any]:
+        """Validate Python code for security threats"""
         try:
             # Parse code to AST
             tree = ast.parse(code)
@@ -191,13 +261,31 @@ class SandboxExecutor:
             if isinstance(e, SecurityError):
                 raise
             raise SecurityError(f"Security validation failed: {str(e)}")
+        
+        return {
+            'valid': True,
+            'error': None
+        }
     
-    def _execute_in_sandbox(self, code: str, language: str, timeout: int) -> Dict[str, Any]:
-        """Execute code in isolated sandbox environment"""
+    def _validate_r_code(self, code: str) -> Dict[str, Any]:
+        """Validate R code for security threats"""
+        # Add R-specific validation logic here
+        return {
+            'valid': True,
+            'error': None
+        }
+    
+    def _validate_javascript_code(self, code: str) -> Dict[str, Any]:
+        """Validate JavaScript code for security threats"""
+        # Add JavaScript-specific validation logic here
+        return {
+            'valid': True,
+            'error': None
+        }
+    
+    def _execute_python_code(self, code: str, execution: SandboxExecution, timeout: int, memory_limit: int) -> Dict[str, Any]:
+        """Execute Python code in isolated sandbox environment"""
         try:
-            if language != 'python':
-                raise ValueError(f"Unsupported language: {language}")
-            
             # Create temporary file
             with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
                 f.write(code)
@@ -205,7 +293,7 @@ class SandboxExecutor:
             
             try:
                 # Execute with resource limits
-                result = self._run_with_limits(temp_file, timeout)
+                result = self._run_with_limits(temp_file, timeout, memory_limit)
                 return result
             finally:
                 # Clean up
@@ -216,14 +304,40 @@ class SandboxExecutor:
             return {
                 'success': False,
                 'output': '',
-                'error_message': str(e),
-                'memory_used_mb': 0,
-                'cpu_usage_percent': 0,
-                'security_scan_passed': False,
-                'security_warnings': [str(e)]
+                'error': str(e),
+                'execution_time': 0,
+                'memory_peak': 0,
+                'cpu_time': 0,
+                'status': 'failed'
             }
     
-    def _run_with_limits(self, script_path: str, timeout: int) -> Dict[str, Any]:
+    def _execute_r_code(self, code: str, execution: SandboxExecution, timeout: int) -> Dict[str, Any]:
+        """Execute R code in isolated sandbox environment"""
+        # Add R-specific execution logic here
+        return {
+            'success': False,
+            'output': '',
+            'error': 'R execution not implemented',
+            'execution_time': 0,
+            'memory_peak': 0,
+            'cpu_time': 0,
+            'status': 'failed'
+        }
+    
+    def _execute_javascript_code(self, code: str, execution: SandboxExecution, timeout: int) -> Dict[str, Any]:
+        """Execute JavaScript code in isolated sandbox environment"""
+        # Add JavaScript-specific execution logic here
+        return {
+            'success': False,
+            'output': '',
+            'error': 'JavaScript execution not implemented',
+            'execution_time': 0,
+            'memory_peak': 0,
+            'cpu_time': 0,
+            'status': 'failed'
+        }
+    
+    def _run_with_limits(self, script_path: str, timeout: int, memory_limit: int) -> Dict[str, Any]:
         """Run script with resource limits"""
         start_time = time.time()
         process = None
@@ -242,7 +356,7 @@ class SandboxExecutor:
             psutil_process = psutil.Process(process.pid)
             
             # Monitor resources
-            max_memory = self.max_memory_mb * 1024 * 1024  # Convert to bytes
+            max_memory = memory_limit * 1024 * 1024  # Convert to bytes
             max_output = self.max_output_size
             
             memory_peak = 0
@@ -256,11 +370,11 @@ class SandboxExecutor:
                 return {
                     'success': False,
                     'output': stdout or '',
-                    'error_message': f'Execution timeout after {timeout} seconds',
-                    'memory_used_mb': memory_peak / (1024 * 1024),
-                    'cpu_usage_percent': 0,
-                    'security_scan_passed': True,
-                    'security_warnings': []
+                    'error': f'Execution timeout after {timeout} seconds',
+                    'execution_time': timeout,
+                    'memory_peak': memory_peak / (1024 * 1024),
+                    'cpu_time': 0,
+                    'status': 'failed'
                 }
             
             # Check memory usage after completion
@@ -271,11 +385,11 @@ class SandboxExecutor:
                     return {
                         'success': False,
                         'output': stdout or '',
-                        'error_message': f'Memory limit exceeded: {memory_peak / (1024 * 1024):.1f}MB',
-                        'memory_used_mb': memory_peak / (1024 * 1024),
-                        'cpu_usage_percent': 0,
-                        'security_scan_passed': True,
-                        'security_warnings': []
+                        'error': f'Memory limit exceeded: {memory_peak / (1024 * 1024):.1f}MB',
+                        'execution_time': time.time() - start_time,
+                        'memory_peak': memory_peak / (1024 * 1024),
+                        'cpu_time': 0,
+                        'status': 'failed'
                     }
             except (psutil.NoSuchProcess, psutil.AccessDenied):
                 pass
@@ -286,28 +400,28 @@ class SandboxExecutor:
                 return {
                     'success': False,
                     'output': stdout or '',
-                    'error_message': f'Output size limit exceeded: {total_output} bytes',
-                    'memory_used_mb': memory_peak / (1024 * 1024),
-                    'cpu_usage_percent': 0,
-                    'security_scan_passed': True,
-                    'security_warnings': []
+                    'error': f'Output size limit exceeded: {total_output} bytes',
+                    'execution_time': time.time() - start_time,
+                    'memory_peak': memory_peak / (1024 * 1024),
+                    'cpu_time': 0,
+                    'status': 'failed'
                 }
             
             # Get CPU usage
-            cpu_percent = 0
+            cpu_time = 0
             try:
-                cpu_percent = psutil_process.cpu_percent()
+                cpu_time = psutil_process.cpu_times().user
             except (psutil.NoSuchProcess, psutil.AccessDenied):
                 pass
             
             return {
                 'success': process.returncode == 0,
                 'output': stdout or '',
-                'error_message': stderr or None if process.returncode != 0 else None,
-                'memory_used_mb': memory_peak / (1024 * 1024),
-                'cpu_usage_percent': cpu_percent,
-                'security_scan_passed': True,
-                'security_warnings': []
+                'error': stderr or None if process.returncode != 0 else None,
+                'execution_time': time.time() - start_time,
+                'memory_peak': memory_peak / (1024 * 1024),
+                'cpu_time': cpu_time,
+                'status': 'completed' if process.returncode == 0 else 'failed'
             }
             
         except Exception as e:
@@ -316,11 +430,11 @@ class SandboxExecutor:
             return {
                 'success': False,
                 'output': '',
-                'error_message': str(e),
-                'memory_used_mb': 0,
-                'cpu_usage_percent': 0,
-                'security_scan_passed': False,
-                'security_warnings': [str(e)]
+                'error': str(e),
+                'execution_time': 0,
+                'memory_peak': 0,
+                'cpu_time': 0,
+                'status': 'failed'
             }
     
     def get_execution_result(self, execution_id: int, user: User) -> Optional[SandboxExecution]:

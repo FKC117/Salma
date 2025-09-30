@@ -230,9 +230,27 @@ class LLMProcessor:
         correlation_id = f"llm_{int(timezone.now().timestamp())}"
         start_time = time.time()
         
+        # DEBUG: Log input parameters
+        print(f"=== LLM PROCESSOR DEBUG ===")
+        print(f"User ID: {getattr(user, 'id', 'None')}")
+        print(f"Session ID: {getattr(session, 'id', 'None') if session else 'None'}")
+        print(f"Analysis Result ID: {getattr(analysis_result, 'id', 'None') if analysis_result else 'None'}")
+        print(f"Dataset ID: {getattr(getattr(session, 'primary_dataset', None), 'id', 'None') if session and getattr(session, 'primary_dataset', None) else 'None'}")
+        print(f"Prompt: {prompt[:100]}{'...' if len(prompt) > 100 else ''}")
+        print(f"Context messages count: {len(context_messages) if context_messages else 0}")
+        print(f"RAG context: {rag_context[:100] if rag_context else 'None'}")
+        print(f"Model used: {self.model_name}")
+        print(f"========================")
+        
         try:
             # Prepare context with RAG integration and dataset information
             full_prompt = self._prepare_prompt_with_context(prompt, context_messages, analysis_result, rag_context, session)
+            
+            # DEBUG: Log prepared prompt
+            print(f"=== PREPARED PROMPT DEBUG ===")
+            print(f"Full prompt length: {len(full_prompt)}")
+            print(f"Full prompt preview: {full_prompt[:200]}{'...' if len(full_prompt) > 200 else ''}")
+            print(f"============================")
             
             # Calculate input tokens
             input_tokens = self._count_tokens(full_prompt)
@@ -242,13 +260,25 @@ class LLMProcessor:
                 raise ValueError("User has exceeded token limits")
             
             # Generate response using the selected model
+            print(f"=== GENERATION START ===")
+            print(f"Using model: {self.model_name}")
             if self.model_name == 'gemini' and not self.use_ollama and self.google_api_key:
+                print("Calling Google AI generation...")
                 generated_text = self._generate_with_google_ai(full_prompt)
             elif self.use_ollama:
+                print("Calling Ollama generation...")
                 generated_text = self._generate_with_ollama(full_prompt)
             else:
                 # Fallback to Google AI if Ollama is not available
+                print("Fallback to Google AI generation...")
                 generated_text = self._generate_with_google_ai(full_prompt)
+            print(f"=== GENERATION END ===")
+            
+            # DEBUG: Log generated response
+            print(f"=== GENERATED RESPONSE DEBUG ===")
+            print(f"Generated text length: {len(generated_text)}")
+            print(f"Generated text preview: {generated_text[:200]}{'...' if len(generated_text) > 200 else ''}")
+            print(f"===============================")
             
             # Calculate output tokens
             output_tokens = self._count_tokens(generated_text)
@@ -264,7 +294,7 @@ class LLMProcessor:
             # Calculate execution time
             execution_time = time.time() - start_time
             
-            return {
+            result = {
                 'text': generated_text,
                 'input_tokens': input_tokens,
                 'output_tokens': output_tokens,
@@ -275,8 +305,23 @@ class LLMProcessor:
                 'model_used': self.model_name
             }
             
+            # DEBUG: Log final result
+            print(f"=== FINAL RESULT DEBUG ===")
+            print(f"Input tokens: {input_tokens}")
+            print(f"Output tokens: {output_tokens}")
+            print(f"Total tokens: {result['total_tokens']}")
+            print(f"Total cost: {result['total_cost']}")
+            print(f"Execution time: {result['execution_time']:.2f}s")
+            print(f"==========================")
+            
+            return result
+            
         except Exception as e:
             logger.error(f"Text generation failed: {str(e)}", exc_info=True)
+            print(f"=== ERROR IN LLM PROCESSOR ===")
+            print(f"Error: {str(e)}")
+            print(f"User ID: {getattr(user, 'id', 'None')}")
+            print(f"=============================")
             raise ValueError(f"Text generation failed: {str(e)}")
     
     def process_message(self, user, message: str, session_id: Optional[str] = None, 

@@ -590,6 +590,16 @@ class ChatViewSet(viewsets.ViewSet):
     Chat message endpoints
     """
     
+class EnhancedChatViewSet(viewsets.ViewSet):
+    """
+    Enhanced Chat endpoints with analysis suggestions and context management
+    """
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.chat_service = ChatService()
+        self.suggestion_service = AnalysisSuggestionService()
+    
     def _format_message_content(self, content):
         """
         Format message content with professional styling including table detection
@@ -602,7 +612,42 @@ class ChatViewSet(viewsets.ViewSet):
         content = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', content)
         # Italic text
         content = re.sub(r'\*(.*?)\*', r'<em>\1</em>', content)
-        # Code blocks
+        # Python code blocks with execute button
+        def format_python_code_block(match):
+            lang = match.group(1) if match.group(1) else ''
+            code = match.group(2).strip()
+            # Check if this is Python code
+            if lang.lower() == 'python' or code.startswith('python') or code.startswith('import ') or 'import pandas as pd' in code:
+                # Remove 'python' prefix if present
+                if code.startswith('python'):
+                    code = code[6:].strip()
+                # Create executable code block
+                import urllib.parse
+                encoded_code = urllib.parse.quote(code)
+                return f'''
+                <div class="code-block-container">
+                    <div class="code-header">
+                        <div class="code-title">
+                            <i class="fas fa-code"></i> Python Code
+                        </div>
+                        <div class="code-actions">
+                            <button class="btn btn-sm btn-outline-primary execute-code-btn" 
+                                    onclick="executePythonCode(this)" 
+                                    data-code="{encoded_code}">
+                                <i class="fas fa-play"></i> Execute
+                            </button>
+                        </div>
+                    </div>
+                    <pre class="code-block"><code class="language-python">{code}</code></pre>
+                </div>
+                '''
+            else:
+                # Regular code block
+                return f'<pre><code>{code}</code></pre>'
+        
+        # Handle code blocks with language specification
+        content = re.sub(r'```(\w+)?\n(.*?)```', format_python_code_block, content, flags=re.DOTALL)
+        # Handle generic code blocks
         content = re.sub(r'```(.*?)```', r'<pre><code>\1</code></pre>', content, flags=re.DOTALL)
         # Inline code
         content = re.sub(r'`(.*?)`', r'<code>\1</code>', content)
@@ -1026,6 +1071,13 @@ class EnhancedChatViewSet(viewsets.ViewSet):
         Send chat message and get AI response with analysis suggestions
         """
         try:
+            print(f"=== ENHANCED CHAT VIEWSET DEBUG ===")
+            print(f"Request method: POST")
+            print(f"Request path: /enhanced-chat/send/")
+            print(f"Request data: {request.data}")
+            print(f"User authenticated: {request.user.is_authenticated if hasattr(request, 'user') else 'Unknown'}")
+            print(f"==================================")
+            
             # Get the authenticated user
             if request.user.is_authenticated:
                 user = request.user
@@ -1037,6 +1089,12 @@ class EnhancedChatViewSet(viewsets.ViewSet):
                         username='default_user',
                         email='user@example.com'
                     )
+            
+            # DEBUG: Log user info
+            print(f"=== USER INFO DEBUG ===")
+            print(f"User ID: {getattr(user, 'id', 'None')}")
+            print(f"Username: {getattr(user, 'username', 'None')}")
+            print(f"=======================")
             
             # Validate request data
             message = request.data.get('message', '').strip()
@@ -1055,6 +1113,14 @@ class EnhancedChatViewSet(viewsets.ViewSet):
             # Get selected AI model (default to ollama)
             selected_model = request.data.get('ai_model', 'ollama')
             
+            # DEBUG: Log request parameters
+            print(f"=== REQUEST PARAMETERS DEBUG ===")
+            print(f"Message: {message[:100]}{'...' if len(message) > 100 else ''}")
+            print(f"Selected model: {selected_model}")
+            print(f"Session ID: {request.data.get('session_id')}")
+            print(f"Context: {request.data.get('context')}")
+            print(f"================================")
+            
             # Process message with selected model
             llm_processor = LLMProcessor(model_name=selected_model)
             result = llm_processor.process_message(
@@ -1063,6 +1129,13 @@ class EnhancedChatViewSet(viewsets.ViewSet):
                 session_id=request.data.get('session_id'),
                 context=request.data.get('context', {})
             )
+            
+            # DEBUG: Log processing result
+            print(f"=== PROCESSING RESULT DEBUG ===")
+            print(f"Success: {result.get('success', 'N/A')}")
+            print(f"Error: {result.get('error', 'N/A')}")
+            print(f"Response length: {len(result.get('response', '')) if result.get('response') else 0}")
+            print(f"================================")
             
             if result['success']:
                 # Return formatted HTML response for HTMX
@@ -1073,6 +1146,12 @@ class EnhancedChatViewSet(viewsets.ViewSet):
                 # Format the response content
                 formatted_content = self._format_message_content(result['response'])
                 
+                # DEBUG: Log formatted content
+                print(f"=== FORMATTED CONTENT DEBUG ===")
+                print(f"Formatted content length: {len(formatted_content)}")
+                print(f"Formatted content preview: {formatted_content[:200]}{'...' if len(formatted_content) > 200 else ''}")
+                print(f"================================")
+                
                 # Render the chat message partial
                 html_response = render_to_string('analytics/partials/chat_message.html', {
                     'message_type': 'assistant',
@@ -1082,6 +1161,12 @@ class EnhancedChatViewSet(viewsets.ViewSet):
                     'token_count': result.get('total_tokens', 0),
                     'cost': result.get('cost', 0.0)
                 })
+                
+                # DEBUG: Log HTML response
+                print(f"=== HTML RESPONSE DEBUG ===")
+                print(f"HTML response length: {len(html_response)}")
+                print(f"HTML response preview: {html_response[:200]}{'...' if len(html_response) > 200 else ''}")
+                print(f"===========================")
                 
                 return HttpResponse(html_response, content_type='text/html')
             else:
@@ -1106,6 +1191,11 @@ class EnhancedChatViewSet(viewsets.ViewSet):
             logger.error(f"Chat message error: {str(e)}", exc_info=True)
             from django.utils import timezone
             from django.http import HttpResponse
+            
+            print(f"=== EXCEPTION IN VIEWSET ===")
+            print(f"Exception: {str(e)}")
+            print(f"Traceback: {traceback.format_exc()}")
+            print(f"============================")
             
             error_html = f'''
             <div class="chat-message slide-in">
