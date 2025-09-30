@@ -206,8 +206,8 @@ class LLMProcessor:
         start_time = time.time()
         
         try:
-            # Prepare context with RAG integration
-            full_prompt = self._prepare_prompt_with_context(prompt, context_messages, analysis_result, rag_context)
+            # Prepare context with RAG integration and dataset information
+            full_prompt = self._prepare_prompt_with_context(prompt, context_messages, analysis_result, rag_context, session)
             
             # Calculate input tokens
             input_tokens = self._count_tokens(full_prompt)
@@ -303,13 +303,13 @@ class LLMProcessor:
                 except Exception as e:
                     logger.warning(f"RAG context retrieval failed: {str(e)}")
             
-            # Generate response
+            # Generate response with dataset context
             result = self.generate_text(
                 prompt=message,
                 user=user,
                 context_messages=context_messages,
                 rag_context=rag_context,
-                session=session  # Pass the session to generate_text
+                session=session  # Pass the session to generate_text for dataset context
             )
             
             # Create chat message records
@@ -570,9 +570,24 @@ class LLMProcessor:
             logger.warning(f"Failed to clear context cache: {str(e)}")
     
     def _prepare_prompt_with_context(self, prompt: str, context_messages: Optional[List[Dict]], 
-                                   analysis_result: Optional[AnalysisResult], rag_context: Optional[str] = None) -> str:
-        """Prepare prompt with context and analysis results"""
+                                   analysis_result: Optional[AnalysisResult], rag_context: Optional[str] = None,
+                                   session: Optional[AnalysisSession] = None) -> str:
+        """Prepare prompt with context, analysis results, and dataset information"""
         full_prompt = prompt
+        
+        # Add dataset context if session is provided
+        if session:
+            dataset = session.primary_dataset
+            dataset_info = f"""
+Dataset Context:
+- Name: {dataset.name}
+- Description: {dataset.description or 'No description provided'}
+- Rows: {dataset.row_count}
+- Columns: {dataset.column_count}
+- Data Quality Score: {dataset.data_quality_score or 'N/A'}
+- Column Types: {json.dumps(dataset.data_types, indent=2) if dataset.data_types else 'Not available'}
+"""
+            full_prompt = f"{dataset_info}\n\n{full_prompt}"
         
         # Add context messages
         if context_messages:
@@ -580,7 +595,7 @@ class LLMProcessor:
                 f"{msg['role']}: {msg['content']}" 
                 for msg in context_messages[-self.max_context_messages:]
             ])
-            full_prompt = f"Previous conversation:\n{context_text}\n\nCurrent request: {prompt}"
+            full_prompt = f"Previous conversation:\n{context_text}\n\nCurrent request: {full_prompt}"
         
         # Add analysis result context
         if analysis_result:

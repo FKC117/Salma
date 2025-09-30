@@ -167,13 +167,20 @@ class ToolExecutor:
         # Generate visualizations automatically
         visualizations = self._generate_visualizations(dataset[columns], columns)
         
+        # Fix: Ensure the variable names are included as the first column in each row
+        table_rows = []
+        for variable_name in stats_transposed.index:
+            # Create a row with the variable name as the first element, followed by statistics
+            row = [variable_name] + stats_transposed.loc[variable_name].tolist()
+            table_rows.append(row)
+        
         result = {
             'type': 'table',
             'title': 'Descriptive Statistics',
             'description': f'Statistical summary for {len(columns)} numeric columns',
             'table_data': {
-                'columns': stats_transposed.columns.tolist(),  # Statistics as columns
-                'rows': stats_transposed.values.tolist()      # Variables as rows
+                'columns': ['Variable'] + stats_transposed.columns.tolist(),  # Add 'Variable' as first column header
+                'rows': table_rows  # Use the fixed rows with variable names included
             },
             'summary_stats': [
                 {'label': 'Variables Analyzed', 'value': len(columns)},

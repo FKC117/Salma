@@ -86,12 +86,12 @@ class ChatService:
             context = self._get_chat_context(chat_session, analysis_session)
             rag_context = self._get_rag_context(message, analysis_session, user)
             
-            # Generate AI response
+            # Generate AI response with dataset context
             ai_response = self.llm_processor.generate_text(
                 prompt=message,
                 user=user,
                 context_messages=context,
-                session=analysis_session,
+                session=analysis_session,  # Pass session for dataset context
                 rag_context=rag_context
             )
             

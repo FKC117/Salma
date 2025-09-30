@@ -1081,6 +1081,8 @@
                   hx-trigger="submit"
                   hx-indicator="#chat-loading">
                 {% csrf_token %}
+                <!-- Hidden session ID input -->
+                <input type="hidden" name="session_id" id="sessionId" value="">
                 <!-- AI Model Selection -->
                 <div class="model-selection mb-2">
                     <label for="chatModelSelect" class="form-label text-light small">AI Model:</label>
@@ -2613,6 +2615,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (!chatInput) return; // Exit if chat elements don't exist
 
+    // Set the session ID in the hidden input
+    function updateSessionIdInput() {
+        const sessionIdInput = document.getElementById('sessionId');
+        if (sessionIdInput) {
+            const sessionId = localStorage.getItem('current_session_id');
+            if (sessionId) {
+                sessionIdInput.value = sessionId;
+            }
+        }
+    }
+
+    // Update session ID when the page loads
+    updateSessionIdInput();
+
     // Auto-resize textarea
     chatInput.addEventListener('input', function() {
         this.style.height = 'auto';
@@ -2784,6 +2800,13 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Scroll to bottom
         chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    
+    // Update session ID before form submission
+    if (chatForm) {
+        chatForm.addEventListener('htmx:beforeRequest', function() {
+            updateSessionIdInput();
+        });
     }
 });
 </script>

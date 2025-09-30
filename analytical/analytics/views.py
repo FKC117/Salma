@@ -1119,30 +1119,6 @@ class EnhancedChatViewSet(viewsets.ViewSet):
             </div>
             '''
             return HttpResponse(error_html, content_type='text/html', status=500)
-            
-            if result['success']:
-                # Check if this is an HTMX request
-                if request.headers.get('HX-Request'):
-                    # Return HTML response for HTMX
-                    from django.template.loader import render_to_string
-                    html_content = render_to_string('analytics/chat_message_response.html', {
-                        'chat_message': result['chat_message'],
-                        'ai_response': result['ai_response']
-                    })
-                    return HttpResponse(html_content)
-                else:
-                    # Return JSON response for API
-                    return Response(result)
-            else:
-                return Response(result, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-                
-        except Exception as e:
-            logger.error(f"Enhanced chat message error: {str(e)}")
-            return Response({
-                'success': False,
-                'error': 'Failed to process chat message',
-                'details': str(e)
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     @action(detail=False, methods=['get'])
     def history(self, request):
