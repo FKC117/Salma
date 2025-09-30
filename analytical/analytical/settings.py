@@ -349,7 +349,7 @@ MATPLOTLIB_BACKEND = 'Agg'  # NON-NEGOTIABLE - Use Agg backend for matplotlib
 # All configuration is directly in settings.py as per project requirements
 # GOOGLE_AI_API_KEY = 'AIzaSyDKU6cZTFq-PyuNsedFSEQLavmXpVM1Oc4'
 GOOGLE_AI_API_KEY = 'AIzaSyBZMrHbI623A5Nbjz2QEK1_4nguL5wTm8s'
-GOOGLE_AI_MODEL = 'gemini-flash-latest'
+GOOGLE_AI_MODEL = 'models/gemini-flash-latest'
 GOOGLE_AI_GENERATION_CONFIG = {
     'temperature': 0.7,
     'top_p': 0.8,
@@ -520,7 +520,7 @@ else:
     ]
 
 # Ollama Configuration (for development)
-USE_OLLAMA = True  # Set to False for production (use Google AI)
+USE_OLLAMA = False  # Set to False for production (use Google AI)
 OLLAMA_URL = 'http://localhost:11434'
 OLLAMA_MODEL = 'deepseek-r1:8b'  # Change to your preferred model
 OLLAMA_GENERATION_CONFIG = {

@@ -496,285 +496,217 @@
 }
 
 .message-text .table {
-    color: #fff;
+    color: #f0f6fc;
     margin-bottom: 0;
 }
 
 .message-text .table th {
     border-top: none;
     border-bottom: 2px solid #495057;
+    background-color: #21262d;
+    color: #f0f6fc;
 }
 
 .message-text .table td {
     border-top: 1px solid #495057;
+    color: #c9d1d9;
+}
+
+/* Code block styling */
+.code-block-container {
+    margin: 0.5rem 0;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.code-header {
+    background-color: #21262d;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid #495057;
+}
+
+.code-block {
+    background-color: #0d1117;
+    padding: 1rem;
+    margin: 0;
+    overflow-x: auto;
+    border-radius: 0 0 0.5rem 0.5rem;
+}
+
+.execute-code-btn {
+    transition: all 0.2s ease;
+}
+
+.execute-code-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.execute-code-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Execution result styling */
+.execution-result .card {
+    border: 1px solid #495057;
+    border-radius: 0.5rem;
+}
+
+.execution-result .card-header {
+    background-color: #21262d;
+    border-bottom: 1px solid #495057;
+    font-weight: 600;
+}
+
+.execution-result pre {
+    background-color: #0d1117;
+    padding: 1rem;
+    border-radius: 0.25rem;
+    overflow-x: auto;
 }
 </style>
 
 <script>
-// Chat Messages JavaScript
-let messageCount = 0;
-
-document.addEventListener('DOMContentLoaded', function() {
-    initializeChat();
-});
-
-function initializeChat() {
-    // Auto-resize textarea
-    const textarea = document.getElementById('messageInput');
-    textarea.addEventListener('input', function() {
-        this.style.height = 'auto';
-        this.style.height = Math.min(this.scrollHeight, 120) + 'px';
-    });
+// Function to execute Python code in sandbox
+function executePythonCode(button) {
+    const code = decodeURIComponent(button.getAttribute('data-code'));
+    const codeBlockContainer = button.closest('.code-block-container');
     
-    // Handle Enter key
-    textarea.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            document.getElementById('chatForm').dispatchEvent(new Event('submit'));
-        }
-    });
+    // Disable the execute button and show loading state
+    button.disabled = true;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Executing...';
     
-    // Temperature slider
-    const temperatureSlider = document.getElementById('temperature');
-    const temperatureValue = document.getElementById('temperatureValue');
-    temperatureSlider.addEventListener('input', function() {
-        temperatureValue.textContent = this.value;
-    });
+    // Create execution result container
+    const resultContainer = document.createElement('div');
+    resultContainer.className = 'execution-result mt-3';
+    resultContainer.innerHTML = `
+        <div class="alert alert-info">
+            <i class="fas fa-cog fa-spin"></i> Executing code in sandbox...
+        </div>
+    `;
+    codeBlockContainer.parentNode.insertBefore(resultContainer, codeBlockContainer.nextSibling);
     
-    // Auto-scroll to bottom
-    scrollToBottom();
-}
-
-function addMessage(content, isUser = false) {
-    const container = document.getElementById('messagesContainer');
-    const template = isUser ? 'userMessageTemplate' : 'aiMessageTemplate';
-    const messageElement = document.getElementById(template).content.cloneNode(true);
+    // Get CSRF token
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
     
-    // Update message content
-    const messageText = messageElement.querySelector('.message-text');
-    messageText.innerHTML = formatMessageContent(content);
-    
-    // Update timestamp
-    const messageTime = messageElement.querySelector('.message-time');
-    messageTime.textContent = new Date().toLocaleTimeString();
-    
-    // Add to container
-    container.appendChild(messageElement);
-    
-    // Scroll to bottom
-    scrollToBottom();
-    
-    messageCount++;
-}
-
-function formatMessageContent(content) {
-    // Convert markdown-like formatting to HTML with better support for tables, images, and lists
-    
-    // Handle code blocks first (triple backticks)
-    content = content.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
-    
-    // Handle inline code (single backticks)
-    content = content.replace(/`(.*?)`/g, '<code>$1</code>');
-    
-    // Handle headers
-    content = content.replace(/^###### (.*$)/gim, '<h6>$1</h6>');
-    content = content.replace(/^##### (.*$)/gim, '<h5>$1</h5>');
-    content = content.replace(/^#### (.*$)/gim, '<h4>$1</h4>');
-    content = content.replace(/^### (.*$)/gim, '<h3>$1</h3>');
-    content = content.replace(/^## (.*$)/gim, '<h2>$1</h2>');
-    content = content.replace(/^# (.*$)/gim, '<h1>$1</h1>');
-    
-    // Handle bold and italic
-    content = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    content = content.replace(/\*(.*?)\*/g, '<em>$1</em>');
-    
-    // Handle unordered lists
-    content = content.replace(/^\* (.*$)/gim, '<li>$1</li>');
-    content = content.replace(/(<li>.*<\/li>)+/gim, '<ul>$&</ul>');
-    
-    // Handle ordered lists
-    content = content.replace(/^\d+\. (.*$)/gim, '<li>$1</li>');
-    content = content.replace(/(<li>.*<\/li>)+/gim, '<ol>$&</ol>');
-    
-    // Handle blockquotes
-    content = content.replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>');
-    
-    // Handle horizontal rules
-    content = content.replace(/^---$/gim, '<hr>');
-    
-    // Handle images (markdown format)
-    content = content.replace(/!\[(.*?)\]\((.*?)\)/g, '<div class="image-container"><img src="$2" alt="$1" class="img-fluid rounded" style="max-width: 100%; height: auto;"></div>');
-    
-    // Handle links
-    content = content.replace(/\[([^\]]+)\]\(([^\)]+)\)/g, '<a href="$2" target="_blank" class="text-info">$1</a>');
-    
-    // Handle tables (simple markdown table format)
-    content = content.replace(/(\|.*\|\r?\n\|[-|: ]+\|\r?\n(\|.*\|\r?\n?)*)/g, function(match) {
-        const lines = match.split('\n').filter(line => line.trim() !== '');
-        if (lines.length < 2) return match;
-        
-        // Parse header
-        const headers = lines[0].split('|').map(h => h.trim()).filter(h => h !== '');
-        
-        // Create table HTML
-        let tableHtml = '<div class="table-responsive"><table class="table table-dark table-striped table-hover"><thead><tr>';
-        
-        // Add headers
-        headers.forEach(header => {
-            tableHtml += `<th>${header}</th>`;
-        });
-        
-        tableHtml += '</tr></thead><tbody>';
-        
-        // Add rows (skip header separator line)
-        for (let i = 2; i < lines.length; i++) {
-            const cells = lines[i].split('|').map(c => c.trim()).filter(c => c !== '');
-            tableHtml += '<tr>';
-            cells.forEach(cell => {
-                tableHtml += `<td>${cell}</td>`;
-            });
-            tableHtml += '</tr>';
-        }
-        
-        tableHtml += '</tbody></table></div>';
-        return tableHtml;
-    });
-    
-    // Handle line breaks (but not inside code blocks)
-    content = content.replace(/\n/g, '<br>');
-    
-    return content;
-}
-
-function scrollToBottom() {
-    const container = document.getElementById('messagesContainer');
-    container.scrollTop = container.scrollHeight;
-}
-
-function showTypingIndicator() {
-    document.getElementById('typingIndicator').style.display = 'block';
-    scrollToBottom();
-}
-
-function hideTypingIndicator() {
-    document.getElementById('typingIndicator').style.display = 'none';
-}
-
-function clearChat() {
-    if (confirm('Are you sure you want to clear the chat history?')) {
-        const container = document.getElementById('messagesContainer');
-        const welcomeMessage = container.querySelector('.welcome-message');
-        container.innerHTML = '';
-        if (welcomeMessage) {
-            container.appendChild(welcomeMessage);
-        }
-        messageCount = 0;
-        showNotification('Chat cleared', 'success');
-    }
-}
-
-function exportChat() {
-    const messages = document.querySelectorAll('.message-group:not(.welcome-message)');
-    const chatData = Array.from(messages).map(msg => {
-        const isUser = msg.querySelector('.user-message');
-        const content = msg.querySelector('.message-text').textContent;
-        const time = msg.querySelector('.message-time').textContent;
-        return {
-            type: isUser ? 'user' : 'ai',
-            content: content,
-            time: time
-        };
-    });
-    
-    const blob = new Blob([JSON.stringify(chatData, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `chat-export-${new Date().toISOString().split('T')[0]}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-    
-    showNotification('Chat exported', 'success');
-}
-
-function toggleChatSettings() {
-    const settings = document.getElementById('chatSettings');
-    settings.style.display = settings.style.display === 'none' ? 'block' : 'none';
-}
-
-function attachFile() {
-    // Implementation for file attachment
-    console.log('Attaching file...');
-}
-
-function copyMessage(button) {
-    const messageText = button.closest('.message-body').querySelector('.message-text').textContent;
-    navigator.clipboard.writeText(messageText).then(() => {
-        showNotification('Message copied to clipboard', 'success');
-    });
-}
-
-function regenerateMessage(button) {
-    const messageGroup = button.closest('.message-group');
-    const messageText = messageGroup.querySelector('.message-text').textContent;
-    
-    // Remove current message
-    messageGroup.remove();
-    
-    // Add new message
-    addMessage('Regenerating response...', false);
-    
-    // In a real implementation, this would make an API call
-    setTimeout(() => {
-        addMessage('Here is a regenerated response based on your request.', false);
-    }, 2000);
-}
-
-function thumbsUp(button) {
-    button.classList.add('btn-success');
-    button.classList.remove('btn-outline-info');
-    button.innerHTML = '<i class="fas fa-thumbs-up me-1"></i>Thanks!';
-    showNotification('Feedback recorded', 'success');
-}
-
-function thumbsDown(button) {
-    button.classList.add('btn-danger');
-    button.classList.remove('btn-outline-warning');
-    button.innerHTML = '<i class="fas fa-thumbs-down me-1"></i>Noted';
-    showNotification('Feedback recorded', 'info');
-}
-
-// HTMX integration
-document.body.addEventListener('htmx:beforeRequest', function(e) {
-    if (e.target.id === 'chatForm') {
-        const message = document.getElementById('messageInput').value.trim();
-        if (message) {
-            addMessage(message, true);
-            document.getElementById('messageInput').value = '';
-            document.getElementById('messageInput').style.height = 'auto';
-            showTypingIndicator();
-        }
-    }
-});
-
-document.body.addEventListener('htmx:afterRequest', function(e) {
-    if (e.target.id === 'chatForm') {
-        hideTypingIndicator();
-        
-        if (e.detail.xhr.status === 200) {
-            try {
-                const response = JSON.parse(e.detail.xhr.response);
-                if (response.success) {
-                    addMessage(response.response || response.message || 'Response received', false);
-                } else {
-                    addMessage(response.error || 'Sorry, I encountered an error processing your request.', false);
-                }
-            } catch (error) {
-                addMessage('Sorry, I encountered an error processing your request.', false);
-            }
+    // Execute code in sandbox
+    fetch('/api/sandbox/execute/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({
+            code: code,
+            language: 'python'
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Format and display results
+            formatExecutionResults(data, resultContainer);
         } else {
-            addMessage('Sorry, I encountered an error processing your request.', false);
+            // Show error
+            resultContainer.innerHTML = `
+                <div class="alert alert-danger">
+                    <h6><i class="fas fa-exclamation-triangle"></i> Execution Error</h6>
+                    <pre class="mb-0">${data.error || 'Unknown error occurred'}</pre>
+                </div>
+            `;
         }
+    })
+    .catch(error => {
+        resultContainer.innerHTML = `
+            <div class="alert alert-danger">
+                <h6><i class="fas fa-exclamation-triangle"></i> Execution Failed</h6>
+                <p>${error.message || 'Failed to execute code'}</p>
+            </div>
+        `;
+    })
+    .finally(() => {
+        // Reset button state
+        button.disabled = false;
+        button.innerHTML = '<i class="fas fa-play"></i> Execute';
+    });
+}
+
+// Function to format execution results
+function formatExecutionResults(data, container) {
+    let html = '';
+    
+    // Add success message
+    html += `
+        <div class="alert alert-success">
+            <i class="fas fa-check-circle"></i> Code executed successfully
+        </div>
+    `;
+    
+    // Add output if available
+    if (data.output) {
+        html += `
+            <div class="card bg-dark mb-3">
+                <div class="card-header">
+                    <i class="fas fa-terminal"></i> Output
+                </div>
+                <div class="card-body">
+                    <pre class="text-light mb-0">${data.output}</pre>
+                </div>
+            </div>
+        `;
     }
-});
+    
+    // Add plots if available
+    if (data.plots && data.plots.length > 0) {
+        html += '<div class="card bg-dark mb-3">';
+        html += '<div class="card-header"><i class="fas fa-chart-bar"></i> Plots</div>';
+        html += '<div class="card-body">';
+        data.plots.forEach(plot => {
+            html += `<img src="${plot}" class="img-fluid mb-2" alt="Generated Plot">`;
+        });
+        html += '</div></div>';
+    }
+    
+    // Add tables if available
+    if (data.tables && data.tables.length > 0) {
+        data.tables.forEach(table => {
+            html += '<div class="card bg-dark mb-3">';
+            html += `<div class="card-header"><i class="fas fa-table"></i> ${table.title || 'Results'}</div>`;
+            html += '<div class="card-body">';
+            
+            if (table.data && table.data.length > 0) {
+                html += '<div class="table-responsive">';
+                html += '<table class="table table-striped table-hover table-dark">';
+                
+                // Add headers if available
+                if (table.data[0]) {
+                    html += '<thead><tr>';
+                    table.data[0].forEach(header => {
+                        html += `<th>${header}</th>`;
+                    });
+                    html += '</tr></thead>';
+                }
+                
+                // Add rows
+                html += '<tbody>';
+                for (let i = 1; i < table.data.length; i++) {
+                    html += '<tr>';
+                    table.data[i].forEach(cell => {
+                        html += `<td>${cell}</td>`;
+                    });
+                    html += '</tr>';
+                }
+                html += '</tbody>';
+                
+                html += '</table>';
+                html += '</div>';
+            }
+            
+            html += '</div></div>';
+        });
+    }
+    
+    container.innerHTML = html;
+}
 </script>

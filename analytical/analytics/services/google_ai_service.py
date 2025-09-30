@@ -94,7 +94,7 @@ class GoogleAIService:
         
         return True, "OK"
     
-    def generate_response(self, prompt: str, user_id: int, context: List[Dict] = None) -> Dict:
+    def generate_response(self, prompt: str, user_id: int, context: Optional[List[Dict]] = None) -> Dict:
         """
         Generate AI response with token tracking
         
@@ -188,7 +188,7 @@ class GoogleAIService:
             'reset_date': usage['reset_date']
         }
     
-    def format_response_for_chat(self, response: str, analysis_results: Dict = None) -> str:
+    def format_response_for_chat(self, response: str, analysis_results: Optional[Dict] = None) -> str:
         """Format AI response for chat display"""
         formatted_response = response
         
@@ -214,9 +214,11 @@ class GoogleAIService:
     def validate_api_key(self) -> bool:
         """Validate Google AI API key"""
         try:
-            # Test API key with a simple request
-            test_response = self.model.generate_content("Hello")
-            return True
+            # Test API key by listing models
+            import google.generativeai as genai
+            genai.configure(api_key=self.api_key)
+            models = list(genai.list_models())
+            return len(models) > 0
         except Exception as e:
             print(f"API key validation failed: {e}")
             return False

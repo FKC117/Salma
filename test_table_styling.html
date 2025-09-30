@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Test Table Styling</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="./analytical/analytics/static/analytics/css/chat-formatting.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #0d1117;
+            color: #f0f6fc;
+            padding: 20px;
+        }
+        .test-container {
+            background-color: #161b22;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h2>Test Table Styling</h2>
+        
+        <h4>Markdown-style Table (as would appear in chat):</h4>
+        <div class="message-content assistant">
+            <div class="message-body">
+                <div class="message-text">
+                    Here's a summary of the descriptive statistics:
+                    
+                    | Variable | Count | Mean | Std Dev | Min | Max |
+                    |----------|-------|------|---------|-----|-----|
+                    | Age      | 100   | 35.2 | 12.4    | 18  | 65  |
+                    | Income   | 100   | 45000| 12000   | 25000| 85000|
+                    | Score    | 100   | 75.5 | 15.2    | 30  | 98  |
+                </div>
+            </div>
+        </div>
+        
+        <h4>Direct HTML Table:</h4>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Variable</th>
+                        <th>Count</th>
+                        <th>Mean</th>
+                        <th>Std Dev</th>
+                        <th>Min</th>
+                        <th>Max</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Age</td>
+                        <td>100</td>
+                        <td>35.2</td>
+                        <td>12.4</td>
+                        <td>18</td>
+                        <td>65</td>
+                    </tr>
+                    <tr>
+                        <td>Income</td>
+                        <td>100</td>
+                        <td>45000</td>
+                        <td>12000</td>
+                        <td>25000</td>
+                        <td>85000</td>
+                    </tr>
+                    <tr>
+                        <td>Score</td>
+                        <td>100</td>
+                        <td>75.5</td>
+                        <td>15.2</td>
+                        <td>30</td>
+                        <td>98</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

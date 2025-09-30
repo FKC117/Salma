@@ -238,94 +238,72 @@ class SandboxExecutor:
                 cwd=str(self.sandbox_dir)
             )
             
+            # Create psutil process for resource monitoring
+            psutil_process = psutil.Process(process.pid)
+            
             # Monitor resources
             max_memory = self.max_memory_mb * 1024 * 1024  # Convert to bytes
             max_output = self.max_output_size
             
-            output_lines = []
-            error_lines = []
             memory_peak = 0
             
-            # Read output with timeout
-            while process.poll() is None:
-                # Check timeout
-                if time.time() - start_time > timeout:
-                    process.terminate()
+            # Wait for process completion with timeout
+            try:
+                stdout, stderr = process.communicate(timeout=timeout)
+            except subprocess.TimeoutExpired:
+                process.kill()
+                stdout, stderr = process.communicate()
+                return {
+                    'success': False,
+                    'output': stdout or '',
+                    'error_message': f'Execution timeout after {timeout} seconds',
+                    'memory_used_mb': memory_peak / (1024 * 1024),
+                    'cpu_usage_percent': 0,
+                    'security_scan_passed': True,
+                    'security_warnings': []
+                }
+            
+            # Check memory usage after completion
+            try:
+                memory_info = psutil_process.memory_info()
+                memory_peak = memory_info.rss
+                if memory_peak > max_memory:
                     return {
                         'success': False,
-                        'output': '',
-                        'error_message': f'Execution timeout after {timeout} seconds',
+                        'output': stdout or '',
+                        'error_message': f'Memory limit exceeded: {memory_peak / (1024 * 1024):.1f}MB',
                         'memory_used_mb': memory_peak / (1024 * 1024),
                         'cpu_usage_percent': 0,
                         'security_scan_passed': True,
                         'security_warnings': []
                     }
-                
-                # Check memory usage
-                try:
-                    memory_info = process.memory_info()
-                    memory_peak = max(memory_peak, memory_info.rss)
-                    
-                    if memory_peak > max_memory:
-                        process.terminate()
-                        return {
-                            'success': False,
-                            'output': '',
-                            'error_message': f'Memory limit exceeded: {memory_peak / (1024 * 1024):.1f}MB',
-                            'memory_used_mb': memory_peak / (1024 * 1024),
-                            'cpu_usage_percent': 0,
-                            'security_scan_passed': True,
-                            'security_warnings': []
-                        }
-                except (psutil.NoSuchProcess, psutil.AccessDenied):
-                    pass
-                
-                # Read output
-                try:
-                    stdout, stderr = process.communicate(timeout=0.1)
-                    if stdout:
-                        output_lines.append(stdout)
-                    if stderr:
-                        error_lines.append(stderr)
-                except subprocess.TimeoutExpired:
-                    continue
-                
-                # Check output size
-                total_output = len('\n'.join(output_lines))
-                if total_output > max_output:
-                    process.terminate()
-                    return {
-                        'success': False,
-                        'output': '',
-                        'error_message': f'Output size limit exceeded: {total_output} bytes',
-                        'memory_used_mb': memory_peak / (1024 * 1024),
-                        'cpu_usage_percent': 0,
-                        'security_scan_passed': True,
-                        'security_warnings': []
-                    }
+            except (psutil.NoSuchProcess, psutil.AccessDenied):
+                pass
             
-            # Get final output
-            stdout, stderr = process.communicate()
-            if stdout:
-                output_lines.append(stdout)
-            if stderr:
-                error_lines.append(stderr)
-            
-            # Combine output
-            output = '\n'.join(output_lines)
-            error_output = '\n'.join(error_lines)
+            # Check output size
+            total_output = len(stdout or '') + len(stderr or '')
+            if total_output > max_output:
+                return {
+                    'success': False,
+                    'output': stdout or '',
+                    'error_message': f'Output size limit exceeded: {total_output} bytes',
+                    'memory_used_mb': memory_peak / (1024 * 1024),
+                    'cpu_usage_percent': 0,
+                    'security_scan_passed': True,
+                    'security_warnings': []
+                }
             
             # Get CPU usage
             cpu_percent = 0
             try:
-                cpu_percent = process.cpu_percent()
+                cpu_percent = psutil_process.cpu_percent()
             except (psutil.NoSuchProcess, psutil.AccessDenied):
                 pass
             
             return {
                 'success': process.returncode == 0,
-                'output': output,
-                'error_message': error_output if process.returncode != 0 else None,
+                'output': stdout or '',
+                'error_message': stderr or None if process.returncode != 0 else None,
                 'memory_used_mb': memory_peak / (1024 * 1024),
                 'cpu_usage_percent': cpu_percent,
                 'security_scan_passed': True,

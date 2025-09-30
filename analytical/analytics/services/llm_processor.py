@@ -46,7 +46,7 @@ class LLMProcessor:
         self.rag_service = RAGService()
         
         # Store the selected model name for later use
-        self.selected_model = model_name or 'ollama'  # Default to ollama if not specified
+        self.selected_model = model_name  # Don't default here, we'll determine it below
         
         # Ollama configuration (for development)
         self.ollama_url = getattr(settings, 'OLLAMA_URL', 'http://localhost:11434')
@@ -80,31 +80,43 @@ class LLMProcessor:
         self.max_context_messages = 10
         self.context_cache_timeout = 3600  # 1 hour
         
-        # Initialize the appropriate model based on selection and environment
-        if self.selected_model == 'gemini':
-            self.model_name = 'gemini'
-            if not self.use_ollama and self.google_api_key:
-                self._initialize_google_ai()
-            else:
-                # Fallback to Ollama if Google AI not available
-                self.model_name = 'ollama'
-                self._initialize_ollama()
-        else:  # Default to ollama
-            self.model_name = 'ollama'
-            self._initialize_ollama()
+        # Initialize the appropriate model based on settings and environment
+        self._initialize_model()
     
-    def _initialize_ollama(self):
-        """Initialize Ollama client"""
-        try:
-            # Test Ollama connection
-            response = requests.get(f"{self.ollama_url}/api/tags", timeout=5)
-            if response.status_code == 200:
-                logger.info(f"Ollama initialized with model: {self.ollama_model}")
+    def _initialize_model(self):
+        """Initialize the appropriate AI model based on settings and availability"""
+        # Determine which model to use
+        if self.selected_model:
+            target_model = self.selected_model
+        elif not self.use_ollama and self.google_api_key:
+            target_model = 'gemini'
+        else:
+            target_model = 'ollama'
+        
+        # Try to initialize the target model
+        if target_model == 'gemini' and self.google_api_key:
+            if self._initialize_google_ai():
+                self.model_name = 'gemini'
+                return
             else:
-                raise Exception(f"Ollama API returned status {response.status_code}")
-        except Exception as e:
-            logger.error(f"Failed to initialize Ollama: {str(e)}")
-            raise Exception(f"Failed to initialize Ollama: {str(e)}")
+                logger.warning("Failed to initialize Google AI, trying fallback options")
+        
+        # Fallback to Ollama if target was Gemini but failed, or if target is Ollama
+        if target_model == 'ollama' or (target_model == 'gemini' and self.use_ollama):
+            if self._initialize_ollama():
+                self.model_name = 'ollama'
+                return
+            else:
+                logger.warning("Failed to initialize Ollama")
+        
+        # Last resort: try Google AI if not already tried
+        if target_model != 'gemini' and self.google_api_key:
+            if self._initialize_google_ai():
+                self.model_name = 'gemini'
+                return
+        
+        # If all fails, raise an error
+        raise Exception("Failed to initialize any AI model. Check your configuration and connectivity.")
     
     def _initialize_google_ai(self):
         """Initialize Google AI client"""
@@ -127,11 +139,25 @@ class LLMProcessor:
                 safety_settings=getattr(settings, 'GOOGLE_AI_SAFETY_SETTINGS', [])
             )
             logger.info(f"Google AI initialized with model: {self.google_model_name}")
+            return True
         except Exception as e:
             logger.error(f"Failed to initialize Google AI model '{self.google_model_name}': {str(e)}")
-            # Fallback to Ollama if Google AI initialization fails
-            self.model_name = 'ollama'
-            self._initialize_ollama()
+            return False
+    
+    def _initialize_ollama(self):
+        """Initialize Ollama client"""
+        try:
+            # Test Ollama connection
+            response = requests.get(f"{self.ollama_url}/api/tags", timeout=5)
+            if response.status_code == 200:
+                logger.info(f"Ollama initialized with model: {self.ollama_model}")
+                return True
+            else:
+                logger.error(f"Ollama API returned status {response.status_code}")
+                return False
+        except Exception as e:
+            logger.error(f"Failed to initialize Ollama: {str(e)}")
+            return False
     
     def _generate_with_ollama(self, prompt: str) -> str:
         """Generate text using Ollama API"""
@@ -168,10 +194,9 @@ class LLMProcessor:
     def _generate_with_google_ai(self, prompt: str) -> str:
         """Generate text using Google AI API"""
         try:
-            # Google AI generation (commented out for development)
-            # response = self.model.generate_content(prompt)
-            # generated_text = response.text if response.text else ""
-            generated_text = "Google AI not available in development mode"
+            # Google AI generation (now enabled for production)
+            response = self.model.generate_content(prompt)
+            generated_text = response.text if response.text else ""
             return generated_text
         except Exception as e:
             logger.error(f"Google AI generation failed: {str(e)}")

@@ -2792,3 +2792,108 @@ def update_interpretation_feedback(request, interpretation_id):
             'success': False,
             'error': 'Failed to update feedback'
         }, status=500)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def execute_sandbox_code(request):
+    """
+    Execute Python code in secure sandbox environment
+    """
+    try:
+        from analytics.services.sandbox_executor import SandboxExecutor
+        from analytics.models import User, AnalysisSession
+        import json
+        
+        data = request.data
+        code = data.get('code', '')
+        language = data.get('language', 'python')
+        
+        if not code:
+            return Response({
+                'success': False,
+                'error': 'No code provided'
+            }, status=400)
+        
+        # Get user (fallback to first user for development)
+        user = request.user
+        if not user.is_authenticated:
+            user = User.objects.first()
+            if not user:
+                user = User.objects.create(
+                    username='default_user',
+                    email='user@example.com'
+                )
+        
+        # Debug: Log user information
+        logger.info(f"DEBUG: Sandbox execution - User ID: {user.id}, Username: {user.username}")
+        
+        # Get current session
+        session = None
+        try:
+            # Try to get the latest session for the user
+            session = AnalysisSession.objects.filter(user=user).order_by('-created_at').first()
+            if session:
+                logger.info(f"DEBUG: Sandbox execution - Session ID: {session.id}, Session Name: {session.name}")
+            else:
+                logger.info("DEBUG: Sandbox execution - No session found for user")
+        except AnalysisSession.DoesNotExist:
+            logger.info("DEBUG: Sandbox execution - Session does not exist")
+            pass
+        
+        # Debug: Log code information
+        logger.info(f"DEBUG: Sandbox execution - Code length: {len(code)} characters")
+        logger.info(f"DEBUG: Sandbox execution - Language: {language}")
+        
+        # Initialize sandbox executor
+        sandbox_executor = SandboxExecutor()
+        
+        # Execute code in sandbox
+        result = sandbox_executor.execute_code(
+            code=code,
+            user=user,
+            language=language,
+            session=session
+        )
+        
+        # Debug: Log execution result
+        logger.info(f"DEBUG: Sandbox execution result - Execution ID: {result.id}, Status: {result.status}")
+        
+        # Format response
+        response_data = {
+            'success': result.status == 'completed',
+            'status': result.status,
+            'output': result.output,
+            'error': result.error_message,
+            'execution_time_ms': result.execution_time_ms,
+            'memory_used_mb': result.memory_used_mb,
+            'debug': {
+                'user_id': user.id,
+                'username': user.username,
+                'session_id': session.id if session else None,
+                'execution_id': result.id
+            }
+        }
+        
+        # If successful, try to parse output for plots and tables
+        if result.status == 'completed' and result.output:
+            try:
+                # Attempt to parse output as JSON for structured data
+                output_json = json.loads(result.output)
+                if isinstance(output_json, dict):
+                    if 'plots' in output_json:
+                        response_data['plots'] = output_json['plots']
+                    if 'tables' in output_json:
+                        response_data['tables'] = output_json['tables']
+            except json.JSONDecodeError:
+                # If not JSON, treat as plain text output
+                pass
+        
+        return Response(response_data)
+        
+    except Exception as e:
+        logger.error(f"Sandbox execution error: {str(e)}", exc_info=True)
+        return Response({
+            'success': False,
+            'error': str(e)
+        }, status=500)

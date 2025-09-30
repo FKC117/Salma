@@ -62,6 +62,7 @@ urlpatterns = [
     path('api/tools/list/', views.list_analysis_tools, name='list_analysis_tools'),
     path('api/tools/configure/<str:tool_id>/', views.get_tool_configuration, name='get_tool_configuration'),
     path('api/tools/execute/', views.execute_analysis_tool, name='execute_analysis_tool'),
+    path('api/sandbox/execute/', views.execute_sandbox_code, name='execute_sandbox_code'),
     
     # API endpoints (must come last to avoid conflicts)
     path('api/', include(router.urls)),
