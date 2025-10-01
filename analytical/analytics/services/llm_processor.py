@@ -196,8 +196,30 @@ class LLMProcessor:
         try:
             # Google AI generation (now enabled for production)
             response = self.model.generate_content(prompt)
-            generated_text = response.text if response.text else ""
-            return generated_text
+            
+            # Handle different response types
+            if hasattr(response, 'text') and response.text:
+                return response.text
+            elif hasattr(response, 'parts') and response.parts:
+                # Extract text from parts
+                text_parts = []
+                for part in response.parts:
+                    if hasattr(part, 'text') and part.text:
+                        text_parts.append(part.text)
+                return ''.join(text_parts)
+            elif hasattr(response, 'candidates') and response.candidates:
+                # Extract text from candidates
+                text_parts = []
+                for candidate in response.candidates:
+                    if hasattr(candidate, 'content') and hasattr(candidate.content, 'parts'):
+                        for part in candidate.content.parts:
+                            if hasattr(part, 'text') and part.text:
+                                text_parts.append(part.text)
+                return ''.join(text_parts)
+            else:
+                logger.warning("Google AI response has no text content")
+                return "No response generated from Google AI"
+                
         except Exception as e:
             logger.error(f"Google AI generation failed: {str(e)}")
             return "Error generating response from Google AI"
@@ -643,13 +665,41 @@ class LLMProcessor:
                                    analysis_result: Optional[AnalysisResult], rag_context: Optional[str] = None,
                                    session: Optional[AnalysisSession] = None) -> str:
         """Prepare prompt with context, analysis results, and dataset information"""
-        # Add output contract instruction to ensure consistent code formatting
+        # Add output contract instruction to ensure consistent code formatting and context handling
         output_contract = """
-IMPORTANT: When you output Python code, always wrap it in a triple-backtick code block with the python language tag:
+IMPORTANT CODE EXECUTION REQUIREMENTS:
+1. When you output Python code, always wrap it in a triple-backtick code block with the python language tag:
 ```python
 # your code here
 ```
-Do not include prose inside the code fence. This ensures the code can be detected and executed in the sandbox.
+
+2. CRITICAL: Each code block is executed independently. To maintain context between blocks:
+   - Always include necessary imports in each code block
+   - Re-run data loading/preparation in each block if needed
+   - Use descriptive variable names and comments
+   - Handle data type conversions properly (e.g., encode categorical variables before correlation analysis)
+   - Include error handling for data operations
+
+3. REQUIRED IMPORTS: Always include these imports in each code block:
+```python
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import matplotlib
+matplotlib.use('Agg')  # Non-interactive backend
+```
+
+4. OUTPUT FORMAT: Use simple text output without emojis, colors, or special formatting:
+   - Use plain text for interpretations
+   - Use simple markdown tables (not complex formatting)
+   - NEVER use status indicators like ✅, ❌, or any emojis
+   - NEVER include "Status:", "Execution Time:", "Code Execution Result", or any execution status sections
+   - NEVER include "Code Execution Error" or similar error status sections
+   - Keep output clean and professional
+   - Use only standard ASCII characters
+
+5. Do not include prose inside the code fence. This ensures the code can be detected and executed in the sandbox.
 """
         
         full_prompt = prompt + output_contract

@@ -668,20 +668,24 @@ class ChatService:
     
     def _append_execution_results(self, text: str, execution_results: List[Dict[str, Any]]) -> str:
         """
-        Append execution results to the original text as HTML
+        Append only successful execution results to the original text as HTML.
+        Failed executions are filtered out and not displayed to the user.
         
         Args:
             text: Original text
             execution_results: List of execution results
             
         Returns:
-            Text with execution results appended as HTML
+            Text with only successful execution results appended as HTML
         """
         try:
             result_sections = []
+            successful_count = 0
+            failed_count = 0
             
             for result in execution_results:
                 if result['success']:
+                    successful_count += 1
                     # Successful execution - format as HTML
                     result_section = f"""
 <div class="execution-result-container mt-3">
@@ -694,7 +698,7 @@ class ChatService:
         <div class="card-body">
             <div class="row">
                 <div class="col-md-6">
-                    <strong>Status:</strong> <span class="text-success">✅ Successfully executed</span>
+                    <strong>Status:</strong> <span class="text-success">Successfully executed</span>
                 </div>
                 <div class="col-md-6">
                     <strong>Execution Time:</strong> {result['execution_time_ms']}ms
@@ -710,45 +714,17 @@ class ChatService:
     </div>
 </div>
 """
+                    result_sections.append(result_section)
                 else:
-                    # Failed execution - format as HTML
-                    result_section = f"""
-<div class="execution-result-container mt-3">
-    <div class="card bg-danger bg-opacity-10 border-danger">
-        <div class="card-header bg-danger bg-opacity-25">
-            <h6 class="mb-0 text-danger">
-                <i class="fas fa-exclamation-triangle"></i> Code Execution Error
-            </h6>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <strong>Status:</strong> <span class="text-danger">❌ Execution failed</span>
-                </div>
-                <div class="col-md-6">
-                    <strong>Execution Time:</strong> {result['execution_time_ms']}ms
-                </div>
-            </div>
-            <div class="mt-3">
-                <strong>Error:</strong>
-                <div class="bg-dark text-light p-3 rounded mt-2">
-                    <pre class="mb-0">{result['error']}</pre>
-                </div>
-            </div>
-            <div class="mt-3">
-                <strong>Code that failed:</strong>
-                <div class="bg-dark text-light p-3 rounded mt-2">
-                    <pre class="mb-0"><code class="language-python">{result['code'][:200]}{'...' if len(result['code']) > 200 else ''}</code></pre>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-"""
-                
-                result_sections.append(result_section)
+                    failed_count += 1
+                    # Log failed execution for debugging but don't display to user
+                    logger.warning(f"Code execution failed (filtered from UI): {result.get('error', 'Unknown error')}")
             
-            # Append all results to the original text
+            # Log execution summary
+            if successful_count > 0 or failed_count > 0:
+                logger.info(f"Code execution summary: {successful_count} successful, {failed_count} failed (filtered)")
+            
+            # Append only successful results to the original text
             if result_sections:
                 text += "\n\n" + "\n\n".join(result_sections)
             

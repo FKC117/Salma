@@ -36,14 +36,14 @@ Industry-standard typography and spacing for analytical platform
     --spacing-xl: 2rem;      /* 32px - Extra large spacing */
     --spacing-2xl: 3rem;     /* 48px - Section spacing */
     
-    /* Professional Color Palette */
-    --text-primary: #f0f6fc;
-    --text-secondary: #c9d1d9;
-    --text-muted: #8b949e;
-    --text-accent: #58a6ff;
-    --text-success: #3fb950;
-    --text-warning: #d29922;
-    --text-danger: #f85149;
+    /* Professional Color Palette - All White Text */
+    --text-primary: #ffffff;
+    --text-secondary: #ffffff;
+    --text-muted: #ffffff;
+    --text-accent: #ffffff;
+    --text-success: #ffffff;
+    --text-warning: #ffffff;
+    --text-danger: #ffffff;
     
     /* Background Colors */
     --bg-primary: #0d1117;

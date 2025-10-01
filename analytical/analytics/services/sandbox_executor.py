@@ -314,6 +314,11 @@ class SandboxExecutor:
             escaped_path = full_dataset_path.replace('\\', '\\\\')
             dataset_code = f'''
 import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import matplotlib
+matplotlib.use('Agg')  # Non-interactive backend
 import os
 
 # Load the dataset
@@ -377,6 +382,7 @@ else:
 import matplotlib
 matplotlib.use("Agg")  # Use non-interactive backend
 import matplotlib.pyplot as plt
+import seaborn as sns
 import os
 
 # Override plt.show to save the figure

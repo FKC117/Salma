@@ -61,6 +61,16 @@
             box-sizing: border-box;
         }
         
+        /* Ensure all text is white */
+        *, *::before, *::after {
+            color: var(--cursor-text-primary) !important;
+        }
+        
+        /* Override any inherited colors */
+        p, h1, h2, h3, h4, h5, h6, span, div, a, li, td, th {
+            color: var(--cursor-text-primary) !important;
+        }
+        
         body {
             background-color: var(--cursor-bg-primary);
             color: var(--cursor-text-primary);
