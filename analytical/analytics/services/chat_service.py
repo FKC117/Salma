@@ -25,6 +25,7 @@ from analytics.services.analysis_executor import AnalysisExecutor
 from analytics.services.session_manager import SessionManager
 from analytics.services.audit_trail_manager import AuditTrailManager
 from analytics.services.code_extraction_service import CodeExtractionService
+from analytics.services.text_formatter import TextFormatter
 
 logger = logging.getLogger(__name__)
 
@@ -41,6 +42,7 @@ class ChatService:
         self.session_manager = SessionManager()
         self.audit_manager = AuditTrailManager()
         self.code_extractor = CodeExtractionService()
+        self.text_formatter = TextFormatter()
         
         # Chat configuration
         self.max_context_messages = 10
@@ -126,6 +128,9 @@ class ChatService:
                 print(f"=== CODE EXECUTION COMPLETED ===")
                 print(f"Executed {len(execution_results)} code blocks")
                 print(f"===============================")
+            
+            # Format the response text professionally
+            ai_response_text = self.text_formatter.format_analysis_text(ai_response_text)
             
             # Create AI message with execution results
             ai_message = self._create_chat_message(
