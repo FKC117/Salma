@@ -919,221 +919,6 @@ class EnhancedChatViewSet(viewsets.ViewSet):
             '''
             return HttpResponse(error_html, content_type='text/html', status=500)
 
-
-class EnhancedChatViewSet(viewsets.ViewSet):
-    """
-    Enhanced Chat endpoints with analysis suggestions and context management
-    """
-    
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.chat_service = ChatService()
-        self.suggestion_service = AnalysisSuggestionService()
-        from analytics.services.code_extraction_service import CodeExtractionService
-        self.code_extractor = CodeExtractionService()
-    
-    def _format_message_content(self, content):
-        """
-        Format message content with professional styling including table detection
-        """
-        # Check if content already contains HTML (from execution results)
-        if 'execution-result-container' in content:
-            # Content already contains HTML from execution results
-            # DO NOT process this content further - it's already properly formatted
-            # Just apply basic markdown formatting to any remaining text
-            content = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', content)
-            content = re.sub(r'\*(.*?)\*', r'<em>\1</em>', content)
-            content = re.sub(r'`(.*?)`', r'<code>\1</code>', content)
-            # DO NOT convert newlines - HTML structure must be preserved
-            pass
-            
-        else:
-            # Original markdown content - apply full formatting
-            content = self._format_tables(content)
-            content = self.code_extractor.extract_and_format_code_blocks(content)
-            
-            # Convert markdown-style formatting to HTML
-            # Bold text
-            content = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', content)
-            # Italic text
-            content = re.sub(r'\*(.*?)\*', r'<em>\1</em>', content)
-            
-            # Handle remaining generic code blocks (non-Python)
-            content = re.sub(r'```(.*?)```', r'<pre><code>\1</code></pre>', content, flags=re.DOTALL)
-            
-            # Inline code
-            content = re.sub(r'`(.*?)`', r'<code>\1</code>', content)
-            
-            # Line breaks (but not for table content)
-            if not self._contains_table(content):
-                content = content.replace('\n', '<br>')
-        
-        return content
-    
-    def _convert_newlines_outside_html(self, content):
-        """
-        Convert newlines to <br> tags only for text outside HTML tags
-        """
-        import re
-        
-        # More sophisticated approach: find HTML blocks and preserve them
-        # Split content by HTML tags (including multi-line tags)
-        parts = re.split(r'(<[^>]*>)', content)
-        
-        result = []
-        in_html_block = False
-        
-        for part in parts:
-            if part.startswith('<') and part.endswith('>'):
-                # This is an HTML tag, keep it as is
-                result.append(part)
-            elif part.startswith('<'):
-                # Start of HTML tag, mark as in HTML block
-                in_html_block = True
-                result.append(part)
-            elif part.endswith('>'):
-                # End of HTML tag, mark as out of HTML block
-                in_html_block = False
-                result.append(part)
-            elif in_html_block:
-                # Inside HTML tag, keep as is
-                result.append(part)
-            else:
-                # Outside HTML tags, convert newlines to <br>
-                result.append(part.replace('\n', '<br>'))
-        
-        return ''.join(result)
-    
-    def _contains_table(self, content):
-        """
-        Check if content contains a table
-        """
-        lines = content.split('\n')
-        table_lines = [line for line in lines if '|' in line and len(line.strip()) > 5]
-        return len(table_lines) >= 2
-    
-    def _format_tables(self, content):
-        """
-        Format markdown tables to HTML
-        """
-        # Split content into lines
-        lines = content.split('\n')
-        result_lines = []
-        i = 0
-        
-        while i < len(lines):
-            line = lines[i]
-            
-            # Check if this line starts a table
-            if '|' in line and len(line.strip()) > 5:
-                # Collect table lines
-                table_lines = []
-                j = i
-                while j < len(lines) and '|' in lines[j] and len(lines[j].strip()) > 5:
-                    table_lines.append(lines[j])
-                    j += 1
-                
-                # If we have at least 2 table lines, format as table
-                if len(table_lines) >= 2:
-                    table_html = self._create_table_html(table_lines)
-                    result_lines.append(table_html)
-                    i = j  # Skip the table lines
-                else:
-                    result_lines.append(line)
-                    i += 1
-            else:
-                result_lines.append(line)
-                i += 1
-        
-        return '\n'.join(result_lines)
-    
-    def _create_table_html(self, table_lines):
-        """
-        Create HTML table from markdown table lines
-        """
-        # Filter out separator lines (like |---|---|---|)
-        data_lines = []
-        for line in table_lines:
-            if not re.match(r'^\s*\|[\s\-\|:]+\|\s*$', line):
-                data_lines.append(line)
-        
-        if len(data_lines) < 2:
-            return '\n'.join(table_lines)  # Return original if not enough data
-        
-        # Extract headers from first line
-        headers = [cell.strip() for cell in data_lines[0].split('|') if cell.strip()]
-        
-        # Extract data rows
-        rows = []
-        for i in range(1, len(data_lines)):
-            cells = [cell.strip() for cell in data_lines[i].split('|') if cell.strip()]
-            if len(cells) >= 2:  # At least 2 columns
-                rows.append(cells)
-        
-        if not headers or not rows:
-            return '\n'.join(table_lines)  # Return original if no valid data
-        
-        # Create HTML table
-        table_id = f'table_{hash(str(table_lines)) % 10000}'
-        
-        html = f'''
-        <div class="table-container">
-            <div class="table-header">
-                <div class="table-title">
-                    <h6><i class="bi bi-table"></i> Data Table</h6>
-                    <span class="table-meta">{len(rows)} rows × {len(headers)} columns</span>
-                </div>
-                <div class="table-actions">
-                    <div class="btn-group" role="group">
-                        <button class="btn btn-sm btn-outline-secondary" onclick="exportTable(this, 'csv')">
-                            <i class="bi bi-file-earmark-spreadsheet"></i> CSV
-                        </button>
-                        <button class="btn btn-sm btn-outline-secondary" onclick="exportTable(this, 'json')">
-                            <i class="bi bi-file-earmark-code"></i> JSON
-                        </button>
-                        <button class="btn btn-sm btn-outline-secondary" onclick="fullscreenTable(this)">
-                            <i class="bi bi-arrows-fullscreen"></i> Fullscreen
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="table-content">
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover table-sm">
-                        <thead class="table-dark">
-                            <tr>
-        '''
-        
-        for header in headers:
-            html += f'<th scope="col">{header}</th>'
-        
-        html += '''
-                            </tr>
-                        </thead>
-                        <tbody>
-        '''
-        
-        for row in rows:
-            html += '<tr>'
-            for cell in row:
-                html += f'<td>{cell}</td>'
-            html += '</tr>'
-        
-        html += '''
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="table-footer">
-                <div class="pagination-info">
-                    Showing 1 to ''' + str(len(rows)) + ''' of ''' + str(len(rows)) + ''' entries
-                </div>
-            </div>
-        </div>
-        '''
-        
-        return html
-    
     @action(detail=False, methods=['post'])
     def send_message(self, request):
         """
@@ -1143,7 +928,14 @@ class EnhancedChatViewSet(viewsets.ViewSet):
             print(f"=== ENHANCED CHAT VIEWSET DEBUG ===")
             print(f"Request method: POST")
             print(f"Request path: /enhanced-chat/send/")
-            print(f"Request data: {request.data}")
+            # Handle both DRF Request and WSGIRequest
+            if hasattr(request, 'data'):
+                request_data = request.data
+            else:
+                # For WSGIRequest, get data from POST
+                request_data = request.POST
+            
+            print(f"Request data: {request_data}")
             print(f"User authenticated: {request.user.is_authenticated if hasattr(request, 'user') else 'Unknown'}")
             print(f"==================================")
             
@@ -1166,7 +958,7 @@ class EnhancedChatViewSet(viewsets.ViewSet):
             print(f"=======================")
             
             # Validate request data
-            message = request.data.get('message', '').strip()
+            message = request_data.get('message', '').strip()
             if not message:
                 return Response({
                     'success': False,
@@ -1180,23 +972,24 @@ class EnhancedChatViewSet(viewsets.ViewSet):
                 }, status=status.HTTP_400_BAD_REQUEST)
             
             # Get selected AI model (default to ollama)
-            selected_model = request.data.get('ai_model', 'ollama')
+            selected_model = request_data.get('ai_model', 'ollama')
             
             # DEBUG: Log request parameters
             print(f"=== REQUEST PARAMETERS DEBUG ===")
             print(f"Message: {message[:100]}{'...' if len(message) > 100 else ''}")
             print(f"Selected model: {selected_model}")
-            print(f"Session ID: {request.data.get('session_id')}")
-            print(f"Context: {request.data.get('context')}")
+            print(f"Session ID: {request_data.get('session_id')}")
+            print(f"Context: {request_data.get('context')}")
             print(f"================================")
             
-            # Process message with selected model
-            llm_processor = LLMProcessor(model_name=selected_model)
-            result = llm_processor.process_message(
-                user=user,
+            # Process message with ChatService (includes automatic code execution)
+            from analytics.services.chat_service import ChatService
+            chat_service = ChatService()
+            result = chat_service.send_message(
                 message=message,
-                session_id=request.data.get('session_id'),
-                context=request.data.get('context', {})
+                user=user,
+                session_id=request_data.get('session_id'),
+                include_suggestions=False  # We'll handle suggestions separately if needed
             )
             
             # DEBUG: Log processing result
@@ -1212,8 +1005,20 @@ class EnhancedChatViewSet(viewsets.ViewSet):
                 from django.utils import timezone
                 from django.http import HttpResponse
                 
+                # Get the AI message content (ChatService returns different format)
+                ai_response = result.get('ai_response', {})
+                ai_message_content = ai_response.get('content', '') if isinstance(ai_response, dict) else ''
+                
+                # DEBUG: Log AI response content
+                print(f"=== AI RESPONSE CONTENT DEBUG ===")
+                print(f"AI response type: {type(ai_response)}")
+                print(f"AI response keys: {list(ai_response.keys()) if isinstance(ai_response, dict) else 'Not a dict'}")
+                print(f"AI message content length: {len(ai_message_content)}")
+                print(f"AI message content preview: {ai_message_content[:200]}{'...' if len(ai_message_content) > 200 else ''}")
+                print(f"=================================")
+                
                 # Format the response content
-                formatted_content = self._format_message_content(result['response'])
+                formatted_content = self._format_message_content(ai_message_content)
                 
                 # DEBUG: Log formatted content
                 print(f"=== FORMATTED CONTENT DEBUG ===")
@@ -1227,7 +1032,7 @@ class EnhancedChatViewSet(viewsets.ViewSet):
                     'message_content': formatted_content,
                     'timestamp': timezone.now().strftime('%H:%M'),
                     'message_metadata': True,
-                    'token_count': result.get('total_tokens', 0),
+                    'token_count': result.get('tokens_used', {}).get('total_tokens', 0),
                     'cost': result.get('cost', 0.0)
                 })
                 
@@ -1279,48 +1084,221 @@ class EnhancedChatViewSet(viewsets.ViewSet):
             </div>
             '''
             return HttpResponse(error_html, content_type='text/html', status=500)
+
+
+# class EnhancedChatViewSet(viewsets.ViewSet):
+#     """
+#     Enhanced Chat endpoints with analysis suggestions and context management
+#     """
     
-    @action(detail=False, methods=['get'])
-    def history(self, request):
-        """
-        Get chat history for current session
-        """
-        try:
-            # Get the authenticated user
-            if request.user.is_authenticated:
-                user = request.user
-            else:
-                user = User.objects.first()
-                if not user:
-                    return Response({
-                        'success': False,
-                        'error': 'User authentication required'
-                    }, status=status.HTTP_401_UNAUTHORIZED)
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+#         self.chat_service = ChatService()
+#         self.suggestion_service = AnalysisSuggestionService()
+#         from analytics.services.code_extraction_service import CodeExtractionService
+#         self.code_extractor = CodeExtractionService()
+    
+#     def _format_message_content(self, content):
+#         """
+#         Format message content with professional styling including table detection
+#         """
+#         # Check if content already contains HTML (from execution results)
+#         if 'execution-result-container' in content:
+#             # Content already contains HTML from execution results
+#             # DO NOT process this content further - it's already properly formatted
+#             # Just apply basic markdown formatting to any remaining text
+#             content = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', content)
+#             content = re.sub(r'\*(.*?)\*', r'<em>\1</em>', content)
+#             content = re.sub(r'`(.*?)`', r'<code>\1</code>', content)
+#             # DO NOT convert newlines - HTML structure must be preserved
+#             pass
             
-            # Get query parameters
-            session_id = request.GET.get('session_id')
-            limit = min(int(request.GET.get('limit', 50)), 100)
-            offset = int(request.GET.get('offset', 0))
+#         else:
+#             # Original markdown content - apply full formatting
+#             content = self._format_tables(content)
+#             content = self.code_extractor.extract_and_format_code_blocks(content)
             
-            result = self.chat_service.get_chat_history(
-                user=user,
-                session_id=session_id,
-                limit=limit,
-                offset=offset
-            )
+#             # Convert markdown-style formatting to HTML
+#             # Bold text
+#             content = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', content)
+#             # Italic text
+#             content = re.sub(r'\*(.*?)\*', r'<em>\1</em>', content)
             
-            if result['success']:
-                return Response(result)
-            else:
-                return Response(result, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+#             # Handle remaining generic code blocks (non-Python)
+#             content = re.sub(r'```(.*?)```', r'<pre><code>\1</code></pre>', content, flags=re.DOTALL)
+            
+#             # Inline code
+#             content = re.sub(r'`(.*?)`', r'<code>\1</code>', content)
+            
+#             # Line breaks (but not for table content)
+#             if not self._contains_table(content):
+#                 content = content.replace('\n', '<br>')
+        
+#         return content
+    
+#     def _convert_newlines_outside_html(self, content):
+#         """
+#         Convert newlines to <br> tags only for text outside HTML tags
+#         """
+#         import re
+        
+#         # More sophisticated approach: find HTML blocks and preserve them
+#         # Split content by HTML tags (including multi-line tags)
+#         parts = re.split(r'(<[^>]*>)', content)
+        
+#         result = []
+#         in_html_block = False
+        
+#         for part in parts:
+#             if part.startswith('<') and part.endswith('>'):
+#                 # This is an HTML tag, keep it as is
+#                 result.append(part)
+#             elif part.startswith('<'):
+#                 # Start of HTML tag, mark as in HTML block
+#                 in_html_block = True
+#                 result.append(part)
+#             elif part.endswith('>'):
+#                 # End of HTML tag, mark as out of HTML block
+#                 in_html_block = False
+#                 result.append(part)
+#             elif in_html_block:
+#                 # Inside HTML tag, keep as is
+#                 result.append(part)
+#             else:
+#                 # Outside HTML tags, convert newlines to <br>
+#                 result.append(part.replace('\n', '<br>'))
+        
+#         return ''.join(result)
+    
+#     def _contains_table(self, content):
+#         """
+#         Check if content contains a table
+#         """
+#         lines = content.split('\n')
+#         table_lines = [line for line in lines if '|' in line and len(line.strip()) > 5]
+#         return len(table_lines) >= 2
+    
+#     def _format_tables(self, content):
+#         """
+#         Format markdown tables to HTML
+#         """
+#         # Split content into lines
+#         lines = content.split('\n')
+#         result_lines = []
+#         i = 0
+        
+#         while i < len(lines):
+#             line = lines[i]
+            
+#             # Check if this line starts a table
+#             if '|' in line and len(line.strip()) > 5:
+#                 # Collect table lines
+#                 table_lines = []
+#                 j = i
+#                 while j < len(lines) and '|' in lines[j] and len(lines[j].strip()) > 5:
+#                     table_lines.append(lines[j])
+#                     j += 1
                 
-        except Exception as e:
-            logger.error(f"Chat history error: {str(e)}")
-            return Response({
-                'success': False,
-                'error': 'Failed to get chat history',
-                'details': str(e)
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+#                 # If we have at least 2 table lines, format as table
+#                 if len(table_lines) >= 2:
+#                     table_html = self._create_table_html(table_lines)
+#                     result_lines.append(table_html)
+#                     i = j  # Skip the table lines
+#                 else:
+#                     result_lines.append(line)
+#                     i += 1
+#             else:
+#                 result_lines.append(line)
+#                 i += 1
+        
+#         return '\n'.join(result_lines)
+    
+#     def _create_table_html(self, table_lines):
+#         """
+#         Create HTML table from markdown table lines
+#         """
+#         # Filter out separator lines (like |---|---|---|)
+#         data_lines = []
+#         for line in table_lines:
+#             if not re.match(r'^\s*\|[\s\-\|:]+\|\s*$', line):
+#                 data_lines.append(line)
+        
+#         if len(data_lines) < 2:
+#             return '\n'.join(table_lines)  # Return original if not enough data
+        
+#         # Extract headers from first line
+#         headers = [cell.strip() for cell in data_lines[0].split('|') if cell.strip()]
+        
+#         # Extract data rows
+#         rows = []
+#         for i in range(1, len(data_lines)):
+#             cells = [cell.strip() for cell in data_lines[i].split('|') if cell.strip()]
+#             if len(cells) >= 2:  # At least 2 columns
+#                 rows.append(cells)
+        
+#         if not headers or not rows:
+#             return '\n'.join(table_lines)  # Return original if no valid data
+        
+#         # Create HTML table
+#         table_id = f'table_{hash(str(table_lines)) % 10000}'
+        
+#         html = f'''
+#         <div class="table-container">
+#             <div class="table-header">
+#                 <div class="table-title">
+#                     <h6><i class="bi bi-table"></i> Data Table</h6>
+#                     <span class="table-meta">{len(rows)} rows × {len(headers)} columns</span>
+#                 </div>
+#                 <div class="table-actions">
+#                     <div class="btn-group" role="group">
+#                         <button class="btn btn-sm btn-outline-secondary" onclick="exportTable(this, 'csv')">
+#                             <i class="bi bi-file-earmark-spreadsheet"></i> CSV
+#                         </button>
+#                         <button class="btn btn-sm btn-outline-secondary" onclick="exportTable(this, 'json')">
+#                             <i class="bi bi-file-earmark-code"></i> JSON
+#                         </button>
+#                         <button class="btn btn-sm btn-outline-secondary" onclick="fullscreenTable(this)">
+#                             <i class="bi bi-arrows-fullscreen"></i> Fullscreen
+#                         </button>
+#                     </div>
+#                 </div>
+#             </div>
+#             <div class="table-content">
+#                 <div class="table-responsive">
+#                     <table class="table table-striped table-hover table-sm">
+#                         <thead class="table-dark">
+#                             <tr>
+#         '''
+        
+#         for header in headers:
+#             html += f'<th scope="col">{header}</th>'
+        
+#         html += '''
+#                             </tr>
+#                         </thead>
+#                         <tbody>
+#         '''
+        
+#         for row in rows:
+#             html += '<tr>'
+#             for cell in row:
+#                 html += f'<td>{cell}</td>'
+#             html += '</tr>'
+        
+#         html += '''
+#                         </tbody>
+#                     </table>
+#                 </div>
+#             </div>
+#             <div class="table-footer">
+#                 <div class="pagination-info">
+#                     Showing 1 to ''' + str(len(rows)) + ''' of ''' + str(len(rows)) + ''' entries
+#                 </div>
+#             </div>
+#         </div>
+#         '''
+        
+#         return html
     
 class AnalyticsView(viewsets.ViewSet):
     """

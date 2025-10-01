@@ -32,6 +32,9 @@ class CodeExtractionService:
             # Direct Python code patterns
             r'(?:^|\n)(python\s*\n.*?)(?=\n\n|\n[A-Z]|\n#|\Z)',
             
+            # Pattern for "python" followed by import statements (no newline)
+            r'(?:^|\n)(python\s+import.*?)(?=\n\n|\n[A-Z]|\n#|\Z)',
+            
             # New pattern for "Python Code" header format
             r'Python Code\s*\n\s*\n\s*\n\s*\n(.*?)(?=\n\s*$|\n\s*\n\s*[A-Z]|\Z)',
             

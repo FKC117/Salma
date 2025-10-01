@@ -284,16 +284,70 @@ class SandboxExecutor:
             'error': None
         }
     
+    def _get_dataset_code(self, session_id: Optional[int]) -> str:
+        """Get dataset loading code for the sandbox"""
+        if not session_id:
+            return ""
+        
+        try:
+            from analytics.models import AnalysisSession, Dataset
+            
+            # Get the analysis session
+            session = AnalysisSession.objects.get(id=session_id)
+            dataset = session.primary_dataset
+            
+            if not dataset:
+                return ""
+            
+            # Get the dataset file path
+            dataset_path = dataset.parquet_path
+            if not dataset_path:
+                return ""
+            
+            # Construct full path
+            from django.conf import settings
+            full_dataset_path = os.path.join(settings.MEDIA_ROOT, dataset_path)
+            if not os.path.exists(full_dataset_path):
+                return ""
+            
+            # Generate dataset loading code (escape backslashes for Windows paths)
+            escaped_path = full_dataset_path.replace('\\', '\\\\')
+            dataset_code = f'''
+import pandas as pd
+import os
+
+# Load the dataset
+dataset_path = r"{full_dataset_path}"
+if os.path.exists(dataset_path):
+    df = pd.read_parquet(dataset_path)
+    print(f"Dataset loaded: {{df.shape[0]}} rows, {{df.shape[1]}} columns")
+    print(f"Columns: {{list(df.columns)}}")
+else:
+    print("Dataset file not found")
+    df = None
+'''
+            return dataset_code
+            
+        except Exception as e:
+            logger.error(f"Error getting dataset code: {str(e)}")
+            return ""
+    
     def _execute_python_code(self, code: str, execution, timeout: int, memory_limit: int) -> Dict[str, Any]:
         """Execute Python code in isolated sandbox environment"""
         try:
+            # Load dataset if session_id is provided
+            dataset_code = self._get_dataset_code(execution.session_id)
+            
             # Modify code to handle matplotlib plots properly
             # Add non-interactive backend and image saving
             modified_code = self._modify_matplotlib_code(code)
             
+            # Combine dataset loading code with the user's code
+            full_code = dataset_code + '\n' + modified_code
+            
             # Create temporary file
             with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
-                f.write(modified_code)
+                f.write(full_code)
                 temp_file = f.name
             
             try:
@@ -340,7 +394,13 @@ def custom_show(*args, **kwargs):
         output_path = os.path.join(output_dir, "out.png")
         plt.tight_layout()
         plt.savefig(output_path, dpi=150, bbox_inches="tight")
-        print("__SANDBOX_IMAGE__/tmp/out.png")
+        
+        # Read the image file and convert to base64
+        import base64
+        with open(output_path, 'rb') as f:
+            image_data = f.read()
+            image_base64 = base64.b64encode(image_data).decode('utf-8')
+            print(f"__SANDBOX_IMAGE_BASE64__data:image/png;base64,{image_base64}")
     original_show(*args, **kwargs)
 
 plt.show = custom_show

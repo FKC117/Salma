@@ -127,10 +127,10 @@ class ChatService:
                 print(f"Executed {len(execution_results)} code blocks")
                 print(f"===============================")
             
-            # Create AI message
+            # Create AI message with execution results
             ai_message = self._create_chat_message(
                 user=user,
-                content=ai_response_text,
+                content=ai_response_text,  # This now includes execution results
                 message_type='assistant',
                 session=analysis_session,
                 chat_session=chat_session,
@@ -703,7 +703,7 @@ class ChatService:
             <div class="mt-3">
                 <strong>Output:</strong>
                 <div class="bg-dark text-light p-3 rounded mt-2">
-                    <pre class="mb-0">{result['output']}</pre>
+                    <pre class="mb-0">{self._process_execution_output(result['output'])}</pre>
                 </div>
             </div>
         </div>
@@ -757,3 +757,35 @@ class ChatService:
         except Exception as e:
             logger.error(f"Error appending execution results: {str(e)}")
             return text
+    
+    def _process_execution_output(self, output: str) -> str:
+        """
+        Process execution output to handle images and other special content
+        
+        Args:
+            output: Raw execution output
+            
+        Returns:
+            Processed output with images converted to HTML
+        """
+        try:
+            # Check for sandbox image markers (base64 format)
+            if '__SANDBOX_IMAGE_BASE64__' in output:
+                # Extract base64 image data and convert to HTML
+                import re
+                image_pattern = r'__SANDBOX_IMAGE_BASE64__(data:image/png;base64,[A-Za-z0-9+/=]+)'
+                matches = re.findall(image_pattern, output)
+                
+                processed_output = output
+                for image_data in matches:
+                    # Create image HTML
+                    image_html = f'\n\n<img src="{image_data}" alt="Generated Plot" class="img-fluid rounded mt-2" style="max-width: 100%; height: auto;">\n'
+                    processed_output = processed_output.replace(f'__SANDBOX_IMAGE_BASE64__{image_data}', image_html)
+                
+                return processed_output
+            else:
+                return output
+                
+        except Exception as e:
+            logger.error(f"Error processing execution output: {str(e)}")
+            return output
