@@ -27,10 +27,10 @@ class AnalysisResultManager:
         analysis_id: str,
         title: str,
         description: str,
-        summary_stats: List[Dict[str, Any]] = None,
-        key_insights: List[Dict[str, Any]] = None,
-        detailed_analysis: str = None,
-        recommendations: List[Dict[str, Any]] = None
+        summary_stats: Optional[List[Dict[str, Any]]] = None,
+        key_insights: Optional[List[Dict[str, Any]]] = None,
+        detailed_analysis: Optional[str] = None,
+        recommendations: Optional[List[Dict[str, Any]]] = None
     ) -> str:
         """
         Create a text analysis result template
@@ -60,12 +60,12 @@ class AnalysisResultManager:
         analysis_id: str,
         title: str,
         description: str,
-        table_summary: Dict[str, Any] = None,
-        table_data: Dict[str, Any] = None,
-        statistical_analysis: Dict[str, Any] = None,
-        data_quality: Dict[str, Any] = None,
-        summary_stats: List[Dict[str, Any]] = None,
-        visualizations: Dict[str, Any] = None
+        table_summary: Optional[Dict[str, Any]] = None,
+        table_data: Optional[Dict[str, Any]] = None,
+        statistical_analysis: Optional[Dict[str, Any]] = None,
+        data_quality: Optional[Dict[str, Any]] = None,
+        summary_stats: Optional[List[Dict[str, Any]]] = None,
+        visualizations: Optional[Dict[str, Any]] = None
     ) -> str:
         """
         Create a table analysis result template
@@ -108,34 +108,41 @@ class AnalysisResultManager:
         description: str,
         chart_type: str,
         data: Any,
-        chart_config: Dict[str, Any] = None,
-        chart_insights: List[Dict[str, Any]] = None,
-        statistical_summary: Dict[str, Any] = None
+        chart_config: Optional[Dict[str, Any]] = None,
+        chart_insights: Optional[List[Dict[str, Any]]] = None,
+        statistical_summary: Optional[Dict[str, Any]] = None,
+        chart_summary: Optional[Dict[str, Any]] = None,
+        chart_data: Optional[Dict[str, Any]] = None  # Add this parameter
     ) -> str:
         """
         Create a chart analysis result template
         """
         try:
-            # Generate chart if data is provided
-            chart_data = None
-            if data is not None:
-                chart_result = self.chart_generator.generate_chart(
-                    chart_type=chart_type,
-                    data=data,
-                    title=title,
-                    **(chart_config or {})
-                )
-                
-                if chart_result['success']:
-                    chart_data = chart_result
-                else:
-                    logger.warning(f"Chart generation failed: {chart_result.get('error')}")
+            # Use provided chart_data or generate chart if data is provided
+            if chart_data is None:
+                chart_data = None
+                if data is not None:
+                    chart_result = self.chart_generator.generate_chart(
+                        chart_type=chart_type,
+                        data=data,
+                        title=title,
+                        **(chart_config or {})
+                    )
+                    
+                    if chart_result['success']:
+                        chart_data = chart_result
+                    else:
+                        logger.warning(f"Chart generation failed: {chart_result.get('error')}")
+            
+            # Use provided chart_summary or create one
+            if chart_summary is None:
+                chart_summary = self._create_chart_summary(chart_type, data, chart_data)
             
             context = {
                 'analysis_id': analysis_id,
                 'title': title,
                 'description': description,
-                'chart_summary': self._create_chart_summary(chart_type, data, chart_data),
+                'chart_summary': chart_summary,
                 'chart_data': chart_data,
                 'chart_config': chart_config or {},
                 'chart_insights': chart_insights or [],
@@ -264,7 +271,7 @@ class AnalysisResultManager:
     def format_statistical_summary(
         self,
         data: Any,
-        columns: List[str] = None
+        columns: Optional[List[str]] = None
     ) -> Dict[str, Any]:
         """Format statistical summary for analysis results"""
         try:

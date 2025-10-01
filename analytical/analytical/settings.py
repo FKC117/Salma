@@ -86,7 +86,9 @@ ROOT_URLCONF = 'analytical.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'analytics' / 'templates'],
+        'DIRS': [
+            BASE_DIR / 'analytics' / 'templates',
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

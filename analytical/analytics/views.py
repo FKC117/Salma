@@ -599,101 +599,80 @@ class EnhancedChatViewSet(viewsets.ViewSet):
         super().__init__(*args, **kwargs)
         self.chat_service = ChatService()
         self.suggestion_service = AnalysisSuggestionService()
+        from analytics.services.code_extraction_service import CodeExtractionService
+        self.code_extractor = CodeExtractionService()
     
     def _format_message_content(self, content):
         """
         Format message content with professional styling including table detection
         """
-        # First, detect and format tables
-        content = self._format_tables(content)
-        
-        # Convert markdown-style formatting to HTML
-        # Bold text
-        content = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', content)
-        # Italic text
-        content = re.sub(r'\*(.*?)\*', r'<em>\1</em>', content)
-        
-        # Python code blocks with execute button
-        def format_python_code_block(match):
-            lang = match.group(1) if match.group(1) else ''
-            code = match.group(2).strip()
-            # Check if this is Python code
-            if lang.lower() == 'python' or code.startswith('python') or code.startswith('import ') or 'import pandas as pd' in code or 'import seaborn as sns' in code or 'import matplotlib.pyplot as plt' in code:
-                # Remove 'python' prefix if present
-                if code.startswith('python'):
-                    code = code[6:].strip()
-                # Create executable code block
-                import urllib.parse
-                encoded_code = urllib.parse.quote(code)
-                return f'''
-                <div class="code-block-container">
-                    <div class="code-header">
-                        <div class="code-title">
-                            <i class="fas fa-code"></i> Python Code
-                        </div>
-                        <div class="code-actions">
-                            <button class="btn btn-sm btn-outline-primary execute-code-btn" 
-                                    onclick="executePythonCode(this)" 
-                                    data-code="{encoded_code}">
-                                <i class="fas fa-play"></i> Execute
-                            </button>
-                        </div>
-                    </div>
-                    <pre class="code-block"><code class="language-python">{code}</code></pre>
-                </div>
-                '''
-            else:
-                # Regular code block
-                return f'<pre><code>{code}</code></pre>'
-        
-        # Handle code blocks with language specification (```
-        content = re.sub(r'```(\w+)?\n(.*?)```', format_python_code_block, content, flags=re.DOTALL)
-        # Handle generic code blocks (```
-
-        content = re.sub(r'```(.*?)```', r'<pre><code>\1</code></pre>', content, flags=re.DOTALL)
-        
-        # Handle AI-generated Python code blocks (```
-
-        # This pattern matches code that starts with "python" on a new line
-        def format_ai_python_code_block(match):
-            code = match.group(1).strip()
-            # Remove 'python' prefix if present at the start
-            if code.startswith('python'):
-                code = code[6:].strip()
-            # Create executable code block
-            import urllib.parse
-            encoded_code = urllib.parse.quote(code)
-            return f'''
-            <div class="code-block-container">
-                <div class="code-header">
-                    <div class="code-title">
-                        <i class="fas fa-code"></i> Python Code
-                    </div>
-                    <div class="code-actions">
-                        <button class="btn btn-sm btn-outline-primary execute-code-btn" 
-                                onclick="executePythonCode(this)" 
-                                data-code="{encoded_code}">
-                            <i class="fas fa-play"></i> Execute
-                        </button>
-                    </div>
-                </div>
-                <pre class="code-block"><code class="language-python">{code}</code></pre>
-            </div>
-            '''
-        
-        # Pattern to match AI-generated Python code blocks
-        # This matches a line with "python" followed by indented code blocks
-        content = re.sub(r'\n\s*python\s*\n(.*?)(?=\n\s*[A-Z#]|\n\s*$)', format_ai_python_code_block, content, flags=re.DOTALL)
-        
-
-        
-        # Inline code
-        content = re.sub(r'`(.*?)`', r'<code>\1</code>', content)
-        # Line breaks (but not for table content)
-        if not self._contains_table(content):
-            content = content.replace('\n', '<br>')
+        # Check if content already contains HTML (from execution results)
+        if 'execution-result-container' in content:
+            # Content already contains HTML from execution results
+            # DO NOT process this content further - it's already properly formatted
+            # Just apply basic markdown formatting to any remaining text
+            content = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', content)
+            content = re.sub(r'\*(.*?)\*', r'<em>\1</em>', content)
+            content = re.sub(r'`(.*?)`', r'<code>\1</code>', content)
+            # DO NOT convert newlines - HTML structure must be preserved
+            pass
+            
+        else:
+            # Original markdown content - apply full formatting
+            content = self._format_tables(content)
+            content = self.code_extractor.extract_and_format_code_blocks(content)
+            
+            # Convert markdown-style formatting to HTML
+            # Bold text
+            content = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', content)
+            # Italic text
+            content = re.sub(r'\*(.*?)\*', r'<em>\1</em>', content)
+            
+            # Handle remaining generic code blocks (non-Python)
+            content = re.sub(r'```(.*?)```', r'<pre><code>\1</code></pre>', content, flags=re.DOTALL)
+            
+            # Inline code
+            content = re.sub(r'`(.*?)`', r'<code>\1</code>', content)
+            
+            # Line breaks (but not for table content)
+            if not self._contains_table(content):
+                content = content.replace('\n', '<br>')
         
         return content
+    
+    def _convert_newlines_outside_html(self, content):
+        """
+        Convert newlines to <br> tags only for text outside HTML tags
+        """
+        import re
+        
+        # More sophisticated approach: find HTML blocks and preserve them
+        # Split content by HTML tags (including multi-line tags)
+        parts = re.split(r'(<[^>]*>)', content)
+        
+        result = []
+        in_html_block = False
+        
+        for part in parts:
+            if part.startswith('<') and part.endswith('>'):
+                # This is an HTML tag, keep it as is
+                result.append(part)
+            elif part.startswith('<'):
+                # Start of HTML tag, mark as in HTML block
+                in_html_block = True
+                result.append(part)
+            elif part.endswith('>'):
+                # End of HTML tag, mark as out of HTML block
+                in_html_block = False
+                result.append(part)
+            elif in_html_block:
+                # Inside HTML tag, keep as is
+                result.append(part)
+            else:
+                # Outside HTML tags, convert newlines to <br>
+                result.append(part.replace('\n', '<br>'))
+        
+        return ''.join(result)
     
     def _contains_table(self, content):
         """
@@ -950,75 +929,80 @@ class EnhancedChatViewSet(viewsets.ViewSet):
         super().__init__(*args, **kwargs)
         self.chat_service = ChatService()
         self.suggestion_service = AnalysisSuggestionService()
+        from analytics.services.code_extraction_service import CodeExtractionService
+        self.code_extractor = CodeExtractionService()
     
     def _format_message_content(self, content):
         """
         Format message content with professional styling including table detection
         """
-        # First, detect and format tables
-        content = self._format_tables(content)
-        
-        # Convert markdown-style formatting to HTML
-        # Bold text
-        content = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', content)
-        # Italic text
-        content = re.sub(r'\*(.*?)\*', r'<em>\1</em>', content)
-        
-        # Python code blocks with execute button
-        def format_python_code_block(code):
-            # Create executable code block
-            import urllib.parse
-            encoded_code = urllib.parse.quote(code)
-            return f'''
-            <div class="code-block-container">
-                <div class="code-header">
-                    <div class="code-title">
-                        <i class="fas fa-code"></i> Python Code
-                    </div>
-                    <div class="code-actions">
-                        <button class="btn btn-sm btn-outline-primary execute-code-btn" 
-                                onclick="executePythonCode(this)" 
-                                data-code="{encoded_code}">
-                            <i class="fas fa-play"></i> Execute
-                        </button>
-                    </div>
-                </div>
-                <pre class="code-block"><code class="language-python">{code}</code></pre>
-            </div>
-            '''
-        
-        # Handle AI-generated Python code blocks (non-markdown style)
-        # This pattern matches the specific format the AI generates:
-        # ### Header
-        # 
-        # python
-        # import pandas as pd
-        # ...
-        def replace_ai_code_block(match):
-            code_part = match.group(1).strip()
-            # Return just the formatted code block without the header
-            return format_python_code_block(code_part)
-        
-        content = re.sub(r'### [^\n]*\n\npython\n(.*?)(?=\n\n###|\s*$)', 
-                        replace_ai_code_block, 
-                        content, flags=re.DOTALL)
-        
-        # Handle markdown-style Python code blocks
-        def replace_markdown_code_block(match):
-            code_part = match.group(1).strip()
-            return format_python_code_block(code_part)
-        
-        content = re.sub(r'```python\n(.*?)```', replace_markdown_code_block, content, flags=re.DOTALL)
-        
-        # Handle generic markdown-style code blocks
-        content = re.sub(r'```(.*?)```', r'<pre><code>\1</code></pre>', content, flags=re.DOTALL)
-        # Inline code
-        content = re.sub(r'`(.*?)`', r'<code>\1</code>', content)
-        # Line breaks (but not for table content)
-        if not self._contains_table(content):
-            content = content.replace('\n', '<br>')
+        # Check if content already contains HTML (from execution results)
+        if 'execution-result-container' in content:
+            # Content already contains HTML from execution results
+            # DO NOT process this content further - it's already properly formatted
+            # Just apply basic markdown formatting to any remaining text
+            content = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', content)
+            content = re.sub(r'\*(.*?)\*', r'<em>\1</em>', content)
+            content = re.sub(r'`(.*?)`', r'<code>\1</code>', content)
+            # DO NOT convert newlines - HTML structure must be preserved
+            pass
+            
+        else:
+            # Original markdown content - apply full formatting
+            content = self._format_tables(content)
+            content = self.code_extractor.extract_and_format_code_blocks(content)
+            
+            # Convert markdown-style formatting to HTML
+            # Bold text
+            content = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', content)
+            # Italic text
+            content = re.sub(r'\*(.*?)\*', r'<em>\1</em>', content)
+            
+            # Handle remaining generic code blocks (non-Python)
+            content = re.sub(r'```(.*?)```', r'<pre><code>\1</code></pre>', content, flags=re.DOTALL)
+            
+            # Inline code
+            content = re.sub(r'`(.*?)`', r'<code>\1</code>', content)
+            
+            # Line breaks (but not for table content)
+            if not self._contains_table(content):
+                content = content.replace('\n', '<br>')
         
         return content
+    
+    def _convert_newlines_outside_html(self, content):
+        """
+        Convert newlines to <br> tags only for text outside HTML tags
+        """
+        import re
+        
+        # More sophisticated approach: find HTML blocks and preserve them
+        # Split content by HTML tags (including multi-line tags)
+        parts = re.split(r'(<[^>]*>)', content)
+        
+        result = []
+        in_html_block = False
+        
+        for part in parts:
+            if part.startswith('<') and part.endswith('>'):
+                # This is an HTML tag, keep it as is
+                result.append(part)
+            elif part.startswith('<'):
+                # Start of HTML tag, mark as in HTML block
+                in_html_block = True
+                result.append(part)
+            elif part.endswith('>'):
+                # End of HTML tag, mark as out of HTML block
+                in_html_block = False
+                result.append(part)
+            elif in_html_block:
+                # Inside HTML tag, keep as is
+                result.append(part)
+            else:
+                # Outside HTML tags, convert newlines to <br>
+                result.append(part.replace('\n', '<br>'))
+        
+        return ''.join(result)
     
     def _contains_table(self, content):
         """
@@ -1277,6 +1261,7 @@ class EnhancedChatViewSet(viewsets.ViewSet):
             from django.utils import timezone
             from django.http import HttpResponse
             
+            import traceback
             print(f"=== EXCEPTION IN VIEWSET ===")
             print(f"Exception: {str(e)}")
             print(f"Traceback: {traceback.format_exc()}")
@@ -1337,7 +1322,12 @@ class EnhancedChatViewSet(viewsets.ViewSet):
                 'details': str(e)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-    @action(detail=False, methods=['post'])
+class AnalyticsView(viewsets.ViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    permission_classes = [IsAuthenticated]
+
     def execute_suggestion(self, request):
         """
         Execute an analysis suggestion
@@ -3026,9 +3016,10 @@ def execute_sandbox_code(request):
         # Execute code in sandbox
         result = sandbox_executor.execute_code(
             code=code,
-            user=user,
+            user_id=user.id,
+            session_id=session.id if session else None,
             language=language,
-            session=session
+            timeout=30
         )
         
         # Debug: Log execution result

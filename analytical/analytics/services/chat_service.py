@@ -24,6 +24,7 @@ from analytics.services.rag_service import RAGService
 from analytics.services.analysis_executor import AnalysisExecutor
 from analytics.services.session_manager import SessionManager
 from analytics.services.audit_trail_manager import AuditTrailManager
+from analytics.services.code_extraction_service import CodeExtractionService
 
 logger = logging.getLogger(__name__)
 
@@ -39,6 +40,7 @@ class ChatService:
         self.analysis_executor = AnalysisExecutor()
         self.session_manager = SessionManager()
         self.audit_manager = AuditTrailManager()
+        self.code_extractor = CodeExtractionService()
         
         # Chat configuration
         self.max_context_messages = 10
@@ -114,10 +116,21 @@ class ChatService:
             print(f"AI Response text length: {len(ai_response.get('text', ''))}")
             print(f"============================")
             
+            # Automatically execute detected Python code
+            ai_response_text = ai_response.get('text', '')
+            execution_results = self._execute_detected_code(ai_response_text, user, analysis_session)
+            
+            # Append execution results to the AI response if any code was executed
+            if execution_results:
+                ai_response_text = self._append_execution_results(ai_response_text, execution_results)
+                print(f"=== CODE EXECUTION COMPLETED ===")
+                print(f"Executed {len(execution_results)} code blocks")
+                print(f"===============================")
+            
             # Create AI message
             ai_message = self._create_chat_message(
                 user=user,
-                content=ai_response['text'],
+                content=ai_response_text,
                 message_type='assistant',
                 session=analysis_session,
                 chat_session=chat_session,
@@ -580,3 +593,167 @@ class ChatService:
         except Exception as e:
             logger.error(f"Error generating analysis suggestions: {str(e)}")
             return []
+    
+    def _execute_detected_code(self, text: str, user: User, session: AnalysisSession) -> List[Dict[str, Any]]:
+        """
+        Automatically execute detected Python code blocks in the text
+        
+        Args:
+            text: Text containing potential Python code blocks
+            user: User executing the code
+            session: Analysis session context
+            
+        Returns:
+            List of execution results for each code block
+        """
+        try:
+            # Extract Python code blocks
+            code_blocks = self.code_extractor.extract_python_code_blocks(text)
+            
+            if not code_blocks:
+                return []
+            
+            execution_results = []
+            
+            # Import sandbox executor
+            from analytics.services.sandbox_executor import SandboxExecutor
+            sandbox_executor = SandboxExecutor()
+            
+            for i, block in enumerate(code_blocks):
+                try:
+                    print(f"=== EXECUTING CODE BLOCK {i+1} ===")
+                    print(f"Code length: {len(block['code'])} characters")
+                    print(f"Code preview: {block['code'][:100]}...")
+                    
+                    # Execute code in sandbox
+                    result = sandbox_executor.execute_code(
+                        code=block['code'],
+                        user_id=user.id,
+                        session_id=session.id if session else None,
+                        language='python',
+                        timeout=30
+                    )
+                    
+                    execution_results.append({
+                        'block_index': i,
+                        'code': block['code'],
+                        'result': result,
+                        'success': result.get('success', False),
+                        'output': result.get('output', ''),
+                        'error': result.get('error', ''),
+                        'execution_time_ms': result.get('execution_time_ms', 0)
+                    })
+                    
+                    print(f"Execution result: {'SUCCESS' if result.get('success') else 'FAILED'}")
+                    print(f"Output length: {len(result.get('output', ''))}")
+                    print(f"================================")
+                    
+                except Exception as e:
+                    logger.error(f"Error executing code block {i+1}: {str(e)}")
+                    execution_results.append({
+                        'block_index': i,
+                        'code': block['code'],
+                        'result': None,
+                        'success': False,
+                        'output': '',
+                        'error': f"Execution failed: {str(e)}",
+                        'execution_time_ms': 0
+                    })
+            
+            return execution_results
+            
+        except Exception as e:
+            logger.error(f"Error in automatic code execution: {str(e)}")
+            return []
+    
+    def _append_execution_results(self, text: str, execution_results: List[Dict[str, Any]]) -> str:
+        """
+        Append execution results to the original text as HTML
+        
+        Args:
+            text: Original text
+            execution_results: List of execution results
+            
+        Returns:
+            Text with execution results appended as HTML
+        """
+        try:
+            result_sections = []
+            
+            for result in execution_results:
+                if result['success']:
+                    # Successful execution - format as HTML
+                    result_section = f"""
+<div class="execution-result-container mt-3">
+    <div class="card bg-success bg-opacity-10 border-success">
+        <div class="card-header bg-success bg-opacity-25">
+            <h6 class="mb-0 text-success">
+                <i class="fas fa-check-circle"></i> Code Execution Result
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <strong>Status:</strong> <span class="text-success">✅ Successfully executed</span>
+                </div>
+                <div class="col-md-6">
+                    <strong>Execution Time:</strong> {result['execution_time_ms']}ms
+                </div>
+            </div>
+            <div class="mt-3">
+                <strong>Output:</strong>
+                <div class="bg-dark text-light p-3 rounded mt-2">
+                    <pre class="mb-0">{result['output']}</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+"""
+                else:
+                    # Failed execution - format as HTML
+                    result_section = f"""
+<div class="execution-result-container mt-3">
+    <div class="card bg-danger bg-opacity-10 border-danger">
+        <div class="card-header bg-danger bg-opacity-25">
+            <h6 class="mb-0 text-danger">
+                <i class="fas fa-exclamation-triangle"></i> Code Execution Error
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <strong>Status:</strong> <span class="text-danger">❌ Execution failed</span>
+                </div>
+                <div class="col-md-6">
+                    <strong>Execution Time:</strong> {result['execution_time_ms']}ms
+                </div>
+            </div>
+            <div class="mt-3">
+                <strong>Error:</strong>
+                <div class="bg-dark text-light p-3 rounded mt-2">
+                    <pre class="mb-0">{result['error']}</pre>
+                </div>
+            </div>
+            <div class="mt-3">
+                <strong>Code that failed:</strong>
+                <div class="bg-dark text-light p-3 rounded mt-2">
+                    <pre class="mb-0"><code class="language-python">{result['code'][:200]}{'...' if len(result['code']) > 200 else ''}</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+"""
+                
+                result_sections.append(result_section)
+            
+            # Append all results to the original text
+            if result_sections:
+                text += "\n\n" + "\n\n".join(result_sections)
+            
+            return text
+            
+        except Exception as e:
+            logger.error(f"Error appending execution results: {str(e)}")
+            return text

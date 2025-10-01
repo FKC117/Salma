@@ -284,6 +284,8 @@ class ToolExecutor:
             'type': 'chart',
             'title': f'Correlation Analysis ({method.title()})',
             'description': f'Correlation matrix for {len(columns)} variables',
+            'chart_type': 'heatmap',  # Required parameter for create_chart_analysis_result
+            'data': dataset[columns],  # Required parameter for create_chart_analysis_result
             'chart_summary': {
                 'type': 'Correlation Heatmap',
                 'data_points': len(dataset),

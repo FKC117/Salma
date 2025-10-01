@@ -18,14 +18,14 @@ def test_tool_registry():
     """Test tool registry functionality"""
     print("Testing Tool Registry...")
     
-    from analytics.services.tool_registry import tool_registry
+    from analytics.services.tool_registry import tool_registry, ToolCategory
     
     # Test getting all tools
     all_tools = tool_registry.get_all_tools()
     print(f"✓ Found {len(all_tools)} tools")
     
     # Test getting tools by category
-    statistical_tools = tool_registry.get_tools_by_category(tool_registry.tool_registry.ToolCategory.STATISTICAL)
+    statistical_tools = tool_registry.get_tools_by_category(ToolCategory.STATISTICAL)
     print(f"✓ Found {len(statistical_tools)} statistical tools")
     
     # Test getting specific tool
@@ -46,6 +46,7 @@ def test_tool_executor():
     print("Testing Tool Executor...")
     
     from analytics.services.tool_executor import tool_executor
+    from analytics.services.tool_registry import tool_registry
     import pandas as pd
     import numpy as np
     

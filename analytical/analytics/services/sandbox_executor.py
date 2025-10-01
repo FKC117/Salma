@@ -35,6 +35,7 @@ class SandboxExecutor:
     """
     
     def __init__(self):
+        from analytics.services.audit_trail_manager import AuditTrailManager
         self.audit_manager = AuditTrailManager()
         
         # Security settings
@@ -104,9 +105,7 @@ class SandboxExecutor:
                 session_id=session_id,
                 language=language,
                 code=code,
-                status='pending',
-                timeout_seconds=timeout,
-                max_memory_mb=memory_limit or self.max_memory_mb
+                status='pending'
             )
             execution_id = execution.id
             

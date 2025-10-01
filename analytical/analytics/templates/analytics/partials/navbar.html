@@ -2,9 +2,9 @@
 <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: var(--cursor-bg-secondary); border-bottom: 1px solid var(--cursor-border);">
     <div class="container-fluid">
         <!-- Brand/Logo -->
-        <a class="navbar-brand fw-bold" href="{% url 'dashboard' %}">
-            <i class="bi bi-graph-up me-2 text-primary"></i>
-            <span class="text-light">Analytical</span>
+        <a class="navbar-brand fw-bold" href="/">
+            <i class="bi bi-capsule me-2 text-primary"></i>
+            <span class="text-light">Prescription System</span>
         </a>
         
         <!-- Mobile Toggle Button -->
@@ -18,7 +18,12 @@
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'dashboard' %}">
-                        <i class="bi bi-house me-1"></i>Dashboard
+                        <i class="bi bi-house me-1"></i>Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'dashboard' %}">
+                        <i class="bi bi-graph-up me-1"></i>Analytics
                     </a>
                 </li>
                 <li class="nav-item dropdown">
