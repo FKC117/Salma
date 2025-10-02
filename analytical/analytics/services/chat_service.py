@@ -50,7 +50,7 @@ class ChatService:
         self.context_cache_timeout = 3600  # 1 hour
     
     def send_message(self, message: str, user: User, session_id: Optional[int] = None,
-                    include_suggestions: bool = True) -> Dict[str, Any]:
+                    include_suggestions: bool = True, dataset_context: Optional[Dict] = None) -> Dict[str, Any]:
         """
         Send a chat message and get AI response with analysis suggestions
         
@@ -59,6 +59,7 @@ class ChatService:
             user: User sending the message
             session_id: Analysis session ID (optional)
             include_suggestions: Whether to include analysis suggestions
+            dataset_context: Dict with dataset_id and dataset_name from frontend
             
         Returns:
             Dict containing chat message, AI response, and suggestions
@@ -72,6 +73,7 @@ class ChatService:
         print(f"Session ID: {session_id}")
         print(f"Message: {message[:100]}{'...' if len(message) > 100 else ''}")
         print(f"Include suggestions: {include_suggestions}")
+        print(f"Dataset context: {dataset_context}")
         print(f"========================")
         
         try:
@@ -79,8 +81,11 @@ class ChatService:
             if session_id:
                 analysis_session = AnalysisSession.objects.get(id=session_id, user=user)
             else:
-                # Get current active session or create default
-                analysis_session = self._get_or_create_active_session(user)
+                # Use dataset context if provided, otherwise get current active session
+                if dataset_context and dataset_context.get('dataset_id'):
+                    analysis_session = self._get_or_create_session_for_dataset(user, dataset_context)
+                else:
+                    analysis_session = self._get_or_create_active_session(user)
             
             # DEBUG: Log session info
             print(f"=== SESSION INFO DEBUG ===")
@@ -447,6 +452,49 @@ class ChatService:
             
         except Exception as e:
             logger.error(f"Error getting/creating active session: {str(e)}")
+            raise
+    
+    def _get_or_create_session_for_dataset(self, user: User, dataset_context: Dict) -> AnalysisSession:
+        """Get or create an analysis session for a specific dataset"""
+        try:
+            dataset_id = dataset_context.get('dataset_id')
+            dataset_name = dataset_context.get('dataset_name', 'Unknown Dataset')
+            
+            # Get the dataset
+            try:
+                dataset = Dataset.objects.get(id=dataset_id, user=user)
+            except Dataset.DoesNotExist:
+                logger.error(f"Dataset {dataset_id} not found for user {user.id}")
+                raise ValueError(f"Dataset {dataset_id} not found")
+            
+            # Try to get existing session for this dataset
+            session = AnalysisSession.objects.filter(
+                user=user,
+                primary_dataset=dataset,
+                is_active=True
+            ).order_by('-last_accessed').first()
+            
+            if session:
+                # Update last accessed time
+                session.last_accessed = timezone.now()
+                session.save()
+                logger.info(f"Using existing session {session.id} for dataset {dataset.name}")
+                return session
+            
+            # Create new session for this dataset
+            session = AnalysisSession.objects.create(
+                name=f"Session for {dataset.name}",
+                description=f"Analysis session for {dataset.name}",
+                primary_dataset=dataset,
+                user=user,
+                is_active=True
+            )
+            
+            logger.info(f"Created new session {session.id} for dataset {dataset.name}")
+            return session
+            
+        except Exception as e:
+            logger.error(f"Error getting/creating session for dataset: {str(e)}")
             raise
     
     def _get_or_create_chat_session(self, user: User, analysis_session: AnalysisSession) -> ChatSession:

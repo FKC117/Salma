@@ -107,6 +107,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function loadDataset(datasetId) {
+        console.log('Loading dataset with ID:', datasetId);
         // Since there's no individual dataset endpoint, we'll get the dataset info from the list
         fetch('/api/datasets/')
             .then(response => {
@@ -116,12 +117,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 return response.json();
             })
             .then(data => {
+                console.log('Available datasets:', data.datasets);
                 if (data.datasets && Array.isArray(data.datasets)) {
                     const dataset = data.datasets.find(d => d.id == datasetId);
+                    console.log('Found dataset:', dataset);
                     if (dataset) {
                         currentDataset = dataset;
                         datasetName.textContent = dataset.name;
                         datasetStats.textContent = `${dataset.row_count || 'Unknown'} rows, ${dataset.column_count || 'Unknown'} columns`;
+                        console.log('Dataset loaded successfully:', dataset.name, 'ID:', dataset.id);
                     } else {
                         console.error('Dataset not found:', datasetId);
                         datasetName.textContent = 'Dataset not found';
@@ -148,20 +152,24 @@ document.addEventListener('DOMContentLoaded', function() {
         addUserCell(message);
         mainInput.value = '';
         
+        const requestData = {
+            message: message,
+            ai_model: 'gemini',
+            context: {
+                dataset_id: currentDataset.id,
+                dataset_name: currentDataset.name
+            }
+        };
+        
+        console.log('Sending message with context:', requestData);
+        
         fetch('{% url "enhanced_chat_send" %}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRFToken': '{{ csrf_token }}'
             },
-            body: JSON.stringify({
-                message: message,
-                ai_model: 'ollama',
-                context: {
-                    dataset_id: currentDataset.id,
-                    dataset_name: currentDataset.name
-                }
-            })
+            body: JSON.stringify(requestData)
         })
         .then(response => response.text())
         .then(html => {
@@ -257,20 +265,24 @@ document.addEventListener('DOMContentLoaded', function() {
         
         addUserCell(message);
         
+        const requestData = {
+            message: message,
+            ai_model: 'gemini',
+            context: {
+                dataset_id: currentDataset.id,
+                dataset_name: currentDataset.name
+            }
+        };
+        
+        console.log('Sending follow-up message with context:', requestData);
+        
         fetch('{% url "enhanced_chat_send" %}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRFToken': '{{ csrf_token }}'
             },
-            body: JSON.stringify({
-                message: message,
-                ai_model: 'ollama',
-                context: {
-                    dataset_id: currentDataset.id,
-                    dataset_name: currentDataset.name
-                }
-            })
+            body: JSON.stringify(requestData)
         })
         .then(response => response.text())
         .then(html => {

@@ -932,8 +932,12 @@ class EnhancedChatViewSet(viewsets.ViewSet):
             if hasattr(request, 'data'):
                 request_data = request.data
             else:
-                # For WSGIRequest, get data from POST
-                request_data = request.POST
+                # For WSGIRequest, get data from POST or JSON body
+                if request.content_type == 'application/json':
+                    import json
+                    request_data = json.loads(request.body.decode('utf-8'))
+                else:
+                    request_data = request.POST
             
             print(f"Request data: {request_data}")
             print(f"User authenticated: {request.user.is_authenticated if hasattr(request, 'user') else 'Unknown'}")
@@ -989,7 +993,8 @@ class EnhancedChatViewSet(viewsets.ViewSet):
                 message=message,
                 user=user,
                 session_id=request_data.get('session_id'),
-                include_suggestions=False  # We'll handle suggestions separately if needed
+                include_suggestions=False,  # We'll handle suggestions separately if needed
+                dataset_context=request_data.get('context')  # Pass dataset context from frontend
             )
             
             # DEBUG: Log processing result
