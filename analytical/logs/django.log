@@ -784,3 +784,443 @@ INFO 2025-10-01 22:22:32,856 basehttp 18276 23464 "GET /api/health/ HTTP/1.1" 20
 INFO 2025-10-01 22:22:36,302 autoreload 18276 24548 F:\analytical\analytical\prescription\urls.py changed, reloading.
 INFO 2025-10-01 22:22:41,168 autoreload 10124 20896 Watching for file changes with StatReloader
 INFO 2025-10-02 10:28:51,094 autoreload 23328 2748 Watching for file changes with StatReloader
+INFO 2025-10-02 10:32:37,926 basehttp 23328 14332 "GET / HTTP/1.1" 302 0
+INFO 2025-10-02 10:32:38,121 basehttp 23328 14332 "GET /accounts/login/ HTTP/1.1" 200 31500
+INFO 2025-10-02 10:32:38,208 basehttp 23328 14332 "GET /static/analytics/js/htmx-config.js HTTP/1.1" 304 0
+INFO 2025-10-02 10:32:38,210 basehttp 23328 1524 "GET /static/analytics/js/main.js HTTP/1.1" 304 0
+INFO 2025-10-02 10:32:41,225 basehttp 23328 14332 "POST /accounts/login/ HTTP/1.1" 302 0
+INFO 2025-10-02 10:32:41,250 basehttp 23328 14332 "GET /dashboard/ HTTP/1.1" 200 237572
+INFO 2025-10-02 10:32:41,303 basehttp 23328 1524 "GET /static/analytics/css/chat-formatting.css HTTP/1.1" 304 0
+INFO 2025-10-02 10:32:41,546 basehttp 23328 14332 "GET /api/sessions/current/ HTTP/1.1" 200 570
+INFO 2025-10-02 10:32:41,752 basehttp 23328 1524 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 10:32:41,814 basehttp 23328 20664 "GET /api/tools/list/ HTTP/1.1" 200 10194
+INFO 2025-10-02 10:32:41,881 basehttp 23328 8460 "GET /api/sessions/28/history/ HTTP/1.1" 200 425
+INFO 2025-10-02 10:32:41,905 basehttp 23328 24420 "GET /api/sessions/current/ HTTP/1.1" 200 570
+INFO 2025-10-02 10:32:50,737 basehttp 23328 14332 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 10:33:01,147 basehttp 23328 14332 "POST /api/sessions/create/ HTTP/1.1" 200 87
+INFO 2025-10-02 10:33:01,224 basehttp 23328 20664 "GET /api/sessions/38/history/ HTTP/1.1" 200 425
+INFO 2025-10-02 10:33:04,488 basehttp 23328 14332 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 10:33:06,678 basehttp 23328 14332 "POST /api/sessions/create/ HTTP/1.1" 200 87
+INFO 2025-10-02 10:33:06,742 basehttp 23328 20664 "GET /api/sessions/39/history/ HTTP/1.1" 200 464
+INFO 2025-10-02 10:33:11,399 basehttp 23328 20664 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:33:12,558 basehttp 23328 14332 "GET /api/tools/configure/descriptive_stats/ HTTP/1.1" 200 3706
+INFO 2025-10-02 10:33:22,311 basehttp 23328 14332 "POST /api/tools/execute/ HTTP/1.1" 200 298008
+INFO 2025-10-02 10:33:41,393 basehttp 23328 20664 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:34:03,599 basehttp 23328 14332 "GET /api/tools/configure/correlation_analysis/ HTTP/1.1" 200 3740
+INFO 2025-10-02 10:34:09,817 basehttp 23328 14332 "POST /api/tools/execute/ HTTP/1.1" 200 75541
+INFO 2025-10-02 10:34:11,452 basehttp 23328 20664 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:34:41,458 basehttp 23328 20664 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:34:56,803 basehttp 23328 14332 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 10:34:59,404 basehttp 23328 14332 "POST /api/sessions/create/ HTTP/1.1" 200 87
+INFO 2025-10-02 10:34:59,487 basehttp 23328 20664 "GET /api/sessions/40/history/ HTTP/1.1" 200 425
+INFO 2025-10-02 10:34:59,784 basehttp 23328 14332 "GET /api/tools/configure/correlation_analysis/ HTTP/1.1" 200 10674
+INFO 2025-10-02 10:35:01,824 basehttp 23328 14332 "GET /dashboard/ HTTP/1.1" 200 237572
+INFO 2025-10-02 10:35:02,047 basehttp 23328 20664 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 10:35:02,049 basehttp 23328 14332 "GET /api/sessions/current/ HTTP/1.1" 200 570
+INFO 2025-10-02 10:35:02,244 basehttp 23328 21188 "GET /api/tools/list/ HTTP/1.1" 200 10194
+INFO 2025-10-02 10:35:02,325 basehttp 23328 17756 "GET /api/sessions/current/ HTTP/1.1" 200 570
+INFO 2025-10-02 10:35:02,362 basehttp 23328 8996 "GET /api/sessions/40/history/ HTTP/1.1" 200 425
+INFO 2025-10-02 10:35:06,526 basehttp 23328 14332 "GET /api/tools/configure/descriptive_stats/ HTTP/1.1" 200 10640
+INFO 2025-10-02 10:35:19,042 basehttp 23328 14332 "POST /api/tools/execute/ HTTP/1.1" 200 2138405
+INFO 2025-10-02 10:35:32,033 basehttp 23328 20664 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:36:02,047 basehttp 23328 21188 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:36:32,048 basehttp 23328 20664 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:37:02,048 basehttp 23328 21188 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:37:19,265 basehttp 23328 20664 "GET /api/tools/configure/correlation_analysis/ HTTP/1.1" 200 10674
+INFO 2025-10-02 10:37:26,731 basehttp 23328 20664 "POST /api/tools/execute/ HTTP/1.1" 200 103339
+INFO 2025-10-02 10:37:32,067 basehttp 23328 20664 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:38:02,076 basehttp 23328 21188 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:38:08,550 basehttp 23328 20664 "POST /api/ai/interpret-analysis/ HTTP/1.1" 200 5173
+INFO 2025-10-02 10:38:15,887 basehttp 23328 21188 "POST /api/ai/interpret-analysis/ HTTP/1.1" 200 5404
+INFO 2025-10-02 10:38:32,073 basehttp 23328 20664 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:39:02,072 basehttp 23328 20664 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:39:32,089 basehttp 23328 20664 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:39:57,315 basehttp 23328 20664 "GET /api/tools/configure/correlation_analysis/ HTTP/1.1" 200 10674
+INFO 2025-10-02 10:40:02,115 basehttp 23328 20664 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:40:08,014 basehttp 23328 20664 "POST /api/tools/execute/ HTTP/1.1" 200 700038
+INFO 2025-10-02 10:40:32,281 basehttp 23328 5796 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:40:39,508 basehttp 23328 20664 "POST /api/ai/interpret-analysis/ HTTP/1.1" 200 6126
+INFO 2025-10-02 10:41:02,135 basehttp 23328 20664 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:41:32,130 basehttp 23328 20664 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:42:02,149 basehttp 23328 20664 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:42:32,165 basehttp 23328 20664 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:43:02,254 basehttp 23328 9096 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:43:32,178 basehttp 23328 9096 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:43:41,297 basehttp 23328 20664 "POST /enhanced-chat/send/ HTTP/1.1" 200 7942
+INFO 2025-10-02 10:44:00,424 basehttp 23328 20664 "GET /dashboard/ HTTP/1.1" 200 237572
+INFO 2025-10-02 10:44:01,033 basehttp 23328 20664 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 10:44:01,050 basehttp 23328 9096 "GET /api/sessions/current/ HTTP/1.1" 200 570
+INFO 2025-10-02 10:44:01,285 basehttp 23328 13864 "GET /api/tools/list/ HTTP/1.1" 200 10194
+INFO 2025-10-02 10:44:01,298 basehttp 23328 18040 "GET /api/sessions/current/ HTTP/1.1" 200 570
+INFO 2025-10-02 10:44:01,301 basehttp 23328 21620 "GET /api/sessions/40/history/ HTTP/1.1" 200 425
+INFO 2025-10-02 10:44:30,990 basehttp 23328 13864 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:44:33,582 basehttp 23328 20664 "POST /enhanced-chat/send/ HTTP/1.1" 200 8497
+INFO 2025-10-02 10:45:01,004 basehttp 23328 20664 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:45:18,687 basehttp 23328 20664 "GET /dashboard/ HTTP/1.1" 200 237572
+INFO 2025-10-02 10:45:18,872 basehttp 23328 20664 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 10:45:18,888 basehttp 23328 18040 "GET /api/tools/list/ HTTP/1.1" 200 10194
+INFO 2025-10-02 10:45:18,890 basehttp 23328 21620 "GET /api/sessions/current/ HTTP/1.1" 200 570
+INFO 2025-10-02 10:45:18,900 basehttp 23328 13864 "GET /api/sessions/current/ HTTP/1.1" 200 570
+INFO 2025-10-02 10:45:18,918 basehttp 23328 9096 "GET /api/sessions/40/history/ HTTP/1.1" 200 425
+INFO 2025-10-02 10:45:38,326 basehttp 23328 6544 "GET /admin/ HTTP/1.1" 302 0
+INFO 2025-10-02 10:45:38,547 basehttp 23328 6544 "GET /admin/login/?next=/admin/ HTTP/1.1" 200 4195
+INFO 2025-10-02 10:45:38,656 basehttp 23328 18648 "GET /static/admin/css/dark_mode.css HTTP/1.1" 200 2929
+INFO 2025-10-02 10:45:38,658 basehttp 23328 6544 "GET /static/admin/css/base.css HTTP/1.1" 200 21207
+INFO 2025-10-02 10:45:38,664 basehttp 23328 10384 "GET /static/admin/css/login.css HTTP/1.1" 200 958
+INFO 2025-10-02 10:45:38,667 basehttp 23328 5516 "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 200 2694
+INFO 2025-10-02 10:45:38,681 basehttp 23328 18648 "GET /static/admin/css/responsive.css HTTP/1.1" 200 18533
+INFO 2025-10-02 10:45:38,716 basehttp 23328 16844 "GET /static/admin/js/theme.js HTTP/1.1" 200 1943
+INFO 2025-10-02 10:45:38,721 basehttp 23328 13824 "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 200 3063
+WARNING 2025-10-02 10:45:39,114 log 23328 18648 Not Found: /favicon.ico
+WARNING 2025-10-02 10:45:39,114 basehttp 23328 18648 "GET /favicon.ico HTTP/1.1" 404 9688
+INFO 2025-10-02 10:45:44,394 basehttp 23328 6544 "POST /admin/login/?next=/admin/ HTTP/1.1" 302 0
+INFO 2025-10-02 10:45:44,461 basehttp 23328 6544 "GET /admin/ HTTP/1.1" 200 15844
+INFO 2025-10-02 10:45:44,498 basehttp 23328 18648 "GET /static/admin/css/dashboard.css HTTP/1.1" 200 441
+INFO 2025-10-02 10:45:44,528 basehttp 23328 13824 "GET /static/admin/img/icon-changelink.svg HTTP/1.1" 200 380
+INFO 2025-10-02 10:45:44,529 basehttp 23328 18648 "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 200 331
+INFO 2025-10-02 10:45:44,534 basehttp 23328 5516 "GET /static/admin/img/icon-viewlink.svg HTTP/1.1" 200 581
+INFO 2025-10-02 10:45:49,233 basehttp 23328 20664 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:45:50,364 basehttp 23328 6544 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 59392
+INFO 2025-10-02 10:45:50,422 basehttp 23328 18648 "GET /static/admin/css/changelists.css HTTP/1.1" 200 6566
+INFO 2025-10-02 10:45:50,432 basehttp 23328 16844 "GET /static/admin/js/jquery.init.js HTTP/1.1" 200 347
+INFO 2025-10-02 10:45:50,449 basehttp 23328 10384 "GET /static/admin/js/core.js HTTP/1.1" 200 5682
+INFO 2025-10-02 10:45:50,450 basehttp 23328 6544 "GET /static/admin/js/admin/RelatedObjectLookups.js HTTP/1.1" 200 8943
+INFO 2025-10-02 10:45:50,482 basehttp 23328 16844 "GET /static/admin/js/urlify.js HTTP/1.1" 200 7887
+INFO 2025-10-02 10:45:50,500 basehttp 23328 10384 "GET /static/admin/js/prepopulate.js HTTP/1.1" 200 1531
+INFO 2025-10-02 10:45:50,529 basehttp 23328 18648 "GET /static/admin/js/actions.js HTTP/1.1" 200 7872
+INFO 2025-10-02 10:45:50,539 basehttp 23328 16844 "GET /static/admin/js/filters.js HTTP/1.1" 200 978
+INFO 2025-10-02 10:45:50,567 basehttp 23328 5516 "GET /static/admin/js/vendor/jquery/jquery.js HTTP/1.1" 200 292458
+INFO 2025-10-02 10:45:50,594 basehttp 23328 13824 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 10:45:50,613 basehttp 23328 6544 "GET /static/admin/js/vendor/xregexp/xregexp.js HTTP/1.1" 200 232381
+INFO 2025-10-02 10:45:50,630 basehttp 23328 5516 "GET /static/admin/img/search.svg HTTP/1.1" 200 458
+INFO 2025-10-02 10:45:50,664 basehttp 23328 5516 "GET /static/admin/img/tooltag-add.svg HTTP/1.1" 200 331
+INFO 2025-10-02 10:45:50,687 basehttp 23328 18648 "GET /static/admin/img/sorting-icons.svg HTTP/1.1" 200 1097
+INFO 2025-10-02 10:46:02,028 basehttp 23328 5516 "GET /admin/analytics/sandboxexecution/88/change/ HTTP/1.1" 200 33042
+INFO 2025-10-02 10:46:02,085 basehttp 23328 5516 "GET /static/admin/css/forms.css HTTP/1.1" 200 9047
+INFO 2025-10-02 10:46:02,105 basehttp 23328 10384 "GET /static/admin/js/prepopulate_init.js HTTP/1.1" 200 586
+INFO 2025-10-02 10:46:02,106 basehttp 23328 16844 "GET /static/admin/js/change_form.js HTTP/1.1" 200 606
+INFO 2025-10-02 10:46:02,125 basehttp 23328 5516 "GET /static/admin/css/widgets.css HTTP/1.1" 200 11900
+INFO 2025-10-02 10:46:02,179 basehttp 23328 18648 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 10:46:19,489 basehttp 23328 20664 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:46:49,828 basehttp 23328 20664 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:47:20,106 basehttp 23328 20664 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:47:50,306 basehttp 23328 20664 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:48:20,507 basehttp 23328 20664 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:48:51,344 basehttp 23328 20664 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:49:21,709 basehttp 23328 20664 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:49:52,011 basehttp 23328 20664 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:50:22,215 basehttp 23328 20664 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:50:52,707 basehttp 23328 20664 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:51:13,778 autoreload 23328 2748 F:\analytical\analytical\analytics\urls.py changed, reloading.
+INFO 2025-10-02 10:51:21,175 autoreload 8500 24000 Watching for file changes with StatReloader
+INFO 2025-10-02 10:52:24,013 basehttp 8500 6372 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:52:54,233 basehttp 8500 6372 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:53:24,373 basehttp 8500 6372 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:53:54,567 basehttp 8500 6372 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:54:24,747 basehttp 8500 6372 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:54:39,708 autoreload 8500 24000 F:\analytical\analytical\analytics\sandbox_views.py changed, reloading.
+INFO 2025-10-02 10:54:41,684 autoreload 1320 11316 Watching for file changes with StatReloader
+INFO 2025-10-02 10:55:25,101 basehttp 1320 5372 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:55:50,689 autoreload 9976 14600 Watching for file changes with StatReloader
+INFO 2025-10-02 10:55:54,826 basehttp 1320 5372 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:56:05,862 basehttp 9976 9532 "GET /dashboard/ HTTP/1.1" 200 237785
+INFO 2025-10-02 10:56:06,086 basehttp 9976 9532 "GET /api/sessions/current/ HTTP/1.1" 200 570
+INFO 2025-10-02 10:56:06,245 basehttp 9976 10064 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 10:56:06,368 basehttp 9976 7012 "GET /api/sessions/current/ HTTP/1.1" 200 570
+INFO 2025-10-02 10:56:06,372 basehttp 9976 16628 "GET /api/tools/list/ HTTP/1.1" 200 10194
+INFO 2025-10-02 10:56:06,416 basehttp 9976 21072 "GET /api/sessions/40/history/ HTTP/1.1" 200 425
+ERROR 2025-10-02 10:56:09,000 log 9976 9532 Internal Server Error: /sandbox/
+ERROR 2025-10-02 10:56:09,001 basehttp 9976 9532 "GET /sandbox/ HTTP/1.1" 500 102
+WARNING 2025-10-02 10:56:09,163 log 9976 15540 Not Found: /favicon.ico
+WARNING 2025-10-02 10:56:09,165 basehttp 9976 15540 "GET /favicon.ico HTTP/1.1" 404 10233
+INFO 2025-10-02 10:57:08,101 autoreload 21544 5320 Watching for file changes with StatReloader
+INFO 2025-10-02 10:57:30,554 autoreload 21544 5320 F:\analytical\analytical\analytics\sandbox_views.py changed, reloading.
+INFO 2025-10-02 10:57:33,960 autoreload 13756 14096 Watching for file changes with StatReloader
+INFO 2025-10-02 10:57:56,180 basehttp 13756 12576 "GET /dashboard/ HTTP/1.1" 200 237785
+INFO 2025-10-02 10:57:56,870 basehttp 13756 12576 "GET /api/sessions/current/ HTTP/1.1" 200 570
+INFO 2025-10-02 10:57:57,150 basehttp 13756 4400 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 10:57:57,190 basehttp 13756 16996 "GET /api/tools/list/ HTTP/1.1" 200 10194
+INFO 2025-10-02 10:57:57,279 basehttp 13756 13120 "GET /api/sessions/current/ HTTP/1.1" 200 570
+INFO 2025-10-02 10:57:57,292 basehttp 13756 5136 "GET /api/sessions/40/history/ HTTP/1.1" 200 425
+INFO 2025-10-02 10:58:01,123 basehttp 13756 12576 "GET /dashboard/ HTTP/1.1" 200 237785
+INFO 2025-10-02 10:58:01,927 basehttp 13756 16996 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 10:58:01,990 basehttp 13756 13120 "GET /api/sessions/40/history/ HTTP/1.1" 200 425
+INFO 2025-10-02 10:58:02,016 basehttp 13756 4400 "GET /api/sessions/current/ HTTP/1.1" 200 570
+INFO 2025-10-02 10:58:02,025 basehttp 13756 12576 "GET /api/sessions/current/ HTTP/1.1" 200 570
+INFO 2025-10-02 10:58:02,121 basehttp 13756 5136 "GET /api/tools/list/ HTTP/1.1" 200 10194
+INFO 2025-10-02 10:58:05,844 basehttp 13756 12576 "GET /sandbox/ HTTP/1.1" 200 45489
+INFO 2025-10-02 10:58:06,427 basehttp 13756 16996 "GET /sandbox/history/ HTTP/1.1" 200 8662
+INFO 2025-10-02 10:58:07,956 autoreload 13756 14096 F:\analytical\analytical\analytics\sandbox_views.py changed, reloading.
+INFO 2025-10-02 10:58:12,606 autoreload 13952 15840 Watching for file changes with StatReloader
+INFO 2025-10-02 10:58:28,168 basehttp 13952 14772 "GET /dashboard/ HTTP/1.1" 200 237785
+INFO 2025-10-02 10:58:28,429 basehttp 13952 14772 "GET /api/sessions/current/ HTTP/1.1" 200 603
+INFO 2025-10-02 10:58:28,624 basehttp 13952 8636 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 10:58:28,741 basehttp 13952 13136 "GET /api/sessions/current/ HTTP/1.1" 200 603
+INFO 2025-10-02 10:58:28,743 basehttp 13952 11496 "GET /api/tools/list/ HTTP/1.1" 200 10194
+INFO 2025-10-02 10:58:28,810 basehttp 13952 1128 "GET /api/sessions/40/history/ HTTP/1.1" 200 425
+INFO 2025-10-02 10:58:30,795 basehttp 13952 14772 "GET /sandbox/ HTTP/1.1" 200 45489
+INFO 2025-10-02 10:58:31,062 basehttp 13952 11496 "GET /sandbox/history/ HTTP/1.1" 200 8662
+INFO 2025-10-02 10:59:01,079 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 10:59:31,099 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:00:01,101 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:00:31,122 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:01:01,111 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:01:31,106 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:02:01,112 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:02:31,120 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:03:01,124 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:03:31,117 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:04:01,136 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:04:31,149 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:05:01,170 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:05:31,165 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:06:01,175 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:06:31,224 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:07:01,228 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:07:31,231 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:08:01,235 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:08:31,312 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:09:01,245 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:09:31,260 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:10:01,262 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:10:31,267 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:11:01,276 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:11:31,287 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:12:01,290 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:12:31,294 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:13:01,314 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:13:22,391 basehttp 13952 11496 "GET /sandbox/ HTTP/1.1" 200 54370
+INFO 2025-10-02 11:13:22,820 basehttp 13952 11496 "GET /sandbox/history/ HTTP/1.1" 200 8662
+INFO 2025-10-02 11:13:36,556 basehttp 13952 11496 "POST /sandbox/execute/ HTTP/1.1" 200 1314
+INFO 2025-10-02 11:13:36,582 basehttp 13952 11496 "GET /sandbox/history/ HTTP/1.1" 200 8663
+INFO 2025-10-02 11:13:52,768 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:14:22,767 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:14:52,789 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:15:22,803 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:15:52,801 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:16:22,811 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:16:52,815 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:17:22,824 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:17:41,063 basehttp 13952 11496 "GET /sandbox/ HTTP/1.1" 200 41456
+INFO 2025-10-02 11:18:11,808 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:18:41,992 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:19:11,899 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:19:41,828 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:20:11,834 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:20:41,843 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:20:48,340 basehttp 13952 11496 "GET /sandbox/ HTTP/1.1" 200 41903
+INFO 2025-10-02 11:21:18,771 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:21:48,759 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:22:18,763 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:22:48,767 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:23:18,789 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:23:24,585 basehttp 13952 11496 "GET /sandbox/ HTTP/1.1" 200 42727
+INFO 2025-10-02 11:23:55,114 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:24:25,118 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:24:55,128 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:25:25,130 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:25:55,125 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:26:25,126 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:26:55,133 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:27:08,807 basehttp 13952 11496 "GET /sandbox/ HTTP/1.1" 200 43651
+INFO 2025-10-02 11:27:39,381 basehttp 13952 13152 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:27:56,255 basehttp 13952 11496 "POST /enhanced-chat/send/ HTTP/1.1" 200 3871
+INFO 2025-10-02 11:27:56,293 basehttp 13952 11496 "POST /sandbox/execute/ HTTP/1.1" 200 283
+INFO 2025-10-02 11:28:09,149 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:28:39,168 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:29:09,918 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:29:40,784 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:30:11,020 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:30:29,835 basehttp 13952 11496 "GET /sandbox/ HTTP/1.1" 200 41724
+INFO 2025-10-02 11:31:01,614 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:31:32,197 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:32:03,185 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:32:33,714 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:33:04,246 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:33:35,024 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:34:05,564 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:34:35,929 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:35:06,385 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:35:36,932 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:36:07,905 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:36:24,121 basehttp 13952 11496 "GET /sandbox/ HTTP/1.1" 200 40848
+INFO 2025-10-02 11:36:54,509 basehttp 13952 11496 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:37:06,362 basehttp 13952 11496 "GET /sandbox/ HTTP/1.1" 200 41724
+WARNING 2025-10-02 11:37:06,666 log 13952 11496 Not Found: /favicon.ico
+INFO 2025-10-02 11:37:06,668 basehttp 13952 11496 - Broken pipe from ('127.0.0.1', 54919)
+INFO 2025-10-02 11:37:36,743 basehttp 13952 9976 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:37:55,388 basehttp 13952 17372 "POST /enhanced-chat/send/ HTTP/1.1" 200 574
+INFO 2025-10-02 11:37:55,472 basehttp 13952 9976 "POST /sandbox/execute/ HTTP/1.1" 200 273
+INFO 2025-10-02 11:38:06,737 basehttp 13952 9976 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:38:36,735 basehttp 13952 9976 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:39:06,759 basehttp 13952 9976 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:39:36,772 basehttp 13952 9976 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:40:03,993 basehttp 13952 9976 "GET /sandbox/ HTTP/1.1" 200 41724
+INFO 2025-10-02 11:40:34,455 basehttp 13952 20188 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:40:41,494 basehttp 13952 9976 "POST /enhanced-chat/send/ HTTP/1.1" 200 4120
+INFO 2025-10-02 11:40:41,556 basehttp 13952 9976 "POST /sandbox/execute/ HTTP/1.1" 200 283
+INFO 2025-10-02 11:41:04,358 basehttp 13952 9976 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:41:34,369 basehttp 13952 9976 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:41:49,301 basehttp 13952 9976 "GET /sandbox/ HTTP/1.1" 200 41724
+WARNING 2025-10-02 11:41:49,663 log 13952 9976 Not Found: /favicon.ico
+INFO 2025-10-02 11:41:49,669 basehttp 13952 9976 - Broken pipe from ('127.0.0.1', 59209)
+INFO 2025-10-02 11:41:56,446 basehttp 13952 20188 "GET /sandbox/ HTTP/1.1" 200 41724
+WARNING 2025-10-02 11:41:56,647 log 13952 20188 Not Found: /favicon.ico
+INFO 2025-10-02 11:41:56,647 basehttp 13952 20188 - Broken pipe from ('127.0.0.1', 59586)
+INFO 2025-10-02 11:42:01,113 basehttp 13952 7996 "GET /dashboard/ HTTP/1.1" 200 237785
+WARNING 2025-10-02 11:42:01,253 log 13952 7996 Not Found: /favicon.ico
+INFO 2025-10-02 11:42:01,258 basehttp 13952 7996 - Broken pipe from ('127.0.0.1', 59818)
+INFO 2025-10-02 11:42:01,553 basehttp 13952 3792 "GET /api/tools/list/ HTTP/1.1" 200 10194
+INFO 2025-10-02 11:42:01,655 basehttp 13952 18216 "GET /api/sessions/current/ HTTP/1.1" 200 603
+INFO 2025-10-02 11:42:01,671 basehttp 13952 22736 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 11:42:01,675 basehttp 13952 20008 "GET /api/sessions/40/history/ HTTP/1.1" 200 425
+INFO 2025-10-02 11:42:01,736 basehttp 13952 7544 "GET /api/sessions/current/ HTTP/1.1" 200 603
+INFO 2025-10-02 11:42:04,118 basehttp 13952 3792 "GET /sandbox/ HTTP/1.1" 200 41724
+WARNING 2025-10-02 11:42:04,280 log 13952 3792 Not Found: /favicon.ico
+INFO 2025-10-02 11:42:04,280 basehttp 13952 3792 - Broken pipe from ('127.0.0.1', 59825)
+INFO 2025-10-02 11:42:34,282 basehttp 13952 22736 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:43:04,281 basehttp 13952 22736 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:43:34,284 basehttp 13952 22736 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:44:04,288 basehttp 13952 22736 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:44:18,259 basehttp 13952 22736 "GET /sandbox/ HTTP/1.1" 200 38684
+WARNING 2025-10-02 11:44:18,598 log 13952 22736 Not Found: /favicon.ico
+INFO 2025-10-02 11:44:18,599 basehttp 13952 22736 - Broken pipe from ('127.0.0.1', 59822)
+INFO 2025-10-02 11:44:48,648 basehttp 13952 9920 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:45:14,135 basehttp 13952 8988 "POST /enhanced-chat/send/ HTTP/1.1" 200 3788
+INFO 2025-10-02 11:45:14,200 basehttp 13952 9920 "POST /sandbox/execute/ HTTP/1.1" 200 273
+INFO 2025-10-02 11:45:18,577 basehttp 13952 9920 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:45:49,083 basehttp 13952 9920 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:46:19,668 basehttp 13952 9920 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:46:42,550 basehttp 13952 8988 "GET /sandbox/ HTTP/1.1" 200 38684
+WARNING 2025-10-02 11:46:42,702 log 13952 9920 Not Found: /favicon.ico
+INFO 2025-10-02 11:46:42,702 basehttp 13952 9920 - Broken pipe from ('127.0.0.1', 60120)
+INFO 2025-10-02 11:47:12,764 basehttp 13952 8988 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:47:32,301 basehttp 13952 8988 "GET /sandbox/ HTTP/1.1" 200 38684
+INFO 2025-10-02 11:48:02,840 basehttp 13952 8988 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:48:32,856 basehttp 13952 8988 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:48:36,662 basehttp 13952 8988 "GET /sandbox/ HTTP/1.1" 200 38684
+INFO 2025-10-02 11:48:52,491 basehttp 13952 8988 "GET /sandbox/ HTTP/1.1" 200 38684
+INFO 2025-10-02 11:48:57,278 basehttp 13952 8988 "GET /sandbox/ HTTP/1.1" 200 38684
+INFO 2025-10-02 11:49:12,427 basehttp 13952 8988 "GET /sandbox/ HTTP/1.1" 200 38684
+INFO 2025-10-02 11:49:43,015 basehttp 13952 8988 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:50:13,730 basehttp 13952 8988 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:50:44,362 basehttp 13952 8988 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:51:02,021 basehttp 13952 8988 "GET /sandbox/ HTTP/1.1" 200 38684
+INFO 2025-10-02 11:51:33,165 basehttp 13952 8988 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:52:04,005 basehttp 13952 8988 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:52:34,409 basehttp 13952 8988 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:53:05,193 basehttp 13952 8988 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:53:36,073 basehttp 13952 8988 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 11:53:56,535 basehttp 13952 8988 "GET /sandbox/ HTTP/1.1" 200 21829
+INFO 2025-10-02 11:55:03,282 basehttp 13952 8988 "POST /enhanced-chat/send/ HTTP/1.1" 200 574
+INFO 2025-10-02 11:55:03,677 basehttp 13952 8988 "POST /sandbox/execute/ HTTP/1.1" 200 273
+INFO 2025-10-02 11:55:27,372 basehttp 13952 2148 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 63463
+INFO 2025-10-02 11:55:27,451 basehttp 13952 2148 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+WARNING 2025-10-02 11:55:28,015 log 13952 12064 Not Found: /favicon.ico
+WARNING 2025-10-02 11:55:28,015 basehttp 13952 12064 "GET /favicon.ico HTTP/1.1" 404 10233
+INFO 2025-10-02 11:55:33,026 basehttp 13952 2148 "GET /admin/analytics/sandboxexecution/97/change/ HTTP/1.1" 200 35183
+INFO 2025-10-02 11:55:33,063 basehttp 13952 12064 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 11:55:39,736 basehttp 13952 8988 "GET /sandbox/ HTTP/1.1" 200 21829
+WARNING 2025-10-02 11:55:39,965 log 13952 8988 Not Found: /favicon.ico
+INFO 2025-10-02 11:55:39,966 basehttp 13952 8988 - Broken pipe from ('127.0.0.1', 60077)
+INFO 2025-10-02 11:56:35,253 basehttp 13952 21540 "GET /sandbox/ HTTP/1.1" 200 23338
+ERROR 2025-10-02 11:57:10,573 log 13952 21540 Internal Server Error: /sandbox/
+ERROR 2025-10-02 11:57:10,583 basehttp 13952 21540 "GET /sandbox/ HTTP/1.1" 500 102
+WARNING 2025-10-02 11:57:11,070 log 13952 14920 Not Found: /favicon.ico
+WARNING 2025-10-02 11:57:11,072 basehttp 13952 14920 "GET /favicon.ico HTTP/1.1" 404 10233
+ERROR 2025-10-02 11:57:21,520 log 13952 21540 Internal Server Error: /sandbox/
+ERROR 2025-10-02 11:57:21,521 basehttp 13952 21540 "GET /sandbox/ HTTP/1.1" 500 102
+WARNING 2025-10-02 11:57:21,755 log 13952 14920 Not Found: /favicon.ico
+WARNING 2025-10-02 11:57:21,771 basehttp 13952 14920 "GET /favicon.ico HTTP/1.1" 404 10233
+ERROR 2025-10-02 11:57:29,700 log 13952 21540 Internal Server Error: /sandbox/
+ERROR 2025-10-02 11:57:29,701 basehttp 13952 21540 "GET /sandbox/ HTTP/1.1" 500 102
+WARNING 2025-10-02 11:57:29,908 log 13952 14920 Not Found: /favicon.ico
+WARNING 2025-10-02 11:57:29,910 basehttp 13952 14920 "GET /favicon.ico HTTP/1.1" 404 10233
+ERROR 2025-10-02 11:58:18,744 log 13952 21540 Internal Server Error: /sandbox/
+ERROR 2025-10-02 11:58:18,746 basehttp 13952 21540 "GET /sandbox/ HTTP/1.1" 500 102
+WARNING 2025-10-02 11:58:19,021 log 13952 14920 Not Found: /favicon.ico
+WARNING 2025-10-02 11:58:19,022 basehttp 13952 14920 "GET /favicon.ico HTTP/1.1" 404 10233
+ERROR 2025-10-02 12:00:06,713 log 13952 21540 Internal Server Error: /sandbox/
+ERROR 2025-10-02 12:00:06,719 basehttp 13952 21540 "GET /sandbox/ HTTP/1.1" 500 102
+WARNING 2025-10-02 12:00:07,182 log 13952 14920 Not Found: /favicon.ico
+WARNING 2025-10-02 12:00:07,187 basehttp 13952 14920 "GET /favicon.ico HTTP/1.1" 404 10233
+INFO 2025-10-02 12:00:22,424 basehttp 13952 21540 "GET / HTTP/1.1" 302 0
+INFO 2025-10-02 12:00:22,459 basehttp 13952 21540 "GET /accounts/login/ HTTP/1.1" 200 31713
+INFO 2025-10-02 12:00:25,568 basehttp 13952 21540 "POST /accounts/login/ HTTP/1.1" 302 0
+INFO 2025-10-02 12:00:25,792 basehttp 13952 21540 "GET /dashboard/ HTTP/1.1" 200 237785
+INFO 2025-10-02 12:00:26,009 basehttp 13952 21540 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 12:00:26,499 basehttp 13952 18036 "GET /api/tools/list/ HTTP/1.1" 200 10194
+INFO 2025-10-02 12:00:26,521 basehttp 13952 8464 "GET /api/sessions/current/ HTTP/1.1" 200 603
+INFO 2025-10-02 12:00:27,197 basehttp 13952 3964 "GET /api/sessions/40/history/ HTTP/1.1" 200 425
+INFO 2025-10-02 12:00:27,241 basehttp 13952 23324 "GET /api/sessions/current/ HTTP/1.1" 200 603
+ERROR 2025-10-02 12:00:27,937 log 13952 21540 Internal Server Error: /sandbox/
+ERROR 2025-10-02 12:00:27,944 basehttp 13952 21540 "GET /sandbox/ HTTP/1.1" 500 102
+WARNING 2025-10-02 12:00:28,556 log 13952 14920 Not Found: /favicon.ico
+WARNING 2025-10-02 12:00:28,582 basehttp 13952 14920 "GET /favicon.ico HTTP/1.1" 404 10233
+INFO 2025-10-02 12:01:36,859 basehttp 13952 21540 "GET /sandbox/ HTTP/1.1" 200 39410
+INFO 2025-10-02 12:02:07,259 basehttp 13952 18036 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:02:37,522 basehttp 13952 18036 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:02:40,560 basehttp 13952 21540 "GET /sandbox/ HTTP/1.1" 200 39410
+INFO 2025-10-02 12:03:07,982 basehttp 13952 21540 "GET /sandbox/ HTTP/1.1" 200 39410
+INFO 2025-10-02 12:03:38,402 basehttp 13952 18036 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:04:09,583 basehttp 13952 18036 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:04:40,533 basehttp 13952 18036 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:05:11,562 basehttp 13952 18036 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:05:36,588 basehttp 13952 18036 "GET /sandbox/ HTTP/1.1" 200 38688
+INFO 2025-10-02 12:06:07,005 basehttp 13952 18036 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:06:37,025 basehttp 13952 18036 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:06:49,278 basehttp 13952 18036 "GET /sandbox/ HTTP/1.1" 200 38688
+INFO 2025-10-02 12:06:53,783 basehttp 13952 18036 "GET /sandbox/ HTTP/1.1" 200 38688
+INFO 2025-10-02 12:07:24,334 basehttp 13952 18036 "GET /api/health/ HTTP/1.1" 200 89
+ERROR 2025-10-02 12:07:52,924 log 13952 18036 Internal Server Error: /sandbox/
+ERROR 2025-10-02 12:07:52,924 basehttp 13952 18036 "GET /sandbox/ HTTP/1.1" 500 102
+WARNING 2025-10-02 12:07:53,024 log 13952 8428 Not Found: /favicon.ico
+WARNING 2025-10-02 12:07:53,024 basehttp 13952 8428 "GET /favicon.ico HTTP/1.1" 404 10233
+INFO 2025-10-02 12:22:15,573 basehttp 13952 17884 "GET /sandbox/ HTTP/1.1" 200 37742
+INFO 2025-10-02 12:22:16,081 basehttp 13952 17884 "GET /api/datasets/ HTTP/1.1" 200 1762
+WARNING 2025-10-02 12:22:23,195 log 13952 17884 Not Found: /api/datasets/17/
+WARNING 2025-10-02 12:22:23,195 basehttp 13952 17884 "GET /api/datasets/17/ HTTP/1.1" 404 17216
+INFO 2025-10-02 12:22:46,137 basehttp 13952 17884 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:23:17,048 basehttp 13952 17884 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:23:47,582 basehttp 13952 17884 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:24:17,595 basehttp 13952 17884 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:24:47,624 basehttp 13952 17884 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:25:17,664 basehttp 13952 17884 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:25:48,000 basehttp 13952 17884 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:26:18,651 basehttp 13952 17884 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:26:49,413 basehttp 13952 17884 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:27:20,292 basehttp 13952 17884 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:27:50,607 basehttp 13952 17884 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:28:21,131 basehttp 13952 17884 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:28:51,588 basehttp 13952 17884 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:29:21,954 basehttp 13952 17884 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:29:52,471 basehttp 13952 17884 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:30:23,423 basehttp 13952 17884 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:30:53,992 basehttp 13952 17884 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:31:24,331 basehttp 13952 17884 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:31:54,745 basehttp 13952 17884 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:32:25,419 basehttp 13952 17884 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:32:55,405 basehttp 13952 17884 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:33:25,726 basehttp 13952 17884 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:33:55,981 basehttp 13952 17884 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:34:26,564 basehttp 13952 17884 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:34:56,953 basehttp 13952 17884 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:35:27,240 basehttp 13952 17884 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:35:57,731 basehttp 13952 17884 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:36:28,697 basehttp 13952 17884 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:36:59,737 basehttp 13952 17884 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:37:29,916 basehttp 13952 17884 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:38:00,351 basehttp 13952 17884 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:38:31,056 basehttp 13952 17884 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:39:00,070 basehttp 13952 17884 "GET /sandbox/ HTTP/1.1" 200 40369
+INFO 2025-10-02 12:39:00,328 basehttp 13952 17884 "GET /api/datasets/ HTTP/1.1" 200 1762
+WARNING 2025-10-02 12:39:10,960 log 13952 17884 Not Found: /api/datasets/12/
+WARNING 2025-10-02 12:39:10,960 basehttp 13952 17884 "GET /api/datasets/12/ HTTP/1.1" 404 17216
+INFO 2025-10-02 12:39:30,720 basehttp 13952 17884 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:40:00,702 basehttp 13952 17884 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:40:30,719 basehttp 13952 17884 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:41:00,722 basehttp 13952 17884 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 12:41:07,182 basehttp 13952 17884 "GET /sandbox/ HTTP/1.1" 200 41679
+INFO 2025-10-02 12:41:07,784 basehttp 13952 5680 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 12:41:13,288 basehttp 13952 17884 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 12:41:37,606 basehttp 13952 5680 "GET /api/health/ HTTP/1.1" 200 89

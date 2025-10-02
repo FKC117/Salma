@@ -1,0 +1,300 @@
+{% extends "analytics/base.html" %}
+{% load static %}
+
+{% block title %}Conversational Data Analysis{% endblock %}
+
+{% block content %}
+<div class="container-fluid" style="height: calc(100vh - var(--cursor-header-height)); margin-top: var(--cursor-header-height); background-color: var(--cursor-bg-primary); display: flex; flex-direction: column;">
+    <div class="card" style="margin: 0; border-radius: 0; border-left: none; border-right: none; border-top: none;">
+        <div class="card-body" style="padding: 12px 20px; display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="font-weight: 600; color: var(--cursor-text-primary); font-size: 14px;" id="dataset-name">No Dataset Loaded</div>
+                <div style="color: var(--cursor-text-secondary); font-size: 12px;" id="dataset-stats">Load a dataset to start analyzing</div>
+            </div>
+            <select id="dataset-selector" class="form-control" style="width: auto; max-width: 200px;">
+                <option value="">Select Dataset</option>
+            </select>
+        </div>
+    </div>
+    
+    <div style="flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px;" id="conversation-canvas">
+        <div class="card" style="width: 100%;">
+            <div class="card-header" style="display: flex; align-items: center; gap: 8px;">
+                <div style="width: 20px; height: 20px; background-color: var(--cursor-accent-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px;">🤖</div>
+                <div style="font-size: 12px; color: var(--cursor-text-secondary); font-weight: 500;">AI Assistant</div>
+            </div>
+            <div class="card-body">
+                <p>👋 Welcome to Conversational Data Analysis!</p>
+                <p>Ask me anything about your dataset in natural language.</p>
+                <p>Load a dataset above to get started!</p>
+            </div>
+        </div>
+        
+        <div class="card" style="width: 100%;">
+            <div class="card-header" style="display: flex; align-items: center; gap: 8px;">
+                <div style="width: 20px; height: 20px; background-color: var(--cursor-accent-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px;">💬</div>
+                <div style="font-size: 12px; color: var(--cursor-text-secondary); font-weight: 500;">Ask a Question</div>
+            </div>
+            <div class="card-body">
+                <textarea id="main-input" class="form-control" placeholder="Ask me anything about your dataset..." rows="2" style="width: 100%;"></textarea>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+                    <div style="font-size: 11px; color: var(--cursor-text-muted);">Press Enter to send</div>
+                    <button id="send-button" class="btn btn-primary">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const conversationCanvas = document.getElementById('conversation-canvas');
+    const mainInput = document.getElementById('main-input');
+    const sendButton = document.getElementById('send-button');
+    const datasetName = document.getElementById('dataset-name');
+    const datasetStats = document.getElementById('dataset-stats');
+    const datasetSelector = document.getElementById('dataset-selector');
+    
+    let currentDataset = null;
+    
+    loadDatasets();
+    
+    mainInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+    
+    sendButton.addEventListener('click', function() {
+        sendMessage();
+    });
+    
+    datasetSelector.addEventListener('change', function() {
+        if (this.value) {
+            loadDataset(this.value);
+        }
+    });
+    
+    function loadDatasets() {
+        fetch('/api/datasets/')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                datasetSelector.innerHTML = '<option value="">Select Dataset</option>';
+                if (data.datasets && Array.isArray(data.datasets)) {
+                    data.datasets.forEach(dataset => {
+                        const option = document.createElement('option');
+                        option.value = dataset.id;
+                        option.textContent = dataset.name;
+                        datasetSelector.appendChild(option);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error loading datasets:', error);
+                datasetSelector.innerHTML = '<option value="">Error loading datasets</option>';
+            });
+    }
+    
+    function loadDataset(datasetId) {
+        // Since there's no individual dataset endpoint, we'll get the dataset info from the list
+        fetch('/api/datasets/')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.datasets && Array.isArray(data.datasets)) {
+                    const dataset = data.datasets.find(d => d.id == datasetId);
+                    if (dataset) {
+                        currentDataset = dataset;
+                        datasetName.textContent = dataset.name;
+                        datasetStats.textContent = `${dataset.row_count || 'Unknown'} rows, ${dataset.column_count || 'Unknown'} columns`;
+                    } else {
+                        console.error('Dataset not found:', datasetId);
+                        datasetName.textContent = 'Dataset not found';
+                        datasetStats.textContent = 'Please select a valid dataset';
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error loading dataset:', error);
+                datasetName.textContent = 'Error loading dataset';
+                datasetStats.textContent = 'Please try again';
+            });
+    }
+    
+    function sendMessage() {
+        const message = mainInput.value.trim();
+        if (!message) return;
+        
+        if (!currentDataset) {
+            alert('Please select a dataset first');
+            return;
+        }
+        
+        addUserCell(message);
+        mainInput.value = '';
+        
+        fetch('{% url "enhanced_chat_send" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                message: message,
+                ai_model: 'ollama',
+                context: {
+                    dataset_id: currentDataset.id,
+                    dataset_name: currentDataset.name
+                }
+            })
+        })
+        .then(response => response.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const messageContent = doc.querySelector('.message-body');
+            
+            if (messageContent) {
+                addAICell(messageContent.innerHTML);
+                addNewInputCell();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+    
+    function addUserCell(message) {
+        const cell = document.createElement('div');
+        cell.className = 'card';
+        cell.style.width = '100%';
+        cell.innerHTML = `
+            <div class="card-header" style="display: flex; align-items: center; gap: 8px;">
+                <div style="width: 20px; height: 20px; background-color: var(--cursor-accent-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px;">👤</div>
+                <div style="font-size: 12px; color: var(--cursor-text-secondary); font-weight: 500;">Your Question</div>
+            </div>
+            <div class="card-body">
+                <p>${message}</p>
+            </div>
+        `;
+        conversationCanvas.appendChild(cell);
+        scrollToBottom();
+    }
+    
+    function addAICell(content) {
+        const cell = document.createElement('div');
+        cell.className = 'card';
+        cell.style.width = '100%';
+        cell.innerHTML = `
+            <div class="card-header" style="display: flex; align-items: center; gap: 8px;">
+                <div style="width: 20px; height: 20px; background-color: var(--cursor-accent-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px;">📊</div>
+                <div style="font-size: 12px; color: var(--cursor-text-secondary); font-weight: 500;">Analysis Result</div>
+            </div>
+            <div class="card-body">
+                ${content}
+            </div>
+        `;
+        conversationCanvas.appendChild(cell);
+        scrollToBottom();
+    }
+    
+    function addNewInputCell() {
+        const cell = document.createElement('div');
+        cell.className = 'card';
+        cell.style.width = '100%';
+        cell.innerHTML = `
+            <div class="card-header" style="display: flex; align-items: center; gap: 8px;">
+                <div style="width: 20px; height: 20px; background-color: var(--cursor-accent-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px;">💬</div>
+                <div style="font-size: 12px; color: var(--cursor-text-secondary); font-weight: 500;">Ask a Follow-up Question</div>
+            </div>
+            <div class="card-body">
+                <textarea class="form-control" placeholder="Ask a follow-up question..." rows="2" style="width: 100%;"></textarea>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+                    <div style="font-size: 11px; color: var(--cursor-text-muted);">Press Enter to send</div>
+                    <button class="btn btn-primary">Send</button>
+                </div>
+            </div>
+        `;
+        
+        const textarea = cell.querySelector('textarea');
+        const button = cell.querySelector('button');
+        
+        textarea.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendFromCell(cell);
+            }
+        });
+        
+        button.addEventListener('click', function() {
+            sendFromCell(cell);
+        });
+        
+        conversationCanvas.appendChild(cell);
+        textarea.focus();
+        scrollToBottom();
+    }
+    
+    function sendFromCell(cell) {
+        const textarea = cell.querySelector('textarea');
+        const message = textarea.value.trim();
+        if (!message) return;
+        
+        addUserCell(message);
+        
+        fetch('{% url "enhanced_chat_send" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                message: message,
+                ai_model: 'ollama',
+                context: {
+                    dataset_id: currentDataset.id,
+                    dataset_name: currentDataset.name
+                }
+            })
+        })
+        .then(response => response.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const messageContent = doc.querySelector('.message-body');
+            
+            if (messageContent) {
+                addAICell(messageContent.innerHTML);
+                addNewInputCell();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+        
+        cell.remove();
+    }
+    
+    function scrollToBottom() {
+        setTimeout(() => {
+            conversationCanvas.scrollTop = conversationCanvas.scrollHeight;
+        }, 100);
+    }
+});
+</script>
+{% endblock %}

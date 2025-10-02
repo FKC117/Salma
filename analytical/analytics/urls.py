@@ -5,6 +5,7 @@ from django.urls import path, include
 from django.shortcuts import redirect
 from rest_framework.routers import DefaultRouter
 from . import views
+from . import sandbox_views
 
 # Create router for API endpoints
 router = DefaultRouter()
@@ -24,6 +25,7 @@ urlpatterns = [
     # Template views (must come first to avoid API router conflicts)
     path('', lambda request: redirect('login'), name='home'),
     path('dashboard/', views.dashboard_view, name='dashboard'),
+    path('sandbox/', sandbox_views.SandboxView.as_view(), name='sandbox'),
     path('upload-form/', views.upload_form_view, name='upload_form'),
     path('register/', views.register_view, name='register'),
     path('my-datasets/', views.my_datasets_view, name='my_datasets'),
@@ -49,6 +51,8 @@ urlpatterns = [
     path('enhanced-chat/context/', views.EnhancedChatViewSet.as_view({'get': 'context'}), name='enhanced_chat_context'),
     path('enhanced-chat/session/', views.EnhancedChatViewSet.as_view({'put': 'update_session'}), name='enhanced_chat_update_session'),
     path('enhanced-chat/sandbox-executions/', views.EnhancedChatViewSet.as_view({'get': 'sandbox_executions'}), name='enhanced_chat_sandbox_executions'),
+    path('sandbox/execute/', sandbox_views.ExecuteCodeView.as_view(), name='sandbox_execute'),
+    path('sandbox/history/', sandbox_views.SandboxHistoryView.as_view(), name='sandbox_history'),
     path('api/health/', views.HealthViewSet.as_view({'get': 'health'}), name='health_check'),
     path('tools/list/', views.ToolsViewSet.as_view({'get': 'list_tools'}), name='tools_refresh'),
     path('agent/run/', views.AgentViewSet.as_view({'post': 'run'}), name='agent_run'),
