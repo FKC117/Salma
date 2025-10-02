@@ -629,7 +629,7 @@ function executePythonCode(button) {
             resultContainer.innerHTML = `
                 <div class="alert alert-danger">
                     <h6><i class="fas fa-exclamation-triangle"></i> Execution Error</h6>
-                    <pre class="mb-0">${data.error || 'Unknown error occurred'}</pre>
+                    <div class="mb-0" style="white-space:pre-wrap">${data.error || 'Unknown error occurred'}</div>
                 </div>
             `;
         }

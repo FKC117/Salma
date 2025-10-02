@@ -41,7 +41,8 @@ class SandboxExecutor:
         # Security settings
         self.allowed_imports = {
             'pandas', 'numpy', 'matplotlib', 'seaborn', 'scipy', 'sklearn',
-            'math', 'statistics', 'json', 'csv', 'datetime', 'time',
+            'statsmodels', 'patsy', 'plotly', 'altair', 'plotnine', 'xlsxwriter',
+            'math', 'statistics', 'json', 'csv', 'datetime', 'time', 
             'collections', 'itertools', 'functools', 'operator'
         }
         
@@ -53,8 +54,8 @@ class SandboxExecutor:
         
         self.forbidden_functions = {
             'exec', 'eval', 'compile', 'open', 'file', 'input', 'raw_input',
-            'exit', 'quit', 'reload', 'dir', 'vars', 'globals', 'locals',
-            'getattr', 'setattr', 'delattr', 'hasattr', 'callable'
+            'exit', 'quit', 'reload',
+            'getattr', 'setattr', 'delattr', 'hasattr'
         }
         
         # Resource limits
@@ -220,19 +221,33 @@ class SandboxExecutor:
     def _validate_python_code(self, code: str) -> Dict[str, Any]:
         """Validate Python code for security threats"""
         try:
-            # Parse code to AST
-            tree = ast.parse(code)
+            # Try to parse code, with automatic syntax correction
+            try:
+                tree = ast.parse(code)
+            except SyntaxError as e:
+                # Attempt to fix common LLM syntax errors
+                corrected_code = self._fix_common_syntax_errors(code)
+                if corrected_code != code:
+                    print(f"=== SYNTAX CORRECTION APPLIED ===")
+                    print(f"Original error: {e}")
+                    print(f"Applied automatic syntax correction")
+                    print(f"================================")
+                    tree = ast.parse(corrected_code)
+                else:
+                    raise e
             
             # Check for forbidden imports
             for node in ast.walk(tree):
                 if isinstance(node, ast.Import):
                     for alias in node.names:
                         if alias.name in self.forbidden_imports:
-                            raise SecurityError(f"Forbidden import: {alias.name}")
+                            available_libs = ', '.join(sorted(self.allowed_imports))
+                            raise SecurityError(f"Forbidden import: {alias.name}. Available libraries: {available_libs}")
                 
                 elif isinstance(node, ast.ImportFrom):
                     if node.module and node.module in self.forbidden_imports:
-                        raise SecurityError(f"Forbidden import: {node.module}")
+                        available_libs = ', '.join(sorted(self.allowed_imports))
+                        raise SecurityError(f"Forbidden import: {node.module}. Available libraries: {available_libs}")
                 
                 elif isinstance(node, ast.Call):
                     if isinstance(node.func, ast.Name) and node.func.id in self.forbidden_functions:
@@ -267,6 +282,299 @@ class SandboxExecutor:
             'valid': True,
             'error': None
         }
+    
+    def _fix_common_syntax_errors(self, code: str) -> str:
+        """Fix common LLM-generated syntax errors using multiple approaches"""
+        try:
+            # Method 1: Try advanced indentation fixing (no external dependencies)
+            corrected_code = self._fix_indentation_advanced(code)
+            if corrected_code and corrected_code != code:
+                print(f"✅ Advanced indentation correction applied")
+                return corrected_code
+            
+            # Method 2: Try manual indentation fixing
+            corrected_code = self._fix_indentation_manually(code)
+            if corrected_code and corrected_code != code:
+                print(f"✅ Manual indentation correction applied")
+                return corrected_code
+            
+            # Method 3: Try string literal fixing
+            corrected_code = self._fix_string_literals(code)
+            if corrected_code and corrected_code != code:
+                print(f"✅ String literal correction applied")
+                return corrected_code
+            
+            # Method 4: Try basic syntax fixing
+            corrected_code = self._fix_basic_syntax(code)
+            if corrected_code and corrected_code != code:
+                print(f"✅ Basic syntax correction applied")
+                return corrected_code
+            
+            print(f"⚠️ No automatic correction could be applied")
+            return code
+            
+        except Exception as e:
+            print(f"❌ Error in syntax correction: {e}")
+            return code
+    
+    def _fix_indentation_advanced(self, code: str) -> str:
+        """Advanced indentation fixing without external dependencies"""
+        try:
+            lines = code.split('\n')
+            fixed_lines = []
+            indent_level = 0
+            in_multiline_string = False
+            string_delimiter = None
+            
+            for i, line in enumerate(lines):
+                stripped = line.strip()
+                
+                # Skip empty lines and comments
+                if not stripped or stripped.startswith('#'):
+                    fixed_lines.append(line)
+                    continue
+                
+                # Handle multiline strings
+                if not in_multiline_string:
+                    # Check for start of multiline string
+                    if '"""' in stripped or "'''" in stripped:
+                        in_multiline_string = True
+                        string_delimiter = '"""' if '"""' in stripped else "'''"
+                        # If string starts and ends on same line, it's not multiline
+                        if stripped.count(string_delimiter) >= 2:
+                            in_multiline_string = False
+                            string_delimiter = None
+                else:
+                    # Check for end of multiline string
+                    if string_delimiter in stripped:
+                        in_multiline_string = False
+                        string_delimiter = None
+                
+                # Don't fix indentation inside multiline strings
+                if in_multiline_string:
+                    fixed_lines.append(line)
+                    continue
+                
+                # Check if this line should be indented based on previous line
+                if i > 0:
+                    prev_line = lines[i-1].rstrip()
+                    
+                    # If previous line ends with colon, this line should be indented
+                    if prev_line.endswith(':'):
+                        indent_level += 1
+                    
+                    # Check for dedentation keywords
+                    elif stripped.startswith(('else:', 'elif ', 'except', 'finally:')):
+                        indent_level = max(0, indent_level - 1)
+                
+                # Apply indentation
+                indent_str = '    ' * indent_level
+                fixed_lines.append(indent_str + stripped)
+            
+            fixed_code = '\n'.join(fixed_lines)
+            
+            # Validate the fixed code
+            try:
+                ast.parse(fixed_code)
+                return fixed_code
+            except SyntaxError as e:
+                print(f"⚠️ Advanced correction still has syntax error: {e}")
+                return code  # Return original if our fix didn't work
+                
+        except Exception as e:
+            print(f"⚠️ Advanced indentation correction failed: {e}")
+            return code
+    
+    def _calculate_expected_indent(self, lines: list, current_index: int, indent_stack: list) -> int:
+        """Calculate expected indentation level for a line"""
+        if current_index == 0:
+            return 0  # First line should not be indented
+        
+        prev_line = lines[current_index - 1].rstrip()
+        current_line = lines[current_index].strip()
+        
+        # If previous line ends with colon, we need to indent
+        if prev_line.endswith(':'):
+            return len(indent_stack) + 1
+        
+        # Check for dedentation keywords
+        dedent_keywords = ['else:', 'elif ', 'except', 'finally:', 'except ']
+        if any(current_line.startswith(keyword) for keyword in dedent_keywords):
+            return max(0, len(indent_stack) - 1)
+        
+        # Check for same-level keywords
+        same_level_keywords = ['return', 'break', 'continue', 'pass', 'raise']
+        if any(current_line.startswith(keyword) for keyword in same_level_keywords):
+            return len(indent_stack)
+        
+        # Default: same indentation as previous line
+        return len(indent_stack)
+    
+    def _fix_indentation_manually(self, code: str) -> str:
+        """Manually fix indentation issues with comprehensive logic"""
+        try:
+            lines = code.split('\n')
+            fixed_lines = []
+            indent_level = 0
+            
+            for i, line in enumerate(lines):
+                stripped = line.strip()
+                
+                # Skip empty lines and comments
+                if not stripped or stripped.startswith('#'):
+                    fixed_lines.append(line)
+                    continue
+                
+                # Determine if this line needs indentation
+                needs_indent = False
+                
+                # Check if previous line ends with colon
+                if i > 0:
+                    prev_line = lines[i-1].rstrip()
+                    if prev_line.endswith(':'):
+                        needs_indent = True
+                        indent_level += 1
+                
+                # Check for dedentation keywords (else, elif, except, finally)
+                dedent_keywords = ['else:', 'elif ', 'except', 'finally:', 'except ']
+                if any(stripped.startswith(keyword) for keyword in dedent_keywords):
+                    indent_level = max(0, indent_level - 1)
+                    needs_indent = True
+                
+                # Apply indentation
+                if needs_indent or not line.startswith(' ') and not line.startswith('\t'):
+                    indent_str = '    ' * indent_level
+                    fixed_lines.append(indent_str + stripped)
+                else:
+                    fixed_lines.append(line)
+            
+            fixed_code = '\n'.join(fixed_lines)
+            
+            # Validate the fixed code
+            try:
+                ast.parse(fixed_code)
+                return fixed_code
+            except SyntaxError as e:
+                print(f"⚠️ Manual correction still has syntax error: {e}")
+                return code
+                
+        except Exception as e:
+            print(f"⚠️ Manual indentation correction failed: {e}")
+            return code
+    
+    def _fix_basic_syntax(self, code: str) -> str:
+        """Fix basic syntax issues"""
+        lines = code.split('\n')
+        fixed_lines = []
+        i = 0
+        
+        while i < len(lines):
+            line = lines[i]
+            
+            # Fix: Missing indentation after try/except/if/else/for/while/def/class
+            if i > 0:
+                prev_line = lines[i-1].rstrip()
+                
+                # Check if previous line ends with colon and current line needs indentation
+                if (prev_line.endswith(':') and 
+                    line.strip() and 
+                    not line.startswith(' ') and 
+                    not line.startswith('\t') and
+                    not line.strip().startswith('#') and
+                    not line.strip().startswith('"""') and
+                    not line.strip().startswith("'''")):
+                    
+                    # Add proper indentation (4 spaces)
+                    fixed_lines.append('    ' + line)
+                    i += 1
+                    continue
+            
+            # Fix: Missing indentation for continuation lines
+            if (line.strip() and 
+                not line.startswith(' ') and 
+                not line.startswith('\t') and
+                not line.strip().startswith('#') and
+                not line.strip().startswith('import') and
+                not line.strip().startswith('from') and
+                not line.strip().startswith('def') and
+                not line.strip().startswith('class') and
+                not line.strip().startswith('if') and
+                not line.strip().startswith('else') and
+                not line.strip().startswith('elif') and
+                not line.strip().startswith('for') and
+                not line.strip().startswith('while') and
+                not line.strip().startswith('try') and
+                not line.strip().startswith('except') and
+                not line.strip().startswith('finally') and
+                not line.strip().startswith('with') and
+                not line.strip().startswith('"""') and
+                not line.strip().startswith("'''") and
+                i > 0 and
+                any(lines[i-1].rstrip().endswith(x) for x in [':', '\\', '(', '[', '{'])):
+                
+                # Add indentation for continuation
+                fixed_lines.append('    ' + line)
+                i += 1
+                continue
+            
+            fixed_lines.append(line)
+            i += 1
+        
+        return '\n'.join(fixed_lines)
+    
+    def _fix_string_literals(self, code: str) -> str:
+        """Fix unterminated string literals"""
+        try:
+            lines = code.split('\n')
+            fixed_lines = []
+            in_string = False
+            string_delimiter = None
+            
+            for i, line in enumerate(lines):
+                if not in_string:
+                    # Check for string start
+                    if '"""' in line:
+                        string_delimiter = '"""'
+                        if line.count('"""') % 2 == 1:  # Odd count means unterminated
+                            in_string = True
+                    elif "'''" in line:
+                        string_delimiter = "'''"
+                        if line.count("'''") % 2 == 1:  # Odd count means unterminated
+                            in_string = True
+                    elif '"' in line and '"""' not in line:
+                        string_delimiter = '"'
+                        if line.count('"') % 2 == 1:  # Odd count means unterminated
+                            in_string = True
+                    elif "'" in line and "'''" not in line:
+                        string_delimiter = "'"
+                        if line.count("'") % 2 == 1:  # Odd count means unterminated
+                            in_string = True
+                    
+                    fixed_lines.append(line)
+                else:
+                    # We're inside a string, look for the end
+                    if string_delimiter in line:
+                        in_string = False
+                        string_delimiter = None
+                    
+                    fixed_lines.append(line)
+            
+            # If we're still in a string at the end, close it
+            if in_string:
+                fixed_lines.append(string_delimiter)
+            
+            fixed_code = '\n'.join(fixed_lines)
+            
+            # Validate the fixed code
+            try:
+                ast.parse(fixed_code)
+                return fixed_code
+            except SyntaxError:
+                return code  # Return original if our fix didn't work
+                
+        except Exception as e:
+            print(f"⚠️ String literal correction failed: {e}")
+            return code
     
     def _validate_r_code(self, code: str) -> Dict[str, Any]:
         """Validate R code for security threats"""
@@ -340,18 +648,26 @@ else:
     def _execute_python_code(self, code: str, execution, timeout: int, memory_limit: int) -> Dict[str, Any]:
         """Execute Python code in isolated sandbox environment"""
         try:
-            # Load dataset if session_id is provided
-            dataset_code = self._get_dataset_code(execution.session_id)
+            # Apply syntax correction to user code
+            corrected_code = self._fix_common_syntax_errors(code)
+            
+            # Fix common file reading patterns
+            corrected_code = self._fix_file_reading_patterns(corrected_code)
             
             # Modify code to handle matplotlib plots properly
             # Add non-interactive backend and image saving
-            modified_code = self._modify_matplotlib_code(code)
+            modified_code = self._modify_matplotlib_code(corrected_code)
             
-            # Combine dataset loading code with the user's code
-            full_code = dataset_code + '\n' + modified_code
+            # Load dataset if session_id is provided
+            dataset_code = self._get_dataset_code(execution.session_id)
             
-            # Create temporary file
-            with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
+            # Combine matplotlib setup, dataset loading code, and user's code
+            # Order is important: matplotlib setup first, then dataset, then user code
+            matplotlib_setup = self._get_matplotlib_setup()
+            full_code = matplotlib_setup + '\n' + dataset_code + '\n' + modified_code
+            
+            # Create temporary file with UTF-8 encoding
+            with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False, encoding='utf-8') as f:
                 f.write(full_code)
                 temp_file = f.name
             
@@ -375,49 +691,156 @@ else:
                 'status': 'failed'
             }
     
-    def _modify_matplotlib_code(self, code: str) -> str:
-        """Modify code to handle matplotlib plots properly"""
-        # Add non-interactive backend and image saving
-        matplotlib_setup = '''
+    def _get_matplotlib_setup(self) -> str:
+        """Get the matplotlib setup code with image capture overrides"""
+        return '''
 import matplotlib
 matplotlib.use("Agg")  # Use non-interactive backend
 import matplotlib.pyplot as plt
 import seaborn as sns
 import os
+import base64
+import io
+
+# Store original functions
+original_show = plt.show
+original_savefig = plt.savefig
 
 # Override plt.show to save the figure
-original_show = plt.show
 def custom_show(*args, **kwargs):
     # Save the figure
+    import matplotlib.pyplot as plt  # Import here to ensure it's available
     fig = plt.gcf()
     if fig.get_axes():  # Only save if there are axes
-        # Create output directory if it doesn't exist
-        output_dir = "/tmp"
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
-        
-        # Save the figure
-        output_path = os.path.join(output_dir, "out.png")
+        # Save to bytes buffer
+        import io  # Import here to ensure it's available
+        buffer = io.BytesIO()
         plt.tight_layout()
-        plt.savefig(output_path, dpi=150, bbox_inches="tight")
+        # Use the original savefig to avoid recursion
+        original_savefig(buffer, format='png', dpi=150, bbox_inches="tight")
+        buffer.seek(0)
         
-        # Read the image file and convert to base64
-        import base64
-        with open(output_path, 'rb') as f:
-            image_data = f.read()
-            image_base64 = base64.b64encode(image_data).decode('utf-8')
-            print(f"__SANDBOX_IMAGE_BASE64__data:image/png;base64,{image_base64}")
+        # Convert to base64
+        import base64  # Import here to ensure it's available
+        image_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+        print(f"__SANDBOX_IMAGE_BASE64__data:image/png;base64,{image_base64}")
     original_show(*args, **kwargs)
 
+# Override plt.savefig to capture images
+def custom_savefig(*args, **kwargs):
+    # Save the figure to bytes buffer
+    import matplotlib.pyplot as plt  # Import here to ensure it's available
+    import io  # Import here to ensure it's available
+    buffer = io.BytesIO()
+    plt.tight_layout()
+    # Use the original savefig to avoid recursion
+    original_savefig(buffer, format='png', dpi=150, bbox_inches="tight")
+    buffer.seek(0)
+    
+    # Convert to base64
+    import base64  # Import here to ensure it's available
+    image_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+    print(f"__SANDBOX_IMAGE_BASE64__data:image/png;base64,{image_base64}")
+    
+    # Also call the original savefig if a filename was provided (for compatibility)
+    if args and isinstance(args[0], str):
+        original_savefig(*args, **kwargs)
+
 plt.show = custom_show
+plt.savefig = custom_savefig
 '''
-        
-        # Check if the code uses matplotlib
-        if 'import matplotlib' in code or 'import seaborn' in code:
-            # Add the matplotlib setup at the beginning
-            return matplotlib_setup + '\n' + code
-        else:
+
+    def _modify_matplotlib_code(self, code: str) -> str:
+        """Modify code to handle matplotlib plots properly"""
+        # The matplotlib setup is now handled separately in _get_matplotlib_setup()
+        # This method just returns the code as-is since setup is done at the beginning
+        return code
+    
+    def _fix_file_reading_patterns(self, code: str) -> str:
+        """Fix common file reading patterns that might cause errors"""
+        try:
+            # Check if code contains file reading operations
+            file_reading_patterns = [
+                'pd.read_csv(',
+                'pd.read_excel(',
+                'pd.read_json(',
+                'pd.read_parquet(',
+                'pd.read_table(',
+                'pd.read_html(',
+                'pd.read_xml(',
+                'pd.read_feather(',
+                'pd.read_pickle(',
+                'pd.read_sql(',
+                'pd.read_sql_table(',
+                'pd.read_sql_query(',
+            ]
+            
+            # Check if any file reading patterns are present
+            has_file_reading = any(pattern in code for pattern in file_reading_patterns)
+            
+            if has_file_reading:
+                # Add helpful comment at the beginning
+                helpful_comment = '''
+# NOTE: File reading operations detected in your code.
+# Files are not available in the sandbox environment.
+# The dataset has been automatically loaded as 'df' from your analysis session.
+# You can use 'df' directly for your analysis.
+# If you need to read a specific file, please upload it to your dataset first.
+
+'''
+                
+                # Process lines to handle try-except blocks properly
+                lines = code.split('\n')
+                modified_lines = []
+                i = 0
+                
+                while i < len(lines):
+                    line = lines[i]
+                    
+                    # Check if line contains file reading
+                    if any(pattern in line for pattern in file_reading_patterns):
+                        # Check if this line is inside a try block
+                        try_indent = self._get_indentation_level(line)
+                        
+                        # Look backwards to see if we're in a try block
+                        in_try_block = False
+                        for j in range(i-1, -1, -1):
+                            prev_line = lines[j].strip()
+                            if not prev_line or prev_line.startswith('#'):
+                                continue
+                            prev_indent = self._get_indentation_level(lines[j])
+                            
+                            if prev_indent < try_indent and prev_line.endswith(':'):
+                                if prev_line.startswith('try') or prev_line.startswith('except') or prev_line.startswith('finally'):
+                                    in_try_block = True
+                                    break
+                                elif prev_line.startswith('if') or prev_line.startswith('for') or prev_line.startswith('while') or prev_line.startswith('def') or prev_line.startswith('class'):
+                                    break
+                        
+                        if in_try_block:
+                            # Replace with a pass statement to maintain try block structure
+                            indent = ' ' * try_indent
+                            modified_lines.append(f"{indent}pass  # File reading replaced with pass - using pre-loaded 'df' instead")
+                        else:
+                            # Comment out the line normally
+                            modified_lines.append(f"# {line}  # File not available in sandbox - using pre-loaded 'df' instead")
+                    else:
+                        modified_lines.append(line)
+                    
+                    i += 1
+                
+                modified_code = helpful_comment + '\n'.join(modified_lines)
+                return modified_code
+            
             return code
+            
+        except Exception as e:
+            logger.error(f"Error fixing file reading patterns: {str(e)}")
+            return code
+    
+    def _get_indentation_level(self, line: str) -> int:
+        """Get the indentation level of a line"""
+        return len(line) - len(line.lstrip())
     
     def _execute_r_code(self, code: str, execution, timeout: int) -> Dict[str, Any]:
         """Execute R code in isolated sandbox environment"""
@@ -451,13 +874,19 @@ plt.show = custom_show
         process = None
         
         try:
-            # Start process
+            # Start process with UTF-8 encoding to handle Unicode characters
+            env = os.environ.copy()
+            env['PYTHONIOENCODING'] = 'utf-8'  # Force Python to use UTF-8 for I/O
+            
             process = subprocess.Popen(
                 [sys.executable, script_path],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 text=True,
-                cwd=str(self.sandbox_dir)
+                encoding='utf-8',
+                errors='replace',  # Replace problematic characters instead of failing
+                cwd=str(self.sandbox_dir),
+                env=env
             )
             
             # Create psutil process for resource monitoring

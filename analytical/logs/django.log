@@ -1301,3 +1301,773 @@ INFO 2025-10-02 13:15:04,705 basehttp 22316 19960 "GET /api/health/ HTTP/1.1" 20
 INFO 2025-10-02 13:15:34,704 basehttp 22316 19960 "GET /api/health/ HTTP/1.1" 200 89
 INFO 2025-10-02 13:16:04,718 basehttp 22316 19960 "GET /api/health/ HTTP/1.1" 200 89
 INFO 2025-10-02 13:16:34,722 basehttp 22316 19960 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:17:04,732 basehttp 22316 19960 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:17:34,740 basehttp 22316 19960 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:18:05,426 basehttp 22316 19960 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:18:34,758 basehttp 22316 19960 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:19:04,757 basehttp 22316 19960 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:19:34,756 basehttp 22316 19960 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:20:04,769 basehttp 22316 19960 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:20:11,024 basehttp 22316 14304 "GET /admin/analytics/sandboxexecution/97/change/ HTTP/1.1" 200 36806
+INFO 2025-10-02 13:20:11,078 basehttp 22316 14304 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+WARNING 2025-10-02 13:20:11,873 log 22316 11060 Not Found: /favicon.ico
+WARNING 2025-10-02 13:20:11,873 basehttp 22316 11060 "GET /favicon.ico HTTP/1.1" 404 10233
+INFO 2025-10-02 13:20:13,653 basehttp 22316 14304 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 65281
+INFO 2025-10-02 13:20:13,730 basehttp 22316 11060 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 13:20:16,368 basehttp 22316 14304 "GET /admin/analytics/sandboxexecution/110/change/ HTTP/1.1" 200 38619
+INFO 2025-10-02 13:20:16,430 basehttp 22316 11060 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 13:20:35,525 basehttp 22316 19960 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:21:06,022 basehttp 22316 19960 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:21:08,911 autoreload 22316 15216 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 13:21:16,152 autoreload 4320 23316 Watching for file changes with StatReloader
+INFO 2025-10-02 13:21:40,430 basehttp 4320 19728 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:22:06,793 basehttp 4320 19728 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:22:35,492 autoreload 4320 23316 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 13:22:39,573 autoreload 22952 17016 Watching for file changes with StatReloader
+INFO 2025-10-02 13:23:12,704 basehttp 22952 20236 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:23:43,309 basehttp 22952 20236 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:24:14,282 basehttp 22952 20236 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:24:20,982 autoreload 22952 17016 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 13:24:26,145 autoreload 6684 10136 Watching for file changes with StatReloader
+INFO 2025-10-02 13:24:44,763 basehttp 6684 3788 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:25:15,383 basehttp 6684 3788 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:25:45,729 basehttp 6684 3788 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:26:15,782 basehttp 6684 3788 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:26:46,865 basehttp 6684 3788 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:27:17,308 basehttp 6684 3788 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:27:47,656 basehttp 6684 3788 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:28:16,504 basehttp 6684 3788 "GET /sandbox/ HTTP/1.1" 200 42174
+INFO 2025-10-02 13:28:16,743 basehttp 6684 3788 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 13:28:23,080 basehttp 6684 3788 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 13:28:46,916 basehttp 6684 13372 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:29:15,554 basehttp 6684 3788 "POST /enhanced-chat/send/ HTTP/1.1" 200 7791
+INFO 2025-10-02 13:29:16,755 basehttp 6684 3788 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:29:46,757 basehttp 6684 3788 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:30:16,763 basehttp 6684 3788 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:30:46,782 basehttp 6684 3788 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:31:16,778 basehttp 6684 3788 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:31:46,795 basehttp 6684 3788 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:32:16,801 basehttp 6684 3788 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:32:46,802 basehttp 6684 3788 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:33:16,897 basehttp 6684 2252 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:33:23,404 basehttp 6684 3788 "POST /enhanced-chat/send/ HTTP/1.1" 200 6585
+INFO 2025-10-02 13:33:46,827 basehttp 6684 3788 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:34:15,568 basehttp 6684 12416 "GET /admin/analytics/sandboxexecution/110/change/ HTTP/1.1" 200 38693
+INFO 2025-10-02 13:34:15,627 basehttp 6684 12416 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+WARNING 2025-10-02 13:34:15,824 log 6684 22672 Not Found: /favicon.ico
+WARNING 2025-10-02 13:34:15,831 basehttp 6684 22672 "GET /favicon.ico HTTP/1.1" 404 10233
+INFO 2025-10-02 13:34:16,765 basehttp 6684 12416 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 65279
+INFO 2025-10-02 13:34:16,827 basehttp 6684 22672 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 13:34:17,745 basehttp 6684 3788 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:34:19,699 basehttp 6684 12416 "GET /admin/analytics/sandboxexecution/116/change/ HTTP/1.1" 200 41606
+INFO 2025-10-02 13:34:19,752 basehttp 6684 22672 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 13:34:48,071 basehttp 6684 3788 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:35:18,421 basehttp 6684 3788 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:35:48,925 basehttp 6684 3788 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:36:19,175 basehttp 6684 3788 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:36:49,677 basehttp 6684 3788 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:37:19,660 basehttp 6684 3788 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:37:41,359 autoreload 6684 10136 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 13:37:50,531 autoreload 19188 19584 Watching for file changes with StatReloader
+INFO 2025-10-02 13:38:19,803 basehttp 19188 21552 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:38:49,671 basehttp 19188 21552 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:39:18,683 autoreload 19188 19584 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 13:39:25,454 autoreload 22900 22932 Watching for file changes with StatReloader
+INFO 2025-10-02 13:40:23,198 basehttp 22900 23848 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:40:29,653 autoreload 22900 22932 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 13:40:34,415 autoreload 24224 15140 Watching for file changes with StatReloader
+INFO 2025-10-02 13:40:53,548 basehttp 24224 14416 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:41:23,772 basehttp 24224 14416 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:41:54,179 basehttp 24224 14416 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:42:50,791 basehttp 24224 14416 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:43:36,894 basehttp 24224 14416 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:44:51,383 basehttp 24224 14416 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:45:29,977 basehttp 24224 14416 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:45:59,450 basehttp 24224 14416 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:46:29,457 basehttp 24224 14416 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:46:32,139 autoreload 24224 15140 F:\analytical\venv\Lib\site-packages\pandas\api\typing\__init__.py changed, reloading.
+INFO 2025-10-02 13:46:50,500 autoreload 11764 19300 Watching for file changes with StatReloader
+INFO 2025-10-02 13:48:00,168 basehttp 11764 21476 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:48:29,464 basehttp 11764 21476 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:48:35,020 autoreload 11764 19300 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 13:48:43,943 autoreload 2160 1440 Watching for file changes with StatReloader
+INFO 2025-10-02 13:49:29,767 basehttp 2160 14988 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:49:51,042 autoreload 2160 1440 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 13:49:53,988 autoreload 24080 10532 Watching for file changes with StatReloader
+INFO 2025-10-02 13:50:05,674 basehttp 24080 1876 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:50:29,483 basehttp 24080 1876 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:50:59,495 basehttp 24080 1876 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:51:29,515 basehttp 24080 1876 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:51:59,526 basehttp 24080 1876 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:52:29,534 basehttp 24080 1876 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:52:59,541 basehttp 24080 1876 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:53:29,543 basehttp 24080 1876 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:53:59,551 basehttp 24080 1876 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:54:29,557 basehttp 24080 1876 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:54:59,561 basehttp 24080 1876 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:55:29,565 basehttp 24080 1876 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:55:59,565 basehttp 24080 1876 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:56:29,566 basehttp 24080 1876 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:56:59,570 basehttp 24080 1876 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:57:29,573 basehttp 24080 1876 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:57:59,586 basehttp 24080 1876 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:58:29,594 basehttp 24080 1876 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:58:59,603 basehttp 24080 1876 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:59:29,612 basehttp 24080 1876 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 13:59:59,624 basehttp 24080 1876 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:00:29,797 basehttp 24080 1876 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:00:59,642 basehttp 24080 1876 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:01:29,647 basehttp 24080 1876 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:03:54,966 basehttp 24080 1764 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:04:16,854 autoreload 24080 10532 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 14:04:22,362 autoreload 12672 23484 Watching for file changes with StatReloader
+INFO 2025-10-02 14:04:37,802 basehttp 12672 20732 "GET /sandbox/ HTTP/1.1" 200 42174
+INFO 2025-10-02 14:04:38,339 basehttp 12672 11076 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 14:04:42,266 basehttp 12672 20732 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 14:05:08,112 basehttp 12672 11076 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:05:29,021 basehttp 12672 20732 "POST /enhanced-chat/send/ HTTP/1.1" 200 577
+INFO 2025-10-02 14:05:38,109 basehttp 12672 11076 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:05:54,156 basehttp 12672 13768 "GET /sandbox/ HTTP/1.1" 200 42174
+INFO 2025-10-02 14:05:54,244 basehttp 12672 13768 "GET /static/analytics/js/htmx-config.js HTTP/1.1" 200 6223
+INFO 2025-10-02 14:05:54,246 basehttp 12672 8492 "GET /static/analytics/js/main.js HTTP/1.1" 200 18510
+INFO 2025-10-02 14:05:54,479 basehttp 12672 13768 "GET /api/datasets/ HTTP/1.1" 200 1762
+WARNING 2025-10-02 14:05:54,525 log 12672 8492 Not Found: /favicon.ico
+WARNING 2025-10-02 14:05:54,528 basehttp 12672 8492 "GET /favicon.ico HTTP/1.1" 404 10233
+INFO 2025-10-02 14:06:02,260 basehttp 12672 13768 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 14:06:24,398 basehttp 12672 8492 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:06:32,409 basehttp 12672 13768 "POST /enhanced-chat/send/ HTTP/1.1" 200 575
+INFO 2025-10-02 14:07:50,140 autoreload 22472 6652 Watching for file changes with StatReloader
+INFO 2025-10-02 14:08:25,053 basehttp 22472 1888 "GET /sandbox/ HTTP/1.1" 200 42174
+INFO 2025-10-02 14:08:25,139 basehttp 22472 1888 "GET /static/analytics/js/htmx-config.js HTTP/1.1" 200 6223
+INFO 2025-10-02 14:08:25,140 basehttp 22472 1888 - Broken pipe from ('127.0.0.1', 57867)
+INFO 2025-10-02 14:08:25,670 basehttp 22472 4928 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 14:08:29,175 basehttp 22472 4928 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 14:08:55,501 basehttp 22472 4928 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:09:20,997 basehttp 22472 4928 "POST /enhanced-chat/send/ HTTP/1.1" 200 5325
+INFO 2025-10-02 14:09:25,504 basehttp 22472 4928 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:09:31,227 basehttp 22472 12876 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 65275
+INFO 2025-10-02 14:09:31,268 basehttp 22472 12876 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+WARNING 2025-10-02 14:09:31,581 log 22472 17452 Not Found: /favicon.ico
+WARNING 2025-10-02 14:09:31,581 basehttp 22472 17452 "GET /favicon.ico HTTP/1.1" 404 10233
+INFO 2025-10-02 14:09:33,264 basehttp 22472 12876 "GET /admin/analytics/sandboxexecution/120/change/ HTTP/1.1" 200 41802
+INFO 2025-10-02 14:09:33,303 basehttp 22472 17452 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 14:09:55,978 basehttp 22472 4928 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:10:05,119 autoreload 22472 6652 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 14:10:10,363 autoreload 20828 20620 Watching for file changes with StatReloader
+INFO 2025-10-02 14:10:40,911 basehttp 20828 5904 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:10:49,194 autoreload 20828 20620 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 14:10:52,775 autoreload 23032 8008 Watching for file changes with StatReloader
+INFO 2025-10-02 14:11:11,202 basehttp 23032 19196 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:11:18,070 basehttp 23032 15752 "GET /admin/analytics/sandboxexecution/120/change/ HTTP/1.1" 200 41802
+INFO 2025-10-02 14:11:18,136 basehttp 23032 15752 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 14:11:20,790 basehttp 23032 15752 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 65273
+INFO 2025-10-02 14:11:21,525 basehttp 23032 16964 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 14:11:28,166 basehttp 23032 19196 "GET /sandbox/ HTTP/1.1" 200 42174
+INFO 2025-10-02 14:11:29,127 basehttp 23032 19196 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 14:11:31,123 autoreload 23032 8008 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 14:11:34,543 autoreload 15648 8332 Watching for file changes with StatReloader
+INFO 2025-10-02 14:11:56,753 autoreload 15648 8332 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 14:11:58,824 autoreload 18828 18232 Watching for file changes with StatReloader
+INFO 2025-10-02 14:12:09,670 basehttp 18828 18892 "GET /sandbox/ HTTP/1.1" 200 42174
+INFO 2025-10-02 14:12:10,055 basehttp 18828 18892 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 14:12:14,304 basehttp 18828 18892 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 14:12:40,189 basehttp 18828 7516 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:12:41,528 basehttp 18828 18892 "POST /enhanced-chat/send/ HTTP/1.1" 200 4932
+INFO 2025-10-02 14:12:51,539 basehttp 18828 8444 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 65269
+INFO 2025-10-02 14:12:51,572 basehttp 18828 8444 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 14:12:53,102 basehttp 18828 8444 "GET /admin/analytics/sandboxexecution/123/change/ HTTP/1.1" 200 41715
+INFO 2025-10-02 14:12:53,247 basehttp 18828 20452 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 14:13:10,616 basehttp 18828 18892 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:13:26,709 autoreload 18828 18232 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 14:13:31,559 autoreload 12784 11436 Watching for file changes with StatReloader
+INFO 2025-10-02 14:14:09,894 autoreload 12784 11436 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 14:14:14,026 autoreload 9076 19052 Watching for file changes with StatReloader
+INFO 2025-10-02 14:14:40,777 basehttp 9076 13844 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:15:10,637 basehttp 9076 13844 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:15:21,687 autoreload 9076 19052 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 14:15:25,798 autoreload 21564 12260 Watching for file changes with StatReloader
+INFO 2025-10-02 14:15:43,640 basehttp 21564 15504 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:16:05,728 autoreload 21564 12260 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 14:16:09,590 autoreload 16228 144 Watching for file changes with StatReloader
+INFO 2025-10-02 14:16:31,636 basehttp 16228 9172 "GET /sandbox/ HTTP/1.1" 200 42174
+INFO 2025-10-02 14:16:31,969 basehttp 16228 19008 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 14:16:34,509 basehttp 16228 9172 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 14:16:35,912 basehttp 16228 9172 "GET /sandbox/ HTTP/1.1" 200 42174
+INFO 2025-10-02 14:16:36,087 basehttp 16228 19008 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 14:16:37,283 basehttp 16228 9172 "GET /sandbox/ HTTP/1.1" 200 42174
+INFO 2025-10-02 14:16:37,440 basehttp 16228 19008 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 14:16:39,029 basehttp 16228 9172 "GET /sandbox/ HTTP/1.1" 200 42174
+INFO 2025-10-02 14:16:39,236 basehttp 16228 19008 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 14:16:41,152 basehttp 16228 9172 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 14:17:09,208 basehttp 16228 19008 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:17:15,095 basehttp 16228 9172 "POST /enhanced-chat/send/ HTTP/1.1" 200 4845
+INFO 2025-10-02 14:17:30,265 basehttp 16228 3656 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 65256
+INFO 2025-10-02 14:17:30,311 basehttp 16228 3656 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+WARNING 2025-10-02 14:17:30,612 log 16228 9368 Not Found: /favicon.ico
+WARNING 2025-10-02 14:17:30,612 basehttp 16228 9368 "GET /favicon.ico HTTP/1.1" 404 10233
+INFO 2025-10-02 14:17:37,003 basehttp 16228 3656 "GET /admin/analytics/sandboxexecution/128/change/ HTTP/1.1" 200 43420
+INFO 2025-10-02 14:17:37,042 basehttp 16228 9368 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 14:17:39,551 basehttp 16228 19008 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:18:10,077 basehttp 16228 19008 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:18:40,080 basehttp 16228 19008 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:19:10,372 autoreload 16228 144 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 14:19:14,800 autoreload 24196 1652 Watching for file changes with StatReloader
+INFO 2025-10-02 14:19:40,769 basehttp 24196 18744 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:20:11,272 basehttp 24196 18744 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:20:41,280 basehttp 24196 18744 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:21:11,285 basehttp 24196 18744 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:21:41,275 basehttp 24196 18744 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:22:11,573 basehttp 24196 18744 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:22:42,023 basehttp 24196 18744 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:23:12,022 basehttp 24196 18744 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:23:42,605 basehttp 24196 18648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:23:49,703 basehttp 24196 18744 "POST /enhanced-chat/send/ HTTP/1.1" 200 4816
+INFO 2025-10-02 14:24:00,306 basehttp 24196 7200 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 65246
+INFO 2025-10-02 14:24:00,351 basehttp 24196 7200 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+WARNING 2025-10-02 14:24:00,573 log 24196 24276 Not Found: /favicon.ico
+WARNING 2025-10-02 14:24:00,575 basehttp 24196 24276 "GET /favicon.ico HTTP/1.1" 404 10233
+INFO 2025-10-02 14:24:02,461 basehttp 24196 7200 "GET /admin/analytics/sandboxexecution/129/change/ HTTP/1.1" 200 40964
+INFO 2025-10-02 14:24:02,499 basehttp 24196 24276 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 14:24:13,149 basehttp 24196 18744 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:24:43,166 basehttp 24196 18744 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:25:13,174 basehttp 24196 18648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:25:14,456 basehttp 24196 18744 "POST /enhanced-chat/send/ HTTP/1.1" 200 575
+INFO 2025-10-02 14:25:35,743 basehttp 24196 18744 "GET /sandbox/ HTTP/1.1" 200 42174
+WARNING 2025-10-02 14:25:36,621 log 24196 18744 Not Found: /favicon.ico
+INFO 2025-10-02 14:25:36,623 basehttp 24196 18744 - Broken pipe from ('127.0.0.1', 59516)
+INFO 2025-10-02 14:25:36,640 basehttp 24196 18648 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 14:25:45,392 basehttp 24196 18648 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 14:26:06,716 basehttp 24196 9128 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:26:22,007 basehttp 24196 18648 "POST /enhanced-chat/send/ HTTP/1.1" 200 8806
+INFO 2025-10-02 14:26:37,267 basehttp 24196 18648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:26:38,272 basehttp 24196 15024 "GET /admin/analytics/sandboxexecution/129/change/ HTTP/1.1" 200 41039
+INFO 2025-10-02 14:26:38,339 basehttp 24196 15024 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+WARNING 2025-10-02 14:26:38,625 log 24196 8204 Not Found: /favicon.ico
+WARNING 2025-10-02 14:26:38,627 basehttp 24196 8204 "GET /favicon.ico HTTP/1.1" 404 10233
+INFO 2025-10-02 14:26:40,578 basehttp 24196 15024 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 65240
+INFO 2025-10-02 14:26:44,278 basehttp 24196 15024 "GET /admin/analytics/sandboxexecution/132/change/ HTTP/1.1" 200 40466
+INFO 2025-10-02 14:26:44,339 basehttp 24196 8204 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 14:27:07,277 basehttp 24196 18648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:27:37,275 basehttp 24196 18648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:28:07,275 basehttp 24196 18648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:28:37,273 basehttp 24196 18648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:29:07,283 basehttp 24196 18648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:29:37,293 basehttp 24196 18648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:30:07,289 basehttp 24196 18648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:30:37,309 basehttp 24196 18648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:31:07,310 basehttp 24196 18648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:31:37,311 basehttp 24196 18648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:32:07,337 basehttp 24196 18648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:32:37,336 basehttp 24196 18648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:33:07,343 basehttp 24196 18648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:33:37,345 basehttp 24196 18648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:34:07,450 basehttp 24196 18648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:34:37,350 basehttp 24196 18648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:35:08,020 basehttp 24196 18648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:35:38,058 basehttp 24196 18648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:36:15,203 basehttp 24196 18648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:36:47,979 basehttp 24196 18648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:36:56,879 basehttp 24196 18648 "GET /sandbox/ HTTP/1.1" 200 42174
+INFO 2025-10-02 14:36:57,133 basehttp 24196 18648 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 14:37:01,053 basehttp 24196 18648 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 14:37:27,319 basehttp 24196 18988 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:37:57,153 basehttp 24196 18988 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:38:03,732 basehttp 24196 18648 "POST /enhanced-chat/send/ HTTP/1.1" 200 11422
+INFO 2025-10-02 14:38:27,156 basehttp 24196 18648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:38:55,028 basehttp 24196 18648 "POST /enhanced-chat/send/ HTTP/1.1" 200 6305
+INFO 2025-10-02 14:38:57,171 basehttp 24196 18648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:39:05,845 basehttp 24196 20620 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 65204
+INFO 2025-10-02 14:39:05,896 basehttp 24196 20620 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+WARNING 2025-10-02 14:39:06,191 log 24196 9100 Not Found: /favicon.ico
+WARNING 2025-10-02 14:39:06,193 basehttp 24196 9100 "GET /favicon.ico HTTP/1.1" 404 10233
+INFO 2025-10-02 14:39:08,378 basehttp 24196 20620 "GET /admin/analytics/sandboxexecution/141/change/ HTTP/1.1" 200 39174
+INFO 2025-10-02 14:39:08,457 basehttp 24196 9100 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 14:39:27,477 basehttp 24196 18648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:39:57,903 basehttp 24196 18648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:40:28,388 basehttp 24196 18648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:40:58,887 basehttp 24196 18648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:41:29,127 basehttp 24196 18648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:41:33,058 autoreload 24196 1652 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 14:41:38,804 autoreload 23720 8060 Watching for file changes with StatReloader
+INFO 2025-10-02 14:41:59,811 basehttp 23720 23536 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:42:29,961 basehttp 23720 23536 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:43:00,385 basehttp 23720 23536 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:43:12,575 autoreload 23720 8060 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 14:43:19,046 autoreload 22024 3744 Watching for file changes with StatReloader
+INFO 2025-10-02 14:44:01,489 basehttp 22024 2124 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:44:04,095 autoreload 22024 3744 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 14:44:08,572 autoreload 18040 20584 Watching for file changes with StatReloader
+INFO 2025-10-02 14:44:33,686 basehttp 18040 22800 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:45:01,855 basehttp 18040 22800 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:45:32,223 basehttp 18040 22800 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:45:53,912 autoreload 18040 20584 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 14:45:59,053 autoreload 12636 23972 Watching for file changes with StatReloader
+INFO 2025-10-02 14:46:33,102 basehttp 12636 19924 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:47:03,379 basehttp 12636 19924 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:47:33,694 basehttp 12636 19924 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:48:04,075 basehttp 12636 19924 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:48:34,268 basehttp 12636 19924 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:49:04,699 basehttp 12636 19924 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:49:34,691 basehttp 12636 19924 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:50:04,707 basehttp 12636 19924 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:50:34,690 basehttp 12636 19924 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:51:04,704 basehttp 12636 19924 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:51:11,393 autoreload 12636 23972 F:\analytical\analytical\analytics\services\chat_service.py changed, reloading.
+INFO 2025-10-02 14:51:15,122 autoreload 24420 17576 Watching for file changes with StatReloader
+INFO 2025-10-02 14:51:34,939 basehttp 24420 21204 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:51:43,707 autoreload 24420 17576 F:\analytical\analytical\analytics\services\chat_service.py changed, reloading.
+INFO 2025-10-02 14:51:54,697 autoreload 15540 5428 Watching for file changes with StatReloader
+INFO 2025-10-02 14:52:34,809 basehttp 15540 20212 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:53:04,723 basehttp 15540 20212 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:53:34,720 basehttp 15540 20212 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:54:04,721 basehttp 15540 20212 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:54:34,739 basehttp 15540 20212 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:54:46,282 autoreload 15540 5428 F:\analytical\analytical\analytics\services\chat_service.py changed, reloading.
+INFO 2025-10-02 14:54:52,236 autoreload 12936 9120 Watching for file changes with StatReloader
+INFO 2025-10-02 14:55:09,344 basehttp 12936 1800 "GET /sandbox/ HTTP/1.1" 200 42174
+INFO 2025-10-02 14:55:10,097 basehttp 12936 13256 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 14:55:15,815 basehttp 12936 1800 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 14:55:39,829 basehttp 12936 13256 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:55:44,592 basehttp 12936 1800 "POST /enhanced-chat/send/ HTTP/1.1" 200 9980
+INFO 2025-10-02 14:55:52,742 basehttp 12936 20372 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 65196
+INFO 2025-10-02 14:55:52,786 basehttp 12936 20372 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+WARNING 2025-10-02 14:55:52,965 log 12936 12708 Not Found: /favicon.ico
+WARNING 2025-10-02 14:55:52,965 basehttp 12936 12708 "GET /favicon.ico HTTP/1.1" 404 10233
+INFO 2025-10-02 14:55:55,543 basehttp 12936 20372 "GET /admin/analytics/sandboxexecution/142/change/ HTTP/1.1" 200 39248
+INFO 2025-10-02 14:55:55,577 basehttp 12936 12708 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 14:56:10,538 basehttp 12936 13256 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:56:40,971 basehttp 12936 13256 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:57:11,560 basehttp 12936 13256 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:57:41,803 basehttp 12936 13256 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:57:42,966 autoreload 12936 9120 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 14:57:49,763 autoreload 19116 23712 Watching for file changes with StatReloader
+INFO 2025-10-02 14:58:17,904 basehttp 19116 6008 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:58:45,194 basehttp 19116 6008 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 14:59:12,898 autoreload 19116 23712 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 14:59:17,059 autoreload 16756 21072 Watching for file changes with StatReloader
+INFO 2025-10-02 14:59:50,125 basehttp 16756 20596 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:00:20,806 basehttp 16756 20596 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:00:20,862 autoreload 16756 21072 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 15:00:22,791 autoreload 21996 18184 Watching for file changes with StatReloader
+INFO 2025-10-02 15:00:50,890 basehttp 21996 23360 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:00:52,313 basehttp 21996 23360 "GET /sandbox/ HTTP/1.1" 200 42174
+INFO 2025-10-02 15:00:52,822 basehttp 21996 23360 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 15:01:20,781 basehttp 21996 23360 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 15:01:22,813 basehttp 21996 23360 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:01:53,257 basehttp 21996 14152 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:01:54,664 basehttp 21996 8360 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 65188
+INFO 2025-10-02 15:01:55,097 basehttp 21996 23360 "POST /enhanced-chat/send/ HTTP/1.1" 200 12404
+INFO 2025-10-02 15:01:58,071 basehttp 21996 8360 "GET /admin/analytics/sandboxexecution/143/change/ HTTP/1.1" 200 39323
+INFO 2025-10-02 15:01:58,118 basehttp 21996 8360 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 15:02:23,173 basehttp 21996 23360 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:02:53,178 basehttp 21996 23360 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:03:23,186 basehttp 21996 23360 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:03:53,188 basehttp 21996 23360 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:04:23,186 basehttp 21996 23360 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:04:53,226 basehttp 21996 23360 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:05:17,229 autoreload 21996 18184 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 15:05:24,692 autoreload 20532 2552 Watching for file changes with StatReloader
+INFO 2025-10-02 15:05:54,340 basehttp 20532 15316 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:06:01,830 autoreload 20532 2552 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 15:06:06,380 autoreload 11008 19924 Watching for file changes with StatReloader
+INFO 2025-10-02 15:06:54,062 basehttp 11008 16448 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:07:24,595 basehttp 11008 16448 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:07:55,205 basehttp 11008 16448 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:08:07,441 autoreload 11008 19924 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 15:08:11,711 autoreload 5576 19700 Watching for file changes with StatReloader
+INFO 2025-10-02 15:08:46,503 autoreload 5576 19700 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 15:08:51,332 autoreload 12516 2692 Watching for file changes with StatReloader
+INFO 2025-10-02 15:09:27,244 basehttp 12516 22840 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:09:29,737 basehttp 12516 22840 "GET /sandbox/ HTTP/1.1" 200 42174
+INFO 2025-10-02 15:09:30,271 basehttp 12516 22840 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 15:09:32,776 autoreload 12516 2692 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 15:09:36,623 autoreload 2092 20176 Watching for file changes with StatReloader
+INFO 2025-10-02 15:09:48,159 basehttp 2092 22284 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 15:10:00,262 basehttp 2092 18416 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:10:16,368 basehttp 2092 22284 "POST /enhanced-chat/send/ HTTP/1.1" 200 8836
+INFO 2025-10-02 15:10:30,229 basehttp 2092 18416 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:10:31,009 basehttp 2092 7452 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 65183
+WARNING 2025-10-02 15:10:31,108 log 2092 7452 Not Found: /favicon.ico
+WARNING 2025-10-02 15:10:31,109 basehttp 2092 7452 "GET /favicon.ico HTTP/1.1" 404 10233
+INFO 2025-10-02 15:10:37,249 basehttp 2092 7452 "GET /admin/analytics/sandboxexecution/144/change/ HTTP/1.1" 200 39398
+INFO 2025-10-02 15:10:37,291 basehttp 2092 7452 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 15:10:46,429 basehttp 2092 7452 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 65183
+INFO 2025-10-02 15:10:47,980 basehttp 2092 7452 "GET /admin/analytics/sandboxexecution/145/change/ HTTP/1.1" 200 40006
+INFO 2025-10-02 15:10:48,012 basehttp 2092 7452 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 15:11:00,208 basehttp 2092 18416 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:11:09,601 basehttp 2092 22284 "GET /sandbox/ HTTP/1.1" 200 42174
+INFO 2025-10-02 15:11:09,787 basehttp 2092 18416 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 15:11:11,673 basehttp 2092 22284 "GET /sandbox/ HTTP/1.1" 200 42174
+INFO 2025-10-02 15:11:11,821 basehttp 2092 18416 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 15:11:12,721 basehttp 2092 22284 "GET /sandbox/ HTTP/1.1" 200 42174
+INFO 2025-10-02 15:11:12,914 basehttp 2092 18416 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 15:11:13,099 basehttp 2092 22284 "GET /sandbox/ HTTP/1.1" 200 42174
+INFO 2025-10-02 15:11:13,235 basehttp 2092 18416 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 15:11:15,237 basehttp 2092 22284 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 15:11:23,686 basehttp 2092 7452 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 65183
+INFO 2025-10-02 15:11:44,325 basehttp 2092 18416 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:11:47,238 basehttp 2092 22284 "POST /enhanced-chat/send/ HTTP/1.1" 200 6896
+INFO 2025-10-02 15:11:51,240 basehttp 2092 7452 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 65183
+INFO 2025-10-02 15:11:51,286 basehttp 2092 7452 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 15:11:54,590 basehttp 2092 7452 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 65183
+INFO 2025-10-02 15:11:54,723 basehttp 2092 10564 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 15:12:00,707 basehttp 2092 7452 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 65183
+INFO 2025-10-02 15:12:00,736 basehttp 2092 10564 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 15:12:12,290 basehttp 2092 22284 "GET /sandbox/ HTTP/1.1" 200 42174
+INFO 2025-10-02 15:12:12,672 basehttp 2092 18416 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 15:12:16,907 basehttp 2092 22284 "GET /sandbox/ HTTP/1.1" 200 42174
+INFO 2025-10-02 15:12:17,093 basehttp 2092 18416 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 15:12:18,014 basehttp 2092 22284 "GET /sandbox/ HTTP/1.1" 200 42174
+INFO 2025-10-02 15:12:18,198 basehttp 2092 18416 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 15:12:18,446 basehttp 2092 22284 "GET /sandbox/ HTTP/1.1" 200 42174
+INFO 2025-10-02 15:12:18,639 basehttp 2092 18416 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 15:12:23,955 basehttp 2092 22284 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 15:12:48,632 basehttp 2092 18416 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:13:11,845 basehttp 2092 22284 "POST /enhanced-chat/send/ HTTP/1.1" 200 574
+INFO 2025-10-02 15:13:18,630 basehttp 2092 18416 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:13:23,458 basehttp 2092 7452 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 65183
+INFO 2025-10-02 15:13:23,500 basehttp 2092 10564 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 15:13:33,904 basehttp 2092 22284 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 15:13:36,888 basehttp 2092 22284 "GET /sandbox/ HTTP/1.1" 200 42174
+INFO 2025-10-02 15:13:37,102 basehttp 2092 18416 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 15:13:39,158 basehttp 2092 22284 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 15:13:43,343 basehttp 2092 22284 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 15:13:45,472 basehttp 2092 22284 "GET /sandbox/ HTTP/1.1" 200 42174
+INFO 2025-10-02 15:13:45,626 basehttp 2092 18416 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 15:13:47,998 basehttp 2092 22284 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 15:14:15,634 basehttp 2092 18416 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:14:43,398 basehttp 2092 22284 "POST /enhanced-chat/send/ HTTP/1.1" 200 27056
+INFO 2025-10-02 15:14:45,628 basehttp 2092 18416 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:15:03,548 basehttp 2092 7452 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 65183
+INFO 2025-10-02 15:15:03,603 basehttp 2092 10564 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+WARNING 2025-10-02 15:15:03,710 log 2092 10564 Not Found: /favicon.ico
+WARNING 2025-10-02 15:15:03,710 basehttp 2092 10564 "GET /favicon.ico HTTP/1.1" 404 10233
+INFO 2025-10-02 15:15:06,282 basehttp 2092 7452 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 65183
+INFO 2025-10-02 15:15:06,337 basehttp 2092 10564 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 15:15:15,851 basehttp 2092 18416 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:15:46,685 basehttp 2092 18416 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:16:17,436 basehttp 2092 18416 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:16:26,852 basehttp 2092 7452 "GET /admin/analytics/vectornote/ HTTP/1.1" 200 75397
+INFO 2025-10-02 15:16:26,954 basehttp 2092 10564 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 15:16:33,286 basehttp 2092 7452 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 65183
+INFO 2025-10-02 15:16:33,361 basehttp 2092 10564 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 15:16:36,000 basehttp 2092 7452 "GET /admin/analytics/analysissession/ HTTP/1.1" 200 70836
+INFO 2025-10-02 15:16:36,054 basehttp 2092 10564 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 15:16:36,102 basehttp 2092 10564 "GET /static/admin/img/icon-yes.svg HTTP/1.1" 200 436
+INFO 2025-10-02 15:16:36,102 basehttp 2092 7452 "GET /static/admin/img/icon-no.svg HTTP/1.1" 200 560
+INFO 2025-10-02 15:16:41,476 basehttp 2092 7452 "GET /admin/analytics/analysisresult/ HTTP/1.1" 200 28368
+INFO 2025-10-02 15:16:41,558 basehttp 2092 10564 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 15:16:47,819 basehttp 2092 18416 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:17:18,196 basehttp 2092 18416 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:17:48,597 basehttp 2092 18416 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:18:03,669 basehttp 2092 18416 "GET /sandbox/ HTTP/1.1" 200 42174
+INFO 2025-10-02 15:18:04,043 basehttp 2092 18416 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 15:18:22,737 basehttp 2092 18416 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 15:18:34,130 basehttp 2092 16160 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:19:00,521 basehttp 2092 18416 "POST /enhanced-chat/send/ HTTP/1.1" 200 14602
+INFO 2025-10-02 15:19:04,042 basehttp 2092 18416 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:19:07,257 basehttp 2092 24380 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 65186
+INFO 2025-10-02 15:19:07,305 basehttp 2092 24380 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 15:19:14,851 basehttp 2092 24380 "GET /admin/analytics/sandboxexecution/146/change/ HTTP/1.1" 200 39675
+INFO 2025-10-02 15:19:14,892 basehttp 2092 24380 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 15:19:21,279 basehttp 2092 24380 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 65186
+INFO 2025-10-02 15:19:34,051 basehttp 2092 18416 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:20:04,135 basehttp 2092 18416 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:20:34,090 basehttp 2092 18416 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:20:44,223 autoreload 2092 20176 F:\analytical\analytical\analytics\services\chat_service.py changed, reloading.
+INFO 2025-10-02 15:20:49,964 autoreload 8392 20404 Watching for file changes with StatReloader
+INFO 2025-10-02 15:21:19,765 autoreload 8392 20404 F:\analytical\analytical\analytics\services\code_extraction_service.py changed, reloading.
+INFO 2025-10-02 15:21:23,763 autoreload 656 14064 Watching for file changes with StatReloader
+INFO 2025-10-02 15:22:04,299 basehttp 656 15716 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:22:26,641 autoreload 656 14064 F:\analytical\analytical\analytics\services\chat_service.py changed, reloading.
+INFO 2025-10-02 15:22:30,263 autoreload 3840 18600 Watching for file changes with StatReloader
+INFO 2025-10-02 15:23:04,299 basehttp 3840 3508 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:23:26,660 autoreload 3840 18600 F:\analytical\analytical\analytics\services\code_extraction_service.py changed, reloading.
+INFO 2025-10-02 15:23:29,667 autoreload 14672 23256 Watching for file changes with StatReloader
+INFO 2025-10-02 15:23:40,660 basehttp 14672 18924 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:24:04,130 basehttp 14672 18924 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:24:34,130 basehttp 14672 18924 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:25:04,149 basehttp 14672 18924 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:25:34,141 basehttp 14672 18924 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:26:04,160 basehttp 14672 18924 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:26:34,171 basehttp 14672 18924 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:27:04,187 basehttp 14672 18924 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:27:34,191 basehttp 14672 18924 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:28:04,208 basehttp 14672 18924 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:28:34,209 basehttp 14672 18924 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:29:04,221 basehttp 14672 18924 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:29:34,220 basehttp 14672 18924 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:30:04,219 basehttp 14672 18924 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:30:34,222 basehttp 14672 18924 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:31:04,221 basehttp 14672 18924 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:31:34,227 basehttp 14672 18924 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:32:04,231 basehttp 14672 18924 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:32:34,240 basehttp 14672 18924 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:33:04,243 basehttp 14672 18924 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:33:34,254 basehttp 14672 18924 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:34:04,416 basehttp 14672 18924 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:34:34,257 basehttp 14672 18924 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:35:04,260 basehttp 14672 18924 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:35:34,274 basehttp 14672 18924 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 15:36:04,286 basehttp 14672 18924 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:31:33,261 basehttp 14672 13064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:32:01,520 basehttp 14672 13064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:32:31,518 basehttp 14672 13064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:32:57,047 basehttp 14672 13064 "GET /sandbox/ HTTP/1.1" 200 42174
+INFO 2025-10-02 18:32:58,532 basehttp 14672 13064 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 18:33:02,099 autoreload 14672 23256 F:\analytical\analytical\analytics\services\code_extraction_service.py changed, reloading.
+INFO 2025-10-02 18:33:10,282 autoreload 9304 20508 Watching for file changes with StatReloader
+INFO 2025-10-02 18:33:29,233 basehttp 9304 12128 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 65189
+INFO 2025-10-02 18:33:29,294 basehttp 9304 12128 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 18:33:29,451 basehttp 9304 21056 "GET /api/health/ HTTP/1.1" 200 89
+WARNING 2025-10-02 18:33:29,573 log 9304 21292 Not Found: /favicon.ico
+WARNING 2025-10-02 18:33:29,573 basehttp 9304 21292 "GET /favicon.ico HTTP/1.1" 404 10233
+INFO 2025-10-02 18:33:32,939 basehttp 9304 12128 "GET /admin/analytics/sandboxexecution/147/change/ HTTP/1.1" 200 44513
+INFO 2025-10-02 18:33:32,995 basehttp 9304 21292 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 18:33:59,466 basehttp 9304 21056 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:34:05,602 autoreload 9304 20508 F:\analytical\analytical\analytics\services\chat_service.py changed, reloading.
+INFO 2025-10-02 18:34:08,023 autoreload 10680 12768 Watching for file changes with StatReloader
+INFO 2025-10-02 18:34:29,630 basehttp 10680 16160 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:34:59,897 basehttp 10680 16160 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:35:30,177 basehttp 10680 16160 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:36:00,575 basehttp 10680 16160 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:36:30,802 basehttp 10680 16160 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:37:01,007 basehttp 10680 16160 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:37:31,194 basehttp 10680 16160 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:38:01,468 basehttp 10680 16160 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:38:31,660 basehttp 10680 16160 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:39:00,492 basehttp 10680 1876 "GET /admin/analytics/sandboxexecution/147/change/ HTTP/1.1" 200 44513
+INFO 2025-10-02 18:39:00,611 basehttp 10680 1876 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+WARNING 2025-10-02 18:39:00,981 log 10680 24596 Not Found: /favicon.ico
+WARNING 2025-10-02 18:39:00,981 basehttp 10680 24596 "GET /favicon.ico HTTP/1.1" 404 10233
+INFO 2025-10-02 18:39:01,674 basehttp 10680 16160 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:39:31,672 basehttp 10680 16160 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:39:32,989 basehttp 10680 16160 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 18:40:01,791 basehttp 10680 16832 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:40:13,466 basehttp 10680 16160 "POST /enhanced-chat/send/ HTTP/1.1" 200 7697
+INFO 2025-10-02 18:40:31,690 basehttp 10680 16160 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:40:40,127 basehttp 10680 1876 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 65201
+INFO 2025-10-02 18:40:40,176 basehttp 10680 24596 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+WARNING 2025-10-02 18:40:40,277 log 10680 24596 Not Found: /favicon.ico
+WARNING 2025-10-02 18:40:40,278 basehttp 10680 24596 "GET /favicon.ico HTTP/1.1" 404 10233
+INFO 2025-10-02 18:40:42,119 basehttp 10680 1876 "GET /admin/analytics/sandboxexecution/150/change/ HTTP/1.1" 200 39734
+INFO 2025-10-02 18:40:42,159 basehttp 10680 24596 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 18:41:01,848 basehttp 10680 16160 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:41:32,903 basehttp 10680 16160 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:42:02,422 basehttp 10680 16160 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:42:33,406 basehttp 10680 16160 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:43:04,453 basehttp 10680 16160 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:43:04,546 autoreload 10680 12768 F:\analytical\analytical\analytics\services\code_extraction_service.py changed, reloading.
+INFO 2025-10-02 18:43:13,513 autoreload 13412 23920 Watching for file changes with StatReloader
+INFO 2025-10-02 18:44:07,168 basehttp 13412 19468 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:44:42,098 basehttp 13412 19468 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:44:53,759 autoreload 13412 23920 F:\analytical\analytical\analytics\services\code_extraction_service.py changed, reloading.
+INFO 2025-10-02 18:45:02,475 autoreload 25292 21340 Watching for file changes with StatReloader
+INFO 2025-10-02 18:45:48,459 basehttp 25292 8024 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:45:56,977 autoreload 25292 21340 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 18:46:01,095 autoreload 17584 5484 Watching for file changes with StatReloader
+INFO 2025-10-02 18:46:36,675 autoreload 17584 5484 F:\analytical\analytical\analytics\services\chat_service.py changed, reloading.
+INFO 2025-10-02 18:46:41,150 autoreload 3436 19508 Watching for file changes with StatReloader
+INFO 2025-10-02 18:47:34,825 basehttp 3436 15700 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:48:06,818 basehttp 3436 15700 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:48:35,019 autoreload 3436 19508 F:\analytical\analytical\analytics\services\chat_service.py changed, reloading.
+INFO 2025-10-02 18:48:38,776 autoreload 18740 1480 Watching for file changes with StatReloader
+INFO 2025-10-02 18:49:10,861 basehttp 18740 2508 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:49:12,637 basehttp 18740 2508 "GET /sandbox/ HTTP/1.1" 200 42174
+INFO 2025-10-02 18:49:13,105 basehttp 18740 2508 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 18:49:23,606 basehttp 18740 2508 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 18:49:43,159 basehttp 18740 12792 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:49:55,129 basehttp 18740 2508 "POST /enhanced-chat/send/ HTTP/1.1" 200 575
+INFO 2025-10-02 18:50:13,098 basehttp 18740 2508 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:50:22,667 basehttp 18740 2508 "GET /sandbox/ HTTP/1.1" 200 42174
+INFO 2025-10-02 18:50:22,914 basehttp 18740 2508 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 18:50:24,630 basehttp 18740 2508 "GET /sandbox/ HTTP/1.1" 200 42174
+INFO 2025-10-02 18:50:24,856 basehttp 18740 2508 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 18:50:29,970 basehttp 18740 2508 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 18:50:54,823 basehttp 18740 12792 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:51:24,586 basehttp 18740 2508 "POST /enhanced-chat/send/ HTTP/1.1" 200 16705
+INFO 2025-10-02 18:51:24,823 basehttp 18740 2508 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:51:39,391 basehttp 18740 14480 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 65231
+INFO 2025-10-02 18:51:39,444 basehttp 18740 14480 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+WARNING 2025-10-02 18:51:39,741 log 18740 24908 Not Found: /favicon.ico
+WARNING 2025-10-02 18:51:39,741 basehttp 18740 24908 "GET /favicon.ico HTTP/1.1" 404 10233
+INFO 2025-10-02 18:51:43,894 basehttp 18740 14480 "GET /admin/analytics/sandboxexecution/154/change/ HTTP/1.1" 200 43368
+INFO 2025-10-02 18:51:43,941 basehttp 18740 24908 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 18:51:55,060 basehttp 18740 2508 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:52:25,049 basehttp 18740 2508 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:52:55,238 basehttp 18740 8232 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:53:25,072 basehttp 18740 8232 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:53:26,879 basehttp 18740 2508 "POST /enhanced-chat/send/ HTTP/1.1" 200 11463
+INFO 2025-10-02 18:53:42,314 basehttp 18740 25412 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 65243
+INFO 2025-10-02 18:53:42,362 basehttp 18740 25412 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+WARNING 2025-10-02 18:53:42,554 log 18740 328 Not Found: /favicon.ico
+WARNING 2025-10-02 18:53:42,555 basehttp 18740 328 "GET /favicon.ico HTTP/1.1" 404 10233
+INFO 2025-10-02 18:53:48,233 basehttp 18740 25412 "GET /admin/analytics/sandboxexecution/157/change/ HTTP/1.1" 200 43325
+INFO 2025-10-02 18:53:48,276 basehttp 18740 328 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+WARNING 2025-10-02 18:53:48,371 log 18740 328 Not Found: /favicon.ico
+WARNING 2025-10-02 18:53:48,373 basehttp 18740 328 "GET /favicon.ico HTTP/1.1" 404 10233
+INFO 2025-10-02 18:53:56,046 basehttp 18740 2508 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:54:26,053 basehttp 18740 2508 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:54:56,076 basehttp 18740 2508 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:55:26,088 basehttp 18740 2508 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:55:56,080 basehttp 18740 2508 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:56:26,091 basehttp 18740 2508 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:56:56,458 basehttp 18740 2508 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:57:26,870 basehttp 18740 2508 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:57:57,744 basehttp 18740 2508 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:58:00,922 autoreload 18740 1480 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 18:58:05,368 autoreload 22608 16884 Watching for file changes with StatReloader
+INFO 2025-10-02 18:58:21,780 autoreload 22608 16884 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 18:58:26,866 autoreload 12244 21564 Watching for file changes with StatReloader
+INFO 2025-10-02 18:58:46,441 autoreload 12244 21564 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 18:58:48,810 autoreload 21652 13744 Watching for file changes with StatReloader
+INFO 2025-10-02 18:59:00,156 basehttp 21652 3580 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 18:59:30,598 basehttp 21652 3580 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:00:05,570 basehttp 21652 3580 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:00:33,491 basehttp 21652 3580 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:01:04,173 basehttp 21652 3580 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:01:35,924 basehttp 21652 3580 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:02:06,907 basehttp 21652 3580 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:02:37,528 basehttp 21652 3580 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:03:08,209 basehttp 21652 3580 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:03:40,954 basehttp 21652 3580 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:03:46,870 basehttp 21652 3580 "GET /sandbox/ HTTP/1.1" 200 42174
+INFO 2025-10-02 19:03:47,927 basehttp 21652 3580 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 19:03:52,750 basehttp 21652 3580 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 19:04:17,863 basehttp 21652 3580 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:04:47,869 basehttp 21652 3580 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:05:17,892 basehttp 21652 3580 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:05:47,895 basehttp 21652 3580 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:06:18,304 basehttp 21652 3580 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:06:49,017 basehttp 21652 3580 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:07:20,006 basehttp 21652 3580 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:07:50,415 basehttp 21652 3580 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:08:40,604 basehttp 21652 3580 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:08:45,184 basehttp 21652 3580 "GET /sandbox/ HTTP/1.1" 200 42174
+INFO 2025-10-02 19:08:45,651 basehttp 21652 3580 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 19:08:47,734 basehttp 21652 3580 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 19:09:15,706 basehttp 21652 23788 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:09:32,805 basehttp 21652 3580 "POST /enhanced-chat/send/ HTTP/1.1" 200 5834
+INFO 2025-10-02 19:09:42,592 basehttp 21652 25108 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 65255
+INFO 2025-10-02 19:09:42,636 basehttp 21652 25108 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+WARNING 2025-10-02 19:09:42,955 log 21652 9908 Not Found: /favicon.ico
+WARNING 2025-10-02 19:09:42,955 basehttp 21652 9908 "GET /favicon.ico HTTP/1.1" 404 10233
+INFO 2025-10-02 19:09:46,495 basehttp 21652 25108 "GET /admin/analytics/sandboxexecution/158/change/ HTTP/1.1" 200 42696
+INFO 2025-10-02 19:09:46,546 basehttp 21652 9908 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+WARNING 2025-10-02 19:09:46,672 log 21652 9908 Not Found: /favicon.ico
+WARNING 2025-10-02 19:09:46,673 basehttp 21652 9908 "GET /favicon.ico HTTP/1.1" 404 10233
+INFO 2025-10-02 19:09:47,310 basehttp 21652 3580 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:10:16,988 basehttp 21652 25108 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 65255
+WARNING 2025-10-02 19:10:17,183 log 21652 9908 Not Found: /favicon.ico
+WARNING 2025-10-02 19:10:17,199 basehttp 21652 9908 "GET /favicon.ico HTTP/1.1" 404 10233
+INFO 2025-10-02 19:10:17,757 basehttp 21652 3580 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:10:19,657 basehttp 21652 25108 "GET /admin/analytics/sandboxexecution/159/change/ HTTP/1.1" 200 42849
+INFO 2025-10-02 19:10:19,702 basehttp 21652 9908 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+WARNING 2025-10-02 19:10:19,829 log 21652 9908 Not Found: /favicon.ico
+WARNING 2025-10-02 19:10:19,831 basehttp 21652 9908 "GET /favicon.ico HTTP/1.1" 404 10233
+INFO 2025-10-02 19:10:48,123 basehttp 21652 3580 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:17:16,862 autoreload 17280 25528 Watching for file changes with StatReloader
+INFO 2025-10-02 19:18:41,975 basehttp 17280 19544 "GET /sandbox/ HTTP/1.1" 200 42174
+INFO 2025-10-02 19:18:42,142 basehttp 17280 19544 "GET /static/analytics/js/main.js HTTP/1.1" 304 0
+INFO 2025-10-02 19:18:42,452 basehttp 17280 19544 "GET /api/datasets/ HTTP/1.1" 200 1762
+WARNING 2025-10-02 19:18:42,625 log 17280 19544 Not Found: /favicon.ico
+INFO 2025-10-02 19:18:42,627 basehttp 17280 19544 - Broken pipe from ('127.0.0.1', 59231)
+INFO 2025-10-02 19:19:12,752 basehttp 17280 8256 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:19:14,443 basehttp 17280 8256 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 19:19:42,766 basehttp 17280 6564 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:19:45,752 basehttp 17280 8256 "POST /enhanced-chat/send/ HTTP/1.1" 200 6699
+INFO 2025-10-02 19:20:05,549 basehttp 17280 14220 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 65258
+INFO 2025-10-02 19:20:05,589 basehttp 17280 14220 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+WARNING 2025-10-02 19:20:05,794 log 17280 23396 Not Found: /favicon.ico
+WARNING 2025-10-02 19:20:05,794 basehttp 17280 23396 "GET /favicon.ico HTTP/1.1" 404 10233
+INFO 2025-10-02 19:20:10,215 basehttp 17280 14220 "GET /admin/analytics/sandboxexecution/161/change/ HTTP/1.1" 200 41295
+INFO 2025-10-02 19:20:10,259 basehttp 17280 23396 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 19:20:13,387 basehttp 17280 8256 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:20:18,372 basehttp 17280 14220 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 65258
+WARNING 2025-10-02 19:20:18,597 log 17280 23396 Not Found: /favicon.ico
+WARNING 2025-10-02 19:20:18,601 basehttp 17280 23396 "GET /favicon.ico HTTP/1.1" 404 10233
+INFO 2025-10-02 19:20:20,583 basehttp 17280 14220 "GET /admin/analytics/sandboxexecution/160/change/ HTTP/1.1" 200 40776
+INFO 2025-10-02 19:20:20,657 basehttp 17280 23396 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 19:20:24,856 basehttp 17280 14220 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 65258
+INFO 2025-10-02 19:20:26,732 basehttp 17280 14220 "GET /admin/analytics/sandboxexecution/160/change/ HTTP/1.1" 200 40776
+INFO 2025-10-02 19:20:26,797 basehttp 17280 23396 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 19:20:44,005 basehttp 17280 8256 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:21:14,808 basehttp 17280 8256 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:21:44,838 basehttp 17280 8256 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:21:56,754 autoreload 17280 25528 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 19:22:01,731 autoreload 4324 22496 Watching for file changes with StatReloader
+INFO 2025-10-02 19:22:15,056 basehttp 4324 20796 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:22:38,757 autoreload 4324 22496 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 19:22:41,570 autoreload 22068 9912 Watching for file changes with StatReloader
+INFO 2025-10-02 19:23:11,095 basehttp 22068 21688 "GET /sandbox/ HTTP/1.1" 200 42174
+INFO 2025-10-02 19:23:11,679 basehttp 22068 23688 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 19:23:13,961 basehttp 22068 21688 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 19:23:41,492 basehttp 22068 23688 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:23:44,813 basehttp 22068 21688 "POST /enhanced-chat/send/ HTTP/1.1" 200 7420
+INFO 2025-10-02 19:23:55,062 basehttp 22068 15428 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 65264
+INFO 2025-10-02 19:23:55,125 basehttp 22068 15428 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+WARNING 2025-10-02 19:23:55,333 log 22068 12936 Not Found: /favicon.ico
+WARNING 2025-10-02 19:23:55,333 basehttp 22068 12936 "GET /favicon.ico HTTP/1.1" 404 10233
+INFO 2025-10-02 19:24:00,295 basehttp 22068 15428 "GET /admin/analytics/sandboxexecution/163/change/ HTTP/1.1" 200 42011
+INFO 2025-10-02 19:24:00,340 basehttp 22068 12936 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 19:24:12,204 basehttp 22068 23688 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:24:42,614 basehttp 22068 23688 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:25:13,059 basehttp 22068 23688 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:25:43,626 basehttp 22068 23688 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:26:13,749 basehttp 22068 23688 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:26:43,988 basehttp 22068 23688 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:26:53,642 autoreload 22068 9912 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 19:26:59,376 autoreload 25100 18012 Watching for file changes with StatReloader
+INFO 2025-10-02 19:27:17,172 basehttp 25100 5272 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:27:43,351 autoreload 25100 18012 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 19:27:47,403 autoreload 19668 15840 Watching for file changes with StatReloader
+INFO 2025-10-02 19:28:40,353 basehttp 19668 20744 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:29:06,287 basehttp 19668 20744 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:29:36,636 basehttp 19668 20744 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:30:05,867 autoreload 19668 15840 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 19:30:13,138 autoreload 12520 3460 Watching for file changes with StatReloader
+INFO 2025-10-02 19:31:10,711 basehttp 12520 5020 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:31:56,170 autoreload 12520 3460 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-02 19:32:17,176 autoreload 24332 20184 Watching for file changes with StatReloader
+INFO 2025-10-02 19:34:20,797 basehttp 24332 18832 "GET /sandbox/ HTTP/1.1" 200 42174
+INFO 2025-10-02 19:34:21,276 basehttp 24332 18832 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 19:34:29,327 basehttp 24332 18832 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 19:34:51,344 basehttp 24332 24684 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:35:06,245 basehttp 24332 18832 "POST /enhanced-chat/send/ HTTP/1.1" 200 7888
+INFO 2025-10-02 19:35:22,235 basehttp 24332 24684 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:35:52,911 basehttp 24332 24684 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:36:23,590 basehttp 24332 24684 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:36:54,577 basehttp 24332 24684 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:37:25,618 basehttp 24332 24684 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:37:56,415 basehttp 24332 24684 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:38:29,292 basehttp 24332 24684 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:39:00,966 basehttp 24332 24684 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:39:25,353 autoreload 24332 20184 F:\analytical\analytical\analytics\services\chat_service.py changed, reloading.
+INFO 2025-10-02 19:39:32,018 autoreload 10104 10120 Watching for file changes with StatReloader
+INFO 2025-10-02 19:40:55,188 autoreload 10104 10120 F:\analytical\analytical\analytics\services\chat_service.py changed, reloading.
+INFO 2025-10-02 19:40:59,607 autoreload 14064 8712 Watching for file changes with StatReloader
+INFO 2025-10-02 19:41:13,244 basehttp 14064 21800 "GET /sandbox/ HTTP/1.1" 200 42174
+INFO 2025-10-02 19:41:13,821 basehttp 14064 21800 "GET /api/datasets/ HTTP/1.1" 200 1762
+WARNING 2025-10-02 19:41:13,949 log 14064 21800 Not Found: /favicon.ico
+INFO 2025-10-02 19:41:13,952 basehttp 14064 21800 - Broken pipe from ('127.0.0.1', 61934)
+INFO 2025-10-02 19:41:17,411 basehttp 14064 10008 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 19:41:43,848 basehttp 14064 10568 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:42:03,171 basehttp 14064 10008 "POST /enhanced-chat/send/ HTTP/1.1" 200 7637
+INFO 2025-10-02 19:42:13,770 basehttp 14064 10008 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:42:43,779 basehttp 14064 10008 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:43:13,786 basehttp 14064 10008 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:43:42,864 basehttp 14064 23672 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 65294
+INFO 2025-10-02 19:43:42,934 basehttp 14064 23672 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+WARNING 2025-10-02 19:43:43,302 log 14064 11884 Not Found: /favicon.ico
+WARNING 2025-10-02 19:43:43,303 basehttp 14064 11884 "GET /favicon.ico HTTP/1.1" 404 10233
+INFO 2025-10-02 19:43:43,998 basehttp 14064 10008 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:43:44,983 basehttp 14064 23672 "GET /admin/analytics/sandboxexecution/167/change/ HTTP/1.1" 200 42422
+INFO 2025-10-02 19:43:45,052 basehttp 14064 11884 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-02 19:43:50,832 autoreload 14064 8712 F:\analytical\analytical\analytics\services\chat_service.py changed, reloading.
+INFO 2025-10-02 19:43:55,190 autoreload 14228 15948 Watching for file changes with StatReloader
+INFO 2025-10-02 19:44:14,631 basehttp 14228 12208 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:44:44,795 basehttp 14228 12208 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:45:15,714 basehttp 14228 12208 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:45:46,527 basehttp 14228 12208 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:46:16,749 basehttp 14228 12208 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 19:46:47,145 basehttp 14228 12208 "GET /api/health/ HTTP/1.1" 200 89

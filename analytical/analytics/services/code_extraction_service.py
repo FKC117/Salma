@@ -20,26 +20,28 @@ class CodeExtractionService:
     
     def __init__(self):
         self.python_patterns = [
-            # Markdown-style code blocks
+            # Markdown-style code blocks (most reliable)
             r'```python\n(.*?)```',
             r'```py\n(.*?)```',
-            r'```\n(.*?)```',
             
-            # AI-generated patterns
-            r'### [^\n]*\n\npython\n(.*?)(?=\n\n###|\s*$)',
-            r'\n\s*python\s*\n(.*?)(?=\n\s*[A-Z#]|\n\s*$)',
+            # Generic code blocks only if they contain Python keywords
+            r'```\n((?:import|from|def|class|if|for|while|try|except|with|print|return|yield|lambda|async|await).*?)```',
             
-            # Direct Python code patterns
-            r'(?:^|\n)(python\s*\n.*?)(?=\n\n|\n[A-Z]|\n#|\Z)',
+            # AI-generated patterns with stricter validation
+            r'### [^\n]*\n\npython\n((?:import|from|def|class|if|for|while|try|except|with|print|return|yield|lambda|async|await).*?)(?=\n\n###|\s*$)',
+            r'\n\s*python\s*\n((?:import|from|def|class|if|for|while|try|except|with|print|return|yield|lambda|async|await).*?)(?=\n\s*[A-Z#]|\n\s*$)',
+            
+            # Direct Python code patterns with validation
+            r'(?:^|\n)(python\s*\n((?:import|from|def|class|if|for|while|try|except|with|print|return|yield|lambda|async|await).*?))(?=\n\n|\n[A-Z]|\n#|\Z)',
             
             # Pattern for "python" followed by import statements (no newline)
             r'(?:^|\n)(python\s+import.*?)(?=\n\n|\n[A-Z]|\n#|\Z)',
             
-            # New pattern for "Python Code" header format
-            r'Python Code\s*\n\s*\n\s*\n\s*\n(.*?)(?=\n\s*$|\n\s*\n\s*[A-Z]|\Z)',
+            # New pattern for "Python Code" header format with validation
+            r'Python Code\s*\n\s*\n\s*\n\s*\n((?:import|from|def|class|if|for|while|try|except|with|print|return|yield|lambda|async|await).*?)(?=\n\s*$|\n\s*\n\s*[A-Z]|\Z)',
             
-            # Pattern for "Python Code" followed by multiple newlines and then code
-            r'Python Code\s*\n+(.*?)(?=\n\s*$|\n\s*\n\s*[A-Z]|\Z)',
+            # Pattern for "Python Code" followed by multiple newlines and then code with validation
+            r'Python Code\s*\n+((?:import|from|def|class|if|for|while|try|except|with|print|return|yield|lambda|async|await).*?)(?=\n\s*$|\n\s*\n\s*[A-Z]|\Z)',
         ]
     
     def extract_python_code_blocks(self, text: str) -> List[Dict[str, Any]]:
@@ -52,9 +54,13 @@ class CodeExtractionService:
         Returns:
             List of dictionaries containing extracted code blocks
         """
+        # Reduced debug output for performance
+        print(f"=== CODE EXTRACTION DEBUG ===")
+        print(f"Input text length: {len(text)}")
+        
         code_blocks = []
         
-        for pattern in self.python_patterns:
+        for i, pattern in enumerate(self.python_patterns):
             matches = re.finditer(pattern, text, re.DOTALL | re.MULTILINE)
             for match in matches:
                 code = match.group(1).strip()
@@ -70,9 +76,16 @@ class CodeExtractionService:
                         'end_pos': match.end(),
                         'pattern_used': pattern
                     })
+                    print(f"✅ Pattern {i+1}: Valid Python code ({len(code)} chars)")
+                else:
+                    print(f"❌ Pattern {i+1}: Invalid Python code rejected")
         
         # Remove duplicates and sort by position
         code_blocks = self._deduplicate_code_blocks(code_blocks)
+        
+        print(f"=== CODE EXTRACTION RESULT ===")
+        print(f"Total code blocks extracted: {len(code_blocks)}")
+        print(f"===============================")
         
         logger.info(f"Extracted {len(code_blocks)} Python code blocks")
         return code_blocks
@@ -97,15 +110,52 @@ class CodeExtractionService:
         if not code or len(code.strip()) < 10:
             return False
         
-        # Check for Python keywords or imports
+        # Check for markdown/HTML patterns that should be rejected
+        markdown_patterns = [
+            r'^#+\s+',  # Headers starting with #
+            r'^\*\s+',  # Bullet points
+            r'^\d+\.\s+',  # Numbered lists
+            r'^##\s+',  # Markdown headers
+            r'^\*\*.*\*\*',  # Bold text
+            r'^_.*_$',  # Italic text
+            r'^\|.*\|',  # Table rows
+            r'^```',  # Code block markers
+            r'^<.*>$',  # HTML tags
+        ]
+        
+        for pattern in markdown_patterns:
+            if re.match(pattern, code.strip(), re.MULTILINE):
+                print(f"❌ Rejected markdown/HTML pattern: {pattern}")
+                return False
+        
+        # Check for Python keywords or imports (must have at least one)
         python_indicators = [
             'import ', 'from ', 'def ', 'class ', 'if ', 'for ', 'while ',
             'try:', 'except:', 'with ', 'return ', 'print(', 'pd.', 'plt.',
-            'sns.', 'numpy', 'pandas', 'matplotlib', 'seaborn'
+            'sns.', 'numpy', 'pandas', 'matplotlib', 'seaborn', 'df.',
+            'plt.figure', 'plt.show', 'plt.savefig', 'plt.close'
         ]
         
         code_lower = code.lower()
-        return any(indicator in code_lower for indicator in python_indicators)
+        has_python_indicator = any(indicator in code_lower for indicator in python_indicators)
+        
+        # Additional check: must not be mostly text/descriptive content
+        lines = code.strip().split('\n')
+        code_lines = [line for line in lines if line.strip() and not line.strip().startswith('#')]
+        
+        if len(code_lines) < 2:  # Must have at least 2 non-comment lines
+            print(f"❌ Too few code lines: {len(code_lines)}")
+            return False
+        
+        # Check if it's mostly descriptive text (not code)
+        descriptive_words = ['insight', 'analysis', 'interpretation', 'conclusion', 'summary', 'finding']
+        text_content_ratio = sum(1 for line in code_lines if any(word in line.lower() for word in descriptive_words)) / len(code_lines)
+        
+        if text_content_ratio > 0.5:  # More than 50% descriptive text
+            print(f"❌ Too much descriptive text: {text_content_ratio:.2f}")
+            return False
+        
+        return has_python_indicator
     
     def _deduplicate_code_blocks(self, code_blocks: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """Remove duplicate code blocks"""

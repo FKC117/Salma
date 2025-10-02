@@ -123,9 +123,21 @@ class ChatService:
             print(f"AI Response text length: {len(ai_response.get('text', ''))}")
             print(f"============================")
             
-            # Automatically execute detected Python code
+            # Automatically execute detected Python code with retry logic
             ai_response_text = ai_response.get('text', '')
-            execution_results = self._execute_detected_code(ai_response_text, user, analysis_session)
+            print(f"=== CHAT SERVICE AUTO-EXECUTION DEBUG ===")
+            print(f"AI Response Length: {len(ai_response_text)}")
+            print(f"AI Response Preview: {ai_response_text[:200]}...")
+            print(f"User ID: {user.id}")
+            print(f"Session ID: {analysis_session.id}")
+            print(f"=========================================")
+            
+            # Only execute code if response contains code blocks (performance optimization)
+            if '```python' in ai_response_text or '```py' in ai_response_text or 'import ' in ai_response_text:
+                execution_results = self._execute_detected_code_with_retry(ai_response_text, user, analysis_session)
+            else:
+                print("✅ No code blocks detected, skipping execution")
+                execution_results = []
             
             # Append execution results to the AI response if any code was executed
             if execution_results:
@@ -719,6 +731,165 @@ class ChatService:
             logger.error(f"Error in automatic code execution: {str(e)}")
             return []
     
+    def _execute_detected_code_with_retry(self, ai_response_text: str, user: User, analysis_session: AnalysisSession) -> List[Dict[str, Any]]:
+        """Execute detected Python code blocks with automatic retry for syntax errors"""
+        try:
+            # Extract Python code blocks
+            code_blocks = self.code_extractor.extract_python_code_blocks(ai_response_text)
+            
+            if not code_blocks:
+                return []
+            
+            execution_results = []
+            
+            # Execute each code block with retry logic
+            for i, code_block_dict in enumerate(code_blocks):
+                code_block = code_block_dict['code']  # Extract the actual code string
+                result = self._execute_code_block_with_retry(code_block, user, analysis_session, i)
+                execution_results.append(result)
+            
+            return execution_results
+            
+        except Exception as e:
+            logger.error(f"Error in automatic code execution: {str(e)}")
+            return []
+    
+    def _execute_code_block_with_retry(self, code_block: str, user: User, analysis_session: AnalysisSession, block_index: int) -> Dict[str, Any]:
+        """Execute a single code block with retry logic for syntax errors"""
+        print(f"=== CHAT SERVICE CODE EXECUTION DEBUG ===")
+        print(f"User ID: {user.id}")
+        print(f"Session ID: {analysis_session.id}")
+        print(f"Block Index: {block_index}")
+        print(f"Code Length: {len(code_block)}")
+        print(f"Code Preview: {code_block[:100]}...")
+        print(f"=========================================")
+        
+        max_retries = 1  # Only retry once to avoid infinite loops
+        
+        for attempt in range(max_retries + 1):
+            try:
+                from analytics.services.sandbox_executor import SandboxExecutor
+                sandbox_executor = SandboxExecutor()
+                
+                print(f"=== CALLING SANDBOX EXECUTOR ===")
+                print(f"Attempt: {attempt + 1}")
+                print(f"================================")
+                
+                result = sandbox_executor.execute_code(
+                    code=code_block,
+                    language='python',
+                    timeout=30,
+                    user_id=user.id,
+                    session_id=analysis_session.id
+                )
+                
+                print(f"=== SANDBOX EXECUTOR RESULT ===")
+                print(f"Success: {result.get('success', 'N/A')}")
+                print(f"Execution ID: {result.get('execution_id', 'N/A')}")
+                print(f"Status: {result.get('status', 'N/A')}")
+                print(f"===============================")
+                
+                return {
+                    'code_block': code_block,
+                    'result': result,
+                    'block_index': block_index,
+                    'attempt': attempt + 1,
+                    'success': result.get('success', False),
+                    'output': result.get('output', ''),
+                    'error': result.get('error', ''),
+                    'execution_time_ms': result.get('execution_time_ms', 0)
+                }
+                
+            except Exception as e:
+                error_msg = str(e)
+                
+                # Check if it's a syntax error and we haven't retried yet
+                if 'Invalid syntax' in error_msg and attempt < max_retries:
+                    print(f"=== SYNTAX ERROR DETECTED - REQUESTING LLM CORRECTION ===")
+                    print(f"Original error: {error_msg}")
+                    print(f"Requesting LLM to fix syntax errors...")
+                    
+                    # Request LLM to fix the syntax
+                    corrected_code = self._request_syntax_correction(code_block, error_msg, user, analysis_session)
+                    
+                    if corrected_code and corrected_code != code_block:
+                        print(f"LLM provided corrected code, retrying execution...")
+                        code_block = corrected_code  # Use corrected code for next attempt
+                        continue
+                    else:
+                        print(f"LLM could not provide correction, using original error")
+                
+                # If we get here, either it's not a syntax error or retry failed
+                logger.error(f"Error executing code block {block_index} (attempt {attempt + 1}): {error_msg}")
+                return {
+                    'code_block': code_block,
+                    'result': {
+                        'success': False,
+                        'error': f"Execution failed: {error_msg}"
+                    },
+                    'block_index': block_index,
+                    'attempt': attempt + 1,
+                    'success': False,
+                    'output': '',
+                    'error': f"Execution failed: {error_msg}",
+                    'execution_time_ms': 0
+                }
+        
+        # This should never be reached, but just in case
+        return {
+            'code_block': code_block,
+            'result': {
+                'success': False,
+                'error': 'Maximum retries exceeded'
+            },
+            'block_index': block_index,
+            'attempt': max_retries + 1,
+            'success': False,
+            'output': '',
+            'error': 'Maximum retries exceeded',
+            'execution_time_ms': 0
+        }
+    
+    def _request_syntax_correction(self, code: str, error_msg: str, user: User, analysis_session: AnalysisSession) -> Optional[str]:
+        """Request LLM to fix syntax errors in the code"""
+        try:
+            correction_prompt = f"""The following Python code has a syntax error. Please fix it and return ONLY the corrected code without any explanations or markdown formatting.
+
+Error: {error_msg}
+
+Code to fix:
+```python
+{code}
+```
+
+Return ONLY the corrected Python code:"""
+
+            # Generate correction using LLM
+            correction_response = self.llm_processor.generate_text(
+                prompt=correction_prompt,
+                user=user,
+                context_messages=[],  # No context needed for syntax correction
+                session=analysis_session,
+                rag_context=None
+            )
+            
+            if correction_response.get('success'):
+                corrected_text = correction_response.get('text', '').strip()
+                
+                # Extract code from response (remove any markdown formatting)
+                if '```python' in corrected_text:
+                    corrected_text = corrected_text.split('```python')[1].split('```')[0].strip()
+                elif '```' in corrected_text:
+                    corrected_text = corrected_text.split('```')[1].split('```')[0].strip()
+                
+                return corrected_text
+            
+            return None
+            
+        except Exception as e:
+            logger.error(f"Error requesting syntax correction: {str(e)}")
+            return None
+    
     def _append_execution_results(self, text: str, execution_results: List[Dict[str, Any]]) -> str:
         """
         Append only successful execution results to the original text as HTML.
@@ -760,7 +931,7 @@ class ChatService:
             <div class="mt-3">
                 <strong>Output:</strong>
                 <div class="bg-dark text-light p-3 rounded mt-2">
-                    <pre class="mb-0">{self._process_execution_output(result['output'])}</pre>
+                    <div class="mb-0" style="white-space:pre-wrap">{self._process_execution_output(result['output'])}</div>
                 </div>
             </div>
         </div>
