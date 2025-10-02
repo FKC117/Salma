@@ -1,0 +1,37 @@
+{% if patients %}
+    <div class="list-group">
+        {% for patient in patients %}
+        <div class="list-group-item list-group-item-action patient-item" 
+             hx-get="{% url 'prescription_patient_timeline_htmx' patient.uid %}"
+             hx-target="#patient-timeline"
+             hx-indicator="#timeline-spinner"
+             data-patient-uid="{{ patient.uid }}">
+            <div class="d-flex w-100 justify-content-between">
+                <h6 class="mb-1">{{ patient.name }}</h6>
+                <small class="text-muted">{{ patient.uid }}</small>
+            </div>
+            <p class="mb-1">
+                <i class="fas fa-phone"></i> {{ patient.phone }}
+                {% if patient.email %}
+                <br><i class="fas fa-envelope"></i> {{ patient.email }}
+                {% endif %}
+            </p>
+            <small class="text-muted">
+                Age: {{ patient.age }} | Gender: {{ patient.get_gender_display }}
+                {% if patient.get_last_visit %}
+                <br>Last Visit: {{ patient.get_last_visit|date:"M d, Y" }}
+                {% endif %}
+            </small>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="text-center text-muted">
+        <i class="fas fa-user-slash fa-2x mb-3"></i>
+        <p>No patients found</p>
+    </div>
+{% endif %}
+
+<div id="timeline-spinner" class="htmx-indicator">
+    <div class="spinner-border spinner-border-sm" role="status"></div>
+</div>

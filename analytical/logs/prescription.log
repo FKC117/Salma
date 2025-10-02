@@ -1,0 +1,71 @@
+[PRESCRIPTION] ERROR 2025-10-01 20:31:17,572 signals log_model_changes:85 - Failed to create audit trail: Object of type datetime is not JSON serializable
+[PRESCRIPTION] ERROR 2025-10-01 20:31:17,575 signals log_model_changes:85 - Failed to create audit trail: Object of type datetime is not JSON serializable
+[PRESCRIPTION] ERROR 2025-10-01 20:31:17,578 signals log_model_changes:85 - Failed to create audit trail: Object of type datetime is not JSON serializable
+[PRESCRIPTION] ERROR 2025-10-01 20:31:17,580 signals log_model_changes:85 - Failed to create audit trail: Object of type datetime is not JSON serializable
+[PRESCRIPTION] ERROR 2025-10-01 20:31:17,588 signals log_model_changes:85 - Failed to create audit trail: Object of type datetime is not JSON serializable
+[PRESCRIPTION] ERROR 2025-10-01 20:31:17,604 signals log_model_changes:85 - Failed to create audit trail: Object of type datetime is not JSON serializable
+[PRESCRIPTION] ERROR 2025-10-01 20:31:17,605 signals create_patient_profile:134 - Failed to create patient profile for P001: An error occurred in the current transaction. You can't execute queries until the end of the 'atomic' block.
+[PRESCRIPTION] ERROR 2025-10-01 20:32:49,216 signals log_model_changes:92 - Failed to create audit trail: null value in column "changed_by_id" of relation "prescription_audit_trail" violates not-null constraint
+DETAIL:  Failing row contains (1, drug, 6, INSERT, null, {"id": 6, "name": "Tamoxifen", "category": "Antineoplastic", "st..., 2025-10-01 14:32:49.211981+00, null, , null).
+
+[PRESCRIPTION] ERROR 2025-10-01 20:32:49,223 signals log_model_changes:92 - Failed to create audit trail: null value in column "changed_by_id" of relation "prescription_audit_trail" violates not-null constraint
+DETAIL:  Failing row contains (2, drug, 7, INSERT, null, {"id": 7, "name": "Anastrozole", "category": "Antineoplastic", "..., 2025-10-01 14:32:49.222177+00, null, , null).
+
+[PRESCRIPTION] ERROR 2025-10-01 20:32:49,226 signals log_model_changes:92 - Failed to create audit trail: null value in column "changed_by_id" of relation "prescription_audit_trail" violates not-null constraint
+DETAIL:  Failing row contains (3, drug, 8, INSERT, null, {"id": 8, "name": "Letrozole", "category": "Antineoplastic", "st..., 2025-10-01 14:32:49.226085+00, null, , null).
+
+[PRESCRIPTION] ERROR 2025-10-01 20:32:49,228 signals log_model_changes:92 - Failed to create audit trail: null value in column "changed_by_id" of relation "prescription_audit_trail" violates not-null constraint
+DETAIL:  Failing row contains (4, drug, 9, INSERT, null, {"id": 9, "name": "Trastuzumab", "category": "Monoclonal Antibod..., 2025-10-01 14:32:49.228901+00, null, , null).
+
+[PRESCRIPTION] ERROR 2025-10-01 20:32:49,231 signals log_model_changes:92 - Failed to create audit trail: null value in column "changed_by_id" of relation "prescription_audit_trail" violates not-null constraint
+DETAIL:  Failing row contains (5, drug, 10, INSERT, null, {"id": 10, "name": "Pertuzumab", "category": "Monoclonal Antibod..., 2025-10-01 14:32:49.230904+00, null, , null).
+
+[PRESCRIPTION] ERROR 2025-10-01 20:32:49,242 signals log_model_changes:92 - Failed to create audit trail: Object of type User is not JSON serializable
+[PRESCRIPTION] ERROR 2025-10-01 20:32:49,243 signals create_patient_profile:144 - Failed to create patient profile for P001: An error occurred in the current transaction. You can't execute queries until the end of the 'atomic' block.
+[PRESCRIPTION] ERROR 2025-10-01 20:32:49,246 signals log_model_changes:92 - Failed to create audit trail: Object of type User is not JSON serializable
+[PRESCRIPTION] ERROR 2025-10-01 20:32:49,247 signals create_patient_profile:144 - Failed to create patient profile for P001: null value in column "updated_by_id" of relation "prescription_patient_profiles" violates not-null constraint
+DETAIL:  Failing row contains (2, , , , {}, {}, , 2025-10-01 14:32:49.246619+00, 2025-10-01 14:32:49.246619+00, 12, P001, null).
+
+[PRESCRIPTION] ERROR 2025-10-01 20:32:49,251 signals log_model_changes:92 - Failed to create audit trail: Object of type Patient is not JSON serializable
+[PRESCRIPTION] ERROR 2025-10-01 20:32:49,258 signals log_model_changes:92 - Failed to create audit trail: Object of type User is not JSON serializable
+[PRESCRIPTION] ERROR 2025-10-01 20:32:49,258 signals create_patient_profile:144 - Failed to create patient profile for P002: An error occurred in the current transaction. You can't execute queries until the end of the 'atomic' block.
+[PRESCRIPTION] ERROR 2025-10-01 20:32:49,262 signals log_model_changes:92 - Failed to create audit trail: Object of type User is not JSON serializable
+[PRESCRIPTION] ERROR 2025-10-01 20:32:49,263 signals create_patient_profile:144 - Failed to create patient profile for P002: null value in column "updated_by_id" of relation "prescription_patient_profiles" violates not-null constraint
+DETAIL:  Failing row contains (4, , , , {}, {}, , 2025-10-01 14:32:49.263113+00, 2025-10-01 14:32:49.263113+00, 12, P002, null).
+
+[PRESCRIPTION] ERROR 2025-10-01 20:32:49,266 signals log_model_changes:92 - Failed to create audit trail: Object of type Patient is not JSON serializable
+[PRESCRIPTION] ERROR 2025-10-01 20:32:49,274 signals log_model_changes:92 - Failed to create audit trail: Object of type User is not JSON serializable
+[PRESCRIPTION] ERROR 2025-10-01 20:32:49,275 signals create_patient_profile:144 - Failed to create patient profile for P003: An error occurred in the current transaction. You can't execute queries until the end of the 'atomic' block.
+[PRESCRIPTION] ERROR 2025-10-01 20:32:49,279 signals log_model_changes:92 - Failed to create audit trail: Object of type User is not JSON serializable
+[PRESCRIPTION] ERROR 2025-10-01 20:32:49,280 signals create_patient_profile:144 - Failed to create patient profile for P003: null value in column "updated_by_id" of relation "prescription_patient_profiles" violates not-null constraint
+DETAIL:  Failing row contains (6, , , , {}, {}, , 2025-10-01 14:32:49.280325+00, 2025-10-01 14:32:49.280325+00, 12, P003, null).
+
+[PRESCRIPTION] ERROR 2025-10-01 20:32:49,283 signals log_model_changes:92 - Failed to create audit trail: Object of type Patient is not JSON serializable
+[PRESCRIPTION] ERROR 2025-10-01 20:32:49,283 signals log_model_changes:92 - Failed to create audit trail: Object of type User is not JSON serializable
+[PRESCRIPTION] ERROR 2025-10-01 20:32:49,283 signals create_patient_profile:144 - Failed to create patient profile for P004: An error occurred in the current transaction. You can't execute queries until the end of the 'atomic' block.
+[PRESCRIPTION] ERROR 2025-10-01 20:32:49,296 signals log_model_changes:92 - Failed to create audit trail: Object of type User is not JSON serializable
+[PRESCRIPTION] ERROR 2025-10-01 20:32:49,297 signals create_patient_profile:144 - Failed to create patient profile for P004: null value in column "updated_by_id" of relation "prescription_patient_profiles" violates not-null constraint
+DETAIL:  Failing row contains (8, , , , {}, {}, , 2025-10-01 14:32:49.296715+00, 2025-10-01 14:32:49.296715+00, 12, P004, null).
+
+[PRESCRIPTION] ERROR 2025-10-01 20:32:49,299 signals log_model_changes:92 - Failed to create audit trail: Object of type Patient is not JSON serializable
+[PRESCRIPTION] ERROR 2025-10-01 20:32:49,305 signals log_model_changes:92 - Failed to create audit trail: Object of type User is not JSON serializable
+[PRESCRIPTION] ERROR 2025-10-01 20:32:49,306 signals create_patient_profile:144 - Failed to create patient profile for P005: An error occurred in the current transaction. You can't execute queries until the end of the 'atomic' block.
+[PRESCRIPTION] ERROR 2025-10-01 20:32:49,310 signals log_model_changes:92 - Failed to create audit trail: Object of type User is not JSON serializable
+[PRESCRIPTION] ERROR 2025-10-01 20:32:49,310 signals create_patient_profile:144 - Failed to create patient profile for P005: null value in column "updated_by_id" of relation "prescription_patient_profiles" violates not-null constraint
+DETAIL:  Failing row contains (10, , , , {}, {}, , 2025-10-01 14:32:49.310812+00, 2025-10-01 14:32:49.310812+00, 12, P005, null).
+
+[PRESCRIPTION] ERROR 2025-10-01 20:32:49,314 signals log_model_changes:92 - Failed to create audit trail: Object of type Patient is not JSON serializable
+[PRESCRIPTION] ERROR 2025-10-01 20:32:49,323 signals log_model_changes:92 - Failed to create audit trail: Object of type User is not JSON serializable
+[PRESCRIPTION] ERROR 2025-10-01 20:32:49,326 signals log_model_changes:92 - Failed to create audit trail: Object of type User is not JSON serializable
+[PRESCRIPTION] ERROR 2025-10-01 20:32:49,329 signals log_model_changes:92 - Failed to create audit trail: Object of type User is not JSON serializable
+[PRESCRIPTION] ERROR 2025-10-01 20:32:49,342 signals log_model_changes:92 - Failed to create audit trail: Object of type Patient is not JSON serializable
+[PRESCRIPTION] INFO 2025-10-01 20:32:49,342 signals log_prescription_creation:151 - New prescription created: ID 1 for patient P005
+[PRESCRIPTION] INFO 2025-10-01 20:32:49,342 signals log_prescription_creation:157 - Prescription 1 contains medications: Tamoxifen
+[PRESCRIPTION] ERROR 2025-10-01 20:32:49,344 signals log_model_changes:92 - Failed to create audit trail: Object of type Patient is not JSON serializable
+[PRESCRIPTION] INFO 2025-10-01 20:32:49,344 signals log_prescription_creation:151 - New prescription created: ID 2 for patient P003
+[PRESCRIPTION] INFO 2025-10-01 20:32:49,345 signals log_prescription_creation:157 - Prescription 2 contains medications: Tamoxifen
+[PRESCRIPTION] ERROR 2025-10-01 20:32:49,347 signals log_model_changes:92 - Failed to create audit trail: Object of type Patient is not JSON serializable
+[PRESCRIPTION] INFO 2025-10-01 20:32:49,347 signals log_prescription_creation:151 - New prescription created: ID 3 for patient P004
+[PRESCRIPTION] INFO 2025-10-01 20:32:49,347 signals log_prescription_creation:157 - Prescription 3 contains medications: Tamoxifen
+[PRESCRIPTION] ERROR 2025-10-01 20:32:49,353 signals log_model_changes:92 - Failed to create audit trail: Object of type Patient is not JSON serializable
+[PRESCRIPTION] ERROR 2025-10-01 20:32:49,353 signals log_model_changes:92 - Failed to create audit trail: Object of type Patient is not JSON serializable

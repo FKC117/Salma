@@ -1,0 +1,233 @@
+{% extends "analytics/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'prescription/css/prescription.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Left Panel: Patient List -->
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-users"></i> Patients
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <!-- Unified Search -->
+                    <div class="mb-3">
+                        <div class="input-group">
+                            <input type="text" 
+                                   id="unified-search-input"
+                                   class="form-control" 
+                                   placeholder="Search patients & prescriptions..."
+                                   hx-get="{% url 'prescription_patient_search_htmx' %}"
+                                   hx-trigger="keyup changed delay:300ms"
+                                   hx-target="#patient-results"
+                                   hx-indicator="#search-spinner"
+                                   name="q">
+                            <div class="input-group-append">
+                                <span class="input-group-text">
+                                    <i class="fas fa-search"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div id="search-spinner" class="htmx-indicator">
+                            <div class="spinner-border spinner-border-sm" role="status"></div>
+                        </div>
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle"></i> Search by UID, Name, Phone, or Diagnosis
+                        </small>
+                    </div>
+                    
+                    <!-- Search Results -->
+                    <div id="patient-results">
+                        {% include 'prescription/partials/unified_search_results.html' %}
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="mt-4">
+                        <h6 class="text-primary mb-3">
+                            <i class="fas fa-bolt"></i> Quick Actions
+                        </h6>
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'prescription_add_patient' %}" class="btn btn-outline-warning btn-sm">
+                                <i class="fas fa-user-plus"></i> Add New Patient
+                            </a>
+                            <a href="{% url 'prescription_patient_list' %}" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-users"></i> View All Patients
+                            </a>
+                            <a href="{% url 'prescription_prescription_list' %}" class="btn btn-outline-success btn-sm">
+                                <i class="fas fa-prescription-bottle-alt"></i> View Prescriptions
+                            </a>
+                            <a href="{% url 'prescription_analytics' %}" class="btn btn-outline-info btn-sm">
+                                <i class="fas fa-chart-bar"></i> Analytics
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Center Panel: Prescription Creation -->
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-prescription-bottle-alt"></i> Prescription Management
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <!-- Quick Stats -->
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <div class="card bg-primary text-white">
+                                <div class="card-body text-center">
+                                    <h3 class="card-title">{{ total_patients|default:0 }}</h3>
+                                    <p class="card-text">Total Patients</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-success text-white">
+                                <div class="card-body text-center">
+                                    <h3 class="card-title">{{ total_prescriptions|default:0 }}</h3>
+                                    <p class="card-text">Total Prescriptions</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-warning text-white">
+                                <div class="card-body text-center">
+                                    <h3 class="card-title">{{ active_prescriptions|default:0 }}</h3>
+                                    <p class="card-text">Active Prescriptions</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Comprehensive Prescription Form -->
+                    <div id="prescription-form">
+                        {% include 'prescription/partials/comprehensive_prescription_form.html' %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Panel: Patient Timeline -->
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-history"></i> Patient Timeline
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div id="patient-timeline">
+                        <div class="text-center text-muted">
+                            <i class="fas fa-user-plus fa-3x mb-3"></i>
+                            <p>Select a patient to view their timeline</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Patient History Modal -->
+{% include 'prescription/partials/patient_history_modal.html' %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'prescription/js/prescription.js' %}"></script>
+<script>
+// Global function to show patient history modal
+function showPatientHistory(patientUid, patientName) {
+    // Store patient UID globally for use in create prescription button
+    window.currentPatientUid = patientUid;
+    
+    // Update modal title
+    document.getElementById('modal-patient-name').textContent = patientName;
+    
+    // Load patient history content
+    fetch(`/prescription/htmx/patient-history/${patientUid}/`)
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('modal-patient-info').innerHTML = html;
+            document.getElementById('modal-patient-summary').innerHTML = html;
+            document.getElementById('modal-patient-timeline').innerHTML = html;
+        })
+        .catch(error => {
+            console.error('Error loading patient history:', error);
+            document.getElementById('modal-patient-info').innerHTML = '<p class="text-danger">Error loading patient history</p>';
+        });
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('patientHistoryModal'));
+    modal.show();
+}
+
+// Handle create new prescription button in modal
+document.addEventListener('DOMContentLoaded', function() {
+    const createNewPrescriptionBtn = document.getElementById('createNewPrescription');
+    if (createNewPrescriptionBtn) {
+        createNewPrescriptionBtn.addEventListener('click', function() {
+            // Get the patient UID from the modal title or content
+            const modalTitle = document.getElementById('modal-patient-name').textContent;
+            const patientUid = window.currentPatientUid; // Store this when modal opens
+            
+            if (patientUid) {
+                // Close modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('patientHistoryModal'));
+                modal.hide();
+                
+                // Set patient in prescription form after modal closes
+                setTimeout(() => {
+                    const prescriptionForm = document.querySelector('#prescription-form');
+                    if (prescriptionForm) {
+                        // Scroll to prescription form
+                        prescriptionForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        
+                        // Set patient in form
+                        const patientSearchInput = prescriptionForm.querySelector('#patient-search');
+                        if (patientSearchInput) {
+                            // Clear any existing selection
+                            const selectedPatientDiv = prescriptionForm.querySelector('#selected-patient');
+                            if (selectedPatientDiv) {
+                                selectedPatientDiv.style.display = 'none';
+                            }
+                            
+                            // Add visual feedback
+                            patientSearchInput.style.borderColor = '#28a745';
+                            patientSearchInput.style.backgroundColor = 'rgba(40, 167, 69, 0.1)';
+                            
+                            // Set the search input value
+                            patientSearchInput.value = patientUid;
+                            
+                            // Trigger search to populate results
+                            patientSearchInput.dispatchEvent(new Event('input'));
+                            
+                            // Focus on the input
+                            patientSearchInput.focus();
+                            
+                            // Remove visual feedback after 2 seconds
+                            setTimeout(() => {
+                                patientSearchInput.style.borderColor = '';
+                                patientSearchInput.style.backgroundColor = '';
+                            }, 2000);
+                        }
+                    }
+                }, 500);
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,177 @@
+{% extends "analytics/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'prescription/css/prescription.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Patient Information -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-user"></i> Patient Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <strong>UID:</strong> 
+                        <span class="badge bg-primary">{{ patient.uid }}</span>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Name:</strong> {{ patient.name }}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Age:</strong> {{ patient.age }} years old
+                    </div>
+                    <div class="mb-3">
+                        <strong>Gender:</strong> {{ patient.get_gender_display }}
+                    </div>
+                    <div class="mb-3">
+                        <strong>Phone:</strong> {{ patient.phone }}
+                    </div>
+                    {% if patient.email %}
+                    <div class="mb-3">
+                        <strong>Email:</strong> {{ patient.email }}
+                    </div>
+                    {% endif %}
+                    {% if patient.address %}
+                    <div class="mb-3">
+                        <strong>Address:</strong> {{ patient.address }}
+                    </div>
+                    {% endif %}
+                    {% if patient.emergency_contact %}
+                    <div class="mb-3">
+                        <strong>Emergency Contact:</strong> {{ patient.emergency_contact }}
+                        {% if patient.emergency_phone %}
+                        <br><small class="text-muted">{{ patient.emergency_phone }}</small>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Prescriptions -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-prescription-bottle-alt"></i> Prescriptions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if prescriptions %}
+                        {% for prescription in prescriptions %}
+                        <div class="border-bottom pb-2 mb-2">
+                            <div class="d-flex justify-content-between">
+                                <strong>Prescription #{{ prescription.id }}</strong>
+                                <span class="badge bg-success">{{ prescription.status|title }}</span>
+                            </div>
+                            <div class="small text-muted">
+                                {{ prescription.prescription_date|date:"M d, Y" }}
+                            </div>
+                            <div class="small">
+                                <strong>Diagnosis:</strong> {{ prescription.diagnosis|truncatechars:50 }}
+                            </div>
+                            <div class="small">
+                                <strong>Medications:</strong> {{ prescription.get_medications_count }} medication(s)
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center text-muted">
+                            <i class="fas fa-prescription-bottle-alt fa-2x mb-3"></i>
+                            <p>No prescriptions found</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Observations -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-stethoscope"></i> Observations
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if observations %}
+                        {% for observation in observations %}
+                        <div class="border-bottom pb-2 mb-2">
+                            <div class="d-flex justify-content-between">
+                                <strong>{{ observation.get_type_display_name }}</strong>
+                                <span class="small text-muted">{{ observation.observation_date|date:"M d, Y" }}</span>
+                            </div>
+                            {% if observation.symptoms %}
+                            <div class="small">
+                                <strong>Symptoms:</strong> {{ observation.symptoms|truncatechars:50 }}
+                            </div>
+                            {% endif %}
+                            {% if observation.examination_findings %}
+                            <div class="small">
+                                <strong>Findings:</strong> {{ observation.examination_findings|truncatechars:50 }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center text-muted">
+                            <i class="fas fa-stethoscope fa-2x mb-3"></i>
+                            <p>No observations found</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Actions -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-bolt"></i> Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <a href="{% url 'prescription_dashboard' %}" class="btn btn-outline-secondary btn-block">
+                                <i class="fas fa-arrow-left"></i> Back to Dashboard
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{% url 'prescription_patient_list' %}" class="btn btn-outline-primary btn-block">
+                                <i class="fas fa-users"></i> All Patients
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{% url 'admin:prescription_prescription_add' %}" class="btn btn-outline-success btn-block">
+                                <i class="fas fa-prescription-bottle-alt"></i> New Prescription
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{% url 'admin:prescription_observation_add' %}" class="btn btn-outline-info btn-block">
+                                <i class="fas fa-stethoscope"></i> New Observation
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'prescription/js/prescription.js' %}"></script>
+{% endblock %}

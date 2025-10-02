@@ -1,0 +1,109 @@
+<!-- Patient Info -->
+<div class="row">
+    <div class="col-md-6">
+        <strong>UID:</strong> {{ patient.uid }}<br>
+        <strong>Name:</strong> {{ patient.name }}<br>
+        <strong>Age:</strong> {{ patient.age }} years old<br>
+        <strong>Gender:</strong> {{ patient.get_gender_display }}<br>
+        <strong>Phone:</strong> {{ patient.phone }}<br>
+        {% if patient.email %}
+        <strong>Email:</strong> {{ patient.email }}<br>
+        {% endif %}
+    </div>
+    <div class="col-md-6">
+        {% if patient.address %}
+        <strong>Address:</strong> {{ patient.address }}<br>
+        {% endif %}
+        {% if patient.emergency_contact %}
+        <strong>Emergency Contact:</strong> {{ patient.emergency_contact }}<br>
+        {% if patient.emergency_phone %}
+        <strong>Emergency Phone:</strong> {{ patient.emergency_phone }}<br>
+        {% endif %}
+        {% endif %}
+        <strong>Registered:</strong> {{ patient.created_at|date:"M d, Y" }}<br>
+    </div>
+</div>
+
+<!-- Summary -->
+<div class="row">
+    <div class="col-md-3">
+        <div class="text-center">
+            <h4 class="text-primary">{{ total_prescriptions }}</h4>
+            <small>Total Prescriptions</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="text-center">
+            <h4 class="text-success">{{ total_observations }}</h4>
+            <small>Total Visits</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="text-center">
+            <h4 class="text-info">{{ diagnoses|length }}</h4>
+            <small>Unique Diagnoses</small>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="text-center">
+            {% if first_visit %}
+            <h6 class="text-warning">{{ first_visit|date:"M d, Y" }}</h6>
+            <small>First Visit</small>
+            {% else %}
+            <h6 class="text-muted">-</h6>
+            <small>No Visits</small>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Timeline -->
+<div class="timeline">
+    {% for item in timeline_items %}
+    <div class="timeline-item">
+        <div class="timeline-marker">
+            {% if item.type == 'prescription' %}
+                <i class="fas fa-prescription-bottle-alt"></i>
+            {% else %}
+                <i class="fas fa-stethoscope"></i>
+            {% endif %}
+        </div>
+        <div class="timeline-content">
+            <div class="timeline-header">
+                <h6 class="mb-1">{{ item.title }}</h6>
+                <small class="text-muted">{{ item.date|date:"M d, Y" }}</small>
+            </div>
+            <div class="timeline-body">
+                <p class="mb-2"><strong>{{ item.description }}</strong></p>
+                
+                {% if item.type == 'prescription' %}
+                    {% if item.details.symptoms %}
+                    <p class="mb-1"><strong>Symptoms:</strong> {{ item.details.symptoms }}</p>
+                    {% endif %}
+                    <p class="mb-1"><strong>Medications:</strong> {{ item.details.medications_count }} medication(s)</p>
+                    {% if item.details.follow_up_date %}
+                    <p class="mb-1"><strong>Follow-up:</strong> {{ item.details.follow_up_date|date:"M d, Y" }}</p>
+                    {% endif %}
+                    <span class="badge bg-success">{{ item.details.status|title }}</span>
+                {% else %}
+                    {% if item.details.examination_findings %}
+                    <p class="mb-1"><strong>Examination:</strong> {{ item.details.examination_findings }}</p>
+                    {% endif %}
+                    {% if item.details.recommendations %}
+                    <p class="mb-1"><strong>Recommendations:</strong> {{ item.details.recommendations }}</p>
+                    {% endif %}
+                    {% if item.details.next_appointment %}
+                    <p class="mb-1"><strong>Next Appointment:</strong> {{ item.details.next_appointment|date:"M d, Y" }}</p>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="text-center text-muted py-4">
+        <i class="fas fa-history fa-3x mb-3"></i>
+        <h5>No Medical History</h5>
+        <p>This patient has no prescriptions or observations yet.</p>
+    </div>
+    {% endfor %}
+</div>

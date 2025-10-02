@@ -1,0 +1,60 @@
+<!-- Patient History Modal -->
+<div class="modal fade" id="patientHistoryModal" tabindex="-1" aria-labelledby="patientHistoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="patientHistoryModalLabel">
+                    <i class="fas fa-history"></i> Patient History: <span id="modal-patient-name"></span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Patient Info -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-user"></i> Patient Information</h6>
+                            </div>
+                            <div class="card-body">
+                                <div id="modal-patient-info">
+                                    <!-- Patient info will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-chart-line"></i> Summary</h6>
+                            </div>
+                            <div class="card-body">
+                                <div id="modal-patient-summary">
+                                    <!-- Summary will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Timeline -->
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="fas fa-timeline"></i> Complete Medical Journey</h6>
+                    </div>
+                    <div class="card-body">
+                        <div id="modal-patient-timeline">
+                            <!-- Timeline will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="createNewPrescription">
+                    <i class="fas fa-plus"></i> Create New Prescription
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

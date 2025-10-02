@@ -1,0 +1,113 @@
+{% if patients %}
+    <div class="list-group">
+        {% for patient in patients %}
+        <div class="list-group-item list-group-item-action patient-item" 
+             hx-get="{% url 'prescription_patient_timeline_htmx' patient.uid %}"
+             hx-target="#patient-timeline"
+             hx-indicator="#timeline-spinner"
+             data-patient-uid="{{ patient.uid }}"
+             data-patient-name="{{ patient.name }}"
+             data-patient-age="{{ patient.age }}"
+             data-patient-gender="{{ patient.get_gender_display }}"
+             data-patient-phone="{{ patient.phone }}">
+            <div class="d-flex w-100 justify-content-between">
+                <h6 class="mb-1">{{ patient.name }}</h6>
+                <small class="badge bg-primary">{{ patient.uid }}</small>
+            </div>
+            <p class="mb-1">
+                <i class="fas fa-phone"></i> {{ patient.phone }}
+                {% if patient.email %}
+                <br><i class="fas fa-envelope"></i> {{ patient.email }}
+                {% endif %}
+            </p>
+            <small class="text-muted">
+                Age: {{ patient.age }} | Gender: {{ patient.get_gender_display }}
+                {% if patient.get_last_visit %}
+                <br>Last Visit: {{ patient.get_last_visit|date:"M d, Y" }}
+                {% endif %}
+            </small>
+            <div class="mt-2">
+                <button type="button" 
+                        class="btn btn-sm btn-outline-info"
+                        onclick="showPatientHistory('{{ patient.uid }}', '{{ patient.name }}')">
+                    <i class="fas fa-history"></i> View History
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    {% if query %}
+    <div class="mt-2">
+        <small class="text-muted">
+            <i class="fas fa-search"></i> Found {{ patients|length }} patient(s) for "{{ query }}"
+        </small>
+    </div>
+    {% endif %}
+{% endif %}
+
+{% if prescriptions %}
+    <div class="list-group">
+        {% for prescription in prescriptions %}
+        <div class="list-group-item list-group-item-action prescription-item">
+            <div class="d-flex w-100 justify-content-between">
+                <h6 class="mb-1">
+                    <a href="{% url 'prescription_prescription_detail' prescription.id %}" class="text-white text-decoration-none">
+                        Prescription #{{ prescription.id }}
+                    </a>
+                </h6>
+                <small class="badge bg-success">{{ prescription.status|title }}</small>
+            </div>
+            <p class="mb-1">
+                <strong>Patient:</strong> {{ prescription.patient.name }} ({{ prescription.patient.uid }})
+            </p>
+            <p class="mb-1">
+                <strong>Diagnosis:</strong> {{ prescription.diagnosis|truncatechars:50 }}
+            </p>
+            {% if prescription.symptoms %}
+            <p class="mb-1">
+                <strong>Symptoms:</strong> {{ prescription.symptoms|truncatechars:50 }}
+            </p>
+            {% endif %}
+            <small class="text-muted">
+                <i class="fas fa-calendar"></i> {{ prescription.prescription_date|date:"M d, Y" }}
+                {% if prescription.follow_up_date %}
+                | <i class="fas fa-clock"></i> Follow-up: {{ prescription.follow_up_date|date:"M d, Y" }}
+                {% endif %}
+                | <i class="fas fa-pills"></i> {{ prescription.get_medications_count }} medication(s)
+            </small>
+            <div class="mt-2">
+                <button type="button" 
+                        class="btn btn-sm btn-outline-info"
+                        onclick="showPatientHistory('{{ prescription.patient.uid }}', '{{ prescription.patient.name }}')">
+                    <i class="fas fa-history"></i> View Patient History
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    {% if query %}
+    <div class="mt-2">
+        <small class="text-muted">
+            <i class="fas fa-search"></i> Found {{ prescriptions|length }} prescription(s) for "{{ query }}"
+        </small>
+    </div>
+    {% endif %}
+{% else %}
+    {% if query %}
+    <div class="text-center text-muted py-3">
+        <i class="fas fa-search fa-2x mb-2"></i>
+        <p class="mb-0">No results found for "{{ query }}"</p>
+        <small>Try searching by UID, name, phone number, or diagnosis</small>
+    </div>
+    {% else %}
+    <div class="text-center text-muted py-2">
+        <small>Start typing to search for patients or prescriptions</small>
+    </div>
+    {% endif %}
+{% endif %}
+
+<div id="timeline-spinner" class="htmx-indicator">
+    <div class="spinner-border spinner-border-sm" role="status"></div>
+</div>

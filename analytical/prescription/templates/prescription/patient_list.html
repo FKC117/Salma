@@ -1,0 +1,87 @@
+{% extends "analytics/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'prescription/css/prescription.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-users"></i> Patient List
+                    </h5>
+                    <a href="{% url 'prescription_add_patient' %}" class="btn btn-primary">
+                        <i class="fas fa-user-plus"></i> Add New Patient
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if patients %}
+                        <div class="table-responsive">
+                            <table class="table table-hover table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>UID</th>
+                                        <th>Name</th>
+                                        <th>Age</th>
+                                        <th>Gender</th>
+                                        <th>Phone</th>
+                                        <th>Email</th>
+                                        <th>Last Visit</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for patient in patients %}
+                                    <tr>
+                                        <td>
+                                            <span class="badge bg-primary">{{ patient.uid }}</span>
+                                        </td>
+                                        <td>{{ patient.name }}</td>
+                                        <td>{{ patient.age }}</td>
+                                        <td>{{ patient.get_gender_display }}</td>
+                                        <td>{{ patient.phone }}</td>
+                                        <td>{{ patient.email|default:"-" }}</td>
+                                        <td>
+                                            {% if patient.get_last_visit %}
+                                                {{ patient.get_last_visit|date:"M d, Y" }}
+                                            {% else %}
+                                                <span class="text-muted">No visits</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'prescription_patient_detail' patient.uid %}" 
+                                               class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye"></i> View
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center text-muted py-5">
+                            <i class="fas fa-user-slash fa-3x mb-3"></i>
+                            <h5>No patients found</h5>
+                            <p>Start by adding your first patient.</p>
+                            <a href="{% url 'prescription_add_patient' %}" class="btn btn-primary">
+                                <i class="fas fa-user-plus"></i> Add First Patient
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'prescription/js/prescription.js' %}"></script>
+{% endblock %}

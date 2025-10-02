@@ -1,0 +1,71 @@
+{% if patient %}
+<div class="patient-timeline">
+    <div class="patient-info mb-3">
+        <h6 class="mb-1">{{ patient.name }}</h6>
+        <small class="text-muted">{{ patient.uid }} | Age: {{ patient.age }} | {{ patient.get_gender_display }}</small>
+    </div>
+    
+    {% if timeline_items %}
+    <div class="timeline">
+        {% for item in timeline_items %}
+        <div class="timeline-item">
+            <div class="timeline-marker">
+                {% if item.type == 'prescription' %}
+                <i class="fas fa-prescription-bottle-alt text-success"></i>
+                {% else %}
+                <i class="fas fa-stethoscope text-info"></i>
+                {% endif %}
+            </div>
+            <div class="timeline-content">
+                <div class="timeline-header">
+                    <h6 class="mb-1">
+                        {% if item.type == 'prescription' %}
+                        Prescription #{{ item.object.id }}
+                        {% else %}
+                        {{ item.object.get_type_display_name }}
+                        {% endif %}
+                    </h6>
+                    <small class="text-muted">{{ item.date|date:"M d, Y" }}</small>
+                </div>
+                <div class="timeline-body">
+                    {% if item.type == 'prescription' %}
+                    <p class="mb-1"><strong>Diagnosis:</strong> {{ item.object.diagnosis }}</p>
+                    {% if item.object.symptoms %}
+                    <p class="mb-1"><strong>Symptoms:</strong> {{ item.object.symptoms }}</p>
+                    {% endif %}
+                    <p class="mb-1"><strong>Medications:</strong> {{ item.object.get_medications_count }} medication(s)</p>
+                    {% if item.object.follow_up_date %}
+                    <p class="mb-1"><strong>Follow-up:</strong> {{ item.object.follow_up_date|date:"M d, Y" }}</p>
+                    {% endif %}
+                    {% else %}
+                    {% if item.object.symptoms %}
+                    <p class="mb-1"><strong>Symptoms:</strong> {{ item.object.symptoms }}</p>
+                    {% endif %}
+                    {% if item.object.examination_findings %}
+                    <p class="mb-1"><strong>Findings:</strong> {{ item.object.examination_findings }}</p>
+                    {% endif %}
+                    {% if item.object.recommendations %}
+                    <p class="mb-1"><strong>Recommendations:</strong> {{ item.object.recommendations }}</p>
+                    {% endif %}
+                    {% if item.object.next_appointment %}
+                    <p class="mb-1"><strong>Next Appointment:</strong> {{ item.object.next_appointment|date:"M d, Y" }}</p>
+                    {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center text-muted">
+        <i class="fas fa-history fa-2x mb-3"></i>
+        <p>No timeline data available for this patient</p>
+    </div>
+    {% endif %}
+</div>
+{% else %}
+<div class="text-center text-muted">
+    <i class="fas fa-user-plus fa-3x mb-3"></i>
+    <p>Select a patient to view their timeline</p>
+</div>
+{% endif %}

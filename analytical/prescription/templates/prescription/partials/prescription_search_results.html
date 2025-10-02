@@ -1,0 +1,56 @@
+{% if prescriptions %}
+    <div class="list-group">
+        {% for prescription in prescriptions %}
+        <div class="list-group-item list-group-item-action prescription-item">
+            <div class="d-flex w-100 justify-content-between">
+                <h6 class="mb-1">
+                    <a href="{% url 'prescription_prescription_detail' prescription.id %}" class="text-white text-decoration-none">
+                        Prescription #{{ prescription.id }}
+                    </a>
+                </h6>
+                <small class="badge bg-success">{{ prescription.status|title }}</small>
+            </div>
+            <p class="mb-1">
+                <strong>Patient:</strong> {{ prescription.patient.name }} ({{ prescription.patient.uid }})
+            </p>
+            <p class="mb-1">
+                <strong>Diagnosis:</strong> {{ prescription.diagnosis|truncatechars:50 }}
+            </p>
+            {% if prescription.symptoms %}
+            <p class="mb-1">
+                <strong>Symptoms:</strong> {{ prescription.symptoms|truncatechars:50 }}
+            </p>
+            {% endif %}
+            <small class="text-muted">
+                <i class="fas fa-calendar"></i> {{ prescription.prescription_date|date:"M d, Y" }}
+                {% if prescription.follow_up_date %}
+                | <i class="fas fa-clock"></i> Follow-up: {{ prescription.follow_up_date|date:"M d, Y" }}
+                {% endif %}
+                | <i class="fas fa-pills"></i> {{ prescription.get_medications_count }} medication(s)
+            </small>
+        </div>
+        {% endfor %}
+    </div>
+    
+    {% if query %}
+    <div class="mt-2">
+        <small class="text-muted">
+            <i class="fas fa-search"></i> Found {{ prescriptions|length }} prescription(s) for "{{ query }}"
+        </small>
+    </div>
+    {% endif %}
+{% else %}
+    {% if query %}
+    <div class="text-center text-muted py-3">
+        <i class="fas fa-search fa-2x mb-2"></i>
+        <p class="mb-0">No prescriptions found for "{{ query }}"</p>
+        <small>Try searching by patient name, UID, diagnosis, or symptoms</small>
+    </div>
+    {% else %}
+    <div class="text-center text-muted py-3">
+        <i class="fas fa-prescription-bottle-alt fa-2x mb-2"></i>
+        <p class="mb-0">No prescriptions found</p>
+        <small>Create your first prescription to get started</small>
+    </div>
+    {% endif %}
+{% endif %}
