@@ -1,5 +1,5 @@
 <!-- Professional Chat Message Partial -->
-<div class="chat-message slide-in">
+<div class="chat-message slide-in" {% if session_id %}data-session-id="{{ session_id }}"{% endif %}>
     <div class="message-content {{ message_type }}">
         <div class="message-body">
             {{ message_content|safe }}
@@ -20,3 +20,12 @@
     </div>
     <div class="message-time">{{ timestamp }}</div>
 </div>
+
+{% if session_id %}
+<script>
+// Make session ID available globally for this message
+if (!window.currentSessionId) {
+    window.currentSessionId = {{ session_id }};
+}
+</script>
+{% endif %}

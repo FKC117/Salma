@@ -6,7 +6,7 @@ from django import forms
 from .models import (
     User, Dataset, DatasetColumn, AnalysisTool, AnalysisSession, 
     AnalysisResult, ChatMessage, AuditTrail, AgentRun, AgentStep,
-    GeneratedImage, SandboxExecution, ReportGeneration, VectorNote
+    GeneratedImage, SandboxExecution, SandboxResult, ReportGeneration, VectorNote
 )
 
 
@@ -324,6 +324,69 @@ class SandboxExecutionAdmin(admin.ModelAdmin):
             'fields': ('created_at', 'started_at', 'finished_at')
         })
     )
+
+
+@admin.register(SandboxResult)
+class SandboxResultAdmin(admin.ModelAdmin):
+    list_display = ['id', 'execution_link', 'user', 'session_link', 'images_preview', 'processing_status', 'created_at']
+    list_filter = ['has_images', 'processed', 'created_at', 'user', 'session']
+    search_fields = ['user__username', 'execution__code', 'text_output']
+    readonly_fields = ['created_at', 'updated_at']
+    fieldsets = (
+        ('Basic Info', {
+            'fields': ('execution', 'session', 'user')
+        }),
+        ('Content', {
+            'fields': ('text_output', 'has_images', 'image_count')
+        }),
+        ('Processing Status', {
+            'fields': ('processed', 'processing_error')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at')
+        })
+    )
+    
+    def get_queryset(self, request):
+        """Optimize queryset with related objects"""
+        return super().get_queryset(request).select_related('execution', 'user', 'session')
+    
+    def execution_link(self, obj):
+        """Create a link to the related SandboxExecution"""
+        if obj.execution:
+            url = reverse('admin:analytics_sandboxexecution_change', args=[obj.execution.id])
+            return format_html('<a href="{}">Execution {}</a>', url, obj.execution.id)
+        return '-'
+    execution_link.short_description = 'Execution'
+    
+    def session_link(self, obj):
+        """Create a link to the related AnalysisSession"""
+        if obj.session:
+            url = reverse('admin:analytics_analysissession_change', args=[obj.session.id])
+            return format_html('<a href="{}">Session {}</a>', url, obj.session.id)
+        return '-'
+    session_link.short_description = 'Session'
+    
+    def images_preview(self, obj):
+        """Show a preview of images count"""
+        if obj.has_images:
+            return format_html(
+                '<span class="badge bg-success">{} images</span>',
+                obj.image_count
+            )
+        return format_html('<span class="badge bg-secondary">No images</span>')
+    images_preview.short_description = 'Images'
+    
+    def processing_status(self, obj):
+        """Show processing status with color coding"""
+        if obj.processed:
+            if obj.processing_error:
+                return format_html('<span class="badge bg-warning">Processed with errors</span>')
+            else:
+                return format_html('<span class="badge bg-success">Processed</span>')
+        else:
+            return format_html('<span class="badge bg-danger">Not processed</span>')
+    processing_status.short_description = 'Status'
 
 
 @admin.register(ReportGeneration)

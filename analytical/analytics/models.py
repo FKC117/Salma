@@ -2386,7 +2386,35 @@ class GeneratedImage(models.Model):
         AnalysisResult,
         on_delete=models.CASCADE,
         related_name='generated_images',
+        null=True,
+        blank=True,
         help_text="Analysis result this image belongs to"
+    )
+    sandbox_result = models.ForeignKey(
+        'SandboxResult',
+        on_delete=models.CASCADE,
+        related_name='images',
+        null=True,
+        blank=True,
+        help_text="Sandbox result this image belongs to"
+    )
+    
+    # Source Type
+    source_type = models.CharField(
+        max_length=20,
+        choices=[
+            ('analysis', 'Analysis Result'),
+            ('sandbox', 'Sandbox Execution'),
+        ],
+        default='analysis',
+        help_text="Type of source that generated this image"
+    )
+    
+    # Base64 Data for Sandbox Images
+    image_data = models.TextField(
+        blank=True,
+        null=True,
+        help_text="Base64 encoded image data (for sandbox images)"
     )
     
     # Timestamps
@@ -2798,3 +2826,95 @@ class VectorNote(models.Model):
         self.usage_count += 1
         self.last_accessed = timezone.now()
         self.save(update_fields=['usage_count', 'last_accessed'])
+
+
+class SandboxResult(models.Model):
+    """
+    Structured results from sandbox execution, similar to AnalysisResult
+    Stores processed output with separated text and images
+    """
+    # Core Information
+    execution = models.OneToOneField(
+        SandboxExecution, 
+        on_delete=models.CASCADE,
+        related_name='structured_result',
+        help_text="Associated sandbox execution"
+    )
+    session = models.ForeignKey(
+        AnalysisSession, 
+        on_delete=models.CASCADE,
+        related_name='sandbox_results',
+        help_text="Analysis session this result belongs to"
+    )
+    user = models.ForeignKey(
+        User, 
+        on_delete=models.CASCADE,
+        related_name='sandbox_results',
+        help_text="User who created this result"
+    )
+    
+    # Content
+    text_output = models.TextField(
+        blank=True, 
+        null=True,
+        help_text="Clean text output without image markers"
+    )
+    has_images = models.BooleanField(
+        default=False,
+        help_text="Whether this result contains images"
+    )
+    image_count = models.PositiveIntegerField(
+        default=0,
+        help_text="Number of images in this result"
+    )
+    
+    # Processing Status
+    processed = models.BooleanField(
+        default=False,
+        help_text="Whether the output has been processed and structured"
+    )
+    processing_error = models.TextField(
+        blank=True,
+        null=True,
+        help_text="Error message if processing failed"
+    )
+    
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        db_table = 'analytics_sandbox_result'
+        verbose_name = 'Sandbox Result'
+        verbose_name_plural = 'Sandbox Results'
+        indexes = [
+            models.Index(fields=['session', 'created_at']),
+            models.Index(fields=['user', 'created_at']),
+            models.Index(fields=['has_images']),
+            models.Index(fields=['processed']),
+            models.Index(fields=['created_at']),
+        ]
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"SandboxResult {self.id} - {self.execution.language} ({self.image_count} images)"
+    
+    def get_images(self):
+        """Get all images associated with this result"""
+        return self.images.filter(source_type='sandbox').order_by('created_at')
+    
+    def to_dict(self):
+        """Convert to dictionary for API responses"""
+        return {
+            'id': self.id,
+            'execution_id': self.execution.id,
+            'session_id': self.session.id,
+            'user_id': self.user.id,
+            'text_output': self.text_output,
+            'has_images': self.has_images,
+            'image_count': self.image_count,
+            'processed': self.processed,
+            'processing_error': self.processing_error,
+            'created_at': self.created_at.isoformat(),
+            'updated_at': self.updated_at.isoformat(),
+        }

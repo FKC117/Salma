@@ -1038,7 +1038,8 @@ class EnhancedChatViewSet(viewsets.ViewSet):
                     'timestamp': timezone.now().strftime('%H:%M'),
                     'message_metadata': True,
                     'token_count': result.get('tokens_used', {}).get('total_tokens', 0),
-                    'cost': result.get('cost', 0.0)
+                    'cost': result.get('cost', 0.0),
+                    'session_id': result.get('session_info', {}).get('id')
                 })
                 
                 # DEBUG: Log HTML response

@@ -164,6 +164,23 @@ class SandboxExecutor:
             # Add execution_id to result
             result['execution_id'] = execution_id
             
+            # Create SandboxResult if execution was successful
+            if result.get('success', False) and execution.status == 'completed':
+                try:
+                    from analytics.services.sandbox_result_processor import SandboxResultProcessor
+                    processor = SandboxResultProcessor()
+                    sandbox_result = processor.create_sandbox_result(execution)
+                    if sandbox_result:
+                        result['sandbox_result_id'] = sandbox_result.id
+                        print(f"=== SANDBOX RESULT CREATED ===")
+                        print(f"SandboxResult ID: {sandbox_result.id}")
+                        print(f"Image count: {sandbox_result.image_count}")
+                        print(f"=============================")
+                except Exception as e:
+                    print(f"=== SANDBOX RESULT ERROR ===")
+                    print(f"Failed to create SandboxResult: {str(e)}")
+                    print(f"=============================")
+            
             print(f"=== FINAL RESULT ===")
             print(f"Success: {result.get('success', 'N/A')}")
             print(f"Status: {result.get('status', 'N/A')}")
@@ -708,10 +725,15 @@ original_savefig = plt.savefig
 
 # Override plt.show to save the figure
 def custom_show(*args, **kwargs):
+    print("=== CUSTOM_SHOW DEBUG ===")
+    print("custom_show called")
     # Save the figure
     import matplotlib.pyplot as plt  # Import here to ensure it's available
     fig = plt.gcf()
+    print(f"Figure has axes: {fig.get_axes()}")
+    print(f"Number of axes: {len(fig.get_axes())}")
     if fig.get_axes():  # Only save if there are axes
+        print("Saving figure to buffer...")
         # Save to bytes buffer
         import io  # Import here to ensure it's available
         buffer = io.BytesIO()
@@ -723,11 +745,20 @@ def custom_show(*args, **kwargs):
         # Convert to base64
         import base64  # Import here to ensure it's available
         image_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+        print(f"Image base64 length: {len(image_base64)}")
         print(f"__SANDBOX_IMAGE_BASE64__data:image/png;base64,{image_base64}")
+        print("=== IMAGE SAVED ===")
+    else:
+        print("No axes found, skipping image save")
+    print("Calling original show...")
     original_show(*args, **kwargs)
+    print("=== CUSTOM_SHOW COMPLETE ===")
 
 # Override plt.savefig to capture images
 def custom_savefig(*args, **kwargs):
+    print("=== CUSTOM_SAVEFIG DEBUG ===")
+    print(f"custom_savefig called with args: {args}")
+    print(f"custom_savefig called with kwargs: {kwargs}")
     # Save the figure to bytes buffer
     import matplotlib.pyplot as plt  # Import here to ensure it's available
     import io  # Import here to ensure it's available
@@ -740,11 +771,15 @@ def custom_savefig(*args, **kwargs):
     # Convert to base64
     import base64  # Import here to ensure it's available
     image_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+    print(f"Image base64 length: {len(image_base64)}")
     print(f"__SANDBOX_IMAGE_BASE64__data:image/png;base64,{image_base64}")
+    print("=== IMAGE SAVED VIA SAVEFIG ===")
     
     # Also call the original savefig if a filename was provided (for compatibility)
     if args and isinstance(args[0], str):
+        print(f"Also saving to file: {args[0]}")
         original_savefig(*args, **kwargs)
+    print("=== CUSTOM_SAVEFIG COMPLETE ===")
 
 plt.show = custom_show
 plt.savefig = custom_savefig

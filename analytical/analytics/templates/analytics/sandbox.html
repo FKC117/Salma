@@ -4,7 +4,7 @@
 {% block title %}Conversational Data Analysis{% endblock %}
 
 {% block content %}
-<div class="container-fluid" style="height: calc(100vh - var(--cursor-header-height)); margin-top: var(--cursor-header-height); background-color: var(--cursor-bg-primary); display: flex; flex-direction: column;">
+<div class="container-fluid" style="height: calc(100vh - var(--cursor-header-height)); margin-top: var(--cursor-header-height); background-color: var(--cursor-bg-primary); display: flex; flex-direction: column;" data-session-id="{% if session %}{{ session.id }}{% endif %}">
     <div class="card" style="margin: 0; border-radius: 0; border-left: none; border-right: none; border-top: none;">
         <div class="card-body" style="padding: 12px 20px; display: flex; align-items: center; justify-content: space-between;">
             <div style="display: flex; align-items: center; gap: 12px;">
@@ -52,6 +52,9 @@
 
 {% block extra_js %}
 <script>
+// Make session ID available globally
+window.currentSessionId = {% if session %}{{ session.id }}{% else %}null{% endif %};
+
 document.addEventListener('DOMContentLoaded', function() {
     const conversationCanvas = document.getElementById('conversation-canvas');
     const mainInput = document.getElementById('main-input');

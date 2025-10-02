@@ -150,6 +150,13 @@ class ChatService:
             ai_response_text = self.text_formatter.format_analysis_text(ai_response_text)
             
             # Create AI message with execution results
+            print(f"=== AI MESSAGE CONTENT DEBUG ===")
+            print(f"Content length: {len(ai_response_text)}")
+            print(f"Contains execution-result-container: {'execution-result-container' in ai_response_text}")
+            print(f"Contains sandbox-result-id: {'sandbox-result-id' in ai_response_text}")
+            print(f"Content preview: {ai_response_text[:500]}...")
+            print(f"================================")
+            
             ai_message = self._create_chat_message(
                 user=user,
                 content=ai_response_text,  # This now includes execution results
@@ -786,6 +793,7 @@ class ChatService:
                 print(f"=== SANDBOX EXECUTOR RESULT ===")
                 print(f"Success: {result.get('success', 'N/A')}")
                 print(f"Execution ID: {result.get('execution_id', 'N/A')}")
+                print(f"SandboxResult ID: {result.get('sandbox_result_id', 'N/A')}")
                 print(f"Status: {result.get('status', 'N/A')}")
                 print(f"===============================")
                 
@@ -797,7 +805,9 @@ class ChatService:
                     'success': result.get('success', False),
                     'output': result.get('output', ''),
                     'error': result.get('error', ''),
-                    'execution_time_ms': result.get('execution_time_ms', 0)
+                    'execution_time_ms': result.get('execution_time_ms', 0),
+                    'execution_id': result.get('execution_id'),
+                    'sandbox_result_id': result.get('sandbox_result_id')
                 }
                 
             except Exception as e:
@@ -910,8 +920,73 @@ Return ONLY the corrected Python code:"""
             for result in execution_results:
                 if result['success']:
                     successful_count += 1
-                    # Successful execution - format as HTML
-                    result_section = f"""
+                    
+                    # Debug logging
+                    print(f"=== EXECUTION RESULT DEBUG ===")
+                    print(f"Result keys: {list(result.keys())}")
+                    print(f"SandboxResult ID: {result.get('sandbox_result_id', 'N/A')}")
+                    print(f"Execution ID: {result.get('execution_id', 'N/A')}")
+                    print(f"=============================")
+                    
+                    # Try to get SandboxResult if available
+                    sandbox_result = None
+                    if result.get('sandbox_result_id'):
+                        try:
+                            from analytics.models import SandboxResult
+                            sandbox_result = SandboxResult.objects.get(id=result['sandbox_result_id'])
+                            print(f"✅ Found SandboxResult: {sandbox_result.id} with {sandbox_result.image_count} images")
+                        except SandboxResult.DoesNotExist:
+                            print(f"❌ SandboxResult {result['sandbox_result_id']} not found")
+                            pass
+                    else:
+                        print(f"❌ No sandbox_result_id in result")
+                    
+                    if sandbox_result:
+                        # Use structured SandboxResult
+                        result_section = f"""
+<div class="execution-result-container mt-3">
+    <div class="card bg-success bg-opacity-10 border-success">
+        <div class="card-header bg-success bg-opacity-25">
+            <h6 class="mb-0 text-success">
+                <i class="fas fa-check-circle"></i> Code Execution Result
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <strong>Status:</strong> <span class="text-success">Successfully executed</span>
+                </div>
+                <div class="col-md-6">
+                    <strong>Execution Time:</strong> {result['execution_time_ms']}ms
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <strong>Images:</strong> {sandbox_result.image_count} generated
+                </div>
+                <div class="col-md-6">
+                    <strong>SandboxResult ID:</strong> {sandbox_result.id}
+                </div>
+            </div>
+            <div class="mt-3">
+                <strong>Output:</strong>
+                <div class="bg-dark text-light p-3 rounded mt-2">
+                    <div class="mb-0" style="white-space:pre-wrap">{sandbox_result.text_output or 'No text output'}</div>
+                </div>
+            </div>
+            <div class="mt-3">
+                <div class="sandbox-images" data-sandbox-result-id="{sandbox_result.id}">
+                    <strong>Images:</strong>
+                    <div class="text-muted">Images will be loaded via API...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+"""
+                    else:
+                        # Fallback to raw output processing
+                        result_section = f"""
 <div class="execution-result-container mt-3">
     <div class="card bg-success bg-opacity-10 border-success">
         <div class="card-header bg-success bg-opacity-25">

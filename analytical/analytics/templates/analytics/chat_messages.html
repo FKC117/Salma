@@ -741,4 +741,138 @@ function formatExecutionResults(data, container) {
     container.innerHTML = html;
     console.log("=== RESULTS FORMATTED ===");
 }
+
+// Function to load sandbox images via API
+async function loadSandboxImages(sandboxResultId, container) {
+    try {
+        console.log(`Loading images for SandboxResult ${sandboxResultId}`);
+        
+        // Get current session ID from the page
+        const sessionId = getCurrentSessionId();
+        if (!sessionId) {
+            console.error('No session ID found');
+            return;
+        }
+        
+        // Fetch sandbox results
+        console.log(`Making API call to: /enhanced-chat/sandbox-results/?session_id=${sessionId}`);
+        const response = await fetch(`/enhanced-chat/sandbox-results/?session_id=${sessionId}`);
+        console.log(`API response status: ${response.status}`);
+        const data = await response.json();
+        console.log(`API response data:`, data);
+        
+        if (data.success && data.results) {
+            // Find the specific sandbox result
+            const result = data.results.find(r => r.id === sandboxResultId);
+            if (result && result.images && result.images.length > 0) {
+                console.log(`Found ${result.images.length} images for SandboxResult ${sandboxResultId}`);
+                
+                // Clear the loading message
+                container.innerHTML = '<strong>Images:</strong>';
+                
+                // Add each image
+                result.images.forEach((image, index) => {
+                    const img = document.createElement('img');
+                    img.src = image.image_data;
+                    img.alt = image.name || `Chart ${index + 1}`;
+                    img.className = 'img-fluid rounded mt-2';
+                    img.style.maxWidth = '100%';
+                    img.style.height = 'auto';
+                    img.style.border = '1px solid #444';
+                    
+                    // Add image info
+                    const imageInfo = document.createElement('div');
+                    imageInfo.className = 'text-muted small mt-1';
+                    imageInfo.textContent = `${image.name} (${image.width}x${image.height})`;
+                    
+                    container.appendChild(img);
+                    container.appendChild(imageInfo);
+                });
+            } else {
+                container.innerHTML = '<strong>Images:</strong> <span class="text-muted">No images found</span>';
+            }
+        } else {
+            console.error('Failed to fetch sandbox results:', data.error);
+            container.innerHTML = '<strong>Images:</strong> <span class="text-danger">Failed to load images</span>';
+        }
+    } catch (error) {
+        console.error('Error loading sandbox images:', error);
+        container.innerHTML = '<strong>Images:</strong> <span class="text-danger">Error loading images</span>';
+    }
+}
+
+// Function to get current session ID
+function getCurrentSessionId() {
+    // Try to get from various sources
+    const sessionElement = document.querySelector('[data-session-id]');
+    if (sessionElement) {
+        const sessionId = sessionElement.getAttribute('data-session-id');
+        console.log(`Found session ID from data attribute: ${sessionId}`);
+        return sessionId;
+    }
+    
+    // Try to get from URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionId = urlParams.get('session_id');
+    if (sessionId) {
+        console.log(`Found session ID from URL: ${sessionId}`);
+        return sessionId;
+    }
+    
+    // Try to get from global variable
+    if (window.currentSessionId) {
+        console.log(`Found session ID from global variable: ${window.currentSessionId}`);
+        return window.currentSessionId;
+    }
+    
+    console.error('No session ID found from any source');
+    return null;
+}
+
+// Function to initialize sandbox image loading
+function initializeSandboxImages() {
+    console.log("=== INITIALIZING SANDBOX IMAGES ===");
+    // Find all sandbox image containers
+    const imageContainers = document.querySelectorAll('.sandbox-images[data-sandbox-result-id]');
+    console.log(`Found ${imageContainers.length} sandbox image containers`);
+    
+    imageContainers.forEach((container, index) => {
+        const sandboxResultId = parseInt(container.getAttribute('data-sandbox-result-id'));
+        console.log(`Container ${index}: SandboxResult ID = ${sandboxResultId}`);
+        if (sandboxResultId) {
+            loadSandboxImages(sandboxResultId, container);
+        }
+    });
+    console.log("=== SANDBOX IMAGES INITIALIZATION COMPLETE ===");
+}
+
+// Initialize sandbox images when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    initializeSandboxImages();
+});
+
+// Also initialize when new content is added (for dynamic content)
+const observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+        if (mutation.type === 'childList') {
+            mutation.addedNodes.forEach(function(node) {
+                if (node.nodeType === 1) { // Element node
+                    const imageContainers = node.querySelectorAll ? 
+                        node.querySelectorAll('.sandbox-images[data-sandbox-result-id]') : [];
+                    imageContainers.forEach(container => {
+                        const sandboxResultId = parseInt(container.getAttribute('data-sandbox-result-id'));
+                        if (sandboxResultId) {
+                            loadSandboxImages(sandboxResultId, container);
+                        }
+                    });
+                }
+            });
+        }
+    });
+});
+
+observer.observe(document.body, {
+    childList: true,
+    subtree: true
+});
 </script>
