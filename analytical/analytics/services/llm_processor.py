@@ -195,34 +195,139 @@ class LLMProcessor:
         """Generate text using Google AI API"""
         try:
             # Google AI generation (now enabled for production)
+            print(f"=== GOOGLE AI API CALL DEBUG ===")
+            print(f"Prompt length: {len(prompt)}")
+            print(f"Model: {self.model}")
+            print(f"API Key configured: {bool(self.google_api_key)}")
+            print(f"Making API call...")
+            
             response = self.model.generate_content(prompt)
             
-            # Handle different response types
-            if hasattr(response, 'text') and response.text:
-                return response.text
-            elif hasattr(response, 'parts') and response.parts:
-                # Extract text from parts
+            print(f"Response received: {type(response)}")
+            print(f"Response attributes: {dir(response)}")
+            print(f"===============================")
+            
+            # Handle different response types - improved handling for complex responses
+            try:
+                # First try the simple text accessor
+                if hasattr(response, 'text') and response.text:
+                    return response.text
+            except ValueError:
+                # If simple text accessor fails, use the parts accessor
+                print("Simple text accessor failed, using parts accessor...")
+            
+            # Extract text from parts (more reliable method)
+            if hasattr(response, 'parts') and response.parts:
+                print(f"Extracting text from {len(response.parts)} parts...")
                 text_parts = []
-                for part in response.parts:
+                for i, part in enumerate(response.parts):
+                    print(f"Part {i}: {type(part)} - {dir(part)}")
                     if hasattr(part, 'text') and part.text:
                         text_parts.append(part.text)
-                return ''.join(text_parts)
-            elif hasattr(response, 'candidates') and response.candidates:
-                # Extract text from candidates
+                        print(f"Part {i} text length: {len(part.text)}")
+                if text_parts:
+                    return ''.join(text_parts)
+            
+            # Extract text from candidates (fallback method)
+            if hasattr(response, 'candidates') and response.candidates:
+                print(f"Extracting text from {len(response.candidates)} candidates...")
                 text_parts = []
-                for candidate in response.candidates:
+                for i, candidate in enumerate(response.candidates):
+                    print(f"Candidate {i}: {type(candidate)} - {dir(candidate)}")
                     if hasattr(candidate, 'content') and hasattr(candidate.content, 'parts'):
-                        for part in candidate.content.parts:
+                        for j, part in enumerate(candidate.content.parts):
+                            print(f"Candidate {i}, Part {j}: {type(part)} - {dir(part)}")
                             if hasattr(part, 'text') and part.text:
                                 text_parts.append(part.text)
-                return ''.join(text_parts)
-            else:
-                logger.warning("Google AI response has no text content")
-                return "No response generated from Google AI"
+                                print(f"Candidate {i}, Part {j} text length: {len(part.text)}")
+                if text_parts:
+                    return ''.join(text_parts)
+            
+            # If no text found, log the response structure for debugging
+            print(f"No text content found in response")
+            print(f"Response type: {type(response)}")
+            print(f"Response attributes: {dir(response)}")
+            logger.warning("Google AI response has no text content")
+            return "No response generated from Google AI"
                 
         except Exception as e:
-            logger.error(f"Google AI generation failed: {str(e)}")
-            return "Error generating response from Google AI"
+            # Enhanced error handling for Google AI API
+            print(f"=== GOOGLE AI ERROR DEBUG ===")
+            print(f"Exception type: {type(e)}")
+            print(f"Exception message: {str(e)}")
+            print(f"Exception attributes: {dir(e)}")
+            if hasattr(e, 'status_code'):
+                print(f"Status code: {e.status_code}")
+            if hasattr(e, 'response'):
+                print(f"Response: {e.response}")
+            print(f"=============================")
+            
+            error_details = self._extract_google_ai_error_details(e)
+            logger.error(f"Google AI generation failed: {error_details}")
+            return f"Google AI Error: {error_details}"
+    
+    def _extract_google_ai_error_details(self, error: Exception) -> str:
+        """Extract detailed error information from Google AI API exceptions"""
+        try:
+            error_str = str(error)
+            error_type = type(error).__name__
+            
+            # Check for specific Google AI error types
+            if hasattr(error, 'status_code'):
+                status_code = error.status_code
+                if status_code == 429:
+                    return f"Rate limit exceeded (429). You've exceeded the requests per minute (RPM) or tokens per minute (TPM) limit. Please try again in a few minutes."
+                elif status_code == 400:
+                    return f"Bad request (400). Check your prompt length and content. Prompt may be too long or contain invalid characters."
+                elif status_code == 401:
+                    return f"Authentication failed (401). Check your API key configuration."
+                elif status_code == 403:
+                    return f"Access forbidden (403). Check your API permissions and billing setup."
+                elif status_code == 500:
+                    return f"Google AI server error (500). This could be due to: 1) Service maintenance, 2) Quota exceeded (check daily limits), 3) Model overload. Try again in a few minutes."
+                elif status_code == 503:
+                    return f"Service unavailable (503). Google AI is temporarily down for maintenance."
+                else:
+                    return f"HTTP {status_code}: {error_str}"
+            
+            # Check for quota exceeded errors
+            if "quota" in error_str.lower() or "limit" in error_str.lower():
+                return f"Quota/Limit exceeded: {error_str}"
+            
+            # Check for token limit errors
+            if "token" in error_str.lower() and "limit" in error_str.lower():
+                return f"Token limit exceeded: {error_str}"
+            
+            # Check for content policy violations
+            if "policy" in error_str.lower() or "safety" in error_str.lower():
+                return f"Content policy violation: {error_str}"
+            
+            # Check for model-specific errors
+            if "model" in error_str.lower():
+                return f"Model error: {error_str}"
+            
+            # Check for billing/payment issues
+            if "billing" in error_str.lower() or "payment" in error_str.lower():
+                return f"Billing/Payment issue: {error_str}"
+            
+            # Check for internal server errors
+            if "internal" in error_str.lower() and "error" in error_str.lower():
+                return f"Internal server error: {error_str}. This is usually temporary - try again in a few minutes."
+            
+            # Check for service unavailable
+            if "service" in error_str.lower() and "unavailable" in error_str.lower():
+                return f"Service unavailable: {error_str}. Google AI may be experiencing issues."
+            
+            # Check for response parsing errors
+            if "response.text" in error_str.lower() and "quick accessor" in error_str.lower():
+                return f"Response parsing error: {error_str}. This is a technical issue with the response format."
+            
+            # Generic error with type information
+            return f"{error_type}: {error_str}"
+            
+        except Exception as parse_error:
+            # Fallback if error parsing fails
+            return f"Unknown error: {str(error)} (Parse error: {str(parse_error)})"
     
     def _count_tokens(self, text: str) -> int:
         """Simple token counting for Ollama (approximation)"""

@@ -2405,3 +2405,100 @@ INFO 2025-10-02 21:07:16,684 basehttp 12088 15992 "GET /api/health/ HTTP/1.1" 20
 INFO 2025-10-02 21:07:47,186 basehttp 12088 15992 "GET /api/health/ HTTP/1.1" 200 89
 INFO 2025-10-02 21:08:17,681 basehttp 12088 15992 "GET /api/health/ HTTP/1.1" 200 89
 INFO 2025-10-02 21:08:47,986 basehttp 12088 15992 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:09:00,800 basehttp 12088 15992 "GET /sandbox/ HTTP/1.1" 200 42266
+INFO 2025-10-02 21:09:01,413 basehttp 12088 15992 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 21:09:05,022 basehttp 12088 15992 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 21:09:31,538 basehttp 12088 11000 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:09:40,097 basehttp 12088 15992 "POST /enhanced-chat/send/ HTTP/1.1" 200 742
+INFO 2025-10-02 21:10:01,430 basehttp 12088 15992 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:10:31,424 basehttp 12088 15992 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:11:01,426 basehttp 12088 15992 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:11:31,433 basehttp 12088 15992 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:12:08,823 autoreload 12088 3908 F:\analytical\analytical\analytics\services\llm_processor.py changed, reloading.
+INFO 2025-10-02 21:12:18,979 autoreload 11332 12232 Watching for file changes with StatReloader
+INFO 2025-10-02 21:13:06,102 basehttp 11332 12576 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:13:11,008 autoreload 11332 12232 F:\analytical\analytical\analytics\services\llm_processor.py changed, reloading.
+INFO 2025-10-02 21:13:22,609 autoreload 22604 18504 Watching for file changes with StatReloader
+INFO 2025-10-02 21:14:06,143 basehttp 22604 12304 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:14:27,669 autoreload 22604 18504 F:\analytical\analytical\analytics\services\llm_processor.py changed, reloading.
+INFO 2025-10-02 21:14:30,490 autoreload 8844 11108 Watching for file changes with StatReloader
+INFO 2025-10-02 21:14:41,438 basehttp 8844 23268 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:15:05,999 basehttp 8844 23268 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:15:36,016 basehttp 8844 23268 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:16:06,012 basehttp 8844 23268 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:16:36,026 basehttp 8844 23268 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:17:06,035 basehttp 8844 23268 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:17:36,037 basehttp 8844 23268 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:18:06,047 basehttp 8844 23268 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:18:36,068 basehttp 8844 23268 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:19:06,071 basehttp 8844 23268 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:19:36,079 basehttp 8844 23268 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:20:06,085 basehttp 8844 23268 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:20:36,087 basehttp 8844 23268 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:21:06,099 basehttp 8844 23268 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:21:36,125 basehttp 8844 23268 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:22:06,123 basehttp 8844 23268 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:22:36,146 basehttp 8844 23268 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:23:06,143 basehttp 8844 23268 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:23:36,152 basehttp 8844 23268 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:24:06,162 basehttp 8844 23268 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:24:36,174 basehttp 8844 23268 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:25:06,245 basehttp 8844 23268 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:25:36,198 basehttp 8844 23268 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:26:06,200 basehttp 8844 23268 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:26:36,205 basehttp 8844 23268 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:27:06,208 basehttp 8844 23268 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:27:36,210 basehttp 8844 23268 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:28:06,227 basehttp 8844 23268 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:28:36,229 basehttp 8844 23268 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:30:51,937 basehttp 8844 7452 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:31:04,491 autoreload 8844 11108 F:\analytical\analytical\analytics\services\llm_processor.py changed, reloading.
+INFO 2025-10-02 21:31:13,684 autoreload 17368 8904 Watching for file changes with StatReloader
+INFO 2025-10-02 21:31:27,038 basehttp 17368 15924 "GET /sandbox/ HTTP/1.1" 200 42266
+INFO 2025-10-02 21:31:27,586 basehttp 17368 26536 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 21:31:35,722 basehttp 17368 15924 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 21:31:57,402 basehttp 17368 26536 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:32:27,416 basehttp 17368 26536 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:32:36,026 basehttp 17368 15924 "POST /enhanced-chat/send/ HTTP/1.1" 200 997
+INFO 2025-10-02 21:32:57,429 basehttp 17368 26536 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:33:29,242 basehttp 17368 26536 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:33:47,223 autoreload 17368 8904 F:\analytical\analytical\analytics\services\llm_processor.py changed, reloading.
+INFO 2025-10-02 21:33:57,216 autoreload 25524 22708 Watching for file changes with StatReloader
+INFO 2025-10-02 21:34:46,439 basehttp 25524 18348 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:35:17,178 autoreload 25524 22708 F:\analytical\analytical\analytics\services\llm_processor.py changed, reloading.
+INFO 2025-10-02 21:35:22,876 autoreload 5980 24072 Watching for file changes with StatReloader
+INFO 2025-10-02 21:35:49,782 basehttp 5980 12428 "GET /sandbox/ HTTP/1.1" 200 42266
+INFO 2025-10-02 21:35:50,006 basehttp 5980 12428 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 21:35:53,935 basehttp 5980 12428 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-02 21:36:20,882 basehttp 5980 17484 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:36:43,592 basehttp 5980 12428 "POST /enhanced-chat/send/ HTTP/1.1" 200 17690
+INFO 2025-10-02 21:36:50,803 basehttp 5980 12428 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:37:14,575 basehttp 5980 5008 "GET /admin/analytics/sandboxresult/ HTTP/1.1" 200 50837
+INFO 2025-10-02 21:37:14,616 basehttp 5980 5008 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+WARNING 2025-10-02 21:37:14,910 log 5980 8168 Not Found: /favicon.ico
+WARNING 2025-10-02 21:37:14,911 basehttp 5980 8168 "GET /favicon.ico HTTP/1.1" 404 10233
+INFO 2025-10-02 21:37:21,109 basehttp 5980 12428 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:37:52,084 basehttp 5980 12428 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:38:22,691 basehttp 5980 12428 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:38:52,995 basehttp 5980 12428 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:39:23,418 basehttp 5980 12428 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:39:53,841 basehttp 5980 12428 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:40:24,343 basehttp 5980 12428 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:40:54,855 basehttp 5980 12428 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:41:25,355 basehttp 5980 12428 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:41:55,797 basehttp 5980 12428 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:42:26,591 basehttp 5980 12428 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:42:57,059 basehttp 5980 12428 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:43:27,676 basehttp 5980 12428 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:43:58,075 basehttp 5980 12428 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:44:28,418 basehttp 5980 12428 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:44:58,915 basehttp 5980 12428 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:45:29,191 basehttp 5980 12428 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:45:59,545 basehttp 5980 12428 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:46:29,775 basehttp 5980 12428 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:47:00,355 basehttp 5980 12428 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:47:30,861 basehttp 5980 12428 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:48:01,465 basehttp 5980 12428 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:48:31,910 basehttp 5980 12428 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:49:03,134 basehttp 5980 12428 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-02 21:49:33,537 basehttp 5980 12428 "GET /api/health/ HTTP/1.1" 200 89
