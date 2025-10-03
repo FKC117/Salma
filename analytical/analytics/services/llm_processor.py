@@ -211,10 +211,20 @@ class LLMProcessor:
             try:
                 # First try the simple text accessor
                 if hasattr(response, 'text') and response.text:
+                    print(f"Simple text accessor successful: {len(response.text)} chars")
                     return response.text
-            except ValueError:
+            except (ValueError, AttributeError) as e:
                 # If simple text accessor fails, use the parts accessor
-                print("Simple text accessor failed, using parts accessor...")
+                print(f"Simple text accessor failed ({str(e)}), using parts accessor...")
+            
+            # Try alternative text access methods
+            try:
+                # Try accessing text through different attributes
+                if hasattr(response, 'result') and hasattr(response.result, 'text'):
+                    print(f"Result text access successful: {len(response.result.text)} chars")
+                    return response.result.text
+            except (ValueError, AttributeError) as e:
+                print(f"Result text access failed: {str(e)}")
             
             # Extract text from parts (more reliable method)
             if hasattr(response, 'parts') and response.parts:
@@ -234,12 +244,32 @@ class LLMProcessor:
                 text_parts = []
                 for i, candidate in enumerate(response.candidates):
                     print(f"Candidate {i}: {type(candidate)} - {dir(candidate)}")
-                    if hasattr(candidate, 'content') and hasattr(candidate.content, 'parts'):
+                    
+                    # Try multiple ways to extract text from candidate
+                    candidate_text = None
+                    
+                    # Method 1: Direct text access
+                    if hasattr(candidate, 'text') and candidate.text:
+                        candidate_text = candidate.text
+                        print(f"Candidate {i} direct text length: {len(candidate_text)}")
+                    
+                    # Method 2: Content parts access
+                    elif hasattr(candidate, 'content') and hasattr(candidate.content, 'parts'):
                         for j, part in enumerate(candidate.content.parts):
                             print(f"Candidate {i}, Part {j}: {type(part)} - {dir(part)}")
                             if hasattr(part, 'text') and part.text:
                                 text_parts.append(part.text)
                                 print(f"Candidate {i}, Part {j} text length: {len(part.text)}")
+                    
+                    # Method 3: Try to get text from candidate directly
+                    elif hasattr(candidate, 'content') and hasattr(candidate.content, 'text'):
+                        candidate_text = candidate.content.text
+                        print(f"Candidate {i} content text length: {len(candidate_text)}")
+                    
+                    # Add candidate text if found
+                    if candidate_text:
+                        text_parts.append(candidate_text)
+                
                 if text_parts:
                     return ''.join(text_parts)
             

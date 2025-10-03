@@ -51,6 +51,7 @@ urlpatterns = [
     path('enhanced-chat/context/', views.EnhancedChatViewSet.as_view({'get': 'context'}), name='enhanced_chat_context'),
     path('enhanced-chat/session/', views.EnhancedChatViewSet.as_view({'put': 'update_session'}), name='enhanced_chat_update_session'),
     path('enhanced-chat/sandbox-executions/', views.EnhancedChatViewSet.as_view({'get': 'sandbox_executions'}), name='enhanced_chat_sandbox_executions'),
+    path('enhanced-chat/sandbox-results/', views.sandbox_results_api, name='enhanced_chat_sandbox_results'),
     path('sandbox/execute/', sandbox_views.ExecuteCodeView.as_view(), name='sandbox_execute'),
     path('sandbox/history/', sandbox_views.SandboxHistoryView.as_view(), name='sandbox_history'),
     path('api/health/', views.HealthViewSet.as_view({'get': 'health'}), name='health_check'),

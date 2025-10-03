@@ -3047,3 +3047,45 @@ def execute_sandbox_code(request):
             'success': False,
             'error': str(e)
         }, status=500)
+
+@api_view(['GET'])
+def sandbox_results_api(request):
+    """
+    Get sandbox results for a session
+    """
+    try:
+        # Get parameters
+        session_id = request.query_params.get('session_id')
+        user_id = request.user.id if request.user.is_authenticated else None
+        
+        if not session_id:
+            return Response({
+                'success': False,
+                'error': 'Session ID is required'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        if not user_id:
+            return Response({
+                'success': False,
+                'error': 'User authentication required'
+            }, status=status.HTTP_401_UNAUTHORIZED)
+        
+        # Import processor
+        from analytics.services.sandbox_result_processor import SandboxResultProcessor
+        
+        # Get results
+        processor = SandboxResultProcessor()
+        results = processor.get_sandbox_results(int(session_id), user_id)
+        
+        return Response({
+            'success': True,
+            'results': results,
+            'count': len(results)
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting sandbox results: {str(e)}", exc_info=True)
+        return Response({
+            'success': False,
+            'error': str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
