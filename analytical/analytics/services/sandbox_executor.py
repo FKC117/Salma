@@ -729,12 +729,26 @@ def custom_show(*args, **kwargs):
     print("custom_show called")
     # Save the figure
     import matplotlib.pyplot as plt  # Import here to ensure it's available
+    import os
+    import uuid
+    import time
     fig = plt.gcf()
     print(f"Figure has axes: {fig.get_axes()}")
     print(f"Number of axes: {len(fig.get_axes())}")
     if fig.get_axes():  # Only save if there are axes
-        print("Saving figure to buffer...")
-        # Save to bytes buffer
+        print("Saving figure to buffer and file...")
+        
+        # Create unique filename
+        timestamp = int(time.time() * 1000)  # milliseconds
+        unique_id = str(uuid.uuid4())[:8]
+        filename = f"sandbox_chart_{timestamp}_{unique_id}.png"
+        
+        # Ensure sandbox directory exists
+        sandbox_dir = "/tmp/sandbox"  # Will be mapped to media/sandbox
+        os.makedirs(sandbox_dir, exist_ok=True)
+        file_path = os.path.join(sandbox_dir, filename)
+        
+        # Save to bytes buffer for base64
         import io  # Import here to ensure it's available
         buffer = io.BytesIO()
         plt.tight_layout()
@@ -742,11 +756,16 @@ def custom_show(*args, **kwargs):
         original_savefig(buffer, format='png', dpi=150, bbox_inches="tight")
         buffer.seek(0)
         
+        # Also save to file
+        original_savefig(file_path, format='png', dpi=150, bbox_inches="tight")
+        print(f"Image saved to file: {file_path}")
+        
         # Convert to base64
         import base64  # Import here to ensure it's available
         image_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
         print(f"Image base64 length: {len(image_base64)}")
         print(f"__SANDBOX_IMAGE_BASE64__data:image/png;base64,{image_base64}")
+        print(f"__SANDBOX_IMAGE_FILE__{file_path}")
         print("=== IMAGE SAVED ===")
     else:
         print("No axes found, skipping image save")
@@ -762,22 +781,41 @@ def custom_savefig(*args, **kwargs):
     # Save the figure to bytes buffer
     import matplotlib.pyplot as plt  # Import here to ensure it's available
     import io  # Import here to ensure it's available
+    import os
+    import uuid
+    import time
+    
+    # Create unique filename
+    timestamp = int(time.time() * 1000)  # milliseconds
+    unique_id = str(uuid.uuid4())[:8]
+    filename = f"sandbox_chart_{timestamp}_{unique_id}.png"
+    
+    # Ensure sandbox directory exists
+    sandbox_dir = "/tmp/sandbox"  # Will be mapped to media/sandbox
+    os.makedirs(sandbox_dir, exist_ok=True)
+    file_path = os.path.join(sandbox_dir, filename)
+    
     buffer = io.BytesIO()
     plt.tight_layout()
     # Use the original savefig to avoid recursion
     original_savefig(buffer, format='png', dpi=150, bbox_inches="tight")
     buffer.seek(0)
     
+    # Also save to file
+    original_savefig(file_path, format='png', dpi=150, bbox_inches="tight")
+    print(f"Image saved to file: {file_path}")
+    
     # Convert to base64
     import base64  # Import here to ensure it's available
     image_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
     print(f"Image base64 length: {len(image_base64)}")
     print(f"__SANDBOX_IMAGE_BASE64__data:image/png;base64,{image_base64}")
+    print(f"__SANDBOX_IMAGE_FILE__{file_path}")
     print("=== IMAGE SAVED VIA SAVEFIG ===")
     
     # Also call the original savefig if a filename was provided (for compatibility)
     if args and isinstance(args[0], str):
-        print(f"Also saving to file: {args[0]}")
+        print(f"Also saving to user-specified file: {args[0]}")
         original_savefig(*args, **kwargs)
     print("=== CUSTOM_SAVEFIG COMPLETE ===")
 

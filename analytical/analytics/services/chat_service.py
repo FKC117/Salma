@@ -977,7 +977,7 @@ Return ONLY the corrected Python code:"""
             <div class="mt-3">
                 <div class="sandbox-images" data-sandbox-result-id="{sandbox_result.id}">
                     <strong>Images:</strong>
-                    <div class="text-muted">Images will be loaded via API...</div>
+                    <div class="text-muted">Images are processed inline...</div>
                 </div>
             </div>
         </div>
@@ -1044,22 +1044,49 @@ Return ONLY the corrected Python code:"""
             Processed output with images converted to HTML
         """
         try:
+            import re
+            import base64
+            import os
+            processed_output = output
+            
             # Check for sandbox image markers (base64 format)
             if '__SANDBOX_IMAGE_BASE64__' in output:
                 # Extract base64 image data and convert to HTML
-                import re
                 image_pattern = r'__SANDBOX_IMAGE_BASE64__(data:image/png;base64,[A-Za-z0-9+/=]+)'
                 matches = re.findall(image_pattern, output)
                 
-                processed_output = output
                 for image_data in matches:
                     # Create image HTML
                     image_html = f'\n\n<img src="{image_data}" alt="Generated Plot" class="img-fluid rounded mt-2" style="max-width: 100%; height: auto;">\n'
                     processed_output = processed_output.replace(f'__SANDBOX_IMAGE_BASE64__{image_data}', image_html)
+            
+            # Check for sandbox image file markers (file paths)
+            if '__SANDBOX_IMAGE_FILE__' in output:
+                # Extract file paths and convert to base64 HTML
+                file_pattern = r'__SANDBOX_IMAGE_FILE__(.+)'
+                matches = re.findall(file_pattern, output)
                 
-                return processed_output
-            else:
-                return output
+                for file_path in matches:
+                    try:
+                        # Check if file exists
+                        if os.path.exists(file_path):
+                            # Read file and convert to base64
+                            with open(file_path, 'rb') as f:
+                                image_data = base64.b64encode(f.read()).decode('utf-8')
+                                base64_data = f"data:image/png;base64,{image_data}"
+                                
+                                # Create image HTML
+                                image_html = f'\n\n<img src="{base64_data}" alt="Generated Plot" class="img-fluid rounded mt-2" style="max-width: 100%; height: auto;">\n'
+                                processed_output = processed_output.replace(f'__SANDBOX_IMAGE_FILE__{file_path}', image_html)
+                        else:
+                            # File doesn't exist, remove the marker
+                            processed_output = processed_output.replace(f'__SANDBOX_IMAGE_FILE__{file_path}', '')
+                    except Exception as e:
+                        logger.warning(f"Error processing image file {file_path}: {str(e)}")
+                        # Remove the marker if there's an error
+                        processed_output = processed_output.replace(f'__SANDBOX_IMAGE_FILE__{file_path}', '')
+            
+            return processed_output
                 
         except Exception as e:
             logger.error(f"Error processing execution output: {str(e)}")
