@@ -4340,3 +4340,73 @@ INFO 2025-10-04 22:38:45,650 basehttp 20136 14648 "POST /api/nl-sandbox/generate
 INFO 2025-10-04 22:38:47,110 basehttp 20136 26360 "GET /api/health/ HTTP/1.1" 200 89
 INFO 2025-10-04 22:38:53,856 basehttp 20136 14648 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 681748
 INFO 2025-10-04 22:39:17,016 basehttp 20136 14648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:39:47,016 basehttp 20136 14648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:40:17,021 basehttp 20136 14648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:40:47,095 basehttp 20136 14648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:41:17,256 basehttp 20136 14648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:41:47,256 basehttp 20136 14648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:42:17,261 basehttp 20136 14648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:42:24,342 autoreload 6744 26032 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-04 22:42:24,353 autoreload 20136 23108 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-04 22:42:24,378 autoreload 9176 2380 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-04 22:42:24,732 autoreload 23032 17304 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-04 22:42:28,116 autoreload 9472 14932 Watching for file changes with StatReloader
+INFO 2025-10-04 22:42:28,126 autoreload 4336 23716 Watching for file changes with StatReloader
+INFO 2025-10-04 22:42:28,389 autoreload 9776 24416 Watching for file changes with StatReloader
+INFO 2025-10-04 22:42:32,248 autoreload 12936 15108 Watching for file changes with StatReloader
+INFO 2025-10-04 22:42:39,182 autoreload 8940 9376 Watching for file changes with StatReloader
+INFO 2025-10-04 22:42:51,050 basehttp 4336 3776 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:43:17,327 basehttp 4336 3776 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:43:21,537 basehttp 4336 3776 "POST /api/nl-sandbox/generate/ HTTP/1.1" 200 858
+INFO 2025-10-04 22:43:28,084 basehttp 4336 3776 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 803
+INFO 2025-10-04 22:43:45,696 basehttp 4336 22480 "GET /admin/analytics/sandboxresult/ HTTP/1.1" 200 114281
+INFO 2025-10-04 22:43:45,739 basehttp 4336 22480 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+WARNING 2025-10-04 22:43:45,926 log 4336 25332 Not Found: /favicon.ico
+WARNING 2025-10-04 22:43:45,926 basehttp 4336 25332 "GET /favicon.ico HTTP/1.1" 404 11672
+INFO 2025-10-04 22:43:48,198 basehttp 4336 3776 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:43:49,841 basehttp 4336 22480 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 66083
+INFO 2025-10-04 22:43:49,877 basehttp 4336 25332 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+WARNING 2025-10-04 22:43:49,951 log 4336 25332 Not Found: /favicon.ico
+WARNING 2025-10-04 22:43:49,952 basehttp 4336 25332 "GET /favicon.ico HTTP/1.1" 404 11672
+INFO 2025-10-04 22:43:53,166 basehttp 4336 22480 "GET /admin/analytics/sandboxexecution/282/change/ HTTP/1.1" 200 58181
+INFO 2025-10-04 22:43:53,205 basehttp 4336 25332 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-04 22:44:07,402 basehttp 4336 3776 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 804
+INFO 2025-10-04 22:44:18,223 basehttp 4336 3776 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:44:48,225 basehttp 4336 3776 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:44:58,560 basehttp 4336 3776 "POST /api/nl-sandbox/generate/ HTTP/1.1" 200 2233
+INFO 2025-10-04 22:45:01,743 basehttp 4336 3776 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 804
+INFO 2025-10-04 22:45:18,235 basehttp 4336 3776 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:45:34,443 basehttp 4336 3776 "POST /api/nl-sandbox/generate/ HTTP/1.1" 200 2182
+INFO 2025-10-04 22:45:38,420 basehttp 4336 3776 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 773
+INFO 2025-10-04 22:45:48,254 basehttp 4336 3776 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:46:18,254 basehttp 4336 3776 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:46:48,266 basehttp 4336 3776 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:47:14,341 autoreload 9472 14932 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 22:47:14,429 autoreload 9776 24416 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 22:47:14,458 autoreload 12936 15108 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 22:47:14,467 autoreload 8940 9376 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 22:47:14,798 autoreload 4336 23716 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 22:47:18,027 autoreload 24212 18728 Watching for file changes with StatReloader
+INFO 2025-10-04 22:47:18,251 autoreload 20212 24600 Watching for file changes with StatReloader
+INFO 2025-10-04 22:47:18,286 autoreload 21488 9172 Watching for file changes with StatReloader
+INFO 2025-10-04 22:47:18,327 autoreload 15112 12800 Watching for file changes with StatReloader
+INFO 2025-10-04 22:47:20,786 autoreload 10128 11656 Watching for file changes with StatReloader
+INFO 2025-10-04 22:47:23,059 autoreload 3048 15780 Watching for file changes with StatReloader
+INFO 2025-10-04 22:47:40,969 basehttp 15112 13692 "GET /natural-language-sandbox/ HTTP/1.1" 200 80489
+INFO 2025-10-04 22:47:41,458 basehttp 15112 13692 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-04 22:48:11,396 basehttp 15112 13692 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:48:20,865 basehttp 15112 13692 "POST /api/nl-sandbox/generate/ HTTP/1.1" 200 2973
+INFO 2025-10-04 22:48:26,031 basehttp 15112 13692 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 280959
+INFO 2025-10-04 22:48:41,392 basehttp 15112 13692 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:49:11,584 basehttp 15112 13740 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:49:11,937 basehttp 15112 13692 "POST /api/nl-sandbox/generate/ HTTP/1.1" 200 2277
+INFO 2025-10-04 22:49:15,263 basehttp 15112 13740 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 341
+INFO 2025-10-04 22:49:31,590 basehttp 20212 9256 "GET /natural-language-sandbox/ HTTP/1.1" 200 80489
+INFO 2025-10-04 22:49:32,096 basehttp 20212 2280 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-04 22:49:52,806 basehttp 20212 9256 "POST /api/nl-sandbox/generate/ HTTP/1.1" 200 3389
+INFO 2025-10-04 22:50:01,968 basehttp 20212 9256 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:50:03,416 basehttp 20212 2280 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 822964
+INFO 2025-10-04 22:50:31,969 basehttp 20212 2280 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:50:53,269 basehttp 20212 2280 "POST /api/nl-sandbox/generate/ HTTP/1.1" 200 2182
+INFO 2025-10-04 22:50:56,407 basehttp 20212 2280 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 623
+INFO 2025-10-04 22:51:01,966 basehttp 20212 2280 "GET /api/health/ HTTP/1.1" 200 89

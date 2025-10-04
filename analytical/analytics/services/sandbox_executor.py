@@ -723,6 +723,9 @@ import io
 original_show = plt.show
 original_savefig = plt.savefig
 
+# Track if we've already captured this figure to avoid duplicates
+captured_figures = set()
+
 # Override plt.show to save the figure
 def custom_show(*args, **kwargs):
     print("=== CUSTOM_SHOW DEBUG ===")
@@ -736,37 +739,43 @@ def custom_show(*args, **kwargs):
     print(f"Figure has axes: {fig.get_axes()}")
     print(f"Number of axes: {len(fig.get_axes())}")
     if fig.get_axes():  # Only save if there are axes
-        print("Saving figure to buffer and file...")
-        
-        # Create unique filename
-        timestamp = int(time.time() * 1000)  # milliseconds
-        unique_id = str(uuid.uuid4())[:8]
-        filename = f"sandbox_chart_{timestamp}_{unique_id}.png"
-        
-        # Ensure sandbox directory exists
-        sandbox_dir = "/tmp/sandbox"  # Will be mapped to media/sandbox
-        os.makedirs(sandbox_dir, exist_ok=True)
-        file_path = os.path.join(sandbox_dir, filename)
-        
-        # Save to bytes buffer for base64
-        import io  # Import here to ensure it's available
-        buffer = io.BytesIO()
-        plt.tight_layout()
-        # Use the original savefig to avoid recursion
-        original_savefig(buffer, format='png', dpi=150, bbox_inches="tight")
-        buffer.seek(0)
-        
-        # Also save to file
-        original_savefig(file_path, format='png', dpi=150, bbox_inches="tight")
-        print(f"Image saved to file: {file_path}")
-        
-        # Convert to base64
-        import base64  # Import here to ensure it's available
-        image_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
-        print(f"Image base64 length: {len(image_base64)}")
-        print(f"__SANDBOX_IMAGE_BASE64__data:image/png;base64,{image_base64}")
-        print(f"__SANDBOX_IMAGE_FILE__{file_path}")
-        print("=== IMAGE SAVED ===")
+        # Create a unique identifier for this figure
+        fig_id = id(fig)
+        if fig_id not in captured_figures:  # Only save if not already captured
+            print("Saving figure to buffer and file...")
+            captured_figures.add(fig_id)
+            
+            # Create unique filename
+            timestamp = int(time.time() * 1000)  # milliseconds
+            unique_id = str(uuid.uuid4())[:8]
+            filename = f"sandbox_chart_{timestamp}_{unique_id}.png"
+            
+            # Ensure sandbox directory exists
+            sandbox_dir = "/tmp/sandbox"  # Will be mapped to media/sandbox
+            os.makedirs(sandbox_dir, exist_ok=True)
+            file_path = os.path.join(sandbox_dir, filename)
+            
+            # Save to bytes buffer for base64
+            import io  # Import here to ensure it's available
+            buffer = io.BytesIO()
+            plt.tight_layout()
+            # Use the original savefig to avoid recursion
+            original_savefig(buffer, format='png', dpi=150, bbox_inches="tight")
+            buffer.seek(0)
+            
+            # Also save to file
+            original_savefig(file_path, format='png', dpi=150, bbox_inches="tight")
+            print(f"Image saved to file: {file_path}")
+            
+            # Convert to base64
+            import base64  # Import here to ensure it's available
+            image_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+            print(f"Image base64 length: {len(image_base64)}")
+            print(f"__SANDBOX_IMAGE_BASE64__data:image/png;base64,{image_base64}")
+            print(f"__SANDBOX_IMAGE_FILE__{file_path}")
+            print("=== IMAGE SAVED ===")
+        else:
+            print("Figure already captured, skipping duplicate save")
     else:
         print("No axes found, skipping image save")
     print("Calling original show...")
@@ -785,33 +794,41 @@ def custom_savefig(*args, **kwargs):
     import uuid
     import time
     
-    # Create unique filename
-    timestamp = int(time.time() * 1000)  # milliseconds
-    unique_id = str(uuid.uuid4())[:8]
-    filename = f"sandbox_chart_{timestamp}_{unique_id}.png"
-    
-    # Ensure sandbox directory exists
-    sandbox_dir = "/tmp/sandbox"  # Will be mapped to media/sandbox
-    os.makedirs(sandbox_dir, exist_ok=True)
-    file_path = os.path.join(sandbox_dir, filename)
-    
-    buffer = io.BytesIO()
-    plt.tight_layout()
-    # Use the original savefig to avoid recursion
-    original_savefig(buffer, format='png', dpi=150, bbox_inches="tight")
-    buffer.seek(0)
-    
-    # Also save to file
-    original_savefig(file_path, format='png', dpi=150, bbox_inches="tight")
-    print(f"Image saved to file: {file_path}")
-    
-    # Convert to base64
-    import base64  # Import here to ensure it's available
-    image_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
-    print(f"Image base64 length: {len(image_base64)}")
-    print(f"__SANDBOX_IMAGE_BASE64__data:image/png;base64,{image_base64}")
-    print(f"__SANDBOX_IMAGE_FILE__{file_path}")
-    print("=== IMAGE SAVED VIA SAVEFIG ===")
+    fig = plt.gcf()
+    # Create a unique identifier for this figure
+    fig_id = id(fig)
+    if fig_id not in captured_figures:  # Only save if not already captured
+        captured_figures.add(fig_id)
+        
+        # Create unique filename
+        timestamp = int(time.time() * 1000)  # milliseconds
+        unique_id = str(uuid.uuid4())[:8]
+        filename = f"sandbox_chart_{timestamp}_{unique_id}.png"
+        
+        # Ensure sandbox directory exists
+        sandbox_dir = "/tmp/sandbox"  # Will be mapped to media/sandbox
+        os.makedirs(sandbox_dir, exist_ok=True)
+        file_path = os.path.join(sandbox_dir, filename)
+        
+        buffer = io.BytesIO()
+        plt.tight_layout()
+        # Use the original savefig to avoid recursion
+        original_savefig(buffer, format='png', dpi=150, bbox_inches="tight")
+        buffer.seek(0)
+        
+        # Also save to file
+        original_savefig(file_path, format='png', dpi=150, bbox_inches="tight")
+        print(f"Image saved to file: {file_path}")
+        
+        # Convert to base64
+        import base64  # Import here to ensure it's available
+        image_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+        print(f"Image base64 length: {len(image_base64)}")
+        print(f"__SANDBOX_IMAGE_BASE64__data:image/png;base64,{image_base64}")
+        print(f"__SANDBOX_IMAGE_FILE__{file_path}")
+        print("=== IMAGE SAVED VIA SAVEFIG ===")
+    else:
+        print("Figure already captured via show(), skipping duplicate save via savefig")
     
     # Also call the original savefig if a filename was provided (for compatibility)
     if args and isinstance(args[0], str):
@@ -821,6 +838,9 @@ def custom_savefig(*args, **kwargs):
 
 plt.show = custom_show
 plt.savefig = custom_savefig
+
+# Clear the captured figures set at the beginning of execution
+captured_figures.clear()
 '''
 
     def _modify_matplotlib_code(self, code: str) -> str:

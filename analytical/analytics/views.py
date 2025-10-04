@@ -3350,11 +3350,11 @@ class NaturalLanguageCodeExecutionView(View):
                 except Dataset.DoesNotExist:  # type: ignore
                     pass
             
-            # Execute the code using sandbox executor
+            # Execute the code using sandbox executor with extended timeout for complex visualizations
             result = sandbox_executor.execute_code(
                 code=code,
                 language='python',
-                timeout=30,
+                timeout=60,  # Increased timeout for complex visualizations
                 user_id=request.user.id,
                 session_id=session.id if session else None
             )

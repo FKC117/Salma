@@ -694,9 +694,15 @@ class NaturalLanguagePythonSandbox {
         }, 500);
     }
 
+    // Enhanced execution result display with better handling of partial outputs
     showExecutionResult(messageDiv, result) {
-        const resultDiv = document.createElement('div');
-        resultDiv.className = `execution-result ${result.isError ? 'error-result' : ''}`;
+        // Check if we already have a result container to avoid duplicates
+        let resultDiv = messageDiv.querySelector('.execution-result:not(.error-result)');
+        if (!resultDiv) {
+            resultDiv = document.createElement('div');
+            resultDiv.className = `execution-result ${result.isError ? 'error-result' : ''}`;
+            messageDiv.appendChild(resultDiv);
+        }
         
         let resultContent = '';
         
@@ -765,7 +771,6 @@ class NaturalLanguagePythonSandbox {
         }
         
         resultDiv.innerHTML = resultContent;
-        messageDiv.appendChild(resultDiv);
         this.scrollToBottom();
     }
 
@@ -1173,13 +1178,16 @@ class NaturalLanguagePythonSandbox {
             // Show loading indicator
             const loadingIndicator = document.createElement('div');
             loadingIndicator.className = 'text-info mt-2';
-            loadingIndicator.innerHTML = '<div class="d-flex align-items-center"><div class="spinner-border spinner-border-sm me-2" role="status"></div><span>Executing code...</span></div>';
+            loadingIndicator.innerHTML = '<div class="d-flex align-items-center"><div class="spinner-border spinner-border-sm me-2" role="status"></div><span>Executing code... Please wait, this may take a moment for complex visualizations.</span></div>';
             const resultContainer = document.createElement('div');
             resultContainer.className = 'execution-result';
             resultContainer.appendChild(loadingIndicator);
             messageDiv.appendChild(resultContainer);
             
-            // Call Django backend for code execution
+            // Call Django backend for code execution with longer timeout
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
+            
             const response = await fetch('/api/nl-sandbox/execute/', {
                 method: 'POST',
                 headers: {
@@ -1190,9 +1198,12 @@ class NaturalLanguagePythonSandbox {
                     code: code,
                     dataset_id: this.selectedDataset?.id || null,
                     session_id: window.currentSessionId || null
-                })
+                }),
+                signal: controller.signal
             });
 
+            clearTimeout(timeoutId);
+            
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
