@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prescription Generation - OncoScript Pro</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Foncoscript9250back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
+</head>
+<body class="bg-background text-text-primary font-sans">
+    <!-- Navigation Header -->
+    <nav class="bg-surface border-b border-slate-700 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo and Brand -->
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center">
+                        <svg class="w-8 h-8 text-primary" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        <span class="ml-2 text-xl font-semibold text-text-primary">OncoScript Pro</span>
+                    </div>
+                </div>
+
+                <!-- Navigation Links -->
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="patient_dashboard.html" class="text-text-secondary hover:text-text-primary px-3 py-2 rounded-md hover:bg-surface-700 transition-colors">Dashboard</a>
+                    <a href="patient_registration.html" class="text-text-secondary hover:text-text-primary px-3 py-2 rounded-md hover:bg-surface-700 transition-colors">New Patient</a>
+                    <a href="appointment_scheduling.html" class="text-text-secondary hover:text-text-primary px-3 py-2 rounded-md hover:bg-surface-700 transition-colors">Appointments</a>
+                    <a href="prescription_generation.html" class="text-primary font-medium px-3 py-2 rounded-md bg-primary/10">Prescriptions</a>
+                </div>
+
+                <!-- User Profile -->
+                <div class="flex items-center space-x-4">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-sm font-medium text-text-primary">Dr. Sarah Johnson</p>
+                        <p class="text-xs text-text-muted">Breast Cancer Specialist</p>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3" alt="Doctor Profile" class="w-10 h-10 rounded-full object-cover border-2 border-primary" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <!-- Header Section -->
+        <div class="mb-8">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                <div>
+                    <h1 class="text-3xl font-bold text-text-primary">Prescription Generation</h1>
+                    <p class="text-text-muted mt-1">Create comprehensive prescriptions with integrated patient data</p>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="flex flex-wrap gap-3">
+                    <button id="previewBtn" class="medical-button bg-accent hover:bg-accent-600 text-white flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                        </svg>
+                        <span>Preview</span>
+                    </button>
+                    <button id="generatePdfBtn" class="medical-button bg-primary hover:bg-primary-700 text-white flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        <span>Generate PDF</span>
+                    </button>
+                    <button id="saveBtn" class="medical-button bg-surface-700 hover:bg-surface-600 text-text-primary border border-slate-600 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+                        </svg>
+                        <span>Save Draft</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Prescription Form -->
+        <form id="prescriptionForm" class="space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Left Column - Patient Information & History -->
+                <div class="lg:col-span-1 space-y-6">
+                    <!-- Patient Selection -->
+                    <div class="medical-card p-6">
+                        <h3 class="text-lg font-semibold text-text-primary mb-4">Patient Information</h3>
+                        
+                        <!-- Patient Search -->
+                        <div class="relative mb-4">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="h-5 w-5 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                </svg>
+                            </div>
+                            <input type="text" placeholder="Search patient by name or ID..." class="medical-input pl-10 w-full" id="patientSearch" />
+                        </div>
+
+                        <!-- Selected Patient Info -->
+                        <div id="selectedPatient" class="bg-surface-700 rounded-lg p-4">
+                            <div class="flex items-center space-x-4">
+                                <img src="https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Patient" class="w-16 h-16 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                                <div class="flex-1">
+                                    <h4 class="text-lg font-medium text-text-primary">Emily Rodriguez</h4>
+                                    <p class="text-sm text-text-muted">ID: P-2025-001</p>
+                                    <p class="text-sm text-text-secondary">Age: 45 | DOB: 03/15/1980</p>
+                                    <p class="text-sm text-text-secondary">Contact: (555) 123-4567</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4 grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <span class="text-text-muted">Blood Type:</span>
+                                    <span class="text-text-primary ml-1">O+</span>
+                                </div>
+                                <div>
+                                    <span class="text-text-muted">Weight:</span>
+                                    <span class="text-text-primary ml-1">68 kg</span>
+                                </div>
+                                <div>
+                                    <span class="text-text-muted">Height:</span>
+                                    <span class="text-text-primary ml-1">165 cm</span>
+                                </div>
+                                <div>
+                                    <span class="text-text-muted">BMI:</span>
+                                    <span class="text-text-primary ml-1">25.0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Medical History Summary -->
+                    <div class="medical-card p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-text-primary">Medical History</h3>
+                            <a href="patient_medical_history.html" class="text-primary hover:text-primary-400 text-sm font-medium">
+                                View Full History
+                            </a>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div class="bg-surface-700 rounded-lg p-3">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-medium text-text-primary">Breast Cancer - Stage II</span>
+                                    <span class="text-xs text-text-muted">Diagnosed: Jan 2025</span>
+                                </div>
+                                <p class="text-xs text-text-secondary">Invasive ductal carcinoma, ER+/PR+/HER2-</p>
+                            </div>
+                            
+                            <div class="bg-surface-700 rounded-lg p-3">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-medium text-text-primary">Hypertension</span>
+                                    <span class="text-xs text-text-muted">Since: 2020</span>
+                                </div>
+                                <p class="text-xs text-text-secondary">Well controlled with medication</p>
+                            </div>
+
+                            <div class="bg-surface-700 rounded-lg p-3">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-medium text-text-primary">Allergies</span>
+                                    <span class="text-xs text-error">Important</span>
+                                </div>
+                                <p class="text-xs text-text-secondary">Penicillin, Sulfa drugs</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Current Biometrics -->
+                    <div class="medical-card p-6">
+                        <h3 class="text-lg font-semibold text-text-primary mb-4">Current Biometrics</h3>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-text-secondary mb-1">Blood Pressure</label>
+                                <input type="text" placeholder="120/80" class="medical-input w-full text-sm" id="bloodPressure" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-text-secondary mb-1">Heart Rate</label>
+                                <input type="text" placeholder="72 bpm" class="medical-input w-full text-sm" id="heartRate" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-text-secondary mb-1">Temperature</label>
+                                <input type="text" placeholder="98.6°F" class="medical-input w-full text-sm" id="temperature" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-text-secondary mb-1">O2 Saturation</label>
+                                <input type="text" placeholder="98%" class="medical-input w-full text-sm" id="oxygenSat" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Middle Column - Clinical Assessment -->
+                <div class="lg:col-span-1 space-y-6">
+                    <!-- Chief Complaints -->
+                    <div class="medical-card p-6">
+                        <h3 class="text-lg font-semibold text-text-primary mb-4">Chief Complaints</h3>
+                        <textarea placeholder="Document patient's primary concerns and symptoms..." class="medical-input w-full h-24 resize-none" id="chiefComplaints"></textarea>
+                    </div>
+
+                    <!-- Clinical Observations -->
+                    <div class="medical-card p-6">
+                        <h3 class="text-lg font-semibold text-text-primary mb-4">Clinical Observations</h3>
+                        <textarea placeholder="Record clinical findings, examination results, and observations..." class="medical-input w-full h-32 resize-none" id="clinicalObservations"></textarea>
+                    </div>
+
+                    <!-- Signs & Symptoms -->
+                    <div class="medical-card p-6">
+                        <h3 class="text-lg font-semibold text-text-primary mb-4">Signs & Symptoms Assessment</h3>
+                        
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-text-secondary mb-2">Pain Level (0-10)</label>
+                                    <select class="medical-input w-full" id="painLevel">
+                                        <option value>Select level</option>
+                                        <option value="0">0 - No pain</option>
+                                        <option value="1">1 - Minimal</option>
+                                        <option value="2">2 - Mild</option>
+                                        <option value="3">3 - Uncomfortable</option>
+                                        <option value="4">4 - Moderate</option>
+                                        <option value="5">5 - Distracting</option>
+                                        <option value="6">6 - Distressing</option>
+                                        <option value="7">7 - Unmanageable</option>
+                                        <option value="8">8 - Intense</option>
+                                        <option value="9">9 - Severe</option>
+                                        <option value="10">10 - Unable to move</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-text-secondary mb-2">Fatigue Level</label>
+                                    <select class="medical-input w-full" id="fatigueLevel">
+                                        <option value>Select level</option>
+                                        <option value="none">None</option>
+                                        <option value="mild">Mild</option>
+                                        <option value="moderate">Moderate</option>
+                                        <option value="severe">Severe</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-text-secondary mb-2">Additional Symptoms</label>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" class="rounded border-slate-600 bg-surface text-primary focus:ring-primary" />
+                                        <span class="text-sm text-text-secondary">Nausea</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" class="rounded border-slate-600 bg-surface text-primary focus:ring-primary" />
+                                        <span class="text-sm text-text-secondary">Vomiting</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" class="rounded border-slate-600 bg-surface text-primary focus:ring-primary" />
+                                        <span class="text-sm text-text-secondary">Dizziness</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" class="rounded border-slate-600 bg-surface text-primary focus:ring-primary" />
+                                        <span class="text-sm text-text-secondary">Shortness of breath</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" class="rounded border-slate-600 bg-surface text-primary focus:ring-primary" />
+                                        <span class="text-sm text-text-secondary">Loss of appetite</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" class="rounded border-slate-600 bg-surface text-primary focus:ring-primary" />
+                                        <span class="text-sm text-text-secondary">Sleep disturbance</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Investigation Recommendations -->
+                    <div class="medical-card p-6">
+                        <h3 class="text-lg font-semibold text-text-primary mb-4">Investigation Recommendations</h3>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-text-secondary mb-2">Laboratory Tests</label>
+                                <div class="space-y-2">
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" class="rounded border-slate-600 bg-surface text-primary focus:ring-primary" />
+                                        <span class="text-sm text-text-secondary">Complete Blood Count (CBC)</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" class="rounded border-slate-600 bg-surface text-primary focus:ring-primary" />
+                                        <span class="text-sm text-text-secondary">Comprehensive Metabolic Panel</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" class="rounded border-slate-600 bg-surface text-primary focus:ring-primary" />
+                                        <span class="text-sm text-text-secondary">Tumor Markers (CA 15-3, CEA)</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" class="rounded border-slate-600 bg-surface text-primary focus:ring-primary" />
+                                        <span class="text-sm text-text-secondary">Liver Function Tests</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-text-secondary mb-2">Imaging Studies</label>
+                                <div class="space-y-2">
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" class="rounded border-slate-600 bg-surface text-primary focus:ring-primary" />
+                                        <span class="text-sm text-text-secondary">Chest X-ray</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" class="rounded border-slate-600 bg-surface text-primary focus:ring-primary" />
+                                        <span class="text-sm text-text-secondary">CT Scan - Chest/Abdomen/Pelvis</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" class="rounded border-slate-600 bg-surface text-primary focus:ring-primary" />
+                                        <span class="text-sm text-text-secondary">Bone Scan</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" class="rounded border-slate-600 bg-surface text-primary focus:ring-primary" />
+                                        <span class="text-sm text-text-secondary">Mammography</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column - Treatment & Prescription -->
+                <div class="lg:col-span-1 space-y-6">
+                    <!-- Treatment Planning -->
+                    <div class="medical-card p-6">
+                        <h3 class="text-lg font-semibold text-text-primary mb-4">Treatment Planning</h3>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-text-secondary mb-2">Treatment Type</label>
+                                <select class="medical-input w-full" id="treatmentType">
+                                    <option value>Select treatment type</option>
+                                    <option value="medication">Medication Only</option>
+                                    <option value="surgical">Surgical Intervention</option>
+                                    <option value="combined">Combined Therapy</option>
+                                    <option value="palliative">Palliative Care</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-text-secondary mb-2">Treatment Goals</label>
+                                <textarea placeholder="Define treatment objectives and expected outcomes..." class="medical-input w-full h-20 resize-none" id="treatmentGoals"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Medication Prescription -->
+                    <div class="medical-card p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-text-primary">Medication Prescription</h3>
+                            <button type="button" id="addMedicationBtn" class="medical-button bg-primary hover:bg-primary-700 text-white text-sm px-3 py-1">
+                                Add Medication
+                            </button>
+                        </div>
+                        
+                        <div id="medicationList" class="space-y-4">
+                            <!-- Medication Entry 1 -->
+                            <div class="medication-entry bg-surface-700 rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-3">
+                                    <span class="text-sm font-medium text-text-primary">Medication #1</span>
+                                    <button type="button" class="text-error hover:text-error-400 text-sm">Remove</button>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 gap-3">
+                                    <div>
+                                        <label class="block text-xs font-medium text-text-secondary mb-1">Medication Name</label>
+                                        <input type="text" placeholder="e.g., Tamoxifen" class="medical-input w-full text-sm" name="medicationName" />
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <div>
+                                            <label class="block text-xs font-medium text-text-secondary mb-1">Strength</label>
+                                            <input type="text" placeholder="20mg" class="medical-input w-full text-sm" name="strength" />
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-text-secondary mb-1">Form</label>
+                                            <select class="medical-input w-full text-sm" name="form">
+                                                <option value>Select form</option>
+                                                <option value="tablet">Tablet</option>
+                                                <option value="capsule">Capsule</option>
+                                                <option value="injection">Injection</option>
+                                                <option value="liquid">Liquid</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-3 gap-2">
+                                        <div>
+                                            <label class="block text-xs font-medium text-text-secondary mb-1">Dosage</label>
+                                            <input type="text" placeholder="1 tablet" class="medical-input w-full text-sm" name="dosage" />
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-text-secondary mb-1">Frequency</label>
+                                            <select class="medical-input w-full text-sm" name="frequency">
+                                                <option value>Select</option>
+                                                <option value="once">Once daily</option>
+                                                <option value="twice">Twice daily</option>
+                                                <option value="thrice">Three times daily</option>
+                                                <option value="four">Four times daily</option>
+                                                <option value="asneeded">As needed</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-text-secondary mb-1">Duration</label>
+                                            <input type="text" placeholder="30 days" class="medical-input w-full text-sm" name="duration" />
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-xs font-medium text-text-secondary mb-1">Special Instructions</label>
+                                        <textarea placeholder="Take with food, avoid alcohol..." class="medical-input w-full h-16 resize-none text-sm" name="instructions"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Drug Interaction Check -->
+                    <div class="medical-card p-6">
+                        <h3 class="text-lg font-semibold text-text-primary mb-4">Drug Interaction Check</h3>
+                        
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between p-3 bg-success/10 border border-success/20 rounded-lg">
+                                <div class="flex items-center space-x-3">
+                                    <svg class="w-5 h-5 text-success flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <div>
+                                        <p class="text-sm font-medium text-text-primary">No Major Interactions</p>
+                                        <p class="text-xs text-text-muted">Current medications are compatible</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between p-3 bg-warning/10 border border-warning/20 rounded-lg">
+                                <div class="flex items-center space-x-3">
+                                    <svg class="w-5 h-5 text-warning flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <div>
+                                        <p class="text-sm font-medium text-text-primary">Allergy Alert</p>
+                                        <p class="text-xs text-text-muted">Patient allergic to Penicillin, Sulfa</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Notes -->
+                    <div class="medical-card p-6">
+                        <h3 class="text-lg font-semibold text-text-primary mb-4">Additional Notes</h3>
+                        <textarea placeholder="Additional clinical notes, follow-up instructions, or special considerations..." class="medical-input w-full h-24 resize-none" id="additionalNotes"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-end pt-6 border-t border-slate-700">
+                <button type="button" class="medical-button bg-surface-700 hover:bg-surface-600 text-text-primary border border-slate-600">
+                    Clear Form
+                </button>
+                <button type="button" id="saveDraftBtn" class="medical-button bg-accent hover:bg-accent-600 text-white">
+                    Save as Draft
+                </button>
+                <button type="submit" class="medical-button bg-primary hover:bg-primary-700 text-white">
+                    Generate Prescription
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Prescription Preview Modal -->
+    <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="medical-card max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="p-6 border-b border-slate-700">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-xl font-semibold text-text-primary">Prescription Preview</h3>
+                        <button id="closePreviewBtn" class="text-text-muted hover:text-text-primary">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="p-6">
+                    <!-- A4 Prescription Layout Preview -->
+                    <div id="prescriptionPreview" class="bg-white text-black p-8 rounded-lg" style="width: 210mm; min-height: 297mm; margin: 0 auto;">
+                        <div class="grid grid-cols-2 gap-8 h-full">
+                            <!-- Left Column - Patient Information -->
+                            <div class="space-y-6">
+                                <div class="text-center border-b border-gray-300 pb-4">
+                                    <h1 class="text-2xl font-bold text-blue-600">OncoScript Pro</h1>
+                                    <p class="text-sm text-gray-600">Breast Cancer Surgical Specialists</p>
+                                </div>
+                                
+                                <div>
+                                    <h3 class="text-lg font-semibold mb-3 text-gray-800">Patient Information</h3>
+                                    <div class="space-y-2 text-sm">
+                                        <p><strong>Name:</strong> Emily Rodriguez</p>
+                                        <p><strong>ID:</strong> P-2025-001</p>
+                                        <p><strong>Age:</strong> 45</p>
+                                        <p><strong>DOB:</strong> 03/15/1980</p>
+                                        <p><strong>Contact:</strong> (555) 123-4567</p>
+                                        <p><strong>Blood Type:</strong> O+</p>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h3 class="text-lg font-semibold mb-3 text-gray-800">Medical History</h3>
+                                    <div class="space-y-2 text-sm">
+                                        <p>• Breast Cancer - Stage II (Jan 2025)</p>
+                                        <p>• Hypertension (Since 2020)</p>
+                                        <p>• Allergies: Penicillin, Sulfa drugs</p>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h3 class="text-lg font-semibold mb-3 text-gray-800">Current Vitals</h3>
+                                    <div class="space-y-2 text-sm">
+                                        <p><strong>BP:</strong> 120/80 mmHg</p>
+                                        <p><strong>HR:</strong> 72 bpm</p>
+                                        <p><strong>Temp:</strong> 98.6°F</p>
+                                        <p><strong>O2 Sat:</strong> 98%</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Right Column - Treatment Details -->
+                            <div class="space-y-6">
+                                <div>
+                                    <h3 class="text-lg font-semibold mb-3 text-gray-800">Chief Complaints</h3>
+                                    <p class="text-sm text-gray-700">Patient reports mild fatigue and occasional discomfort in the surgical site.</p>
+                                </div>
+                                
+                                <div>
+                                    <h3 class="text-lg font-semibold mb-3 text-gray-800">Clinical Observations</h3>
+                                    <p class="text-sm text-gray-700">Post-surgical healing progressing well. No signs of infection or complications.</p>
+                                </div>
+                                
+                                <div>
+                                    <h3 class="text-lg font-semibold mb-3 text-gray-800">Prescription</h3>
+                                    <div class="space-y-4 text-sm">
+                                        <div class="border border-gray-300 rounded p-3">
+                                            <p><strong>Tamoxifen 20mg Tablets</strong></p>
+                                            <p>Take 1 tablet once daily</p>
+                                            <p>Duration: 30 days</p>
+                                            <p>Instructions: Take with food</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h3 class="text-lg font-semibold mb-3 text-gray-800">Follow-up Instructions</h3>
+                                    <p class="text-sm text-gray-700">Return in 2 weeks for progress evaluation. Contact office if any concerning symptoms develop.</p>
+                                </div>
+                                
+                                <div class="mt-8 pt-4 border-t border-gray-300">
+                                    <div class="text-sm">
+                                        <p><strong>Dr. Sarah Johnson, MD</strong></p>
+                                        <p>Breast Cancer Specialist</p>
+                                        <p>License: MD-12345</p>
+                                        <p>Date: October 4, 2025</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="p-6 border-t border-slate-700 flex justify-end space-x-4">
+                    <button id="downloadPdfBtn" class="medical-button bg-primary hover:bg-primary-700 text-white">
+                        Download PDF
+                    </button>
+                    <button id="printBtn" class="medical-button bg-accent hover:bg-accent-600 text-white">
+                        Print
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Navigation Menu -->
+    <div class="md:hidden fixed bottom-0 left-0 right-0 bg-surface border-t border-slate-700 z-50">
+        <div class="grid grid-cols-4 gap-1 p-2">
+            <a href="patient_dashboard.html" class="flex flex-col items-center py-2 px-1 text-text-muted">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+                </svg>
+                <span class="text-xs mt-1">Dashboard</span>
+            </a>
+            <a href="patient_registration.html" class="flex flex-col items-center py-2 px-1 text-text-muted">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                </svg>
+                <span class="text-xs mt-1">New</span>
+            </a>
+            <a href="appointment_scheduling.html" class="flex flex-col items-center py-2 px-1 text-text-muted">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                <span class="text-xs mt-1">Calendar</span>
+            </a>
+            <a href="prescription_generation.html" class="flex flex-col items-center py-2 px-1 text-primary">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                <span class="text-xs mt-1">Rx</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Form functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add medication functionality
+            let medicationCount = 1;
+            
+            document.getElementById('addMedicationBtn').addEventListener('click', function() {
+                medicationCount++;
+                const medicationList = document.getElementById('medicationList');
+                const newMedication = createMedicationEntry(medicationCount);
+                medicationList.appendChild(newMedication);
+            });
+
+            function createMedicationEntry(count) {
+                const div = document.createElement('div');
+                div.className = 'medication-entry bg-surface-700 rounded-lg p-4';
+                div.innerHTML = `
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-sm font-medium text-text-primary">Medication #${count}</span>
+                        <button type="button" class="remove-medication text-error hover:text-error-400 text-sm">Remove</button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-text-secondary mb-1">Medication Name</label>
+                            <input type="text" placeholder="e.g., Tamoxifen" class="medical-input w-full text-sm" name="medicationName">
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-xs font-medium text-text-secondary mb-1">Strength</label>
+                                <input type="text" placeholder="20mg" class="medical-input w-full text-sm" name="strength">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-text-secondary mb-1">Form</label>
+                                <select class="medical-input w-full text-sm" name="form">
+                                    <option value="">Select form</option>
+                                    <option value="tablet">Tablet</option>
+                                    <option value="capsule">Capsule</option>
+                                    <option value="injection">Injection</option>
+                                    <option value="liquid">Liquid</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="block text-xs font-medium text-text-secondary mb-1">Dosage</label>
+                                <input type="text" placeholder="1 tablet" class="medical-input w-full text-sm" name="dosage">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-text-secondary mb-1">Frequency</label>
+                                <select class="medical-input w-full text-sm" name="frequency">
+                                    <option value="">Select</option>
+                                    <option value="once">Once daily</option>
+                                    <option value="twice">Twice daily</option>
+                                    <option value="thrice">Three times daily</option>
+                                    <option value="four">Four times daily</option>
+                                    <option value="asneeded">As needed</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-text-secondary mb-1">Duration</label>
+                                <input type="text" placeholder="30 days" class="medical-input w-full text-sm" name="duration">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-xs font-medium text-text-secondary mb-1">Special Instructions</label>
+                            <textarea placeholder="Take with food, avoid alcohol..." class="medical-input w-full h-16 resize-none text-sm" name="instructions"></textarea>
+                        </div>
+                    </div>
+                `;
+                
+                // Add remove functionality
+                div.querySelector('.remove-medication').addEventListener('click', function() {
+                    div.remove();
+                });
+                
+                return div;
+            }
+
+            // Remove medication functionality for existing entries
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('remove-medication')) {
+                    e.target.closest('.medication-entry').remove();
+                }
+            });
+
+            // Preview functionality
+            document.getElementById('previewBtn').addEventListener('click', function() {
+                document.getElementById('previewModal').classList.remove('hidden');
+            });
+
+            document.getElementById('closePreviewBtn').addEventListener('click', function() {
+                document.getElementById('previewModal').classList.add('hidden');
+            });
+
+            // PDF Generation
+            document.getElementById('generatePdfBtn').addEventListener('click', function() {
+                // Show preview first
+                document.getElementById('previewModal').classList.remove('hidden');
+            });
+
+            document.getElementById('downloadPdfBtn').addEventListener('click', function() {
+                // In a real application, this would generate and download a PDF
+                alert('PDF generation would be implemented with a library like jsPDF or Puppeteer');
+            });
+
+            document.getElementById('printBtn').addEventListener('click', function() {
+                window.print();
+            });
+
+            // Auto-save functionality
+            const formInputs = document.querySelectorAll('input, textarea, select');
+            formInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    // Auto-save to localStorage
+                    localStorage.setItem('prescriptionDraft', JSON.stringify(getFormData()));
+                });
+            });
+
+            // Load saved draft
+            const savedDraft = localStorage.getItem('prescriptionDraft');
+            if (savedDraft) {
+                try {
+                    const draftData = JSON.parse(savedDraft);
+                    loadFormData(draftData);
+                } catch (e) {
+                    console.error('Error loading draft:', e);
+                }
+            }
+
+            function getFormData() {
+                const formData = {};
+                const inputs = document.querySelectorAll('input, textarea, select');
+                inputs.forEach(input => {
+                    if (input.name || input.id) {
+                        formData[input.name || input.id] = input.value;
+                    }
+                });
+                return formData;
+            }
+
+            function loadFormData(data) {
+                Object.keys(data).forEach(key => {
+                    const element = document.querySelector(`[name="${key}"], #${key}`);
+                    if (element) {
+                        element.value = data[key];
+                    }
+                });
+            }
+
+            // Form submission
+            document.getElementById('prescriptionForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Validate form
+                if (validateForm()) {
+                    // Show success message
+                    alert('Prescription generated successfully!');
+                    
+                    // Clear form
+                    this.reset();
+                    localStorage.removeItem('prescriptionDraft');
+                } else {
+                    alert('Please fill in all required fields.');
+                }
+            });
+
+            function validateForm() {
+                const requiredFields = document.querySelectorAll('input[required], textarea[required], select[required]');
+                let isValid = true;
+                
+                requiredFields.forEach(field => {
+                    if (!field.value.trim()) {
+                        isValid = false;
+                        field.classList.add('border-error');
+                    } else {
+                        field.classList.remove('border-error');
+                    }
+                });
+                
+                return isValid;
+            }
+
+            // Patient search functionality
+            document.getElementById('patientSearch').addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                // In a real application, this would search the patient database
+                console.log('Searching for patient:', searchTerm);
+            });
+        });
+    </script>
+<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+</body>
+</html>

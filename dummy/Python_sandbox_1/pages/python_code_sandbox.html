@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Python Jupyter Notebook</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fpythonsan3478back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
+</head>
+<body class="bg-gray-900 text-gray-100 font-sans">
+    <!-- Jupyter Toolbar -->
+    <div class="toolbar bg-gray-800 border-b border-gray-700 px-4 py-2">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-orange-500 rounded flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-semibold text-gray-100">Jupyter Notebook</h1>
+                        <p class="text-xs text-gray-400">Python 3.11.0</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-2 border-l border-gray-600 pl-4">
+                    <button id="addCellBtn" class="px-3 py-1.5 bg-blue-600 text-white text-sm rounded hover:bg-blue-500 transition-colors">
+                        + Cell
+                    </button>
+                    <button id="runAllBtn" class="px-3 py-1.5 bg-green-600 text-white text-sm rounded hover:bg-green-500 transition-colors">
+                        Run All
+                    </button>
+                    <button id="clearAllBtn" class="px-3 py-1.5 bg-red-600 text-white text-sm rounded hover:bg-red-500 transition-colors">
+                        Clear All
+                    </button>
+                    <button id="toggleSidebarBtn" class="px-3 py-1.5 bg-purple-600 text-white text-sm rounded hover:bg-purple-500 transition-colors">
+                        📊 Datasets
+                    </button>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-2 text-sm text-gray-400">
+                <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                <span>Kernel Ready</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Layout Container -->
+    <div class="flex h-screen">
+        <!-- Dataset Sidebar -->
+        <div id="datasetSidebar" class="w-80 bg-gray-800 border-r border-gray-700 flex flex-col transition-all duration-300">
+            <!-- Sidebar Header -->
+            <div class="px-4 py-3 border-b border-gray-700">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-lg font-semibold text-gray-100">📊 Datasets</h2>
+                    <button id="closeSidebarBtn" class="text-gray-400 hover:text-white">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dataset Upload -->
+            <div class="px-4 py-3 border-b border-gray-700">
+                <button id="uploadDatasetBtn" class="w-full px-3 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-500 transition-colors">
+                    📁 Load Dataset
+                </button>
+                <input type="file" id="datasetFileInput" accept=".csv,.json,.xlsx" class="hidden" />
+            </div>
+
+            <!-- Dataset List -->
+            <div class="flex-1 overflow-y-auto">
+                <div class="px-4 py-2">
+                    <h3 class="text-sm font-medium text-gray-300 mb-2">Available Datasets</h3>
+                    <div id="datasetList" class="space-y-2">
+                        <!-- Datasets will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dataset Preview -->
+            <div id="datasetPreview" class="px-4 py-3 border-t border-gray-700 max-h-80 overflow-y-auto hidden">
+                <h3 class="text-sm font-medium text-gray-300 mb-2">Dataset Preview</h3>
+                <div id="previewContent" class="text-xs"></div>
+            </div>
+        </div>
+
+        <!-- Notebook Container -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <div class="flex-1 overflow-y-auto p-4">
+                <div id="notebookContainer" class="space-y-2 max-w-none">
+                    <!-- Initial cell will be added by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* Dark theme custom styles */
+        .jupyter-cell {
+            background: #1f2937;
+            border: 1px solid #374151;
+        }
+        
+        .jupyter-cell.selected {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 1px #3b82f6;
+        }
+        
+        .jupyter-cell.executing {
+            border-color: #10b981;
+        }
+        
+        .cell-input {
+            background: #111827 !important;
+            color: #f9fafb !important;
+            border: none !important;
+            font-family: 'JetBrains Mono', monospace !important;
+            font-size: 14px;
+            resize: none;
+            outline: none !important;
+            width: 100%;
+        }
+        
+        .cell-input:focus {
+            background: #0f172a !important;
+        }
+        
+        .cell-input::placeholder {
+            color: #6b7280;
+        }
+        
+        .cell-prompt {
+            color: #60a5fa;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            font-weight: 500;
+            min-width: 80px;
+            white-space: nowrap;
+        }
+        
+        .output-text {
+            background: #0f172a;
+            color: #f9fafb;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            padding: 12px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+        }
+        
+        .output-table {
+            background: #1f2937;
+            border-collapse: collapse;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        .output-table th {
+            background: #374151;
+            color: #f9fafb;
+            padding: 8px 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #4b5563;
+        }
+        
+        .output-table td {
+            background: #1f2937;
+            color: #e5e7eb;
+            padding: 8px 12px;
+            border-bottom: 1px solid #374151;
+        }
+        
+        .output-table tbody tr:hover {
+            background: #374151;
+        }
+        
+        .add-cell-button {
+            transition: opacity 0.2s;
+        }
+        
+        .jupyter-cell:hover .add-cell-button {
+            opacity: 1 !important;
+        }
+        
+        .add-cell-btn {
+            background: #374151;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        
+        .add-cell-btn:hover {
+            background: #4b5563;
+            color: #60a5fa !important;
+        }
+        
+        .loading-dots::after {
+            content: '';
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid #60a5fa;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .output-error .cell-prompt {
+            color: #f87171;
+        }
+        
+        .output-error .output-text {
+            background: #7f1d1d;
+            color: #fca5a5;
+            border-left: 4px solid #dc2626;
+        }
+
+        /* Dataset item styling */
+        .dataset-item {
+            background: #374151;
+            border: 1px solid #4b5563;
+            border-radius: 6px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .dataset-item:hover {
+            background: #4b5563;
+            border-color: #60a5fa;
+        }
+
+        .dataset-item.selected {
+            background: #1e40af;
+            border-color: #3b82f6;
+        }
+
+        .dataset-item h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .dataset-item .dataset-meta {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        .dataset-actions {
+            margin-top: 8px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .dataset-btn {
+            padding: 4px 8px;
+            font-size: 11px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .dataset-btn.view {
+            background: #059669;
+            color: white;
+        }
+
+        .dataset-btn.view:hover {
+            background: #047857;
+        }
+
+        .dataset-btn.load {
+            background: #7c3aed;
+            color: white;
+        }
+
+        .dataset-btn.load:hover {
+            background: #6d28d9;
+        }
+
+        .dataset-btn.remove {
+            background: #dc2626;
+            color: white;
+        }
+
+        .dataset-btn.remove:hover {
+            background: #b91c1c;
+        }
+
+        /* Sidebar hide/show */
+        .sidebar-hidden {
+            margin-left: -320px;
+        }
+        
+        /* Scrollbar styling for dark theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
+        }
+    </style>
+
+    <script>
+        class JupyterNotebook {
+            constructor() {
+                this.notebookContainer = document.getElementById('notebookContainer');
+                this.addCellBtn = document.getElementById('addCellBtn');
+                this.runAllBtn = document.getElementById('runAllBtn');
+                this.clearAllBtn = document.getElementById('clearAllBtn');
+                this.toggleSidebarBtn = document.getElementById('toggleSidebarBtn');
+                this.closeSidebarBtn = document.getElementById('closeSidebarBtn');
+                this.uploadDatasetBtn = document.getElementById('uploadDatasetBtn');
+                this.datasetFileInput = document.getElementById('datasetFileInput');
+                this.datasetSidebar = document.getElementById('datasetSidebar');
+                this.datasetList = document.getElementById('datasetList');
+                this.datasetPreview = document.getElementById('datasetPreview');
+                this.previewContent = document.getElementById('previewContent');
+                
+                this.executionCounter = 1;
+                this.selectedCell = null;
+                this.datasets = [];
+                this.selectedDataset = null;
+                
+                this.initializeEventListeners();
+                this.addCell(); // Add initial cell
+                this.loadSampleData();
+                this.loadSampleDatasets();
+            }
+
+            initializeEventListeners() {
+                this.addCellBtn.addEventListener('click', () => this.addCell());
+                this.runAllBtn.addEventListener('click', () => this.runAllCells());
+                this.clearAllBtn.addEventListener('click', () => this.clearAllOutputs());
+                
+                // Sidebar controls
+                this.toggleSidebarBtn.addEventListener('click', () => this.toggleSidebar());
+                this.closeSidebarBtn.addEventListener('click', () => this.hideSidebar());
+                
+                // Dataset upload
+                this.uploadDatasetBtn.addEventListener('click', () => this.datasetFileInput.click());
+                this.datasetFileInput.addEventListener('change', (e) => this.handleFileUpload(e));
+                
+                // Global keyboard shortcuts
+                document.addEventListener('keydown', (e) => {
+                    if (e.ctrlKey || e.metaKey) {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            this.runSelectedCell();
+                        }
+                    }
+                    
+                    if (e.key === 'Escape') {
+                        this.deselectAllCells();
+                    }
+                });
+            }
+
+            toggleSidebar() {
+                this.datasetSidebar.classList.toggle('sidebar-hidden');
+            }
+
+            hideSidebar() {
+                this.datasetSidebar.classList.add('sidebar-hidden');
+            }
+
+            showSidebar() {
+                this.datasetSidebar.classList.remove('sidebar-hidden');
+            }
+
+            async handleFileUpload(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const fileExtension = file.name.split('.').pop().toLowerCase();
+                
+                try {
+                    let data;
+                    const text = await file.text();
+                    
+                    switch (fileExtension) {
+                        case 'csv':
+                            data = this.parseCSV(text);
+                            break;
+                        case 'json':
+                            data = JSON.parse(text);
+                            break;
+                        default:
+                            throw new Error('Unsupported file format');
+                    }
+
+                    const dataset = {
+                        id: Date.now(),
+                        name: file.name,
+                        type: fileExtension,
+                        size: file.size,
+                        rows: Array.isArray(data) ? data.length : 1,
+                        columns: Array.isArray(data) && data.length > 0 ? Object.keys(data[0]).length : 0,
+                        data: data,
+                        uploadDate: new Date()
+                    };
+
+                    this.datasets.push(dataset);
+                    this.renderDatasetList();
+                    this.showNotification(`Dataset "${file.name}" loaded successfully!`);
+                    
+                } catch (error) {
+                    this.showNotification(`Error loading dataset: ${error.message}`, 'error');
+                }
+
+                // Clear the input
+                event.target.value = '';
+            }
+
+            parseCSV(text) {
+                const lines = text.trim().split('\n');
+                const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+                
+                return lines.slice(1).map(line => {
+                    const values = line.split(',').map(v => v.trim().replace(/"/g, ''));
+                    const row = {};
+                    headers.forEach((header, index) => {
+                        row[header] = values[index] || '';
+                    });
+                    return row;
+                });
+            }
+
+            loadSampleDatasets() {
+                const sampleDatasets = [
+                    {
+                        id: 1,
+                        name: 'iris.csv',
+                        type: 'csv',
+                        size: 4800,
+                        rows: 150,
+                        columns: 5,
+                        data: [
+                            { sepal_length: 5.1, sepal_width: 3.5, petal_length: 1.4, petal_width: 0.2, species: 'setosa' },
+                            { sepal_length: 4.9, sepal_width: 3.0, petal_length: 1.4, petal_width: 0.2, species: 'setosa' },
+                            { sepal_length: 4.7, sepal_width: 3.2, petal_length: 1.3, petal_width: 0.2, species: 'setosa' },
+                            { sepal_length: 6.2, sepal_width: 2.9, petal_length: 4.3, petal_width: 1.3, species: 'versicolor' },
+                            { sepal_length: 5.9, sepal_width: 3.0, petal_length: 4.2, petal_width: 1.5, species: 'versicolor' }
+                        ],
+                        uploadDate: new Date()
+                    },
+                    {
+                        id: 2,
+                        name: 'sales_data.csv',
+                        type: 'csv',
+                        size: 12400,
+                        rows: 100,
+                        columns: 4,
+                        data: [
+                            { product: 'Laptop', category: 'Electronics', sales: 45000, quarter: 'Q1' },
+                            { product: 'Phone', category: 'Electronics', sales: 32000, quarter: 'Q1' },
+                            { product: 'Tablet', category: 'Electronics', sales: 28000, quarter: 'Q1' },
+                            { product: 'Headphones', category: 'Electronics', sales: 15000, quarter: 'Q2' },
+                            { product: 'Camera', category: 'Electronics', sales: 22000, quarter: 'Q2' }
+                        ],
+                        uploadDate: new Date()
+                    },
+                    {
+                        id: 3,
+                        name: 'weather_data.json',
+                        type: 'json',
+                        size: 8600,
+                        rows: 30,
+                        columns: 6,
+                        data: [
+                            { city: 'New York', temperature: 22.5, humidity: 65, pressure: 1013, wind_speed: 12.3, date: '2024-01-01' },
+                            { city: 'Los Angeles', temperature: 28.1, humidity: 45, pressure: 1020, wind_speed: 8.7, date: '2024-01-01' },
+                            { city: 'Chicago', temperature: 18.9, humidity: 72, pressure: 1008, wind_speed: 15.2, date: '2024-01-01' },
+                            { city: 'Miami', temperature: 31.2, humidity: 78, pressure: 1018, wind_speed: 9.4, date: '2024-01-01' }
+                        ],
+                        uploadDate: new Date()
+                    }
+                ];
+
+                this.datasets = sampleDatasets;
+                this.renderDatasetList();
+            }
+
+            renderDatasetList() {
+                this.datasetList.innerHTML = '';
+
+                this.datasets.forEach(dataset => {
+                    const datasetItem = document.createElement('div');
+                    datasetItem.className = 'dataset-item';
+                    datasetItem.dataset.id = dataset.id;
+
+                    datasetItem.innerHTML = `
+                        <h4>${dataset.name}</h4>
+                        <div class="dataset-meta">
+                            ${dataset.rows} rows × ${dataset.columns} cols | ${this.formatFileSize(dataset.size)}
+                        </div>
+                        <div class="dataset-actions">
+                            <button class="dataset-btn view" onclick="notebook.previewDataset(${dataset.id})">👁 View</button>
+                            <button class="dataset-btn load" onclick="notebook.loadDatasetToCell(${dataset.id})">📊 Load</button>
+                            <button class="dataset-btn remove" onclick="notebook.removeDataset(${dataset.id})">🗑 Remove</button>
+                        </div>
+                    `;
+
+                    datasetItem.addEventListener('click', (e) => {
+                        if (!e.target.classList.contains('dataset-btn')) {
+                            this.selectDataset(dataset.id);
+                        }
+                    });
+
+                    this.datasetList.appendChild(datasetItem);
+                });
+            }
+
+            selectDataset(datasetId) {
+                // Remove previous selection
+                this.datasetList.querySelectorAll('.dataset-item').forEach(item => {
+                    item.classList.remove('selected');
+                });
+
+                // Select current dataset
+                const selectedItem = this.datasetList.querySelector(`[data-id="${datasetId}"]`);
+                if (selectedItem) {
+                    selectedItem.classList.add('selected');
+                    this.selectedDataset = this.datasets.find(d => d.id === datasetId);
+                }
+            }
+
+            previewDataset(datasetId) {
+                const dataset = this.datasets.find(d => d.id === datasetId);
+                if (!dataset) return;
+
+                const previewData = dataset.data.slice(0, 5); // Show first 5 rows
+                const table = this.createTable(previewData);
+                
+                this.previewContent.innerHTML = `
+                    <div class="mb-2">
+                        <strong>${dataset.name}</strong> - ${dataset.rows} rows × ${dataset.columns} columns
+                    </div>
+                `;
+                this.previewContent.appendChild(table);
+                this.datasetPreview.classList.remove('hidden');
+            }
+
+            loadDatasetToCell(datasetId) {
+                const dataset = this.datasets.find(d => d.id === datasetId);
+                if (!dataset) return;
+
+                const code = `# Load dataset: ${dataset.name}
+import pandas as pd
+
+# Dataset loaded from sidebar
+df = pd.DataFrame(${JSON.stringify(dataset.data, null, 2)})
+
+print(f"Dataset shape: {df.shape}")
+print(f"Columns: {list(df.columns)}")
+df.head()`;
+
+                const cell = this.addCell(code);
+                this.runCell(cell);
+                this.showNotification(`Dataset "${dataset.name}" loaded into new cell`);
+            }
+
+            removeDataset(datasetId) {
+                if (confirm('Are you sure you want to remove this dataset?')) {
+                    this.datasets = this.datasets.filter(d => d.id !== datasetId);
+                    this.renderDatasetList();
+                    this.datasetPreview.classList.add('hidden');
+                    this.showNotification('Dataset removed successfully');
+                }
+            }
+
+            formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            showNotification(message, type = 'success') {
+                const notification = document.createElement('div');
+                notification.className = `fixed top-4 right-4 px-4 py-2 rounded shadow-lg text-white z-50 ${
+                    type === 'error' ? 'bg-red-600' : 'bg-green-600'
+                }`;
+                notification.textContent = message;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.remove();
+                }, 3000);
+            }
+
+            // Rest of the existing JupyterNotebook methods remain the same...
+            addCell(content = '', index = null) {
+                const cellId = 'cell_' + Date.now();
+                const cell = document.createElement('div');
+                cell.className = 'jupyter-cell bg-gray-800 border border-gray-700 rounded-lg mb-2';
+                cell.dataset.cellId = cellId;
+                
+                cell.innerHTML = `
+                    <div class="flex">
+                        <div class="cell-prompt py-3 px-2">
+                            In [<span class="execution-counter"></span>]:
+                        </div>
+                        <div class="flex-1 relative">
+                            <textarea class="cell-input p-3 min-h-[60px] w-full" placeholder="# Enter Python code here...">${content}</textarea>
+                            <div class="absolute top-2 right-2 opacity-0 add-cell-button">
+                                <button class="add-cell-btn text-gray-400 hover:text-blue-400 text-sm">+ Add Cell</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cell-output hidden"></div>
+                `;
+                
+                // Insert cell at specified index or append
+                if (index !== null) {
+                    const cells = this.notebookContainer.children;
+                    if (index < cells.length) {
+                        this.notebookContainer.insertBefore(cell, cells[index]);
+                    } else {
+                        this.notebookContainer.appendChild(cell);
+                    }
+                } else {
+                    this.notebookContainer.appendChild(cell);
+                }
+                
+                this.initializeCellEventListeners(cell);
+                this.selectCell(cell);
+                
+                return cell;
+            }
+
+            initializeCellEventListeners(cell) {
+                const textarea = cell.querySelector('.cell-input');
+                const addCellBtn = cell.querySelector('.add-cell-btn');
+                
+                // Auto-resize textarea
+                textarea.addEventListener('input', () => {
+                    textarea.style.height = 'auto';
+                    textarea.style.height = Math.max(60, textarea.scrollHeight) + 'px';
+                });
+                
+                // Cell selection
+                textarea.addEventListener('focus', () => this.selectCell(cell));
+                
+                // Keyboard shortcuts within cell
+                textarea.addEventListener('keydown', (e) => {
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                        e.preventDefault();
+                        this.runCell(cell);
+                    }
+                    
+                    if (e.shiftKey && e.key === 'Enter') {
+                        e.preventDefault();
+                        this.runCell(cell);
+                        this.addCell('', this.getCellIndex(cell) + 1);
+                    }
+                });
+                
+                // Add cell button
+                addCellBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.addCell('', this.getCellIndex(cell) + 1);
+                });
+                
+                // Double-click to delete empty cell
+                cell.addEventListener('dblclick', (e) => {
+                    if (e.target.closest('.cell-input') && !textarea.value.trim()) {
+                        this.deleteCell(cell);
+                    }
+                });
+            }
+
+            selectCell(cell) {
+                this.deselectAllCells();
+                cell.classList.add('selected');
+                this.selectedCell = cell;
+            }
+
+            deselectAllCells() {
+                document.querySelectorAll('.jupyter-cell').forEach(cell => {
+                    cell.classList.remove('selected');
+                });
+                this.selectedCell = null;
+            }
+
+            getCellIndex(cell) {
+                return Array.from(this.notebookContainer.children).indexOf(cell);
+            }
+
+            deleteCell(cell) {
+                if (this.notebookContainer.children.length > 1) {
+                    cell.remove();
+                }
+            }
+
+            async runCell(cell) {
+                const textarea = cell.querySelector('.cell-input');
+                const outputDiv = cell.querySelector('.cell-output');
+                const promptCounter = cell.querySelector('.execution-counter');
+                const code = textarea.value.trim();
+                
+                if (!code) return;
+                
+                // Mark cell as executing
+                cell.classList.add('executing');
+                promptCounter.innerHTML = '<span class="loading-dots"></span>';
+                
+                // Clear previous output
+                outputDiv.innerHTML = '';
+                outputDiv.classList.remove('hidden');
+                
+                try {
+                    // Simulate execution delay
+                    await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000));
+                    
+                    const result = this.executeCode(code);
+                    this.renderOutput(outputDiv, result);
+                    
+                    // Update execution counter
+                    promptCounter.textContent = this.executionCounter++;
+                    
+                } catch (error) {
+                    this.renderError(outputDiv, error.message);
+                    promptCounter.textContent = this.executionCounter++;
+                }
+                
+                cell.classList.remove('executing');
+            }
+
+            runSelectedCell() {
+                if (this.selectedCell) {
+                    this.runCell(this.selectedCell);
+                }
+            }
+
+            async runAllCells() {
+                const cells = Array.from(this.notebookContainer.children);
+                for (const cell of cells) {
+                    await this.runCell(cell);
+                    await new Promise(resolve => setTimeout(resolve, 200)); // Brief pause between cells
+                }
+            }
+
+            clearAllOutputs() {
+                document.querySelectorAll('.cell-output').forEach(output => {
+                    output.innerHTML = '';
+                    output.classList.add('hidden');
+                });
+                
+                document.querySelectorAll('.execution-counter').forEach(counter => {
+                    counter.textContent = '';
+                });
+                
+                this.executionCounter = 1;
+            }
+
+            executeCode(code) {
+                // Enhanced mock execution with multiple output types
+                
+                // Handle matplotlib/plotting
+                if (code.includes('plt.') || code.includes('matplotlib')) {
+                    return this.generateChart(code);
+                }
+                
+                // Handle pandas DataFrame display
+                if (code.includes('DataFrame') || code.includes('.head()') || code.includes('.describe()')) {
+                    return this.generateTable(code);
+                }
+                
+                // Handle data analysis examples
+                if (code.includes('numpy') || code.includes('np.')) {
+                    return this.generateNumPyOutput(code);
+                }
+                
+                // Handle print statements
+                if (code.includes('print(')) {
+                    return this.handlePrintStatements(code);
+                }
+                
+                // Handle mathematical expressions
+                if (/^\s*[\d\+\-\*\/\(\)\s]+\s*$/.test(code)) {
+                    try {
+                        const result = eval(code);
+                        return { type: 'text', content: result.toString() };
+                    } catch (e) {
+                        throw new Error('SyntaxError: invalid syntax');
+                    }
+                }
+                
+                // Handle variable assignments and other code
+                if (code.includes('=')) {
+                    return { type: 'text', content: '# Variable assigned successfully' };
+                }
+                
+                return { type: 'text', content: '# Code executed successfully' };
+            }
+
+            generateChart(code) {
+                const chartTypes = ['line', 'bar', 'scatter', 'pie'];
+                const chartType = chartTypes[Math.floor(Math.random() * chartTypes.length)];
+                
+                const data = {
+                    line: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'Sample Data',
+                            data: [12, 19, 3, 5, 2, 3],
+                            borderColor: 'rgb(75, 192, 192)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            tension: 0.1
+                        }]
+                    },
+                    bar: {
+                        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                        datasets: [{
+                            label: 'Sample Dataset',
+                            data: [12, 19, 3, 5, 2, 3],
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.5)',
+                                'rgba(54, 162, 235, 0.5)',
+                                'rgba(255, 205, 86, 0.5)',
+                                'rgba(75, 192, 192, 0.5)',
+                                'rgba(153, 102, 255, 0.5)',
+                                'rgba(255, 159, 64, 0.5)'
+                            ]
+                        }]
+                    },
+                    scatter: {
+                        datasets: [{
+                            label: 'Scatter Dataset',
+                            data: [
+                                { x: -10, y: 0 }, { x: 0, y: 10 }, { x: 10, y: 5 },
+                                { x: 0.5, y: 5.5 }, { x: -5, y: 3 }, { x: 8, y: -2 }
+                            ],
+                            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                        }]
+                    },
+                    pie: {
+                        labels: ['Red', 'Blue', 'Yellow'],
+                        datasets: [{
+                            data: [300, 50, 100],
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.5)',
+                                'rgba(54, 162, 235, 0.5)',
+                                'rgba(255, 205, 86, 0.5)'
+                            ]
+                        }]
+                    }
+                };
+                
+                return {
+                    type: 'chart',
+                    chartType: chartType,
+                    data: data[chartType]
+                };
+            }
+
+            generateTable(code) {
+                const sampleData = [
+                    { Name: 'Alice', Age: 25, City: 'New York', Salary: 75000 },
+                    { Name: 'Bob', Age: 30, City: 'San Francisco', Salary: 85000 },
+                    { Name: 'Charlie', Age: 35, City: 'Chicago', Salary: 65000 },
+                    { Name: 'Diana', Age: 28, City: 'Boston', Salary: 70000 },
+                    { Name: 'Eve', Age: 32, City: 'Seattle', Salary: 80000 }
+                ];
+                
+                return {
+                    type: 'table',
+                    data: sampleData
+                };
+            }
+
+            generateNumPyOutput(code) {
+                const outputs = [
+                    'array([1, 2, 3, 4, 5])',
+                    'array([[1, 2], [3, 4]])',
+                    'Mean: 3.0\nStd: 1.58',
+                    'Shape: (5, 2)\nDtype: float64'
+                ];
+                
+                return {
+                    type: 'text',
+                    content: outputs[Math.floor(Math.random() * outputs.length)]
+                };
+            }
+
+            handlePrintStatements(code) {
+                const printRegex = /print\(([^)]+)\)/g;
+                const outputs = [];
+                let match;
+                
+                while ((match = printRegex.exec(code)) !== null) {
+                    let content = match[1].trim();
+                    // Remove quotes
+                    if (content.startsWith('"') && content.endsWith('"') || 
+                        content.startsWith("'") && content.endsWith("'")) {
+                        content = content.slice(1, -1);
+                    }
+                    outputs.push(content);
+                }
+                
+                return {
+                    type: 'text',
+                    content: outputs.join('\n') || 'Hello, World!'
+                };
+            }
+
+            renderOutput(outputDiv, result) {
+                const outputContent = document.createElement('div');
+                outputContent.className = 'py-2';
+                
+                // Add output prompt
+                const prompt = document.createElement('div');
+                prompt.className = 'cell-prompt text-orange-400 mb-1';
+                prompt.innerHTML = `Out[${this.executionCounter}]:`;
+                outputContent.appendChild(prompt);
+                
+                switch (result.type) {
+                    case 'text':
+                        const textDiv = document.createElement('div');
+                        textDiv.className = 'output-text pl-20';
+                        textDiv.textContent = result.content;
+                        outputContent.appendChild(textDiv);
+                        break;
+                        
+                    case 'table':
+                        const tableContainer = document.createElement('div');
+                        tableContainer.className = 'pl-20';
+                        const table = this.createTable(result.data);
+                        tableContainer.appendChild(table);
+                        outputContent.appendChild(tableContainer);
+                        break;
+                        
+                    case 'chart':
+                        const chartContainer = document.createElement('div');
+                        chartContainer.className = 'pl-20';
+                        const canvas = document.createElement('canvas');
+                        canvas.width = 600;
+                        canvas.height = 400;
+                        chartContainer.appendChild(canvas);
+                        outputContent.appendChild(chartContainer);
+                        
+                        // Render chart after DOM update
+                        setTimeout(() => {
+                            new Chart(canvas, {
+                                type: result.chartType,
+                                data: result.data,
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: {
+                                        legend: {
+                                            labels: {
+                                                color: '#f9fafb'
+                                            }
+                                        }
+                                    },
+                                    scales: result.chartType !== 'pie' ? {
+                                        x: {
+                                            ticks: {
+                                                color: '#f9fafb'
+                                            },
+                                            grid: {
+                                                color: '#374151'
+                                            }
+                                        },
+                                        y: {
+                                            ticks: {
+                                                color: '#f9fafb'
+                                            },
+                                            grid: {
+                                                color: '#374151'
+                                            }
+                                        }
+                                    } : {}
+                                }
+                            });
+                        }, 100);
+                        break;
+                }
+                
+                outputDiv.appendChild(outputContent);
+            }
+
+            renderError(outputDiv, errorMessage) {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'output-error py-2';
+                errorDiv.innerHTML = `
+                    <div class="cell-prompt text-red-400 mb-1">Error:</div>
+                    <div class="output-text pl-20 text-red-300">${errorMessage}</div>
+                `;
+                outputDiv.appendChild(errorDiv);
+            }
+
+            createTable(data) {
+                const table = document.createElement('table');
+                table.className = 'output-table w-full';
+                
+                if (data.length === 0) return table;
+                
+                // Create header
+                const thead = document.createElement('thead');
+                const headerRow = document.createElement('tr');
+                Object.keys(data[0]).forEach(key => {
+                    const th = document.createElement('th');
+                    th.textContent = key;
+                    headerRow.appendChild(th);
+                });
+                thead.appendChild(headerRow);
+                table.appendChild(thead);
+                
+                // Create body
+                const tbody = document.createElement('tbody');
+                data.forEach(row => {
+                    const tr = document.createElement('tr');
+                    Object.values(row).forEach(value => {
+                        const td = document.createElement('td');
+                        td.textContent = value;
+                        tr.appendChild(td);
+                    });
+                    tbody.appendChild(tr);
+                });
+                table.appendChild(tbody);
+                
+                return table;
+            }
+
+            loadSampleData() {
+                // Add some sample cells with different types of content
+                setTimeout(() => {
+                    const samples = [
+                        `# Data Analysis Example
+import pandas as pd
+import numpy as np
+
+# Create sample dataset
+df = pd.DataFrame({
+    'Name': ['Alice', 'Bob', 'Charlie'],
+    'Age': [25, 30, 35],
+    'Salary': [75000, 85000, 65000]
+})
+
+df.head()`,
+                        `# Data Visualization
+import matplotlib.pyplot as plt
+
+# Sample plot
+plt.figure(figsize=(10, 6))
+plt.plot([1, 2, 3, 4, 5], [2, 4, 1, 5, 3])
+plt.title('Sample Line Chart')
+plt.xlabel('X-axis')
+plt.ylabel('Y-axis')
+plt.show()`,
+                        `# Simple computation
+x = 10
+y = 20
+result = x + y
+print(f"The sum of {x} and {y} is {result}")
+
+# Mathematical operations
+import numpy as np
+arr = np.array([1, 2, 3, 4, 5])
+print(f"Mean: {np.mean(arr)}")
+print(f"Standard deviation: {np.std(arr)}")`
+                    ];
+                    
+                    // Clear the initial empty cell
+                    this.notebookContainer.innerHTML = '';
+                    
+                    samples.forEach(sample => {
+                        this.addCell(sample);
+                    });
+                }, 100);
+            }
+        }
+
+        // Make notebook accessible globally for dataset buttons
+        let notebook;
+
+        // Initialize notebook when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            notebook = new JupyterNotebook();
+        });
+    </script>
+<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+</body>
+</html>

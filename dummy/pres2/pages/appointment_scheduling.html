@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Appointment Scheduling - OncoScript Pro</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Foncoscript9250back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
+</head>
+<body class="bg-background text-text-primary font-sans">
+    <!-- Navigation Header -->
+    <nav class="bg-surface border-b border-slate-700 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo and Brand -->
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center">
+                        <svg class="w-8 h-8 text-primary" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        <span class="ml-2 text-xl font-semibold text-text-primary">OncoScript Pro</span>
+                    </div>
+                </div>
+
+                <!-- Navigation Links -->
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="patient_dashboard.html" class="text-text-secondary hover:text-text-primary px-3 py-2 rounded-md hover:bg-surface-700 transition-colors">Dashboard</a>
+                    <a href="analytics_dashboard.html" class="text-text-secondary hover:text-text-primary px-3 py-2 rounded-md hover:bg-surface-700 transition-colors">Analytics</a>
+                    <a href="patient_registration.html" class="text-text-secondary hover:text-text-primary px-3 py-2 rounded-md hover:bg-surface-700 transition-colors">New Patient</a>
+                    <a href="appointment_scheduling.html" class="text-primary font-medium px-3 py-2 rounded-md bg-primary/10">Appointments</a>
+                </div>
+
+                <!-- User Profile -->
+                <div class="flex items-center space-x-4">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-sm font-medium text-text-primary">Dr. Sarah Johnson</p>
+                        <p class="text-xs text-text-muted">Breast Cancer Specialist</p>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3" alt="Doctor Profile" class="w-10 h-10 rounded-full object-cover border-2 border-primary" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <!-- Header Section -->
+        <div class="mb-8">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                <div>
+                    <h1 class="text-3xl font-bold text-text-primary">Appointment Scheduling</h1>
+                    <p class="text-text-muted mt-1">Manage patient appointments and calendar scheduling</p>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="flex flex-wrap gap-3">
+                    <button id="newAppointmentBtn" class="medical-button bg-primary hover:bg-primary-700 text-white flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        </svg>
+                        <span>New Appointment</span>
+                    </button>
+                    <button class="medical-button bg-surface-700 hover:bg-surface-600 text-text-primary border border-slate-600 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                        </svg>
+                        <span>Export</span>
+                    </button>
+                    <button class="medical-button bg-accent hover:bg-accent-600 text-white flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5-5-5h5v-5a7.5 7.5 0 00-15 0v5h5l-5 5-5-5h5V7a10 10 0 0120 0z"/>
+                        </svg>
+                        <span>Sync</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calendar and Scheduling Grid -->
+        <div class="grid grid-cols-1 xl:grid-cols-4 gap-6">
+            <!-- Main Calendar Section -->
+            <div class="xl:col-span-3 space-y-6">
+                <!-- Calendar Controls -->
+                <div class="medical-card p-6">
+                    <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-6">
+                        <div class="flex items-center space-x-4">
+                            <h2 class="text-xl font-semibold text-text-primary">October 2025</h2>
+                            <div class="flex items-center space-x-2">
+                                <button id="prevMonth" class="medical-button bg-surface-700 hover:bg-surface-600 text-text-primary border border-slate-600 p-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                                    </svg>
+                                </button>
+                                <button id="nextMonth" class="medical-button bg-surface-700 hover:bg-surface-600 text-text-primary border border-slate-600 p-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- View Toggle -->
+                        <div class="flex items-center space-x-2">
+                            <div class="flex bg-surface-700 rounded-lg p-1">
+                                <button class="px-3 py-1 text-sm rounded-md bg-primary text-white">Month</button>
+                                <button class="px-3 py-1 text-sm rounded-md text-text-muted hover:text-text-primary">Week</button>
+                                <button class="px-3 py-1 text-sm rounded-md text-text-muted hover:text-text-primary">Day</button>
+                            </div>
+                            <button class="medical-button bg-surface-700 hover:bg-surface-600 text-text-primary border border-slate-600 text-sm">
+                                Today
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Patient Search -->
+                    <div class="relative mb-6">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                        </div>
+                        <input type="text" placeholder="Search patients for scheduling..." class="medical-input pl-10 w-full" id="patientSearchScheduling" />
+                    </div>
+                </div>
+
+                <!-- Calendar Grid -->
+                <div class="medical-card">
+                    <div class="p-6">
+                        <!-- Calendar Header -->
+                        <div class="grid grid-cols-7 gap-1 mb-4">
+                            <div class="text-center text-sm font-medium text-text-muted py-2">Sun</div>
+                            <div class="text-center text-sm font-medium text-text-muted py-2">Mon</div>
+                            <div class="text-center text-sm font-medium text-text-muted py-2">Tue</div>
+                            <div class="text-center text-sm font-medium text-text-muted py-2">Wed</div>
+                            <div class="text-center text-sm font-medium text-text-muted py-2">Thu</div>
+                            <div class="text-center text-sm font-medium text-text-muted py-2">Fri</div>
+                            <div class="text-center text-sm font-medium text-text-muted py-2">Sat</div>
+                        </div>
+
+                        <!-- Calendar Days -->
+                        <div class="grid grid-cols-7 gap-1" id="calendarGrid">
+                            <!-- Week 1 -->
+                            <div class="calendar-day text-text-muted p-2 text-center text-sm">29</div>
+                            <div class="calendar-day text-text-muted p-2 text-center text-sm">30</div>
+                            <div class="calendar-day p-2 text-center text-sm hover:bg-surface-700 cursor-pointer rounded">1</div>
+                            <div class="calendar-day p-2 text-center text-sm hover:bg-surface-700 cursor-pointer rounded">2</div>
+                            <div class="calendar-day p-2 text-center text-sm hover:bg-surface-700 cursor-pointer rounded">3</div>
+                            <div class="calendar-day p-2 text-center text-sm hover:bg-surface-700 cursor-pointer rounded bg-primary/20 border border-primary/30">
+                                <div class="font-medium text-text-primary">4</div>
+                                <div class="text-xs text-primary mt-1">Today</div>
+                            </div>
+                            <div class="calendar-day p-2 text-center text-sm hover:bg-surface-700 cursor-pointer rounded">5</div>
+
+                            <!-- Week 2 -->
+                            <div class="calendar-day p-2 text-center text-sm hover:bg-surface-700 cursor-pointer rounded">6</div>
+                            <div class="calendar-day p-2 text-center text-sm hover:bg-surface-700 cursor-pointer rounded">7</div>
+                            <div class="calendar-day p-2 text-center text-sm hover:bg-surface-700 cursor-pointer rounded relative">
+                                <div class="font-medium text-text-primary">8</div>
+                                <div class="absolute bottom-1 left-1 right-1">
+                                    <div class="bg-warning h-1 rounded-full mb-0.5"></div>
+                                    <div class="text-xs text-warning truncate">Emily R.</div>
+                                </div>
+                            </div>
+                            <div class="calendar-day p-2 text-center text-sm hover:bg-surface-700 cursor-pointer rounded">9</div>
+                            <div class="calendar-day p-2 text-center text-sm hover:bg-surface-700 cursor-pointer rounded">10</div>
+                            <div class="calendar-day p-2 text-center text-sm hover:bg-surface-700 cursor-pointer rounded">11</div>
+                            <div class="calendar-day p-2 text-center text-sm hover:bg-surface-700 cursor-pointer rounded">12</div>
+
+                            <!-- Week 3 -->
+                            <div class="calendar-day p-2 text-center text-sm hover:bg-surface-700 cursor-pointer rounded">13</div>
+                            <div class="calendar-day p-2 text-center text-sm hover:bg-surface-700 cursor-pointer rounded relative">
+                                <div class="font-medium text-text-primary">14</div>
+                                <div class="absolute bottom-1 left-1 right-1">
+                                    <div class="bg-success h-1 rounded-full mb-0.5"></div>
+                                    <div class="text-xs text-success truncate">Sarah T.</div>
+                                </div>
+                            </div>
+                            <div class="calendar-day p-2 text-center text-sm hover:bg-surface-700 cursor-pointer rounded relative">
+                                <div class="font-medium text-text-primary">15</div>
+                                <div class="absolute bottom-1 left-1 right-1">
+                                    <div class="bg-primary h-1 rounded-full mb-0.5"></div>
+                                    <div class="text-xs text-primary truncate">Maria G.</div>
+                                </div>
+                            </div>
+                            <div class="calendar-day p-2 text-center text-sm hover:bg-surface-700 cursor-pointer rounded">16</div>
+                            <div class="calendar-day p-2 text-center text-sm hover:bg-surface-700 cursor-pointer rounded">17</div>
+                            <div class="calendar-day p-2 text-center text-sm hover:bg-surface-700 cursor-pointer rounded">18</div>
+                            <div class="calendar-day p-2 text-center text-sm hover:bg-surface-700 cursor-pointer rounded">19</div>
+
+                            <!-- Week 4 -->
+                            <div class="calendar-day p-2 text-center text-sm hover:bg-surface-700 cursor-pointer rounded">20</div>
+                            <div class="calendar-day p-2 text-center text-sm hover:bg-surface-700 cursor-pointer rounded">21</div>
+                            <div class="calendar-day p-2 text-center text-sm hover:bg-surface-700 cursor-pointer rounded relative">
+                                <div class="font-medium text-text-primary">22</div>
+                                <div class="absolute bottom-1 left-1 right-1">
+                                    <div class="bg-accent h-1 rounded-full mb-0.5"></div>
+                                    <div class="text-xs text-accent truncate">Jennifer L.</div>
+                                </div>
+                            </div>
+                            <div class="calendar-day p-2 text-center text-sm hover:bg-surface-700 cursor-pointer rounded">23</div>
+                            <div class="calendar-day p-2 text-center text-sm hover:bg-surface-700 cursor-pointer rounded">24</div>
+                            <div class="calendar-day p-2 text-center text-sm hover:bg-surface-700 cursor-pointer rounded">25</div>
+                            <div class="calendar-day p-2 text-center text-sm hover:bg-surface-700 cursor-pointer rounded">26</div>
+
+                            <!-- Week 5 -->
+                            <div class="calendar-day p-2 text-center text-sm hover:bg-surface-700 cursor-pointer rounded">27</div>
+                            <div class="calendar-day p-2 text-center text-sm hover:bg-surface-700 cursor-pointer rounded">28</div>
+                            <div class="calendar-day p-2 text-center text-sm hover:bg-surface-700 cursor-pointer rounded">29</div>
+                            <div class="calendar-day p-2 text-center text-sm hover:bg-surface-700 cursor-pointer rounded">30</div>
+                            <div class="calendar-day p-2 text-center text-sm hover:bg-surface-700 cursor-pointer rounded">31</div>
+                            <div class="calendar-day text-text-muted p-2 text-center text-sm">1</div>
+                            <div class="calendar-day text-text-muted p-2 text-center text-sm">2</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Legend -->
+                <div class="medical-card p-4">
+                    <div class="flex flex-wrap gap-6 text-sm">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 bg-warning rounded-full"></div>
+                            <span class="text-text-secondary">Active Treatment</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 bg-success rounded-full"></div>
+                            <span class="text-text-secondary">Post-Surgery</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 bg-primary rounded-full"></div>
+                            <span class="text-text-secondary">Follow-up</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 bg-accent rounded-full"></div>
+                            <span class="text-text-secondary">Consultation</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 bg-error rounded-full"></div>
+                            <span class="text-text-secondary">Urgent</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar Panel -->
+            <div class="xl:col-span-1 space-y-6">
+                <!-- Today's Appointments -->
+                <div class="medical-card p-6">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4">Today's Schedule</h3>
+                    <div class="text-sm text-text-muted mb-4">Friday, October 4, 2025</div>
+                    
+                    <div class="space-y-4">
+                        <div class="p-4 bg-surface-700 rounded-lg border-l-4 border-warning">
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="text-sm font-medium text-text-primary">Emily Rodriguez</p>
+                                <span class="text-xs text-text-muted">10:30 AM</span>
+                            </div>
+                            <p class="text-xs text-text-muted mb-2">Active Treatment - Chemotherapy Follow-up</p>
+                            <div class="flex items-center space-x-2">
+                                <a href="patient_medical_history.html" class="text-primary hover:text-primary-400 text-xs">View History</a>
+                                <span class="text-text-muted">•</span>
+                                <button class="text-accent hover:text-accent-400 text-xs">Reschedule</button>
+                            </div>
+                        </div>
+
+                        <div class="p-4 bg-surface-700 rounded-lg border-l-4 border-primary">
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="text-sm font-medium text-text-primary">Maria Garcia</p>
+                                <span class="text-xs text-text-muted">2:00 PM</span>
+                            </div>
+                            <p class="text-xs text-text-muted mb-2">Follow-up - Post-surgical Assessment</p>
+                            <div class="flex items-center space-x-2">
+                                <a href="patient_medical_history.html" class="text-primary hover:text-primary-400 text-xs">View History</a>
+                                <span class="text-text-muted">•</span>
+                                <button class="text-accent hover:text-accent-400 text-xs">Reschedule</button>
+                            </div>
+                        </div>
+
+                        <div class="p-4 bg-surface-700 rounded-lg border-l-4 border-success">
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="text-sm font-medium text-text-primary">Sarah Thompson</p>
+                                <span class="text-xs text-text-muted">3:30 PM</span>
+                            </div>
+                            <p class="text-xs text-text-muted mb-2">Post-Surgery - Recovery Check</p>
+                            <div class="flex items-center space-x-2">
+                                <a href="patient_medical_history.html" class="text-primary hover:text-primary-400 text-xs">View History</a>
+                                <span class="text-text-muted">•</span>
+                                <button class="text-accent hover:text-accent-400 text-xs">Reschedule</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="w-full mt-4 medical-button bg-primary hover:bg-primary-700 text-white text-sm">
+                        View Full Day Schedule
+                    </button>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="medical-card p-6">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4">Scheduling Overview</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-text-muted text-sm">Today's Appointments</span>
+                            <span class="text-text-primary font-semibold">8</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-text-muted text-sm">This Week</span>
+                            <span class="text-accent font-semibold">32</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-text-muted text-sm">Available Slots</span>
+                            <span class="text-success font-semibold">15</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-text-muted text-sm">Waitlist</span>
+                            <span class="text-warning font-semibold">3</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Appointment Types -->
+                <div class="medical-card p-6">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4">Appointment Types</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 bg-surface-700 rounded-lg">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-3 h-3 bg-primary rounded-full"></div>
+                                <span class="text-sm text-text-primary">Consultation</span>
+                            </div>
+                            <span class="text-xs text-text-muted">60 min</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-surface-700 rounded-lg">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-3 h-3 bg-warning rounded-full"></div>
+                                <span class="text-sm text-text-primary">Treatment</span>
+                            </div>
+                            <span class="text-xs text-text-muted">90 min</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-surface-700 rounded-lg">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-3 h-3 bg-success rounded-full"></div>
+                                <span class="text-sm text-text-primary">Follow-up</span>
+                            </div>
+                            <span class="text-xs text-text-muted">30 min</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-surface-700 rounded-lg">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-3 h-3 bg-accent rounded-full"></div>
+                                <span class="text-sm text-text-primary">Surgery</span>
+                            </div>
+                            <span class="text-xs text-text-muted">180 min</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Appointment Modal -->
+    <div id="appointmentModal" class="fixed inset-0 z-50 hidden medical-modal">
+        <div class="flex items-center justify-center min-h-screen px-4">
+            <div class="medical-card max-w-2xl w-full p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-semibold text-text-primary">Schedule New Appointment</h3>
+                    <button id="closeModal" class="text-text-muted hover:text-text-primary">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <form class="space-y-6">
+                    <!-- Patient Selection -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2">Patient</label>
+                            <select class="medical-input w-full">
+                                <option>Select Patient</option>
+                                <option>Emily Rodriguez (P-2025-001)</option>
+                                <option>Sarah Thompson (P-2025-002)</option>
+                                <option>Maria Garcia (P-2025-003)</option>
+                                <option>Jennifer Lee (P-2025-004)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2">Appointment Type</label>
+                            <select class="medical-input w-full">
+                                <option>Select Type</option>
+                                <option>Consultation (60 min)</option>
+                                <option>Treatment (90 min)</option>
+                                <option>Follow-up (30 min)</option>
+                                <option>Surgery (180 min)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Date and Time -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2">Date</label>
+                            <input type="date" class="medical-input w-full" value="2025-10-04" />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2">Time</label>
+                            <select class="medical-input w-full">
+                                <option>Select Time</option>
+                                <option>09:00 AM</option>
+                                <option>10:00 AM</option>
+                                <option>11:00 AM</option>
+                                <option>02:00 PM</option>
+                                <option>03:00 PM</option>
+                                <option>04:00 PM</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Notes -->
+                    <div>
+                        <label class="block text-sm font-medium text-text-primary mb-2">Notes</label>
+                        <textarea class="medical-input w-full h-24" placeholder="Special requirements, preparation instructions, or additional notes..."></textarea>
+                    </div>
+
+                    <!-- Recurring Options -->
+                    <div class="flex items-center space-x-4">
+                        <label class="flex items-center">
+                            <input type="checkbox" class="rounded border-slate-600 bg-surface text-primary focus:ring-primary focus:ring-offset-0" />
+                            <span class="ml-2 text-sm text-text-primary">Recurring appointment</span>
+                        </label>
+                        <select class="medical-input text-sm">
+                            <option>Weekly</option>
+                            <option>Bi-weekly</option>
+                            <option>Monthly</option>
+                        </select>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex justify-end space-x-4 pt-4 border-t border-slate-700">
+                        <button type="button" id="cancelModal" class="medical-button bg-surface-700 hover:bg-surface-600 text-text-primary border border-slate-600">
+                            Cancel
+                        </button>
+                        <button type="submit" class="medical-button bg-primary hover:bg-primary-700 text-white">
+                            Schedule Appointment
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Navigation Menu -->
+    <div class="md:hidden fixed bottom-0 left-0 right-0 bg-surface border-t border-slate-700 z-50">
+        <div class="grid grid-cols-4 gap-1 p-2">
+            <a href="patient_dashboard.html" class="flex flex-col items-center py-2 px-1 text-text-muted">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+                </svg>
+                <span class="text-xs mt-1">Dashboard</span>
+            </a>
+            <a href="analytics_dashboard.html" class="flex flex-col items-center py-2 px-1 text-text-muted">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                </svg>
+                <span class="text-xs mt-1">Analytics</span>
+            </a>
+            <a href="patient_registration.html" class="flex flex-col items-center py-2 px-1 text-text-muted">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                </svg>
+                <span class="text-xs mt-1">New</span>
+            </a>
+            <a href="appointment_scheduling.html" class="flex flex-col items-center py-2 px-1 text-primary">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                <span class="text-xs mt-1">Calendar</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Modal functionality
+        const newAppointmentBtn = document.getElementById('newAppointmentBtn');
+        const appointmentModal = document.getElementById('appointmentModal');
+        const closeModal = document.getElementById('closeModal');
+        const cancelModal = document.getElementById('cancelModal');
+
+        newAppointmentBtn.addEventListener('click', () => {
+            appointmentModal.classList.remove('hidden');
+        });
+
+        closeModal.addEventListener('click', () => {
+            appointmentModal.classList.add('hidden');
+        });
+
+        cancelModal.addEventListener('click', () => {
+            appointmentModal.classList.add('hidden');
+        });
+
+        // Close modal on outside click
+        appointmentModal.addEventListener('click', (e) => {
+            if (e.target === appointmentModal) {
+                appointmentModal.classList.add('hidden');
+            }
+        });
+
+        // Calendar navigation
+        const prevMonth = document.getElementById('prevMonth');
+        const nextMonth = document.getElementById('nextMonth');
+
+        prevMonth.addEventListener('click', () => {
+            // Previous month logic would go here
+            console.log('Previous month clicked');
+        });
+
+        nextMonth.addEventListener('click', () => {
+            // Next month logic would go here
+            console.log('Next month clicked');
+        });
+
+        // Patient search functionality
+        document.getElementById('patientSearchScheduling').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            // Search logic would filter available patients for scheduling
+            console.log('Searching for:', searchTerm);
+        });
+
+        // Calendar day click handlers
+        document.querySelectorAll('.calendar-day').forEach(day => {
+            day.addEventListener('click', function() {
+                if (!this.classList.contains('text-text-muted')) {
+                    // Remove previous selection
+                    document.querySelectorAll('.calendar-day').forEach(d => {
+                        d.classList.remove('ring-2', 'ring-primary');
+                    });
+                    
+                    // Add selection to clicked day
+                    this.classList.add('ring-2', 'ring-primary');
+                    
+                    // Open appointment modal for selected day
+                    appointmentModal.classList.remove('hidden');
+                }
+            });
+        });
+
+        // Drag and drop functionality for rescheduling
+        let draggedAppointment = null;
+
+        document.querySelectorAll('.calendar-day').forEach(day => {
+            day.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                day.classList.add('bg-primary/10');
+            });
+
+            day.addEventListener('dragleave', () => {
+                day.classList.remove('bg-primary/10');
+            });
+
+            day.addEventListener('drop', (e) => {
+                e.preventDefault();
+                day.classList.remove('bg-primary/10');
+                
+                if (draggedAppointment) {
+                    // Rescheduling logic would go here
+                    console.log('Appointment rescheduled');
+                    draggedAppointment = null;
+                }
+            });
+        });
+
+        // Auto-save form data
+        const formInputs = document.querySelectorAll('input, select, textarea');
+        formInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                localStorage.setItem(`appointment_${this.name || this.id}`, this.value);
+            });
+        });
+
+        // Load saved form data
+        formInputs.forEach(input => {
+            const savedValue = localStorage.getItem(`appointment_${input.name || input.id}`);
+            if (savedValue) {
+                input.value = savedValue;
+            }
+        });
+
+        // Real-time availability checking
+        function checkAvailability(date, time) {
+            // This would check against existing appointments
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve(Math.random() > 0.3); // Mock availability
+                }, 500);
+            });
+        }
+
+        // Form submission
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Collect form data
+            const formData = new FormData(this);
+            
+            // Show success message
+            alert('Appointment scheduled successfully!');
+            
+            // Close modal
+            appointmentModal.classList.add('hidden');
+            
+            // Clear form
+            this.reset();
+            
+            // Clear saved data
+            formInputs.forEach(input => {
+                localStorage.removeItem(`appointment_${input.name || input.id}`);
+            });
+        });
+    </script>
+<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+</body>
+</html>

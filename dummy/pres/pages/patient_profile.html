@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Patient Profile - Emily Rodriguez - MediScript OPD</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+<script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fmediscript5763back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
+</head>
+<body class="bg-background min-h-screen">
+    <!-- Header Navigation -->
+    <header class="bg-surface shadow-medical border-b border-secondary-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo and Brand -->
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center">
+                        <svg class="w-8 h-8 text-primary" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                        </svg>
+                        <h1 class="ml-2 text-xl font-semibold text-text-primary">MediScript OPD</h1>
+                    </div>
+                </div>
+
+                <!-- Navigation Menu -->
+                <nav class="hidden md:flex space-x-8">
+                    <a href="patient_dashboard.html" class="text-text-secondary hover:text-primary transition-colors">Dashboard</a>
+                    <a href="patient_enrollment.html" class="text-text-secondary hover:text-primary transition-colors">Enrollment</a>
+                    <a href="patient_profile.html" class="text-primary font-medium border-b-2 border-primary pb-1">Profiles</a>
+                    <a href="treatment_session.html" class="text-text-secondary hover:text-primary transition-colors">Treatment</a>
+                    <a href="prescription_management.html" class="text-text-secondary hover:text-primary transition-colors">Prescriptions</a>
+                    <a href="medical_reports.html" class="text-text-secondary hover:text-primary transition-colors">Reports</a>
+                </nav>
+
+                <!-- User Profile -->
+                <div class="flex items-center space-x-4">
+                    <button class="p-2 text-text-secondary hover:text-primary transition-colors">
+                        <i class="fas fa-bell text-lg"></i>
+                    </button>
+                    <div class="flex items-center space-x-2">
+                        <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Dr. Sarah Johnson" class="w-8 h-8 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                        <span class="text-sm font-medium text-text-primary">Dr. Johnson</span>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden p-2 text-text-secondary hover:text-primary" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars text-lg"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Patient Header -->
+        <div class="card mb-8">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+                <div class="flex items-center space-x-6">
+                    <div class="relative">
+                        <img src="https://images.pexels.com/photos/5327585/pexels-photo-5327585.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Emily Rodriguez" class="w-20 h-20 rounded-full object-cover border-4 border-primary-100" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                        <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-accent rounded-full border-2 border-surface flex items-center justify-center">
+                            <i class="fas fa-check text-white text-xs"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-semibold text-text-primary">Emily Rodriguez</h2>
+                        <p class="text-text-secondary font-data">Patient ID: P-2024-001</p>
+                        <div class="flex items-center space-x-4 mt-2">
+                            <span class="text-sm text-text-secondary">Age: 34</span>
+                            <span class="text-sm text-text-secondary">Gender: Female</span>
+                            <span class="text-sm text-text-secondary">Blood Type: O+</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Critical Alerts -->
+                <div class="mt-4 lg:mt-0 space-y-2">
+                    <div class="flex items-center space-x-2 bg-error-50 text-error-700 px-3 py-2 rounded-md">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span class="text-sm font-medium">Allergy: Penicillin</span>
+                    </div>
+                    <div class="flex items-center space-x-2 bg-warning-50 text-warning-700 px-3 py-2 rounded-md">
+                        <i class="fas fa-heart"></i>
+                        <span class="text-sm font-medium">Hypertension</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 pt-6 border-t border-secondary-200">
+                <div class="text-center">
+                    <p class="text-2xl font-semibold text-text-primary">365</p>
+                    <p class="text-sm text-text-secondary">Days Since Enrollment</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-2xl font-semibold text-text-primary">12</p>
+                    <p class="text-sm text-text-secondary">Total Visits</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-2xl font-semibold text-text-primary">3</p>
+                    <p class="text-sm text-text-secondary">Active Medications</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-2xl font-semibold text-text-primary">Oct 15, 2025</p>
+                    <p class="text-sm text-text-secondary">Next Appointment</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <!-- Main Content Area -->
+            <div class="lg:col-span-3">
+                <!-- Tab Navigation -->
+                <div class="card mb-6">
+                    <div class="border-b border-secondary-200">
+                        <nav class="flex space-x-6 overflow-x-auto" id="tabNavigation">
+                            <button class="tab-button active" data-tab="patient-journey">
+                                <i class="fas fa-route mr-2"></i>
+                                Patient Journey
+                            </button>
+                            <button class="tab-button" data-tab="medical-history">
+                                <i class="fas fa-history mr-2"></i>
+                                Medical History
+                            </button>
+                            <button class="tab-button" data-tab="medications">
+                                <i class="fas fa-pills mr-2"></i>
+                                Current Medications
+                            </button>
+                            <button class="tab-button" data-tab="visits">
+                                <i class="fas fa-calendar-alt mr-2"></i>
+                                Visit History
+                            </button>
+                            <button class="tab-button" data-tab="documents">
+                                <i class="fas fa-file-medical mr-2"></i>
+                                Documents
+                            </button>
+                        </nav>
+                    </div>
+
+                    <!-- Tab Content -->
+                    <div class="mt-6">
+                        <!-- Patient Journey Tab -->
+                        <div id="patient-journey" class="tab-content active">
+                            <div class="flex items-center justify-between mb-6">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-text-primary">Complete Patient Journey</h3>
+                                    <p class="text-sm text-text-secondary mt-1">Comprehensive timeline from day 1 to present with all medical events</p>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <div class="flex items-center space-x-2">
+                                        <button class="btn-secondary text-sm" onclick="toggleJourneyView('detailed')">
+                                            <i class="fas fa-list-ul mr-1"></i>
+                                            Detailed View
+                                        </button>
+                                        <button class="btn-secondary text-sm" onclick="toggleJourneyView('summary')">
+                                            <i class="fas fa-compress-alt mr-1"></i>
+                                            Summary View
+                                        </button>
+                                    </div>
+                                    <button class="btn-secondary text-sm" onclick="printJourney()">
+                                        <i class="fas fa-print mr-1"></i>
+                                        Print
+                                    </button>
+                                    <button class="btn-secondary text-sm" onclick="exportJourney()">
+                                        <i class="fas fa-download mr-1"></i>
+                                        Export
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Journey Overview Cards -->
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                                <div class="bg-primary-50 border border-primary-200 rounded-lg p-4">
+                                    <div class="flex items-center">
+                                        <div class="p-2 bg-primary rounded-full">
+                                            <i class="fas fa-calendar-day text-white text-sm"></i>
+                                        </div>
+                                        <div class="ml-3">
+                                            <p class="text-sm font-medium text-primary-700">Enrollment Date</p>
+                                            <p class="text-lg font-semibold text-primary-900">Oct 3, 2024</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bg-accent-50 border border-accent-200 rounded-lg p-4">
+                                    <div class="flex items-center">
+                                        <div class="p-2 bg-accent rounded-full">
+                                            <i class="fas fa-clock text-white text-sm"></i>
+                                        </div>
+                                        <div class="ml-3">
+                                            <p class="text-sm font-medium text-accent-700">Care Duration</p>
+                                            <p class="text-lg font-semibold text-accent-900">12 months</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bg-success-50 border border-success-200 rounded-lg p-4">
+                                    <div class="flex items-center">
+                                        <div class="p-2 bg-success rounded-full">
+                                            <i class="fas fa-heartbeat text-white text-sm"></i>
+                                        </div>
+                                        <div class="ml-3">
+                                            <p class="text-sm font-medium text-success-700">Health Score</p>
+                                            <p class="text-lg font-semibold text-success-900">Improving</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Detailed Journey Timeline -->
+                            <div class="relative" id="detailedJourney">
+                                <!-- Timeline Line -->
+                                <div class="absolute left-6 top-0 bottom-0 w-0.5 bg-gradient-to-b from-success via-accent to-primary"></div>
+                                
+                                <!-- Journey Events -->
+                                <div class="space-y-8">
+                                    <!-- Day 1: Patient Enrollment -->
+                                    <div class="relative flex items-start">
+                                        <div class="relative z-10 w-12 h-12 bg-success rounded-full border-4 border-surface flex items-center justify-center shadow-lg">
+                                            <i class="fas fa-user-plus text-white"></i>
+                                        </div>
+                                        <div class="ml-6 flex-1 bg-gradient-to-r from-success-50 to-surface rounded-lg p-6 border border-success-200">
+                                            <div class="flex items-center justify-between mb-3">
+                                                <div class="flex items-center space-x-3">
+                                                    <h4 class="text-lg font-semibold text-text-primary">Day 1: Patient Enrollment</h4>
+                                                    <span class="bg-success text-white text-xs px-2 py-1 rounded-full">Milestone</span>
+                                                </div>
+                                                <div class="text-right">
+                                                    <p class="text-sm font-medium text-text-primary">Oct 3, 2024</p>
+                                                    <p class="text-xs text-text-secondary">8:30 AM</p>
+                                                </div>
+                                            </div>
+                                            <p class="text-text-secondary mb-4">Patient Emily Rodriguez enrolled in the medical system. Initial registration and demographic information collected.</p>
+                                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                                                <div class="bg-surface p-3 rounded-md">
+                                                    <p class="text-xs text-text-secondary">Age at Enrollment</p>
+                                                    <p class="font-semibold text-text-primary">33 years</p>
+                                                </div>
+                                                <div class="bg-surface p-3 rounded-md">
+                                                    <p class="text-xs text-text-secondary">Primary Insurance</p>
+                                                    <p class="font-semibold text-text-primary">BlueCross</p>
+                                                </div>
+                                                <div class="bg-surface p-3 rounded-md">
+                                                    <p class="text-xs text-text-secondary">Emergency Contact</p>
+                                                    <p class="font-semibold text-text-primary">Maria Rodriguez</p>
+                                                </div>
+                                                <div class="bg-surface p-3 rounded-md">
+                                                    <p class="text-xs text-text-secondary">Referring Doctor</p>
+                                                    <p class="font-semibold text-text-primary">Dr. Smith</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center space-x-2 text-sm text-text-secondary">
+                                                <i class="fas fa-user text-success"></i>
+                                                <span>Registration Team</span>
+                                                <span class="w-1 h-1 bg-text-secondary rounded-full"></span>
+                                                <span>System: Patient Registration</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Day 5: Initial Consultation -->
+                                    <div class="relative flex items-start">
+                                        <div class="relative z-10 w-12 h-12 bg-primary rounded-full border-4 border-surface flex items-center justify-center shadow-lg">
+                                            <i class="fas fa-stethoscope text-white"></i>
+                                        </div>
+                                        <div class="ml-6 flex-1 bg-gradient-to-r from-primary-50 to-surface rounded-lg p-6 border border-primary-200">
+                                            <div class="flex items-center justify-between mb-3">
+                                                <div class="flex items-center space-x-3">
+                                                    <h4 class="text-lg font-semibold text-text-primary">Day 5: Initial Consultation</h4>
+                                                    <span class="bg-primary text-white text-xs px-2 py-1 rounded-full">First Visit</span>
+                                                </div>
+                                                <div class="text-right">
+                                                    <p class="text-sm font-medium text-text-primary">Oct 8, 2024</p>
+                                                    <p class="text-xs text-text-secondary">2:00 PM - 3:15 PM</p>
+                                                </div>
+                                            </div>
+                                            <p class="text-text-secondary mb-4">Comprehensive initial examination and health assessment. Baseline vital signs recorded and medical history documented.</p>
+                                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                                                <div class="bg-surface p-3 rounded-md">
+                                                    <p class="text-xs text-text-secondary">Blood Pressure</p>
+                                                    <p class="font-semibold text-text-primary">158/95 mmHg</p>
+                                                </div>
+                                                <div class="bg-surface p-3 rounded-md">
+                                                    <p class="text-xs text-text-secondary">Weight</p>
+                                                    <p class="font-semibold text-text-primary">67 kg</p>
+                                                </div>
+                                                <div class="bg-surface p-3 rounded-md">
+                                                    <p class="text-xs text-text-secondary">Heart Rate</p>
+                                                    <p class="font-semibold text-text-primary">78 bpm</p>
+                                                </div>
+                                                <div class="bg-surface p-3 rounded-md">
+                                                    <p class="text-xs text-text-secondary">BMI</p>
+                                                    <p class="font-semibold text-text-primary">24.8</p>
+                                                </div>
+                                            </div>
+                                            <div class="bg-warning-50 border border-warning-200 rounded-md p-3 mb-4">
+                                                <p class="text-sm text-warning-700">
+                                                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                                                    <strong>Initial Concerns:</strong> Elevated blood pressure readings, family history of cardiovascular disease
+                                                </p>
+                                            </div>
+                                            <div class="flex items-center space-x-2 text-sm text-text-secondary">
+                                                <i class="fas fa-user-md text-primary"></i>
+                                                <span>Dr. Sarah Johnson</span>
+                                                <span class="w-1 h-1 bg-text-secondary rounded-full"></span>
+                                                <span>Duration: 1h 15m</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Day 12: Lab Results -->
+                                    <div class="relative flex items-start">
+                                        <div class="relative z-10 w-12 h-12 bg-accent rounded-full border-4 border-surface flex items-center justify-center shadow-lg">
+                                            <i class="fas fa-flask text-white"></i>
+                                        </div>
+                                        <div class="ml-6 flex-1 bg-gradient-to-r from-accent-50 to-surface rounded-lg p-6 border border-accent-200">
+                                            <div class="flex items-center justify-between mb-3">
+                                                <div class="flex items-center space-x-3">
+                                                    <h4 class="text-lg font-semibold text-text-primary">Day 12: Laboratory Results</h4>
+                                                    <span class="bg-accent text-white text-xs px-2 py-1 rounded-full">Lab Results</span>
+                                                </div>
+                                                <div class="text-right">
+                                                    <p class="text-sm font-medium text-text-primary">Oct 15, 2024</p>
+                                                    <p class="text-xs text-text-secondary">10:00 AM</p>
+                                                </div>
+                                            </div>
+                                            <p class="text-text-secondary mb-4">Complete metabolic panel and lipid profile results received. Blood glucose levels showing early warning signs.</p>
+                                            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
+                                                <div class="bg-surface p-3 rounded-md">
+                                                    <p class="text-xs text-text-secondary">Fasting Glucose</p>
+                                                    <p class="font-semibold text-warning-600">108 mg/dL</p>
+                                                    <p class="text-xs text-warning-600">Slightly High</p>
+                                                </div>
+                                                <div class="bg-surface p-3 rounded-md">
+                                                    <p class="text-xs text-text-secondary">Total Cholesterol</p>
+                                                    <p class="font-semibold text-text-primary">190 mg/dL</p>
+                                                    <p class="text-xs text-success-600">Normal</p>
+                                                </div>
+                                                <div class="bg-surface p-3 rounded-md">
+                                                    <p class="text-xs text-text-secondary">HbA1c</p>
+                                                    <p class="font-semibold text-warning-600">5.9%</p>
+                                                    <p class="text-xs text-warning-600">Pre-diabetic</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center space-x-2 text-sm text-text-secondary">
+                                                <i class="fas fa-microscope text-accent"></i>
+                                                <span>MediLab Diagnostics</span>
+                                                <span class="w-1 h-1 bg-text-secondary rounded-full"></span>
+                                                <span>Ref ID: LAB-2024-1015</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Day 45: Medication Start -->
+                                    <div class="relative flex items-start">
+                                        <div class="relative z-10 w-12 h-12 bg-info rounded-full border-4 border-surface flex items-center justify-center shadow-lg">
+                                            <i class="fas fa-pills text-white"></i>
+                                        </div>
+                                        <div class="ml-6 flex-1 bg-gradient-to-r from-info-50 to-surface rounded-lg p-6 border border-info-200">
+                                            <div class="flex items-center justify-between mb-3">
+                                                <div class="flex items-center space-x-3">
+                                                    <h4 class="text-lg font-semibold text-text-primary">Day 45: Medication Therapy Started</h4>
+                                                    <span class="bg-info text-white text-xs px-2 py-1 rounded-full">Treatment</span>
+                                                </div>
+                                                <div class="text-right">
+                                                    <p class="text-sm font-medium text-text-primary">Nov 17, 2024</p>
+                                                    <p class="text-xs text-text-secondary">11:30 AM</p>
+                                                </div>
+                                            </div>
+                                            <p class="text-text-secondary mb-4">Started on ACE inhibitor therapy for hypertension management and lifestyle modification program for pre-diabetes.</p>
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                                <div class="bg-surface p-4 rounded-md border-l-4 border-info">
+                                                    <h5 class="font-medium text-text-primary mb-2">New Medications</h5>
+                                                    <div class="space-y-2">
+                                                        <div class="flex justify-between">
+                                                            <span class="text-sm">Lisinopril</span>
+                                                            <span class="text-sm font-medium">10mg daily</span>
+                                                        </div>
+                                                        <div class="flex justify-between">
+                                                            <span class="text-sm">Metformin</span>
+                                                            <span class="text-sm font-medium">500mg BID</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="bg-surface p-4 rounded-md border-l-4 border-warning">
+                                                    <h5 class="font-medium text-text-primary mb-2">Care Instructions</h5>
+                                                    <ul class="text-sm text-text-secondary space-y-1">
+                                                        <li>• Monitor BP daily</li>
+                                                        <li>• Low-sodium diet</li>
+                                                        <li>• 30min exercise daily</li>
+                                                        <li>• Weight monitoring</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center space-x-2 text-sm text-text-secondary">
+                                                <i class="fas fa-user-md text-info"></i>
+                                                <span>Dr. Sarah Johnson</span>
+                                                <span class="w-1 h-1 bg-text-secondary rounded-full"></span>
+                                                <span>Prescription ID: RX-2024-1117</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Day 120: Allergy Discovery -->
+                                    <div class="relative flex items-start">
+                                        <div class="relative z-10 w-12 h-12 bg-warning rounded-full border-4 border-surface flex items-center justify-center shadow-lg">
+                                            <i class="fas fa-allergies text-white"></i>
+                                        </div>
+                                        <div class="ml-6 flex-1 bg-gradient-to-r from-warning-50 to-surface rounded-lg p-6 border border-warning-200">
+                                            <div class="flex items-center justify-between mb-3">
+                                                <div class="flex items-center space-x-3">
+                                                    <h4 class="text-lg font-semibold text-text-primary">Day 120: Allergy Discovered</h4>
+                                                    <span class="bg-warning text-white text-xs px-2 py-1 rounded-full">Alert</span>
+                                                </div>
+                                                <div class="text-right">
+                                                    <p class="text-sm font-medium text-text-primary">Jan 31, 2025</p>
+                                                    <p class="text-xs text-text-secondary">3:45 PM</p>
+                                                </div>
+                                            </div>
+                                            <p class="text-text-secondary mb-4">Patient experienced allergic reaction to penicillin prescribed for minor infection. Immediate treatment provided and allergy added to permanent medical record.</p>
+                                            <div class="bg-error-50 border border-error-200 rounded-md p-4 mb-4">
+                                                <div class="flex items-center space-x-2 mb-2">
+                                                    <i class="fas fa-exclamation-triangle text-error"></i>
+                                                    <h5 class="font-medium text-error-700">Critical Allergy Alert</h5>
+                                                </div>
+                                                <div class="grid grid-cols-2 gap-4">
+                                                    <div>
+                                                        <p class="text-sm text-error-700"><strong>Allergen:</strong> Penicillin</p>
+                                                        <p class="text-sm text-error-700"><strong>Severity:</strong> Severe</p>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-sm text-error-700"><strong>Reaction:</strong> Skin rash, difficulty breathing</p>
+                                                        <p class="text-sm text-error-700"><strong>Treatment:</strong> Epinephrine, Benadryl</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center space-x-2 text-sm text-text-secondary">
+                                                <i class="fas fa-user-md text-warning"></i>
+                                                <span>Dr. Michael Chen</span>
+                                                <span class="w-1 h-1 bg-text-secondary rounded-full"></span>
+                                                <span>Emergency Response: 8 minutes</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Day 180: Follow-up Progress -->
+                                    <div class="relative flex items-start">
+                                        <div class="relative z-10 w-12 h-12 bg-success rounded-full border-4 border-surface flex items-center justify-center shadow-lg">
+                                            <i class="fas fa-chart-line text-white"></i>
+                                        </div>
+                                        <div class="ml-6 flex-1 bg-gradient-to-r from-success-50 to-surface rounded-lg p-6 border border-success-200">
+                                            <div class="flex items-center justify-between mb-3">
+                                                <div class="flex items-center space-x-3">
+                                                    <h4 class="text-lg font-semibold text-text-primary">Day 180: Significant Progress</h4>
+                                                    <span class="bg-success text-white text-xs px-2 py-1 rounded-full">Improvement</span>
+                                                </div>
+                                                <div class="text-right">
+                                                    <p class="text-sm font-medium text-text-primary">Mar 31, 2025</p>
+                                                    <p class="text-xs text-text-secondary">10:15 AM</p>
+                                                </div>
+                                            </div>
+                                            <p class="text-text-secondary mb-4">Six-month follow-up shows significant improvement in blood pressure control and glucose management. Patient adherent to treatment plan.</p>
+                                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                                                <div class="bg-surface p-3 rounded-md">
+                                                    <p class="text-xs text-text-secondary">Blood Pressure</p>
+                                                    <p class="font-semibold text-success-600">128/82 mmHg</p>
+                                                    <p class="text-xs text-success-600">↓ -30/-13</p>
+                                                </div>
+                                                <div class="bg-surface p-3 rounded-md">
+                                                    <p class="text-xs text-text-secondary">Weight</p>
+                                                    <p class="font-semibold text-success-600">64 kg</p>
+                                                    <p class="text-xs text-success-600">↓ -3 kg</p>
+                                                </div>
+                                                <div class="bg-surface p-3 rounded-md">
+                                                    <p class="text-xs text-text-secondary">HbA1c</p>
+                                                    <p class="font-semibold text-success-600">5.6%</p>
+                                                    <p class="text-xs text-success-600">↓ -0.3%</p>
+                                                </div>
+                                                <div class="bg-surface p-3 rounded-md">
+                                                    <p class="text-xs text-text-secondary">Compliance</p>
+                                                    <p class="font-semibold text-success-600">94%</p>
+                                                    <p class="text-xs text-success-600">Excellent</p>
+                                                </div>
+                                            </div>
+                                            <div class="bg-success-50 border border-success-200 rounded-md p-3 mb-4">
+                                                <p class="text-sm text-success-700">
+                                                    <i class="fas fa-trophy mr-2"></i>
+                                                    <strong>Achievement:</strong> Blood pressure now in normal range, pre-diabetes risk significantly reduced
+                                                </p>
+                                            </div>
+                                            <div class="flex items-center space-x-2 text-sm text-text-secondary">
+                                                <i class="fas fa-user-md text-success"></i>
+                                                <span>Dr. Sarah Johnson</span>
+                                                <span class="w-1 h-1 bg-text-secondary rounded-full"></span>
+                                                <span>Progress Review Session</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Day 365: Current Status -->
+                                    <div class="relative flex items-start">
+                                        <div class="relative z-10 w-12 h-12 bg-primary rounded-full border-4 border-surface flex items-center justify-center shadow-lg animate-pulse">
+                                            <i class="fas fa-calendar-check text-white"></i>
+                                        </div>
+                                        <div class="ml-6 flex-1 bg-gradient-to-r from-primary-50 to-surface rounded-lg p-6 border border-primary-200 shadow-lg">
+                                            <div class="flex items-center justify-between mb-3">
+                                                <div class="flex items-center space-x-3">
+                                                    <h4 class="text-lg font-semibold text-text-primary">Day 365: Current Status</h4>
+                                                    <span class="bg-primary text-white text-xs px-2 py-1 rounded-full">Present Day</span>
+                                                </div>
+                                                <div class="text-right">
+                                                    <p class="text-sm font-medium text-text-primary">Oct 3, 2025</p>
+                                                    <p class="text-xs text-text-secondary">Today</p>
+                                                </div>
+                                            </div>
+                                            <p class="text-text-secondary mb-4">One year since enrollment. Patient shows remarkable improvement and continues to be actively managed with regular monitoring.</p>
+                                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                                                <div class="bg-surface p-3 rounded-md">
+                                                    <p class="text-xs text-text-secondary">Current BP</p>
+                                                    <p class="font-semibold text-success-600">125/80 mmHg</p>
+                                                    <p class="text-xs text-success-600">Optimal</p>
+                                                </div>
+                                                <div class="bg-surface p-3 rounded-md">
+                                                    <p class="text-xs text-text-secondary">Current Weight</p>
+                                                    <p class="font-semibold text-success-600">63 kg</p>
+                                                    <p class="text-xs text-success-600">Stable</p>
+                                                </div>
+                                                <div class="bg-surface p-3 rounded-md">
+                                                    <p class="text-xs text-text-secondary">Medications</p>
+                                                    <p class="font-semibold text-text-primary">2 Active</p>
+                                                    <p class="text-xs text-text-secondary">Well Tolerated</p>
+                                                </div>
+                                                <div class="bg-surface p-3 rounded-md">
+                                                    <p class="text-xs text-text-secondary">Next Visit</p>
+                                                    <p class="font-semibold text-primary">Oct 15, 2025</p>
+                                                    <p class="text-xs text-text-secondary">Scheduled</p>
+                                                </div>
+                                            </div>
+                                            <div class="bg-info-50 border border-info-200 rounded-md p-3 mb-4">
+                                                <p class="text-sm text-info-700">
+                                                    <i class="fas fa-lightbulb mr-2"></i>
+                                                    <strong>Current Focus:</strong> Maintaining current medication regimen, quarterly monitoring, lifestyle maintenance
+                                                </p>
+                                            </div>
+                                            <div class="flex items-center justify-between">
+                                                <div class="flex items-center space-x-2 text-sm text-text-secondary">
+                                                    <i class="fas fa-user-md text-primary"></i>
+                                                    <span>Dr. Sarah Johnson</span>
+                                                    <span class="w-1 h-1 bg-text-secondary rounded-full"></span>
+                                                    <span>Primary Care Team</span>
+                                                </div>
+                                                <button class="btn-primary text-sm" onclick="scheduleFollowUp()">
+                                                    <i class="fas fa-calendar-plus mr-1"></i>
+                                                    Schedule Follow-up
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Summary Journey View -->
+                            <div class="hidden" id="summaryJourney">
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    <div class="bg-success-50 border-2 border-success-200 rounded-lg p-6">
+                                        <div class="flex items-center mb-4">
+                                            <div class="p-3 bg-success rounded-full">
+                                                <i class="fas fa-user-plus text-white"></i>
+                                            </div>
+                                            <div class="ml-3">
+                                                <h4 class="font-semibold text-success-800">Enrollment Phase</h4>
+                                                <p class="text-sm text-success-600">Days 1-10</p>
+                                            </div>
+                                        </div>
+                                        <ul class="text-sm space-y-2 text-success-700">
+                                            <li>• Patient registration completed</li>
+                                            <li>• Initial consultation scheduled</li>
+                                            <li>• Baseline health assessment</li>
+                                            <li>• Lab work ordered</li>
+                                        </ul>
+                                    </div>
+                                    
+                                    <div class="bg-warning-50 border-2 border-warning-200 rounded-lg p-6">
+                                        <div class="flex items-center mb-4">
+                                            <div class="p-3 bg-warning rounded-full">
+                                                <i class="fas fa-exclamation-triangle text-white"></i>
+                                            </div>
+                                            <div class="ml-3">
+                                                <h4 class="font-semibold text-warning-800">Diagnosis Phase</h4>
+                                                <p class="text-sm text-warning-600">Days 11-50</p>
+                                            </div>
+                                        </div>
+                                        <ul class="text-sm space-y-2 text-warning-700">
+                                            <li>• Hypertension identified</li>
+                                            <li>• Pre-diabetes detected</li>
+                                            <li>• Treatment plan developed</li>
+                                            <li>• Medication therapy started</li>
+                                        </ul>
+                                    </div>
+                                    
+                                    <div class="bg-info-50 border-2 border-info-200 rounded-lg p-6">
+                                        <div class="flex items-center mb-4">
+                                            <div class="p-3 bg-info rounded-full">
+                                                <i class="fas fa-cogs text-white"></i>
+                                            </div>
+                                            <div class="ml-3">
+                                                <h4 class="font-semibold text-info-800">Treatment Phase</h4>
+                                                <p class="text-sm text-info-600">Days 51-200</p>
+                                            </div>
+                                        </div>
+                                        <ul class="text-sm space-y-2 text-info-700">
+                                            <li>• Medication adjustments</li>
+                                            <li>• Penicillin allergy discovered</li>
+                                            <li>• Lifestyle modifications</li>
+                                            <li>• Regular monitoring established</li>
+                                        </ul>
+                                    </div>
+                                    
+                                    <div class="bg-accent-50 border-2 border-accent-200 rounded-lg p-6">
+                                        <div class="flex items-center mb-4">
+                                            <div class="p-3 bg-accent rounded-full">
+                                                <i class="fas fa-chart-line text-white"></i>
+                                            </div>
+                                            <div class="ml-3">
+                                                <h4 class="font-semibold text-accent-800">Progress Phase</h4>
+                                                <p class="text-sm text-accent-600">Days 201-300</p>
+                                            </div>
+                                        </div>
+                                        <ul class="text-sm space-y-2 text-accent-700">
+                                            <li>• Significant BP improvement</li>
+                                            <li>• Weight reduction achieved</li>
+                                            <li>• HbA1c levels normalized</li>
+                                            <li>• Patient compliance excellent</li>
+                                        </ul>
+                                    </div>
+                                    
+                                    <div class="bg-primary-50 border-2 border-primary-200 rounded-lg p-6">
+                                        <div class="flex items-center mb-4">
+                                            <div class="p-3 bg-primary rounded-full">
+                                                <i class="fas fa-trophy text-white"></i>
+                                            </div>
+                                            <div class="ml-3">
+                                                <h4 class="font-semibold text-primary-800">Maintenance Phase</h4>
+                                                <p class="text-sm text-primary-600">Days 301-365+</p>
+                                            </div>
+                                        </div>
+                                        <ul class="text-sm space-y-2 text-primary-700">
+                                            <li>• Optimal health achieved</li>
+                                            <li>• Stable medication regimen</li>
+                                            <li>• Quarterly monitoring</li>
+                                            <li>• Long-term management plan</li>
+                                        </ul>
+                                    </div>
+                                    
+                                    <div class="bg-secondary-50 border-2 border-secondary-200 rounded-lg p-6">
+                                        <div class="flex items-center mb-4">
+                                            <div class="p-3 bg-secondary-500 rounded-full">
+                                                <i class="fas fa-calendar-check text-white"></i>
+                                            </div>
+                                            <div class="ml-3">
+                                                <h4 class="font-semibold text-text-primary">Future Planning</h4>
+                                                <p class="text-sm text-text-secondary">Ongoing</p>
+                                            </div>
+                                        </div>
+                                        <ul class="text-sm space-y-2 text-text-secondary">
+                                            <li>• Continue current medications</li>
+                                            <li>• Annual comprehensive exam</li>
+                                            <li>• Preventive care screening</li>
+                                            <li>• Health maintenance focus</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Medical History Tab -->
+                        <div id="medical-history" class="tab-content hidden">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-lg font-semibold text-text-primary">Medical History Timeline</h3>
+                                <div class="flex items-center space-x-2">
+                                    <select class="input-field w-auto">
+                                        <option>All Conditions</option>
+                                        <option>Cardiovascular</option>
+                                        <option>Respiratory</option>
+                                        <option>Endocrine</option>
+                                    </select>
+                                    <input type="date" class="input-field w-auto" value="2025-01-01" />
+                                    <span class="text-text-secondary">to</span>
+                                    <input type="date" class="input-field w-auto" value="2025-10-03" />
+                                </div>
+                            </div>
+
+                            <!-- Timeline Visualization -->
+                            <div class="relative">
+                                <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-secondary-200"></div>
+                                
+                                <!-- Timeline Items -->
+                                <div class="space-y-6">
+                                    <div class="relative flex items-start space-x-4">
+                                        <div class="relative z-10 w-8 h-8 bg-error rounded-full border-4 border-surface flex items-center justify-center">
+                                            <i class="fas fa-heart text-white text-xs"></i>
+                                        </div>
+                                        <div class="flex-1 bg-secondary-50 rounded-md p-4">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <h4 class="font-medium text-text-primary">Hypertension Diagnosis</h4>
+                                                <span class="text-sm text-text-secondary">Sep 15, 2025</span>
+                                            </div>
+                                            <p class="text-sm text-text-secondary mb-2">Blood pressure consistently elevated. Started on ACE inhibitor therapy.</p>
+                                            <div class="flex items-center space-x-4 text-xs text-text-secondary">
+                                                <span>Dr. Sarah Johnson</span>
+                                                <span>ICD-10: I10</span>
+                                                <span class="status-error">Critical</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="relative flex items-start space-x-4">
+                                        <div class="relative z-10 w-8 h-8 bg-warning rounded-full border-4 border-surface flex items-center justify-center">
+                                            <i class="fas fa-allergies text-white text-xs"></i>
+                                        </div>
+                                        <div class="flex-1 bg-secondary-50 rounded-md p-4">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <h4 class="font-medium text-text-primary">Penicillin Allergy Documented</h4>
+                                                <span class="text-sm text-text-secondary">Aug 22, 2025</span>
+                                            </div>
+                                            <p class="text-sm text-text-secondary mb-2">Patient reported severe allergic reaction to penicillin. Added to allergy list.</p>
+                                            <div class="flex items-center space-x-4 text-xs text-text-secondary">
+                                                <span>Dr. Michael Chen</span>
+                                                <span>Severity: High</span>
+                                                <span class="status-warning">Alert</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="relative flex items-start space-x-4">
+                                        <div class="relative z-10 w-8 h-8 bg-accent rounded-full border-4 border-surface flex items-center justify-center">
+                                            <i class="fas fa-check text-white text-xs"></i>
+                                        </div>
+                                        <div class="flex-1 bg-secondary-50 rounded-md p-4">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <h4 class="font-medium text-text-primary">Annual Physical Examination</h4>
+                                                <span class="text-sm text-text-secondary">Jul 10, 2025</span>
+                                            </div>
+                                            <p class="text-sm text-text-secondary mb-2">Routine physical examination completed. All vital signs within normal limits.</p>
+                                            <div class="flex items-center space-x-4 text-xs text-text-secondary">
+                                                <span>Dr. Sarah Johnson</span>
+                                                <span>Type: Preventive</span>
+                                                <span class="status-success">Normal</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Current Medications Tab -->
+                        <div id="medications" class="tab-content hidden">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-lg font-semibold text-text-primary">Current Medications</h3>
+                                <button class="btn-primary">
+                                    <i class="fas fa-plus mr-2"></i>
+                                    Add Medication
+                                </button>
+                            </div>
+
+                            <div class="space-y-4">
+                                <div class="border border-secondary-200 rounded-md p-4">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-12 h-12 bg-primary-50 rounded-md flex items-center justify-center">
+                                                <i class="fas fa-pills text-primary"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="font-medium text-text-primary">Lisinopril</h4>
+                                                <p class="text-sm text-text-secondary">ACE Inhibitor</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <span class="status-success">Active</span>
+                                            <button class="p-2 text-text-secondary hover:text-primary">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                                        <div>
+                                            <p class="text-text-secondary">Dosage</p>
+                                            <p class="font-medium text-text-primary">10mg</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-text-secondary">Frequency</p>
+                                            <p class="font-medium text-text-primary">Once daily</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-text-secondary">Started</p>
+                                            <p class="font-medium text-text-primary">Sep 15, 2025</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-text-secondary">Next Refill</p>
+                                            <p class="font-medium text-text-primary">Nov 15, 2025</p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3 p-2 bg-warning-50 rounded-md">
+                                        <p class="text-sm text-warning-700">
+                                            <i class="fas fa-exclamation-triangle mr-1"></i>
+                                            Monitor blood pressure regularly. May interact with NSAIDs.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="border border-secondary-200 rounded-md p-4">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-12 h-12 bg-accent-50 rounded-md flex items-center justify-center">
+                                                <i class="fas fa-capsules text-accent"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="font-medium text-text-primary">Metformin</h4>
+                                                <p class="text-sm text-text-secondary">Antidiabetic</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <span class="status-success">Active</span>
+                                            <button class="p-2 text-text-secondary hover:text-primary">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                                        <div>
+                                            <p class="text-text-secondary">Dosage</p>
+                                            <p class="font-medium text-text-primary">500mg</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-text-secondary">Frequency</p>
+                                            <p class="font-medium text-text-primary">Twice daily</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-text-secondary">Started</p>
+                                            <p class="font-medium text-text-primary">Aug 01, 2025</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-text-secondary">Next Refill</p>
+                                            <p class="font-medium text-text-primary">Oct 30, 2025</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Visit History Tab -->
+                        <div id="visits" class="tab-content hidden">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-lg font-semibold text-text-primary">Visit History</h3>
+                                <div class="flex items-center space-x-2">
+                                    <select class="input-field w-auto">
+                                        <option>All Visits</option>
+                                        <option>Routine</option>
+                                        <option>Follow-up</option>
+                                        <option>Emergency</option>
+                                    </select>
+                                    <button class="btn-secondary">
+                                        <i class="fas fa-download mr-2"></i>
+                                        Export
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="space-y-4">
+                                <div class="border border-secondary-200 rounded-md p-4 hover:bg-secondary-50 transition-colors cursor-pointer" onclick="toggleVisitDetails('visit1')">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-4">
+                                            <div class="w-10 h-10 bg-primary-50 rounded-full flex items-center justify-center">
+                                                <i class="fas fa-stethoscope text-primary"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="font-medium text-text-primary">Hypertension Follow-up</h4>
+                                                <p class="text-sm text-text-secondary">Oct 01, 2025 • Dr. Sarah Johnson</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <span class="status-success">Completed</span>
+                                            <i class="fas fa-chevron-down text-text-secondary" id="visit1-icon"></i>
+                                        </div>
+                                    </div>
+                                    <div id="visit1-details" class="hidden mt-4 pt-4 border-t border-secondary-200">
+                                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                                            <div>
+                                                <p class="text-sm text-text-secondary">Blood Pressure</p>
+                                                <p class="font-medium text-text-primary">140/90 mmHg</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm text-text-secondary">Weight</p>
+                                                <p class="font-medium text-text-primary">68 kg</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm text-text-secondary">Heart Rate</p>
+                                                <p class="font-medium text-text-primary">72 bpm</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-sm text-text-secondary">Temperature</p>
+                                                <p class="font-medium text-text-primary">98.6°F</p>
+                                            </div>
+                                        </div>
+                                        <div class="mb-4">
+                                            <p class="text-sm text-text-secondary mb-2">Chief Complaint</p>
+                                            <p class="text-sm text-text-primary">Follow-up for hypertension management. Patient reports good medication compliance.</p>
+                                        </div>
+                                        <div class="mb-4">
+                                            <p class="text-sm text-text-secondary mb-2">Assessment & Plan</p>
+                                            <p class="text-sm text-text-primary">Blood pressure improving on current medication. Continue Lisinopril 10mg daily. Follow-up in 4 weeks.</p>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <button class="btn-secondary text-sm">
+                                                <i class="fas fa-file-medical mr-1"></i>
+                                                View Full Report
+                                            </button>
+                                            <button class="btn-secondary text-sm">
+                                                <i class="fas fa-prescription-bottle-alt mr-1"></i>
+                                                View Prescriptions
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="border border-secondary-200 rounded-md p-4 hover:bg-secondary-50 transition-colors cursor-pointer" onclick="toggleVisitDetails('visit2')">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-4">
+                                            <div class="w-10 h-10 bg-warning-50 rounded-full flex items-center justify-center">
+                                                <i class="fas fa-allergies text-warning"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="font-medium text-text-primary">Allergy Documentation</h4>
+                                                <p class="text-sm text-text-secondary">Aug 22, 2025 • Dr. Michael Chen</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <span class="status-warning">Alert Added</span>
+                                            <i class="fas fa-chevron-down text-text-secondary" id="visit2-icon"></i>
+                                        </div>
+                                    </div>
+                                    <div id="visit2-details" class="hidden mt-4 pt-4 border-t border-secondary-200">
+                                        <div class="mb-4">
+                                            <p class="text-sm text-text-secondary mb-2">Reason for Visit</p>
+                                            <p class="text-sm text-text-primary">Patient reported allergic reaction to penicillin during previous treatment.</p>
+                                        </div>
+                                        <div class="mb-4">
+                                            <p class="text-sm text-text-secondary mb-2">Allergy Details</p>
+                                            <p class="text-sm text-text-primary">Severe skin rash and difficulty breathing after penicillin administration. Added to permanent allergy list.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Documents Tab -->
+                        <div id="documents" class="tab-content hidden">
+                            <div class="flex items-center justify-between mb-6">
+                                <h3 class="text-lg font-semibold text-text-primary">Medical Documents</h3>
+                                <button class="btn-primary">
+                                    <i class="fas fa-upload mr-2"></i>
+                                    Upload Document
+                                </button>
+                            </div>
+
+                            <!-- Document Categories -->
+                            <div class="flex flex-wrap gap-2 mb-6">
+                                <button class="px-3 py-1 bg-primary text-white rounded-full text-sm">All Documents</button>
+                                <button class="px-3 py-1 bg-secondary-100 text-text-secondary rounded-full text-sm hover:bg-secondary-200">Lab Results</button>
+                                <button class="px-3 py-1 bg-secondary-100 text-text-secondary rounded-full text-sm hover:bg-secondary-200">Imaging</button>
+                                <button class="px-3 py-1 bg-secondary-100 text-text-secondary rounded-full text-sm hover:bg-secondary-200">Reports</button>
+                                <button class="px-3 py-1 bg-secondary-100 text-text-secondary rounded-full text-sm hover:bg-secondary-200">Insurance</button>
+                            </div>
+
+                            <!-- Document Grid -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <div class="border border-secondary-200 rounded-md p-4 hover:bg-secondary-50 transition-colors cursor-pointer">
+                                    <div class="flex items-center space-x-3 mb-3">
+                                        <div class="w-10 h-10 bg-error-50 rounded-md flex items-center justify-center">
+                                            <i class="fas fa-file-pdf text-error"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="font-medium text-text-primary">Blood Test Results</h4>
+                                            <p class="text-sm text-text-secondary">Sep 28, 2025</p>
+                                        </div>
+                                        <button class="p-1 text-text-secondary hover:text-primary">
+                                            <i class="fas fa-download"></i>
+                                        </button>
+                                    </div>
+                                    <p class="text-sm text-text-secondary mb-2">Complete blood count and lipid panel results</p>
+                                    <div class="flex items-center justify-between text-xs text-text-secondary">
+                                        <span>PDF • 245 KB</span>
+                                        <span class="status-success">Normal</span>
+                                    </div>
+                                </div>
+
+                                <div class="border border-secondary-200 rounded-md p-4 hover:bg-secondary-50 transition-colors cursor-pointer">
+                                    <div class="flex items-center space-x-3 mb-3">
+                                        <div class="w-10 h-10 bg-primary-50 rounded-md flex items-center justify-center">
+                                            <i class="fas fa-x-ray text-primary"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="font-medium text-text-primary">Chest X-Ray</h4>
+                                            <p class="text-sm text-text-secondary">Aug 15, 2025</p>
+                                        </div>
+                                        <button class="p-1 text-text-secondary hover:text-primary">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    <p class="text-sm text-text-secondary mb-2">Routine chest imaging for annual physical</p>
+                                    <div class="flex items-center justify-between text-xs text-text-secondary">
+                                        <span>DICOM • 2.1 MB</span>
+                                        <span class="status-success">Clear</span>
+                                    </div>
+                                </div>
+
+                                <div class="border border-secondary-200 rounded-md p-4 hover:bg-secondary-50 transition-colors cursor-pointer">
+                                    <div class="flex items-center space-x-3 mb-3">
+                                        <div class="w-10 h-10 bg-accent-50 rounded-md flex items-center justify-center">
+                                            <i class="fas fa-file-medical text-accent"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h4 class="font-medium text-text-primary">Insurance Card</h4>
+                                            <p class="text-sm text-text-secondary">Jul 01, 2025</p>
+                                        </div>
+                                        <button class="p-1 text-text-secondary hover:text-primary">
+                                            <i class="fas fa-download"></i>
+                                        </button>
+                                    </div>
+                                    <p class="text-sm text-text-secondary mb-2">Current health insurance information</p>
+                                    <div class="flex items-center justify-between text-xs text-text-secondary">
+                                        <span>JPG • 156 KB</span>
+                                        <span class="status-success">Active</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="space-y-6">
+                <!-- Journey Progress -->
+                <div class="card">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4">Journey Progress</h3>
+                    
+                    <!-- Progress Indicators -->
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-text-secondary">Enrollment</span>
+                            <div class="w-4 h-4 bg-success rounded-full">
+                                <i class="fas fa-check text-white text-xs flex items-center justify-center h-full"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-text-secondary">Diagnosis</span>
+                            <div class="w-4 h-4 bg-success rounded-full">
+                                <i class="fas fa-check text-white text-xs flex items-center justify-center h-full"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-text-secondary">Treatment</span>
+                            <div class="w-4 h-4 bg-success rounded-full">
+                                <i class="fas fa-check text-white text-xs flex items-center justify-center h-full"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-text-secondary">Stabilization</span>
+                            <div class="w-4 h-4 bg-primary rounded-full animate-pulse">
+                                <i class="fas fa-arrow-right text-white text-xs flex items-center justify-center h-full"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-text-secondary">Maintenance</span>
+                            <div class="w-4 h-4 bg-secondary-300 rounded-full"></div>
+                        </div>
+                    </div>
+
+                    <!-- Journey Metrics -->
+                    <div class="mt-6 pt-4 border-t border-secondary-200">
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-sm text-text-secondary">Overall Progress</span>
+                                <span class="text-sm font-medium text-success-600">80%</span>
+                            </div>
+                            <div class="w-full bg-secondary-200 rounded-full h-2">
+                                <div class="bg-success h-2 rounded-full w-4/5"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vital Signs Trends -->
+                <div class="card">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4">Vital Signs Trends</h3>
+                    
+                    <!-- Blood Pressure Chart Placeholder -->
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="text-sm font-medium text-text-primary">Blood Pressure</h4>
+                            <span class="text-sm text-text-secondary">Last 6 months</span>
+                        </div>
+                        <div class="h-32 bg-secondary-50 rounded-md flex items-center justify-center" aria-label="Blood pressure trend chart">
+                            <svg class="w-full h-full" viewBox="0 0 300 120">
+                                <polyline fill="none" stroke="#2563EB" stroke-width="2" points="20,80 60,75 100,70 140,85 180,75 220,70 260,65"/>
+                                <polyline fill="none" stroke="#DC2626" stroke-width="2" points="20,100 60,95 100,90 140,105 180,95 220,90 260,85"/>
+                                <text x="10" y="15" class="text-xs fill-current text-text-secondary">Systolic</text>
+                                <text x="10" y="110" class="text-xs fill-current text-text-secondary">Diastolic</text>
+                            </svg>
+                        </div>
+                        <div class="flex items-center justify-between text-sm mt-2">
+                            <span class="text-text-secondary">Current: 125/80</span>
+                            <span class="status-success">Improved</span>
+                        </div>
+                    </div>
+
+                    <!-- Weight Trend -->
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="text-sm font-medium text-text-primary">Weight</h4>
+                            <span class="text-sm text-text-secondary">63 kg</span>
+                        </div>
+                        <div class="h-20 bg-secondary-50 rounded-md flex items-center justify-center" aria-label="Weight trend chart">
+                            <svg class="w-full h-full" viewBox="0 0 300 80">
+                                <polyline fill="none" stroke="#059669" stroke-width="2" points="20,60 60,58 100,62 140,60 180,59 220,61 260,60"/>
+                            </svg>
+                        </div>
+                        <div class="text-center text-sm text-text-secondary mt-2">Stable</div>
+                    </div>
+
+                    <!-- Heart Rate -->
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="text-sm font-medium text-text-primary">Heart Rate</h4>
+                            <span class="text-sm text-text-secondary">72 bpm</span>
+                        </div>
+                        <div class="h-20 bg-secondary-50 rounded-md flex items-center justify-center" aria-label="Heart rate trend chart">
+                            <svg class="w-full h-full" viewBox="0 0 300 80">
+                                <polyline fill="none" stroke="#D97706" stroke-width="2" points="20,40 60,42 100,38 140,40 180,41 220,39 260,40"/>
+                            </svg>
+                        </div>
+                        <div class="text-center text-sm text-text-secondary mt-2">Normal</div>
+                    </div>
+                </div>
+
+                <!-- Upcoming Appointments -->
+                <div class="card">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4">Upcoming Appointments</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 bg-primary-50 rounded-md">
+                            <div>
+                                <p class="text-sm font-medium text-text-primary">Follow-up Visit</p>
+                                <p class="text-xs text-text-secondary">Oct 15, 2025 • 10:00 AM</p>
+                            </div>
+                            <button class="text-primary hover:text-primary-700">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-accent-50 rounded-md">
+                            <div>
+                                <p class="text-sm font-medium text-text-primary">Lab Work</p>
+                                <p class="text-xs text-text-secondary">Oct 22, 2025 • 8:00 AM</p>
+                            </div>
+                            <button class="text-accent hover:text-accent-600">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button class="w-full mt-4 text-sm text-primary hover:text-primary-700 font-medium">
+                        Schedule New Appointment
+                    </button>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4">Quick Actions</h3>
+                    <div class="space-y-2">
+                        <a href="treatment_session.html" class="w-full btn-primary flex items-center justify-center">
+                            <i class="fas fa-stethoscope mr-2"></i>
+                            New Visit
+                        </a>
+                        <a href="prescription_management.html" class="w-full btn-secondary flex items-center justify-center">
+                            <i class="fas fa-prescription-bottle-alt mr-2"></i>
+                            Prescribe Medication
+                        </a>
+                        <button class="w-full btn-secondary flex items-center justify-center">
+                            <i class="fas fa-calendar-plus mr-2"></i>
+                            Schedule Appointment
+                        </button>
+                        <a href="medical_reports.html" class="w-full btn-secondary flex items-center justify-center">
+                            <i class="fas fa-file-medical mr-2"></i>
+                            Generate Report
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Emergency Contacts -->
+                <div class="card">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4">Emergency Contacts</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <p class="text-sm font-medium text-text-primary">Maria Rodriguez</p>
+                            <p class="text-xs text-text-secondary">Sister • (555) 123-4567</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-text-primary">Dr. Sarah Johnson</p>
+                            <p class="text-xs text-text-secondary">Primary Care • (555) 987-6543</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Mobile Navigation Menu (Hidden by default) -->
+    <div class="md:hidden fixed inset-0 z-50 hidden" id="mobileMenu">
+        <div class="fixed inset-0 bg-black bg-opacity-50"></div>
+        <div class="fixed inset-y-0 left-0 w-64 bg-surface shadow-lg">
+            <div class="p-4">
+                <div class="flex items-center justify-between mb-8">
+                    <h2 class="text-lg font-semibold text-text-primary">Menu</h2>
+                    <button class="p-2 text-text-secondary hover:text-primary" onclick="toggleMobileMenu()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <nav class="space-y-4">
+                    <a href="patient_dashboard.html" class="block text-text-secondary hover:text-primary">Dashboard</a>
+                    <a href="patient_enrollment.html" class="block text-text-secondary hover:text-primary">Enrollment</a>
+                    <a href="patient_profile.html" class="block text-primary font-medium">Profiles</a>
+                    <a href="treatment_session.html" class="block text-text-secondary hover:text-primary">Treatment</a>
+                    <a href="prescription_management.html" class="block text-text-secondary hover:text-primary">Prescriptions</a>
+                    <a href="medical_reports.html" class="block text-text-secondary hover:text-primary">Reports</a>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .tab-button {
+            @apply py-4 px-3 border-b-2 border-transparent font-medium text-sm text-text-secondary hover:text-text-primary hover:border-secondary-300 transition-colors whitespace-nowrap;
+        }
+        
+        .tab-button.active {
+            @apply border-primary text-primary;
+        }
+        
+        .tab-content {
+            @apply transition-all duration-200;
+        }
+        
+        .tab-content.hidden {
+            @apply opacity-0 pointer-events-none;
+        }
+        
+        .tab-content.active {
+            @apply opacity-100;
+        }
+
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: .5;
+            }
+        }
+    </style>
+
+    <script>
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Tab functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const targetTab = this.getAttribute('data-tab');
+
+                    // Remove active class from all buttons and contents
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                        content.classList.add('hidden');
+                    });
+
+                    // Add active class to clicked button and corresponding content
+                    this.classList.add('active');
+                    const targetContent = document.getElementById(targetTab);
+                    if (targetContent) {
+                        targetContent.classList.add('active');
+                        targetContent.classList.remove('hidden');
+                    }
+                });
+            });
+        });
+
+        // Visit details toggle
+        function toggleVisitDetails(visitId) {
+            const details = document.getElementById(visitId + '-details');
+            const icon = document.getElementById(visitId + '-icon');
+            
+            if (details.classList.contains('hidden')) {
+                details.classList.remove('hidden');
+                icon.classList.remove('fa-chevron-down');
+                icon.classList.add('fa-chevron-up');
+            } else {
+                details.classList.add('hidden');
+                icon.classList.remove('fa-chevron-up');
+                icon.classList.add('fa-chevron-down');
+            }
+        }
+
+        // Journey view toggle
+        function toggleJourneyView(view) {
+            const detailedJourney = document.getElementById('detailedJourney');
+            const summaryJourney = document.getElementById('summaryJourney');
+            
+            if (view === 'detailed') {
+                detailedJourney.classList.remove('hidden');
+                summaryJourney.classList.add('hidden');
+            } else {
+                detailedJourney.classList.add('hidden');
+                summaryJourney.classList.remove('hidden');
+            }
+        }
+
+        // Journey actions
+        function printJourney() {
+            window.print();
+        }
+
+        function exportJourney() {
+            // Simulate export functionality
+            alert('Patient journey exported successfully!');
+        }
+
+        function scheduleFollowUp() {
+            // Simulate scheduling functionality
+            alert('Follow-up appointment scheduling opened.');
+        }
+    </script>
+<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+</body>
+</html>

@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prescription Management - MediScript OPD</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+<script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fmediscript5763back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
+</head>
+<body class="bg-background min-h-screen">
+    <!-- Header Navigation -->
+    <header class="bg-surface shadow-medical border-b border-secondary-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo and Brand -->
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center">
+                        <svg class="w-8 h-8 text-primary" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                        </svg>
+                        <h1 class="ml-2 text-xl font-semibold text-text-primary">MediScript OPD</h1>
+                    </div>
+                </div>
+
+                <!-- Navigation Menu -->
+                <nav class="hidden md:flex space-x-8">
+                    <a href="patient_dashboard.html" class="text-text-secondary hover:text-primary transition-colors">Dashboard</a>
+                    <a href="patient_enrollment.html" class="text-text-secondary hover:text-primary transition-colors">Enrollment</a>
+                    <a href="patient_profile.html" class="text-text-secondary hover:text-primary transition-colors">Profiles</a>
+                    <a href="treatment_session.html" class="text-text-secondary hover:text-primary transition-colors">Treatment</a>
+                    <a href="prescription_management.html" class="text-primary font-medium border-b-2 border-primary pb-1">Prescriptions</a>
+                    <a href="medical_reports.html" class="text-text-secondary hover:text-primary transition-colors">Reports</a>
+                </nav>
+
+                <!-- User Profile -->
+                <div class="flex items-center space-x-4">
+                    <button class="p-2 text-text-secondary hover:text-primary transition-colors">
+                        <i class="fas fa-bell text-lg"></i>
+                    </button>
+                    <div class="flex items-center space-x-2">
+                        <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Dr. Sarah Johnson" class="w-8 h-8 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                        <span class="text-sm font-medium text-text-primary">Dr. Johnson</span>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden p-2 text-text-secondary hover:text-primary" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars text-lg"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Page Header -->
+        <div class="mb-8">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                    <h2 class="text-3xl font-semibold text-text-primary">Complete Prescription Form</h2>
+                    <p class="mt-1 text-text-secondary">All-in-one prescription generation with comprehensive field access</p>
+                </div>
+                <div class="mt-4 lg:mt-0 flex flex-col sm:flex-row gap-3">
+                    <button class="btn-secondary flex items-center justify-center" onclick="clearAllFields()">
+                        <i class="fas fa-eraser mr-2"></i>
+                        Clear Form
+                    </button>
+                    <button class="btn-secondary flex items-center justify-center" onclick="saveDraft()">
+                        <i class="fas fa-save mr-2"></i>
+                        Save Draft
+                    </button>
+                    <button class="btn-primary flex items-center justify-center" onclick="addNewPrescription()">
+                        <i class="fas fa-plus mr-2"></i>
+                        New Prescription
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Single Page Prescription Form -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <!-- Main Form - Expanded for better field access -->
+            <div class="lg:col-span-3">
+                <div class="card">
+                    <!-- Patient Selection Section -->
+                    <div class="mb-8 pb-6 border-b border-secondary-200">
+                        <h3 class="text-lg font-semibold text-text-primary mb-6 flex items-center">
+                            <i class="fas fa-user mr-2"></i>
+                            Patient Information
+                        </h3>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- Patient Search -->
+                            <div>
+                                <label class="block text-sm font-medium text-text-primary mb-2">Patient Search</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i class="fas fa-search text-text-secondary"></i>
+                                    </div>
+                                    <input type="text" class="input-field pl-10" placeholder="Search by name, ID, or phone..." id="patientSearch" />
+                                </div>
+                            </div>
+
+                            <!-- Quick Patient Info Display -->
+                            <div class="bg-secondary-50 p-4 rounded-md">
+                                <div class="flex items-center space-x-3">
+                                    <img src="https://images.pexels.com/photos/5327585/pexels-photo-5327585.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Emily Rodriguez" class="w-12 h-12 rounded-full object-cover" />
+                                    <div>
+                                        <p class="font-medium text-text-primary">Emily Rodriguez</p>
+                                        <p class="text-sm text-text-secondary">P-2024-001 | Age: 34 | 65kg</p>
+                                        <div class="flex items-center space-x-2 mt-1">
+                                            <span class="text-xs bg-warning-100 text-warning-700 px-2 py-1 rounded">Allergic to Penicillin</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prescription Details Section -->
+                    <div class="mb-8 pb-6 border-b border-secondary-200">
+                        <h3 class="text-lg font-semibold text-text-primary mb-6 flex items-center">
+                            <i class="fas fa-prescription-bottle-alt mr-2"></i>
+                            Prescription Details
+                        </h3>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <!-- Prescription Date -->
+                            <div>
+                                <label class="block text-sm font-medium text-text-primary mb-2">Prescription Date</label>
+                                <input type="date" class="input-field" value="2025-10-03" />
+                            </div>
+
+                            <!-- Prescription Type -->
+                            <div>
+                                <label class="block text-sm font-medium text-text-primary mb-2">Prescription Type</label>
+                                <select class="input-field">
+                                    <option>New Prescription</option>
+                                    <option>Refill Request</option>
+                                    <option>Medication Change</option>
+                                    <option>Discontinuation</option>
+                                </select>
+                            </div>
+
+                            <!-- Priority Level -->
+                            <div>
+                                <label class="block text-sm font-medium text-text-primary mb-2">Priority</label>
+                                <select class="input-field">
+                                    <option>Routine</option>
+                                    <option>Urgent</option>
+                                    <option>Emergency</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                            <!-- Diagnosis/Indication -->
+                            <div>
+                                <label class="block text-sm font-medium text-text-primary mb-2">Primary Diagnosis/Indication</label>
+                                <textarea class="input-field" rows="2" placeholder="ICD-10 code and description..."></textarea>
+                            </div>
+
+                            <!-- Clinical Notes -->
+                            <div>
+                                <label class="block text-sm font-medium text-text-primary mb-2">Clinical Notes</label>
+                                <textarea class="input-field" rows="2" placeholder="Treatment rationale, patient status..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Medication Entry Section -->
+                    <div class="mb-8 pb-6 border-b border-secondary-200">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-semibold text-text-primary flex items-center">
+                                <i class="fas fa-pills mr-2"></i>
+                                Medication Entry
+                            </h3>
+                            <button class="btn-secondary text-sm" onclick="addMedicationRow()">
+                                <i class="fas fa-plus mr-1"></i>
+                                Add Medication
+                            </button>
+                        </div>
+
+                        <!-- Medication Search -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-text-primary mb-2">Quick Medication Search</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-search text-text-secondary"></i>
+                                </div>
+                                <input type="text" class="input-field pl-10" placeholder="Type medication name for quick add..." id="medicationQuickSearch" />
+                            </div>
+                            
+                            <!-- Quick Search Results -->
+                            <div class="mt-2 bg-surface border border-secondary-200 rounded-md shadow-medical max-h-48 overflow-y-auto hidden" id="quickSearchResults">
+                                <div class="p-3 hover:bg-secondary-50 cursor-pointer border-b border-secondary-200" onclick="selectMedication('Lisinopril', '10mg', 'ACE Inhibitor')">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <p class="font-medium text-text-primary">Lisinopril</p>
+                                            <p class="text-sm text-text-secondary">ACE Inhibitor - For Hypertension</p>
+                                        </div>
+                                        <span class="text-xs bg-accent-50 text-accent-600 px-2 py-1 rounded">Generic Available</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 hover:bg-secondary-50 cursor-pointer border-b border-secondary-200" onclick="selectMedication('Metformin', '500mg', 'Antidiabetic')">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <p class="font-medium text-text-primary">Metformin</p>
+                                            <p class="text-sm text-text-secondary">Antidiabetic - For Type 2 Diabetes</p>
+                                        </div>
+                                        <span class="text-xs bg-accent-50 text-accent-600 px-2 py-1 rounded">Generic Available</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 hover:bg-secondary-50 cursor-pointer border-b border-secondary-200" onclick="selectMedication('Atorvastatin', '20mg', 'Statin')">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <p class="font-medium text-text-primary">Atorvastatin</p>
+                                            <p class="text-sm text-text-secondary">Statin - For High Cholesterol</p>
+                                        </div>
+                                        <span class="text-xs bg-success-50 text-success-600 px-2 py-1 rounded">First Line</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Medications List Container -->
+                        <div id="medicationsList">
+                            <!-- Medication Entry 1 -->
+                            <div class="medication-entry border border-secondary-200 rounded-md p-6 mb-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="font-semibold text-text-primary flex items-center">
+                                        <span class="bg-primary-100 text-primary-700 px-2 py-1 rounded-full text-sm mr-3">1</span>
+                                        Medication Details
+                                    </h4>
+                                    <button class="text-error hover:text-error-700 transition-colors" onclick="removeMedication(this)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    <!-- Medication Name & Strength -->
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-text-primary mb-2">Medication Name *</label>
+                                            <input type="text" class="input-field" placeholder="Enter medication name..." value="Lisinopril" />
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-text-primary mb-2">Strength/Dosage *</label>
+                                            <input type="text" class="input-field" placeholder="e.g., 10mg, 500mg..." value="10mg" />
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-text-primary mb-2">Dosage Form</label>
+                                            <select class="input-field">
+                                                <option>Tablet</option>
+                                                <option>Capsule</option>
+                                                <option>Liquid</option>
+                                                <option>Injection</option>
+                                                <option>Topical</option>
+                                                <option>Inhaler</option>
+                                                <option>Drops</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Dosing Instructions -->
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-text-primary mb-2">Frequency *</label>
+                                            <select class="input-field">
+                                                <option>Once daily (QD)</option>
+                                                <option>Twice daily (BID)</option>
+                                                <option>Three times daily (TID)</option>
+                                                <option>Four times daily (QID)</option>
+                                                <option>Every 4 hours</option>
+                                                <option>Every 6 hours</option>
+                                                <option>Every 8 hours</option>
+                                                <option>Every 12 hours</option>
+                                                <option>As needed (PRN)</option>
+                                                <option>Custom</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-text-primary mb-2">Route of Administration</label>
+                                            <select class="input-field">
+                                                <option>Oral (PO)</option>
+                                                <option>Topical</option>
+                                                <option>Intravenous (IV)</option>
+                                                <option>Intramuscular (IM)</option>
+                                                <option>Subcutaneous (SC)</option>
+                                                <option>Inhalation</option>
+                                                <option>Sublingual</option>
+                                                <option>Rectal</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-text-primary mb-2">Duration *</label>
+                                            <div class="flex space-x-2">
+                                                <input type="number" class="input-field flex-1" placeholder="Number" value="30" />
+                                                <select class="input-field flex-1">
+                                                    <option>Days</option>
+                                                    <option>Weeks</option>
+                                                    <option>Months</option>
+                                                    <option>Ongoing</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Special Instructions -->
+                                <div class="mt-6">
+                                    <label class="block text-sm font-medium text-text-primary mb-2">Special Instructions</label>
+                                    <textarea class="input-field" rows="3" placeholder="Take with food, avoid alcohol, monitor blood pressure...">Take with food in the morning. Monitor blood pressure weekly.</textarea>
+                                </div>
+
+                                <!-- Quantity and Refills -->
+                                <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 mt-6">
+                                    <div>
+                                        <label class="block text-sm font-medium text-text-primary mb-2">Quantity *</label>
+                                        <input type="number" class="input-field" placeholder="30" value="30" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-text-primary mb-2">Unit</label>
+                                        <select class="input-field">
+                                            <option>Tablets</option>
+                                            <option>Capsules</option>
+                                            <option>mL</option>
+                                            <option>grams</option>
+                                            <option>Each</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-text-primary mb-2">Refills</label>
+                                        <select class="input-field">
+                                            <option>0</option>
+                                            <option>1</option>
+                                            <option>2</option>
+                                            <option>3</option>
+                                            <option>5</option>
+                                            <option>PRN (as needed)</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-text-primary mb-2">Days Supply</label>
+                                        <input type="number" class="input-field" placeholder="30" value="30" />
+                                    </div>
+                                </div>
+
+                                <!-- Additional Options -->
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                                    <div class="space-y-3">
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="rounded border-secondary-300 text-primary focus:ring-primary" />
+                                            <span class="ml-2 text-sm text-text-secondary">Generic substitution allowed</span>
+                                        </label>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="rounded border-secondary-300 text-primary focus:ring-primary" />
+                                            <span class="ml-2 text-sm text-text-secondary">Brand medically necessary</span>
+                                        </label>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="rounded border-secondary-300 text-primary focus:ring-primary" />
+                                            <span class="ml-2 text-sm text-text-secondary">Controlled substance</span>
+                                        </label>
+                                    </div>
+                                    <div class="space-y-3">
+                                        <div class="text-sm">
+                                            <span class="font-medium text-text-primary">Estimated Cost:</span>
+                                            <span class="text-accent-600 ml-2">$12.50/month</span>
+                                        </div>
+                                        <div class="text-sm">
+                                            <span class="font-medium text-text-primary">Insurance Coverage:</span>
+                                            <span class="text-success-600 ml-2">Covered - Tier 1</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Medication Entry 2 -->
+                            <div class="medication-entry border border-secondary-200 rounded-md p-6 mb-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="font-semibold text-text-primary flex items-center">
+                                        <span class="bg-primary-100 text-primary-700 px-2 py-1 rounded-full text-sm mr-3">2</span>
+                                        Medication Details
+                                    </h4>
+                                    <button class="text-error hover:text-error-700 transition-colors" onclick="removeMedication(this)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    <!-- Medication Name & Strength -->
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-text-primary mb-2">Medication Name *</label>
+                                            <input type="text" class="input-field" placeholder="Enter medication name..." value="Metformin" />
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-text-primary mb-2">Strength/Dosage *</label>
+                                            <input type="text" class="input-field" placeholder="e.g., 10mg, 500mg..." value="500mg" />
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-text-primary mb-2">Dosage Form</label>
+                                            <select class="input-field">
+                                                <option>Tablet</option>
+                                                <option>Capsule</option>
+                                                <option>Liquid</option>
+                                                <option>Injection</option>
+                                                <option>Topical</option>
+                                                <option>Inhaler</option>
+                                                <option>Drops</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Dosing Instructions -->
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-text-primary mb-2">Frequency *</label>
+                                            <select class="input-field">
+                                                <option>Once daily (QD)</option>
+                                                <option selected>Twice daily (BID)</option>
+                                                <option>Three times daily (TID)</option>
+                                                <option>Four times daily (QID)</option>
+                                                <option>Every 4 hours</option>
+                                                <option>Every 6 hours</option>
+                                                <option>Every 8 hours</option>
+                                                <option>Every 12 hours</option>
+                                                <option>As needed (PRN)</option>
+                                                <option>Custom</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-text-primary mb-2">Route of Administration</label>
+                                            <select class="input-field">
+                                                <option>Oral (PO)</option>
+                                                <option>Topical</option>
+                                                <option>Intravenous (IV)</option>
+                                                <option>Intramuscular (IM)</option>
+                                                <option>Subcutaneous (SC)</option>
+                                                <option>Inhalation</option>
+                                                <option>Sublingual</option>
+                                                <option>Rectal</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-text-primary mb-2">Duration *</label>
+                                            <div class="flex space-x-2">
+                                                <input type="number" class="input-field flex-1" placeholder="Number" value="90" />
+                                                <select class="input-field flex-1">
+                                                    <option selected>Days</option>
+                                                    <option>Weeks</option>
+                                                    <option>Months</option>
+                                                    <option>Ongoing</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Special Instructions -->
+                                <div class="mt-6">
+                                    <label class="block text-sm font-medium text-text-primary mb-2">Special Instructions</label>
+                                    <textarea class="input-field" rows="3" placeholder="Take with food, avoid alcohol, monitor blood pressure...">Take with meals to reduce stomach upset. Monitor blood sugar levels regularly.</textarea>
+                                </div>
+
+                                <!-- Quantity and Refills -->
+                                <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 mt-6">
+                                    <div>
+                                        <label class="block text-sm font-medium text-text-primary mb-2">Quantity *</label>
+                                        <input type="number" class="input-field" placeholder="30" value="180" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-text-primary mb-2">Unit</label>
+                                        <select class="input-field">
+                                            <option>Tablets</option>
+                                            <option>Capsules</option>
+                                            <option>mL</option>
+                                            <option>grams</option>
+                                            <option>Each</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-text-primary mb-2">Refills</label>
+                                        <select class="input-field">
+                                            <option>0</option>
+                                            <option>1</option>
+                                            <option>2</option>
+                                            <option selected>3</option>
+                                            <option>5</option>
+                                            <option>PRN (as needed)</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-text-primary mb-2">Days Supply</label>
+                                        <input type="number" class="input-field" placeholder="30" value="90" />
+                                    </div>
+                                </div>
+
+                                <!-- Additional Options -->
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                                    <div class="space-y-3">
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="rounded border-secondary-300 text-primary focus:ring-primary" checked />
+                                            <span class="ml-2 text-sm text-text-secondary">Generic substitution allowed</span>
+                                        </label>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="rounded border-secondary-300 text-primary focus:ring-primary" />
+                                            <span class="ml-2 text-sm text-text-secondary">Brand medically necessary</span>
+                                        </label>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" class="rounded border-secondary-300 text-primary focus:ring-primary" />
+                                            <span class="ml-2 text-sm text-text-secondary">Controlled substance</span>
+                                        </label>
+                                    </div>
+                                    <div class="space-y-3">
+                                        <div class="text-sm">
+                                            <span class="font-medium text-text-primary">Estimated Cost:</span>
+                                            <span class="text-accent-600 ml-2">$8.75/month</span>
+                                        </div>
+                                        <div class="text-sm">
+                                            <span class="font-medium text-text-primary">Insurance Coverage:</span>
+                                            <span class="text-success-600 ml-2">Covered - Tier 1</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Safety Checks Section -->
+                    <div class="mb-8 pb-6 border-b border-secondary-200">
+                        <h3 class="text-lg font-semibold text-text-primary mb-6 flex items-center">
+                            <i class="fas fa-shield-alt mr-2"></i>
+                            Safety & Interaction Checks
+                        </h3>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- Drug Interaction Check -->
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="font-medium text-text-primary">Drug Interactions</h4>
+                                    <button class="btn-secondary text-sm">
+                                        <i class="fas fa-sync-alt mr-1"></i>
+                                        Check Now
+                                    </button>
+                                </div>
+                                
+                                <div class="space-y-3">
+                                    <!-- No Interactions -->
+                                    <div class="flex items-center p-3 bg-success-50 border border-success-200 rounded-md">
+                                        <i class="fas fa-check-circle text-success mr-3"></i>
+                                        <div>
+                                            <p class="text-sm font-medium text-success-700">No major interactions detected</p>
+                                            <p class="text-xs text-success-600">Current medications are compatible</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Allergy Warning -->
+                                    <div class="flex items-center p-3 bg-warning-50 border border-warning-200 rounded-md">
+                                        <i class="fas fa-exclamation-triangle text-warning mr-3"></i>
+                                        <div>
+                                            <p class="text-sm font-medium text-warning-700">Allergy Alert</p>
+                                            <p class="text-xs text-warning-600">Patient allergic to Penicillin - verify no cross-reactivity</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Dosage Validation -->
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="font-medium text-text-primary">Dosage Validation</h4>
+                                    <button class="btn-secondary text-sm">
+                                        <i class="fas fa-calculator mr-1"></i>
+                                        Validate
+                                    </button>
+                                </div>
+                                
+                                <div class="space-y-3">
+                                    <!-- Dosage Check -->
+                                    <div class="flex items-center p-3 bg-success-50 border border-success-200 rounded-md">
+                                        <i class="fas fa-check-circle text-success mr-3"></i>
+                                        <div>
+                                            <p class="text-sm font-medium text-success-700">All dosages within normal range</p>
+                                            <p class="text-xs text-success-600">Based on patient weight and age</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Kidney Function Check -->
+                                    <div class="flex items-center p-3 bg-info-50 border border-info-200 rounded-md">
+                                        <i class="fas fa-info-circle text-info mr-3"></i>
+                                        <div>
+                                            <p class="text-sm font-medium text-info-700">Monitor kidney function</p>
+                                            <p class="text-xs text-info-600">ACE inhibitors require periodic monitoring</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prescription Summary & Actions -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-text-primary mb-6 flex items-center">
+                            <i class="fas fa-clipboard-check mr-2"></i>
+                            Prescription Summary & Actions
+                        </h3>
+
+                        <!-- Summary -->
+                        <div class="bg-secondary-50 p-4 rounded-md mb-6">
+                            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                                <div class="text-center">
+                                    <p class="text-2xl font-bold text-primary">2</p>
+                                    <p class="text-sm text-text-secondary">Medications</p>
+                                </div>
+                                <div class="text-center">
+                                    <p class="text-2xl font-bold text-accent">$21.25</p>
+                                    <p class="text-sm text-text-secondary">Est. Monthly Cost</p>
+                                </div>
+                                <div class="text-center">
+                                    <p class="text-2xl font-bold text-success">90</p>
+                                    <p class="text-sm text-text-secondary">Days Supply</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                            <button class="btn-secondary flex items-center justify-center" onclick="previewPrescription()">
+                                <i class="fas fa-eye mr-2"></i>
+                                Preview
+                            </button>
+                            <button class="btn-secondary flex items-center justify-center" onclick="saveDraft()">
+                                <i class="fas fa-save mr-2"></i>
+                                Save Draft
+                            </button>
+                            <button class="btn-secondary flex items-center justify-center" onclick="printPrescription()">
+                                <i class="fas fa-print mr-2"></i>
+                                Print
+                            </button>
+                            <button class="btn-primary flex items-center justify-center" onclick="sendToPharmacy()">
+                                <i class="fas fa-paper-plane mr-2"></i>
+                                Send to Pharmacy
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar - Condensed Reference Panel -->
+            <div class="space-y-6">
+                <!-- Patient Quick Reference -->
+                <div class="card">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4">Quick Reference</h3>
+                    
+                    <!-- Current Medications -->
+                    <div class="mb-4">
+                        <h4 class="text-sm font-medium text-text-primary mb-2">Current Medications</h4>
+                        <div class="space-y-1">
+                            <div class="text-xs p-2 bg-secondary-50 rounded">
+                                <p class="font-medium">Aspirin 81mg Daily</p>
+                            </div>
+                            <div class="text-xs p-2 bg-secondary-50 rounded">
+                                <p class="font-medium">Vitamin D3 1000IU Daily</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Medical Conditions -->
+                    <div class="mb-4">
+                        <h4 class="text-sm font-medium text-text-primary mb-2">Conditions</h4>
+                        <div class="space-y-1">
+                            <div class="flex items-center text-xs">
+                                <div class="w-2 h-2 bg-error rounded-full mr-2"></div>
+                                <span>Hypertension</span>
+                            </div>
+                            <div class="flex items-center text-xs">
+                                <div class="w-2 h-2 bg-warning rounded-full mr-2"></div>
+                                <span>Pre-diabetes</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Allergies -->
+                    <div class="mb-4">
+                        <h4 class="text-sm font-medium text-text-primary mb-2">Allergies</h4>
+                        <div class="space-y-1">
+                            <div class="text-xs p-2 bg-error-50 border border-error-200 rounded">
+                                <p class="font-medium text-error-700">Penicillin - Severe</p>
+                            </div>
+                            <div class="text-xs p-2 bg-warning-50 border border-warning-200 rounded">
+                                <p class="font-medium text-warning-700">Sulfa - Moderate</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Templates -->
+                <div class="card">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4">Quick Templates</h3>
+                    <div class="space-y-2">
+                        <button class="w-full text-left p-2 bg-secondary-50 hover:bg-secondary-100 rounded text-sm transition-colors">
+                            Hypertension Mgmt
+                        </button>
+                        <button class="w-full text-left p-2 bg-secondary-50 hover:bg-secondary-100 rounded text-sm transition-colors">
+                            Diabetes Control
+                        </button>
+                        <button class="w-full text-left p-2 bg-secondary-50 hover:bg-secondary-100 rounded text-sm transition-colors">
+                            Pain Management
+                        </button>
+                        <button class="w-full text-left p-2 bg-secondary-50 hover:bg-secondary-100 rounded text-sm transition-colors">
+                            Antibiotic Course
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="card">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4">Recent Prescriptions</h3>
+                    <div class="space-y-2">
+                        <div class="border-l-4 border-primary pl-2 text-xs">
+                            <p class="font-medium">Michael Chen</p>
+                            <p class="text-text-secondary">Oct 01, 2025</p>
+                        </div>
+                        <div class="border-l-4 border-accent pl-2 text-xs">
+                            <p class="font-medium">Sarah Williams</p>
+                            <p class="text-text-secondary">Sep 30, 2025</p>
+                        </div>
+                        <div class="border-l-4 border-warning pl-2 text-xs">
+                            <p class="font-medium">David Johnson</p>
+                            <p class="text-text-secondary">Sep 28, 2025</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DEA Info -->
+                <div class="card">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4">DEA License</h3>
+                    <div class="text-center text-xs">
+                        <p class="font-medium">BJ1234567</p>
+                        <p class="text-text-secondary">Expires: 12/31/2025</p>
+                        <div class="mt-2 p-2 bg-success-50 text-success-700 rounded">
+                            Active & Valid
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Mobile Navigation Menu -->
+    <div class="md:hidden fixed inset-0 z-50 hidden" id="mobileMenu">
+        <div class="fixed inset-0 bg-black bg-opacity-50" onclick="toggleMobileMenu()"></div>
+        <div class="fixed inset-y-0 left-0 w-64 bg-surface shadow-lg">
+            <div class="p-4">
+                <div class="flex items-center justify-between mb-8">
+                    <h2 class="text-lg font-semibold text-text-primary">Menu</h2>
+                    <button class="p-2 text-text-secondary hover:text-primary" onclick="toggleMobileMenu()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <nav class="space-y-4">
+                    <a href="patient_dashboard.html" class="block text-text-secondary hover:text-primary">Dashboard</a>
+                    <a href="patient_enrollment.html" class="block text-text-secondary hover:text-primary">Enrollment</a>
+                    <a href="patient_profile.html" class="block text-text-secondary hover:text-primary">Profiles</a>
+                    <a href="treatment_session.html" class="block text-text-secondary hover:text-primary">Treatment</a>
+                    <a href="prescription_management.html" class="block text-primary font-medium">Prescriptions</a>
+                    <a href="medical_reports.html" class="block text-text-secondary hover:text-primary">Reports</a>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- Prescription Preview Modal -->
+    <div class="fixed inset-0 z-50 hidden" id="prescriptionModal">
+        <div class="fixed inset-0 bg-black bg-opacity-50" onclick="closePrescriptionModal()"></div>
+        <div class="fixed inset-0 flex items-center justify-center p-4">
+            <div class="bg-surface rounded-md shadow-medical-lg max-w-4xl w-full max-h-screen overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-semibold text-text-primary">Prescription Preview</h3>
+                        <button class="p-2 text-text-secondary hover:text-primary" onclick="closePrescriptionModal()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Prescription Content -->
+                    <div class="border border-secondary-200 rounded-md p-8 bg-surface">
+                        <div class="text-center mb-8">
+                            <h4 class="text-2xl font-semibold text-text-primary">Dr. Sarah Johnson, MD</h4>
+                            <p class="text-text-secondary text-lg">Internal Medicine</p>
+                            <p class="text-sm text-text-secondary mt-2">123 Medical Center Dr, Healthcare City, HC 12345</p>
+                            <p class="text-sm text-text-secondary">Phone: (555) 123-4567 | DEA: BJ1234567</p>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-8 mb-8">
+                            <div>
+                                <p class="text-sm text-text-secondary">Date: October 03, 2025</p>
+                                <p class="text-sm text-text-secondary">Patient: Emily Rodriguez (DOB: 01/15/1991)</p>
+                                <p class="text-sm text-text-secondary">Address: 456 Patient St, City, State 12345</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm text-text-secondary">Patient ID: P-2024-001</p>
+                                <p class="text-sm text-text-secondary">Age: 34 years | Weight: 65kg</p>
+                                <p class="text-sm text-warning-700">⚠️ Allergic to Penicillin</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-8">
+                            <h5 class="font-semibold text-text-primary mb-4 text-lg">Rx:</h5>
+                            <div class="space-y-6">
+                                <div class="border-l-4 border-primary pl-6">
+                                    <p class="font-semibold text-text-primary text-lg">1. Lisinopril 10mg tablets</p>
+                                    <p class="text-sm text-text-secondary mt-1">Sig: Take one (1) tablet by mouth once daily</p>
+                                    <p class="text-sm text-text-secondary">Special instructions: Take with food in the morning. Monitor blood pressure weekly.</p>
+                                    <p class="text-sm text-text-secondary mt-2">Disp: #30 tablets (thirty)</p>
+                                    <p class="text-sm text-text-secondary">Refills: 0 (zero)</p>
+                                    <p class="text-sm text-text-secondary">Generic substitution permitted</p>
+                                </div>
+                                
+                                <div class="border-l-4 border-accent pl-6">
+                                    <p class="font-semibold text-text-primary text-lg">2. Metformin 500mg tablets</p>
+                                    <p class="text-sm text-text-secondary mt-1">Sig: Take one (1) tablet by mouth twice daily with meals</p>
+                                    <p class="text-sm text-text-secondary">Special instructions: Take with meals to reduce stomach upset. Monitor blood sugar levels regularly.</p>
+                                    <p class="text-sm text-text-secondary mt-2">Disp: #180 tablets (one hundred eighty)</p>
+                                    <p class="text-sm text-text-secondary">Refills: 3 (three)</p>
+                                    <p class="text-sm text-text-secondary">Generic substitution permitted</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center border-t border-secondary-200 pt-6">
+                            <p class="text-sm text-text-secondary mb-4">Generic substitution permitted unless otherwise noted above</p>
+                            <div class="mt-6">
+                                <p class="text-lg font-semibold text-text-secondary">Dr. Sarah Johnson, MD</p>
+                                <p class="text-sm text-text-secondary">Electronically signed on October 03, 2025 at 3:40 PM</p>
+                                <p class="text-xs text-text-secondary mt-2">This prescription was generated electronically and is valid without signature</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-end space-x-3 mt-6">
+                        <button class="btn-secondary" onclick="closePrescriptionModal()">Close Preview</button>
+                        <button class="btn-secondary" onclick="printPrescription()">
+                            <i class="fas fa-print mr-2"></i>
+                            Print
+                        </button>
+                        <button class="btn-primary" onclick="sendToPharmacy()">
+                            <i class="fas fa-paper-plane mr-2"></i>
+                            Send to Pharmacy
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let medicationCounter = 2;
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        function closePrescriptionModal() {
+            const modal = document.getElementById('prescriptionModal');
+            modal.classList.add('hidden');
+        }
+
+        function previewPrescription() {
+            const modal = document.getElementById('prescriptionModal');
+            modal.classList.remove('hidden');
+        }
+
+        function clearAllFields() {
+            if (confirm('Are you sure you want to clear all fields? This action cannot be undone.')) {
+                // Clear patient search
+                document.getElementById('patientSearch').value = '';
+                
+                // Clear all medication entries except the first two (keep as examples)
+                const medicationsList = document.getElementById('medicationsList');
+                const entries = medicationsList.querySelectorAll('.medication-entry');
+                
+                // Reset first medication entry
+                const firstEntry = entries[0];
+                firstEntry.querySelectorAll('input[type="text"]')[0].value = '';
+                firstEntry.querySelectorAll('input[type="text"]')[1].value = '';
+                firstEntry.querySelectorAll('textarea')[0].value = '';
+                firstEntry.querySelectorAll('input[type="number"]')[0].value = '';
+                firstEntry.querySelectorAll('input[type="number"]')[1].value = '';
+                
+                // Remove additional entries beyond the first two
+                for (let i = entries.length - 1; i >= 2; i--) {
+                    entries[i].remove();
+                }
+                
+                medicationCounter = 2;
+                updateMedicationNumbers();
+                
+                alert('Form cleared successfully!');
+            }
+        }
+
+        function saveDraft() {
+            // Simulate saving draft
+            const saveData = {
+                patient: document.getElementById('patientSearch').value,
+                medications: [],
+                timestamp: new Date().toISOString()
+            };
+            
+            // Collect medication data
+            const medicationEntries = document.querySelectorAll('.medication-entry');
+            medicationEntries.forEach(entry => {
+                const medName = entry.querySelector('input[type="text"]').value;
+                if (medName.trim()) {
+                    saveData.medications.push({
+                        name: medName,
+                        // Add other fields as needed
+                    });
+                }
+            });
+            
+            localStorage.setItem('prescriptionDraft', JSON.stringify(saveData));
+            
+            // Show success message
+            const button = event.target.closest('button');
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check mr-2"></i>Draft Saved!';
+            button.classList.add('bg-success', 'text-white');
+            
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.classList.remove('bg-success', 'text-white');
+            }, 2000);
+        }
+
+        function addMedicationRow() {
+            medicationCounter++;
+            const medicationsList = document.getElementById('medicationsList');
+            
+            const newMedication = document.createElement('div');
+            newMedication.className = 'medication-entry border border-secondary-200 rounded-md p-6 mb-6';
+            newMedication.innerHTML = `
+                <div class="flex items-center justify-between mb-4">
+                    <h4 class="font-semibold text-text-primary flex items-center">
+                        <span class="bg-primary-100 text-primary-700 px-2 py-1 rounded-full text-sm mr-3">${medicationCounter}</span>
+                        Medication Details
+                    </h4>
+                    <button class="text-error hover:text-error-700 transition-colors" onclick="removeMedication(this)">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2">Medication Name *</label>
+                            <input type="text" class="input-field" placeholder="Enter medication name..." />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2">Strength/Dosage *</label>
+                            <input type="text" class="input-field" placeholder="e.g., 10mg, 500mg..." />
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2">Dosage Form</label>
+                            <select class="input-field">
+                                <option>Tablet</option>
+                                <option>Capsule</option>
+                                <option>Liquid</option>
+                                <option>Injection</option>
+                                <option>Topical</option>
+                                <option>Inhaler</option>
+                                <option>Drops</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2">Frequency *</label>
+                            <select class="input-field">
+                                <option>Once daily (QD)</option>
+                                <option>Twice daily (BID)</option>
+                                <option>Three times daily (TID)</option>
+                                <option>Four times daily (QID)</option>
+                                <option>Every 4 hours</option>
+                                <option>Every 6 hours</option>
+                                <option>Every 8 hours</option>
+                                <option>Every 12 hours</option>
+                                <option>As needed (PRN)</option>
+                                <option>Custom</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2">Route of Administration</label>
+                            <select class="input-field">
+                                <option>Oral (PO)</option>
+                                <option>Topical</option>
+                                <option>Intravenous (IV)</option>
+                                <option>Intramuscular (IM)</option>
+                                <option>Subcutaneous (SC)</option>
+                                <option>Inhalation</option>
+                                <option>Sublingual</option>
+                                <option>Rectal</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2">Duration *</label>
+                            <div class="flex space-x-2">
+                                <input type="number" class="input-field flex-1" placeholder="Number" />
+                                <select class="input-field flex-1">
+                                    <option>Days</option>
+                                    <option>Weeks</option>
+                                    <option>Months</option>
+                                    <option>Ongoing</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-text-primary mb-2">Special Instructions</label>
+                    <textarea class="input-field" rows="3" placeholder="Take with food, avoid alcohol, monitor..."></textarea>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 mt-6">
+                    <div>
+                        <label class="block text-sm font-medium text-text-primary mb-2">Quantity *</label>
+                        <input type="number" class="input-field" placeholder="30" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text-primary mb-2">Unit</label>
+                        <select class="input-field">
+                            <option>Tablets</option>
+                            <option>Capsules</option>
+                            <option>mL</option>
+                            <option>grams</option>
+                            <option>Each</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text-primary mb-2">Refills</label>
+                        <select class="input-field">
+                            <option>0</option>
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>5</option>
+                            <option>PRN (as needed)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text-primary mb-2">Days Supply</label>
+                        <input type="number" class="input-field" placeholder="30" />
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                    <div class="space-y-3">
+                        <label class="flex items-center">
+                            <input type="checkbox" class="rounded border-secondary-300 text-primary focus:ring-primary" />
+                            <span class="ml-2 text-sm text-text-secondary">Generic substitution allowed</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="rounded border-secondary-300 text-primary focus:ring-primary" />
+                            <span class="ml-2 text-sm text-text-secondary">Brand medically necessary</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="rounded border-secondary-300 text-primary focus:ring-primary" />
+                            <span class="ml-2 text-sm text-text-secondary">Controlled substance</span>
+                        </label>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="text-sm">
+                            <span class="font-medium text-text-primary">Estimated Cost:</span>
+                            <span class="text-accent-600 ml-2">--</span>
+                        </div>
+                        <div class="text-sm">
+                            <span class="font-medium text-text-primary">Insurance Coverage:</span>
+                            <span class="text-info-600 ml-2">To be determined</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            medicationsList.appendChild(newMedication);
+        }
+
+        function removeMedication(button) {
+            if (confirm('Are you sure you want to remove this medication?')) {
+                button.closest('.medication-entry').remove();
+                updateMedicationNumbers();
+            }
+        }
+
+        function updateMedicationNumbers() {
+            const medicationEntries = document.querySelectorAll('.medication-entry');
+            medicationEntries.forEach((entry, index) => {
+                const numberSpan = entry.querySelector('.bg-primary-100');
+                if (numberSpan) {
+                    numberSpan.textContent = index + 1;
+                }
+            });
+        }
+
+        function selectMedication(name, strength, category) {
+            // Find the first empty medication entry or add a new one
+            const medicationEntries = document.querySelectorAll('.medication-entry');
+            let targetEntry = null;
+            
+            for (let entry of medicationEntries) {
+                const nameField = entry.querySelector('input[type="text"]');
+                if (!nameField.value.trim()) {
+                    targetEntry = entry;
+                    break;
+                }
+            }
+            
+            if (!targetEntry) {
+                addMedicationRow();
+                targetEntry = document.querySelector('.medication-entry:last-child');
+            }
+            
+            // Fill in the medication details
+            const nameField = targetEntry.querySelector('input[type="text"]');
+            const strengthField = targetEntry.querySelectorAll('input[type="text"]')[1];
+            
+            nameField.value = name;
+            strengthField.value = strength;
+            
+            // Hide the search results
+            document.getElementById('quickSearchResults').classList.add('hidden');
+            document.getElementById('medicationQuickSearch').value = '';
+        }
+
+        function printPrescription() {
+            window.print();
+        }
+
+        function sendToPharmacy() {
+            // Simulate sending to pharmacy
+            const button = event.target.closest('button');
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Sending...';
+            button.disabled = true;
+            
+            setTimeout(() => {
+                button.innerHTML = '<i class="fas fa-check mr-2"></i>Sent to Pharmacy!';
+                button.classList.add('bg-success', 'text-white');
+                
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.classList.remove('bg-success', 'text-white');
+                    button.disabled = false;
+                    if (document.getElementById('prescriptionModal').classList.contains('hidden') === false) {
+                        closePrescriptionModal();
+                    }
+                }, 2000);
+            }, 1500);
+        }
+
+        function addNewPrescription() {
+            if (confirm('This will clear the current form and start a new prescription. Continue?')) {
+                clearAllFields();
+            }
+        }
+
+        // Quick medication search functionality
+        document.getElementById('medicationQuickSearch').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const resultsDiv = document.getElementById('quickSearchResults');
+            
+            if (searchTerm.length > 2) {
+                resultsDiv.classList.remove('hidden');
+            } else {
+                resultsDiv.classList.add('hidden');
+            }
+        });
+
+        // Patient search functionality
+        document.getElementById('patientSearch').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            // Implement patient search logic here
+            console.log('Searching for patient:', searchTerm);
+        });
+
+        // Hide search results when clicking outside
+        document.addEventListener('click', function(e) {
+            const searchInput = document.getElementById('medicationQuickSearch');
+            const searchResults = document.getElementById('quickSearchResults');
+            
+            if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                searchResults.classList.add('hidden');
+            }
+        });
+
+        // Load draft if exists
+        document.addEventListener('DOMContentLoaded', function() {
+            const draft = localStorage.getItem('prescriptionDraft');
+            if (draft) {
+                // Show notification about available draft
+                console.log('Draft available:', JSON.parse(draft));
+            }
+        });
+    </script>
+<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+</body>
+</html>

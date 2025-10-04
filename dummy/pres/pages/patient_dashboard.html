@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Patient Dashboard - MediScript OPD</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+<script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fmediscript5763back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
+</head>
+<body class="bg-background min-h-screen">
+    <!-- Header Navigation -->
+    <header class="bg-surface shadow-medical border-b border-secondary-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo and Brand -->
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center">
+                        <svg class="w-8 h-8 text-primary" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                        </svg>
+                        <h1 class="ml-2 text-xl font-semibold text-text-primary">MediScript OPD</h1>
+                    </div>
+                </div>
+
+                <!-- Navigation Menu -->
+                <nav class="hidden md:flex space-x-8">
+                    <a href="patient_dashboard.html" class="text-primary font-medium border-b-2 border-primary pb-1">Dashboard</a>
+                    <a href="patient_enrollment.html" class="text-text-secondary hover:text-primary transition-colors">Enrollment</a>
+                    <a href="patient_profile.html" class="text-text-secondary hover:text-primary transition-colors">Profiles</a>
+                    <a href="treatment_session.html" class="text-text-secondary hover:text-primary transition-colors">Treatment</a>
+                    <a href="prescription_management.html" class="text-text-secondary hover:text-primary transition-colors">Prescriptions</a>
+                    <a href="medical_reports.html" class="text-text-secondary hover:text-primary transition-colors">Reports</a>
+                </nav>
+
+                <!-- User Profile -->
+                <div class="flex items-center space-x-4">
+                    <button class="p-2 text-text-secondary hover:text-primary transition-colors">
+                        <i class="fas fa-bell text-lg"></i>
+                    </button>
+                    <div class="flex items-center space-x-2">
+                        <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Dr. Sarah Johnson" class="w-8 h-8 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                        <span class="text-sm font-medium text-text-primary">Dr. Johnson</span>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden p-2 text-text-secondary hover:text-primary">
+                    <i class="fas fa-bars text-lg"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Dashboard Header -->
+        <div class="mb-8">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                    <h2 class="text-3xl font-semibold text-text-primary">Patient Dashboard</h2>
+                    <p class="mt-1 text-text-secondary">Manage your patients and track their care journey</p>
+                </div>
+                <div class="mt-4 lg:mt-0 flex flex-col sm:flex-row gap-3">
+                    <button class="btn-secondary flex items-center justify-center">
+                        <i class="fas fa-ambulance mr-2"></i>
+                        Emergency Access
+                    </button>
+                    <a href="patient_enrollment.html" class="btn-primary flex items-center justify-center">
+                        <i class="fas fa-user-plus mr-2"></i>
+                        New Patient Enrollment
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="card">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-primary-50">
+                        <i class="fas fa-users text-primary text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-text-secondary">Total Patients</p>
+                        <p class="text-2xl font-semibold text-text-primary">1,247</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-accent-50">
+                        <i class="fas fa-calendar-check text-accent text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-text-secondary">Today's Appointments</p>
+                        <p class="text-2xl font-semibold text-text-primary">23</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-warning-50">
+                        <i class="fas fa-prescription-bottle-alt text-warning text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-text-secondary">Pending Prescriptions</p>
+                        <p class="text-2xl font-semibold text-text-primary">8</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-error-50">
+                        <i class="fas fa-exclamation-triangle text-error text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-text-secondary">Critical Alerts</p>
+                        <p class="text-2xl font-semibold text-text-primary">3</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Dashboard Content -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Patient Search and List -->
+            <div class="lg:col-span-2">
+                <div class="card">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+                        <h3 class="text-lg font-semibold text-text-primary">Patient Search & Management</h3>
+                        <div class="mt-3 sm:mt-0 flex items-center space-x-2">
+                            <button class="p-2 text-text-secondary hover:text-primary transition-colors">
+                                <i class="fas fa-filter"></i>
+                            </button>
+                            <button class="p-2 text-text-secondary hover:text-primary transition-colors">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Search Bar -->
+                    <div class="mb-6">
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-search text-text-secondary"></i>
+                            </div>
+                            <input type="text" class="input-field pl-10 pr-4" placeholder="Search by name, ID, phone, or date of birth..." id="patientSearch" />
+                        </div>
+                        
+                        <!-- Search Filters -->
+                        <div class="mt-3 flex flex-wrap gap-2">
+                            <select class="input-field w-auto">
+                                <option>All Status</option>
+                                <option>Active</option>
+                                <option>Inactive</option>
+                                <option>Critical</option>
+                            </select>
+                            <select class="input-field w-auto">
+                                <option>All Departments</option>
+                                <option>Cardiology</option>
+                                <option>Neurology</option>
+                                <option>Orthopedics</option>
+                            </select>
+                            <button class="btn-secondary">
+                                <i class="fas fa-times mr-1"></i>
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Patient Table -->
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-secondary-200">
+                            <thead class="bg-secondary-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">Patient</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">ID</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">Last Visit</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-surface divide-y divide-secondary-200">
+                                <tr class="hover:bg-secondary-50 transition-colors cursor-pointer" onclick="window.location.href='patient_profile.html'">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <img src="https://images.pexels.com/photos/5327585/pexels-photo-5327585.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Emily Rodriguez" class="w-10 h-10 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-text-primary">Emily Rodriguez</div>
+                                                <div class="text-sm text-text-secondary">emily.rodriguez@email.com</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-data text-text-primary">P-2024-001</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-text-secondary">Oct 01, 2025</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="status-success">Active</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <button class="text-primary hover:text-primary-700 mr-3">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="text-text-secondary hover:text-primary">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+
+                                <tr class="hover:bg-secondary-50 transition-colors cursor-pointer" onclick="window.location.href='patient_profile.html'">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <img src="https://images.pixabay.com/photos/2017/08/01/01/33/beanie-2562646_1280.jpg" alt="Michael Chen" class="w-10 h-10 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-text-primary">Michael Chen</div>
+                                                <div class="text-sm text-text-secondary">michael.chen@email.com</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-data text-text-primary">P-2024-002</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-text-secondary">Sep 28, 2025</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="status-warning">Follow-up</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <button class="text-primary hover:text-primary-700 mr-3">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="text-text-secondary hover:text-primary">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+
+                                <tr class="hover:bg-secondary-50 transition-colors cursor-pointer" onclick="window.location.href='patient_profile.html'">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <img src="https://images.unsplash.com/photo-1594824804732-5f7b0b8b8b8b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Sarah Williams" class="w-10 h-10 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-text-primary">Sarah Williams</div>
+                                                <div class="text-sm text-text-secondary">sarah.williams@email.com</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-data text-text-primary">P-2024-003</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-text-secondary">Sep 25, 2025</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="status-error">Critical</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <button class="text-primary hover:text-primary-700 mr-3">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="text-text-secondary hover:text-primary">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="mt-6 flex items-center justify-between">
+                        <div class="text-sm text-text-secondary">
+                            Showing 1 to 3 of 1,247 results
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button class="px-3 py-1 text-sm border border-secondary-300 rounded-md text-text-secondary hover:bg-secondary-50">Previous</button>
+                            <button class="px-3 py-1 text-sm bg-primary text-white rounded-md">1</button>
+                            <button class="px-3 py-1 text-sm border border-secondary-300 rounded-md text-text-secondary hover:bg-secondary-50">2</button>
+                            <button class="px-3 py-1 text-sm border border-secondary-300 rounded-md text-text-secondary hover:bg-secondary-50">3</button>
+                            <button class="px-3 py-1 text-sm border border-secondary-300 rounded-md text-text-secondary hover:bg-secondary-50">Next</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="space-y-6">
+                <!-- Today's Appointments -->
+                <div class="card">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4">Today's Appointments</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-3 bg-secondary-50 rounded-md">
+                            <div class="flex items-center">
+                                <div class="w-2 h-2 bg-accent rounded-full mr-3"></div>
+                                <div>
+                                    <p class="text-sm font-medium text-text-primary">Emily Rodriguez</p>
+                                    <p class="text-xs text-text-secondary">9:00 AM - Cardiology</p>
+                                </div>
+                            </div>
+                            <button class="text-primary hover:text-primary-700">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 bg-secondary-50 rounded-md">
+                            <div class="flex items-center">
+                                <div class="w-2 h-2 bg-warning rounded-full mr-3"></div>
+                                <div>
+                                    <p class="text-sm font-medium text-text-primary">Michael Chen</p>
+                                    <p class="text-xs text-text-secondary">10:30 AM - Follow-up</p>
+                                </div>
+                            </div>
+                            <button class="text-primary hover:text-primary-700">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 bg-secondary-50 rounded-md">
+                            <div class="flex items-center">
+                                <div class="w-2 h-2 bg-error rounded-full mr-3"></div>
+                                <div>
+                                    <p class="text-sm font-medium text-text-primary">Sarah Williams</p>
+                                    <p class="text-xs text-text-secondary">2:00 PM - Emergency</p>
+                                </div>
+                            </div>
+                            <button class="text-primary hover:text-primary-700">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button class="w-full mt-4 text-sm text-primary hover:text-primary-700 font-medium">
+                        View All Appointments
+                    </button>
+                </div>
+
+                <!-- Recent Activities -->
+                <div class="card">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4">Recent Activities</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-2 h-2 bg-accent rounded-full mt-2"></div>
+                            <div>
+                                <p class="text-sm text-text-primary">New patient enrolled: John Doe</p>
+                                <p class="text-xs text-text-secondary">2 hours ago</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-2 h-2 bg-primary rounded-full mt-2"></div>
+                            <div>
+                                <p class="text-sm text-text-primary">Prescription updated for Emily Rodriguez</p>
+                                <p class="text-xs text-text-secondary">4 hours ago</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-2 h-2 bg-warning rounded-full mt-2"></div>
+                            <div>
+                                <p class="text-sm text-text-primary">Lab results received for Michael Chen</p>
+                                <p class="text-xs text-text-secondary">6 hours ago</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4">Quick Actions</h3>
+                    <div class="space-y-2">
+                        <a href="treatment_session.html" class="w-full btn-secondary flex items-center justify-center">
+                            <i class="fas fa-stethoscope mr-2"></i>
+                            Start Treatment Session
+                        </a>
+                        <a href="prescription_management.html" class="w-full btn-secondary flex items-center justify-center">
+                            <i class="fas fa-prescription-bottle-alt mr-2"></i>
+                            Manage Prescriptions
+                        </a>
+                        <a href="medical_reports.html" class="w-full btn-secondary flex items-center justify-center">
+                            <i class="fas fa-file-medical mr-2"></i>
+                            Generate Reports
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Mobile Navigation Menu (Hidden by default) -->
+    <div class="md:hidden fixed inset-0 z-50 hidden" id="mobileMenu">
+        <div class="fixed inset-0 bg-black bg-opacity-50"></div>
+        <div class="fixed inset-y-0 left-0 w-64 bg-surface shadow-lg">
+            <div class="p-4">
+                <div class="flex items-center justify-between mb-8">
+                    <h2 class="text-lg font-semibold text-text-primary">Menu</h2>
+                    <button class="p-2 text-text-secondary hover:text-primary" onclick="toggleMobileMenu()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <nav class="space-y-4">
+                    <a href="patient_dashboard.html" class="block text-primary font-medium">Dashboard</a>
+                    <a href="patient_enrollment.html" class="block text-text-secondary hover:text-primary">Enrollment</a>
+                    <a href="patient_profile.html" class="block text-text-secondary hover:text-primary">Profiles</a>
+                    <a href="treatment_session.html" class="block text-text-secondary hover:text-primary">Treatment</a>
+                    <a href="prescription_management.html" class="block text-text-secondary hover:text-primary">Prescriptions</a>
+                    <a href="medical_reports.html" class="block text-text-secondary hover:text-primary">Reports</a>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Search functionality
+        document.getElementById('patientSearch').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            // In a real application, this would filter the patient table
+            console.log('Searching for:', searchTerm);
+        });
+    </script>
+<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+</body>
+</html>

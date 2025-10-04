@@ -1,0 +1,1617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Natural Language Python Sandbox</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fpythonsan3478back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
+</head>
+<body class="bg-gray-900 text-gray-100 font-sans">
+    <!-- Natural Language Sandbox Toolbar -->
+    <div class="toolbar bg-gray-800 border-b border-gray-700 px-4 py-2">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-emerald-500 rounded flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-semibold text-gray-100">Natural Language Python Sandbox</h1>
+                        <p class="text-xs text-gray-400">AI-Powered Code Generation</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-2 border-l border-gray-600 pl-4">
+                    <button id="clearChatBtn" class="px-3 py-1.5 bg-red-600 text-white text-sm rounded hover:bg-red-500 transition-colors">
+                        Clear Chat
+                    </button>
+                    <button id="toggleSidebarBtn" class="px-3 py-1.5 bg-purple-600 text-white text-sm rounded hover:bg-purple-500 transition-colors">
+                        📊 Datasets
+                    </button>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-2 text-sm text-gray-400">
+                <div class="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                <span>AI Assistant Ready</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Layout Container -->
+    <div class="flex h-screen overflow-hidden">
+        <!-- Dataset Sidebar -->
+        <div id="datasetSidebar" class="w-80 bg-gray-800 border-r border-gray-700 flex flex-col transition-all duration-300 flex-shrink-0">
+            <!-- Sidebar Header -->
+            <div class="px-4 py-3 border-b border-gray-700 flex-shrink-0">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-lg font-semibold text-gray-100">📊 Datasets</h2>
+                    <button id="closeSidebarBtn" class="text-gray-400 hover:text-white">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dataset Upload -->
+            <div class="px-4 py-3 border-b border-gray-700 flex-shrink-0">
+                <button id="uploadDatasetBtn" class="w-full px-3 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-500 transition-colors">
+                    📁 Load Dataset
+                </button>
+                <input type="file" id="datasetFileInput" accept=".csv,.json,.xlsx" class="hidden" />
+            </div>
+
+            <!-- Dataset List -->
+            <div class="flex-1 overflow-y-auto min-h-0">
+                <div class="px-4 py-2">
+                    <h3 class="text-sm font-medium text-gray-300 mb-2">Available Datasets</h3>
+                    <div id="datasetList" class="space-y-2">
+                        <!-- Datasets will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dataset Preview -->
+            <div id="datasetPreview" class="px-4 py-3 border-t border-gray-700 max-h-80 overflow-y-auto hidden flex-shrink-0">
+                <h3 class="text-sm font-medium text-gray-300 mb-2">Dataset Preview</h3>
+                <div id="previewContent" class="text-xs overflow-hidden"></div>
+            </div>
+        </div>
+
+        <!-- Chat Interface Container -->
+        <div class="flex-1 flex flex-col overflow-hidden min-w-0">
+            <!-- Chat Messages Container -->
+            <div class="flex-1 overflow-y-auto p-4 min-h-0">
+                <div id="chatContainer" class="space-y-4 max-w-full">
+                    <!-- Welcome message -->
+                    <div class="bg-gray-800 border border-gray-700 rounded-lg p-4">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
+                                </svg>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="font-medium text-emerald-400 mb-2">AI Assistant</div>
+                                <div class="text-gray-300">
+                                    Welcome to the Natural Language Python Sandbox! Ask me anything about your data in plain English, like:
+                                    <ul class="mt-2 space-y-1 text-sm text-gray-400 list-disc list-inside">
+                                        <li>"Show me the correlation between sales and profit"</li>
+                                        <li>"Create a bar chart of monthly revenue"</li>
+                                        <li>"Filter data where age is greater than 25"</li>
+                                        <li>"Calculate the mean temperature by city"</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="border-t border-gray-700 bg-gray-800 p-4 flex-shrink-0">
+                <div class="flex items-end space-x-3">
+                    <div class="flex-1 min-w-0">
+                        <textarea id="messageInput" placeholder="Ask me anything about your data in natural language, or write Python code directly..." class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-gray-100 placeholder-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent" rows="3"></textarea>
+                        <div id="inputDetection" class="text-xs text-gray-500 mt-1 hidden">
+                            <span id="detectionText"></span>
+                        </div>
+                    </div>
+                    <button id="sendBtn" class="px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-500 transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 self-stretch flex-shrink-0">
+                        <span id="btnText">Ask</span>
+                        <svg id="sendIcon" class="w-4 h-4 ml-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* Dataset item styling */
+        .dataset-item {
+            background: #374151;
+            border: 1px solid #4b5563;
+            border-radius: 6px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .dataset-item:hover {
+            background: #4b5563;
+            border-color: #60a5fa;
+        }
+
+        .dataset-item.selected {
+            background: #1e40af;
+            border-color: #3b82f6;
+        }
+
+        .dataset-item h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .dataset-item .dataset-meta {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        .dataset-actions {
+            margin-top: 8px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .dataset-btn {
+            padding: 4px 8px;
+            font-size: 11px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .dataset-btn.view {
+            background: #059669;
+            color: white;
+        }
+
+        .dataset-btn.view:hover {
+            background: #047857;
+        }
+
+        .dataset-btn.load {
+            background: #7c3aed;
+            color: white;
+        }
+
+        .dataset-btn.load:hover {
+            background: #6d28d9;
+        }
+
+        .dataset-btn.remove {
+            background: #dc2626;
+            color: white;
+        }
+
+        .dataset-btn.remove:hover {
+            background: #b91c1c;
+        }
+
+        /* Sidebar hide/show */
+        .sidebar-hidden {
+            margin-left: -320px;
+        }
+
+        /* Message styling - FIXED: Added proper containment */
+        .user-message, .assistant-message {
+            max-width: 100%;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .user-message {
+            background: #1f2937;
+            border: 1px solid #374151;
+        }
+
+        .assistant-message {
+            background: #0f172a;
+            border: 1px solid #1e293b;
+        }
+
+        /* FIXED: Code block containment */
+        .code-block {
+            background: #111827;
+            border: 1px solid #374151;
+            border-radius: 6px;
+            padding: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            position: relative;
+            max-width: 100%;
+            overflow-x: auto;
+        }
+
+        .code-block pre {
+            max-width: 100%;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #374151;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .code-actions {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .code-action-btn {
+            padding: 4px 8px;
+            background: #374151;
+            border: none;
+            border-radius: 4px;
+            color: #9ca3af;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .code-action-btn:hover {
+            background: #4b5563;
+            color: #f9fafb;
+        }
+
+        .executing {
+            border-color: #10b981;
+        }
+
+        /* FIXED: Execution result containment */
+        .execution-result {
+            background: #0f172a;
+            border: 1px solid #1e293b;
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 8px;
+            max-width: 100%;
+            overflow: hidden;
+        }
+
+        /* FIXED: Table containment and scrolling */
+        .result-table-container {
+            max-width: 100%;
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 400px;
+            border-radius: 6px;
+        }
+
+        .result-table {
+            background: #1f2937;
+            border-collapse: collapse;
+            border-radius: 6px;
+            overflow: hidden;
+            width: 100%;
+            min-width: 400px; /* Ensures table doesn't get too cramped */
+        }
+
+        .result-table th {
+            background: #374151;
+            color: #f9fafb;
+            padding: 8px 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #4b5563;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .result-table td {
+            background: #1f2937;
+            color: #e5e7eb;
+            padding: 8px 12px;
+            border-bottom: 1px solid #374151;
+            max-width: 200px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .result-table tbody tr:hover {
+            background: #374151;
+        }
+
+        .loading-animation::after {
+            content: '';
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid #10b981;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+            margin-left: 8px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .error-result {
+            background: #7f1d1d;
+            color: #fca5a5;
+            border-left: 4px solid #dc2626;
+        }
+
+        /* Auto-resize textarea */
+        #messageInput {
+            min-height: 44px;
+            max-height: 120px;
+        }
+        
+        /* Scrollbar styling for dark theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
+        }
+
+        /* FIXED: Heatmap containment */
+        .heatmap-container {
+            background: #1f2937;
+            border-radius: 6px;
+            padding: 16px;
+            overflow: auto;
+            max-width: 100%;
+            max-height: 600px;
+        }
+
+        .heatmap-grid {
+            display: grid;
+            gap: 2px;
+            width: fit-content;
+            margin: 0 auto;
+            min-width: 300px;
+            max-width: 100%;
+        }
+
+        .heatmap-cell {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 500;
+            border-radius: 4px;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            min-width: 35px; /* Prevent cells from getting too small */
+        }
+
+        .heatmap-labels {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 16px;
+            font-size: 14px;
+            color: #9ca3af;
+            flex-wrap: wrap;
+        }
+
+        .heatmap-label-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .heatmap-color-box {
+            width: 16px;
+            height: 16px;
+            border-radius: 2px;
+        }
+
+        /* FIXED: Chart canvas containment */
+        .chart-container {
+            max-width: 100%;
+            max-height: 500px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .chart-container canvas {
+            max-width: 100% !important;
+            max-height: 100% !important;
+            height: auto !important;
+            width: auto !important;
+        }
+
+        /* FIXED: Content overflow prevention */
+        .message-content {
+            min-w-0;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+        }
+
+        /* FIXED: Flex container sizing */
+        .flex-1 {
+            min-width: 0; /* Allow flex items to shrink below their minimum content size */
+        }
+
+        /* FIXED: Prevent horizontal scroll in main container */
+        #chatContainer > * {
+            max-width: 100%;
+        }
+
+        /* FIXED: Ensure proper text wrapping */
+        pre, code {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        /* FIXED: Responsive chart sizing */
+        @media (max-width: 768px) {
+            .heatmap-cell {
+                width: 30px;
+                height: 30px;
+                font-size: 10px;
+                min-width: 25px;
+            }
+            
+            .chart-container {
+                max-height: 300px;
+            }
+            
+            .result-table th,
+            .result-table td {
+                padding: 6px 8px;
+                font-size: 14px;
+            }
+        }
+    </style>
+
+    <script>
+        class NaturalLanguagePythonSandbox {
+            constructor() {
+                this.chatContainer = document.getElementById('chatContainer');
+                this.messageInput = document.getElementById('messageInput');
+                this.sendBtn = document.getElementById('sendBtn');
+                this.btnText = document.getElementById('btnText');
+                this.clearChatBtn = document.getElementById('clearChatBtn');
+                this.inputDetection = document.getElementById('inputDetection');
+                this.detectionText = document.getElementById('detectionText');
+                
+                // Dataset management
+                this.toggleSidebarBtn = document.getElementById('toggleSidebarBtn');
+                this.closeSidebarBtn = document.getElementById('closeSidebarBtn');
+                this.uploadDatasetBtn = document.getElementById('uploadDatasetBtn');
+                this.datasetFileInput = document.getElementById('datasetFileInput');
+                this.datasetSidebar = document.getElementById('datasetSidebar');
+                this.datasetList = document.getElementById('datasetList');
+                this.datasetPreview = document.getElementById('datasetPreview');
+                this.previewContent = document.getElementById('previewContent');
+                
+                this.datasets = [];
+                this.selectedDataset = null;
+                this.chatHistory = [];
+                this.executionCounter = 1;
+                
+                this.initializeEventListeners();
+                this.loadSampleDatasets();
+                this.loadChatHistory();
+            }
+
+            initializeEventListeners() {
+                // Chat functionality
+                this.sendBtn.addEventListener('click', () => this.sendMessage());
+                this.messageInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        this.sendMessage();
+                    }
+                });
+                
+                this.messageInput.addEventListener('input', () => {
+                    this.detectInputType();
+                    this.autoResize();
+                });
+                
+                this.clearChatBtn.addEventListener('click', () => this.clearChat());
+                
+                // Dataset management
+                this.toggleSidebarBtn.addEventListener('click', () => this.toggleSidebar());
+                this.closeSidebarBtn.addEventListener('click', () => this.hideSidebar());
+                this.uploadDatasetBtn.addEventListener('click', () => this.datasetFileInput.click());
+                this.datasetFileInput.addEventListener('change', (e) => this.handleFileUpload(e));
+            }
+
+            autoResize() {
+                this.messageInput.style.height = 'auto';
+                this.messageInput.style.height = Math.min(this.messageInput.scrollHeight, 120) + 'px';
+            }
+
+            detectInputType() {
+                const input = this.messageInput.value.trim();
+                
+                if (!input) {
+                    this.inputDetection.classList.add('hidden');
+                    this.btnText.textContent = 'Ask';
+                    return;
+                }
+
+                // Detect if it's likely natural language or code
+                const codeIndicators = [
+                    'import ', 'def ', 'class ', 'for ', 'while ', 'if ', 
+                    'print(', 'plt.', 'df.', 'np.', '=', 'return ',
+                    '#', 'pandas', 'matplotlib', 'numpy'
+                ];
+                
+                const hasCodeIndicators = codeIndicators.some(indicator => 
+                    input.toLowerCase().includes(indicator.toLowerCase())
+                );
+                
+                const isQuestion = input.includes('?') || 
+                    input.toLowerCase().startsWith('show me') ||
+                    input.toLowerCase().startsWith('what is') ||
+                    input.toLowerCase().startsWith('how to') ||
+                    input.toLowerCase().startsWith('create a') ||
+                    input.toLowerCase().startsWith('generate') ||
+                    input.toLowerCase().startsWith('analyze') ||
+                    input.toLowerCase().startsWith('calculate') ||
+                    input.toLowerCase().startsWith('find') ||
+                    input.toLowerCase().startsWith('filter');
+
+                this.inputDetection.classList.remove('hidden');
+                
+                if (hasCodeIndicators && !isQuestion) {
+                    this.detectionText.textContent = '🐍 Direct Python code detected';
+                    this.btnText.textContent = 'Run';
+                } else {
+                    this.detectionText.textContent = '💬 Natural language query detected';
+                    this.btnText.textContent = 'Ask';
+                }
+            }
+
+            async sendMessage() {
+                const message = this.messageInput.value.trim();
+                if (!message) return;
+
+                // Add user message
+                this.addUserMessage(message);
+                
+                // Clear input
+                this.messageInput.value = '';
+                this.inputDetection.classList.add('hidden');
+                this.autoResize();
+                this.detectInputType();
+                
+                // Determine if it's a natural language query or direct code
+                const isDirectCode = this.btnText.textContent === 'Run';
+                
+                if (isDirectCode) {
+                    await this.executeDirectCode(message);
+                } else {
+                    await this.processNaturalLanguageQuery(message);
+                }
+                
+                this.saveChatHistory();
+                this.scrollToBottom();
+            }
+
+            addUserMessage(message) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'user-message rounded-lg p-4';
+                
+                messageDiv.innerHTML = `
+                    <div class="flex items-start space-x-3">
+                        <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1 min-w-0 message-content">
+                            <div class="font-medium text-blue-400 mb-2">You</div>
+                            <div class="text-gray-300 whitespace-pre-wrap">${this.escapeHtml(message)}</div>
+                        </div>
+                    </div>
+                `;
+                
+                this.chatContainer.appendChild(messageDiv);
+                this.chatHistory.push({ type: 'user', content: message, timestamp: Date.now() });
+            }
+
+            async processNaturalLanguageQuery(query) {
+                // Add loading message
+                const loadingDiv = this.addAssistantMessage('Processing your request...', true);
+                
+                try {
+                    // Simulate LLM processing delay
+                    await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
+                    
+                    // Generate Python code based on the query
+                    const generatedCode = this.generateCodeFromQuery(query);
+                    
+                    // Remove loading message
+                    loadingDiv.remove();
+                    
+                    // Add assistant response with generated code
+                    await this.addCodeGenerationResponse(query, generatedCode);
+                    
+                } catch (error) {
+                    loadingDiv.remove();
+                    this.addAssistantMessage(`I encountered an error processing your request: ${error.message}`, false, true);
+                }
+            }
+
+            async executeDirectCode(code) {
+                // Add assistant response indicating direct execution
+                const assistantDiv = this.addAssistantMessage('Executing your Python code...', true);
+                
+                try {
+                    // Simulate execution delay
+                    await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 1000));
+                    
+                    // Remove loading message
+                    assistantDiv.remove();
+                    
+                    // Execute code and show results
+                    await this.addDirectCodeExecution(code);
+                    
+                } catch (error) {
+                    assistantDiv.remove();
+                    this.addAssistantMessage(`Execution error: ${error.message}`, false, true);
+                }
+            }
+
+            generateCodeFromQuery(query) {
+                const lowerQuery = query.toLowerCase();
+                
+                // Pattern matching for common queries
+                if (lowerQuery.includes('correlation') && lowerQuery.includes('between')) {
+                    return `import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Calculate correlation between variables
+correlation_matrix = df.corr()
+print("Correlation Matrix:")
+print(correlation_matrix)
+
+# Visualize correlation heatmap
+plt.figure(figsize=(10, 8))
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', center=0)
+plt.title('Correlation Heatmap')
+plt.show()`;
+                }
+                
+                if (lowerQuery.includes('bar chart') || lowerQuery.includes('bar plot')) {
+                    return `import matplotlib.pyplot as plt
+
+# Create a bar chart
+plt.figure(figsize=(10, 6))
+df.groupby('category').sum().plot(kind='bar')
+plt.title('Bar Chart Analysis')
+plt.xlabel('Categories')
+plt.ylabel('Values')
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()`;
+                }
+                
+                if (lowerQuery.includes('filter') && (lowerQuery.includes('where') || lowerQuery.includes('>'))) {
+                    return `# Filter data based on conditions
+filtered_data = df[df['column_name'] > threshold_value]
+print(f"Filtered dataset shape: {filtered_data.shape}")
+print("\\nFirst 5 rows of filtered data:")
+filtered_data.head()`;
+                }
+                
+                if (lowerQuery.includes('mean') || lowerQuery.includes('average')) {
+                    return `import pandas as pd
+
+# Calculate mean values
+print("Mean values for numeric columns:")
+numeric_means = df.select_dtypes(include='number').mean()
+print(numeric_means)
+
+# Group by categorical column and calculate means
+if 'category' in df.columns:
+    grouped_means = df.groupby('category').mean()
+    print("\\nMean values by category:")
+    print(grouped_means)`;
+                }
+                
+                if (lowerQuery.includes('line chart') || lowerQuery.includes('line plot')) {
+                    return `import matplotlib.pyplot as plt
+
+# Create a line chart
+plt.figure(figsize=(12, 6))
+plt.plot(df.index, df.select_dtypes(include='number').iloc[:, 0])
+plt.title('Line Chart Analysis')
+plt.xlabel('Index')
+plt.ylabel('Values')
+plt.grid(True, alpha=0.3)
+plt.show()`;
+                }
+                
+                if (lowerQuery.includes('scatter') || lowerQuery.includes('relationship')) {
+                    return `import matplotlib.pyplot as plt
+
+# Create scatter plot
+numeric_cols = df.select_dtypes(include='number').columns
+if len(numeric_cols) >= 2:
+    plt.figure(figsize=(10, 6))
+    plt.scatter(df[numeric_cols[0]], df[numeric_cols[1]], alpha=0.6)
+    plt.xlabel(numeric_cols[0])
+    plt.ylabel(numeric_cols[1])
+    plt.title(f'Scatter Plot: {numeric_cols[0]} vs {numeric_cols[1]}')
+    plt.grid(True, alpha=0.3)
+    plt.show()`;
+                }
+                
+                if (lowerQuery.includes('describe') || lowerQuery.includes('summary') || lowerQuery.includes('statistics')) {
+                    return `# Generate descriptive statistics
+print("Dataset Overview:")
+print(f"Shape: {df.shape}")
+print(f"Columns: {list(df.columns)}")
+print("\\nData Types:")
+print(df.dtypes)
+print("\\nDescriptive Statistics:")
+df.describe()`;
+                }
+                
+                if (lowerQuery.includes('unique') || lowerQuery.includes('distinct')) {
+                    return `# Show unique values for each column
+for column in df.columns:
+    unique_count = df[column].nunique()
+    print(f"{column}: {unique_count} unique values")
+    if unique_count < 10:
+        print(f"  Unique values: {list(df[column].unique())}")
+    print()`;
+                }
+                
+                // Default generic analysis
+                return `import pandas as pd
+import matplotlib.pyplot as plt
+
+# Basic dataset exploration based on your query
+print("Dataset Information:")
+print(f"Shape: {df.shape}")
+print(f"Columns: {list(df.columns)}")
+
+print("\\nFirst few rows:")
+print(df.head())
+
+print("\\nBasic statistics:")
+df.describe()`;
+            }
+
+            async addCodeGenerationResponse(originalQuery, generatedCode) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'assistant-message rounded-lg p-4';
+                
+                messageDiv.innerHTML = `
+                    <div class="flex items-start space-x-3">
+                        <div class="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1 min-w-0 message-content">
+                            <div class="font-medium text-emerald-400 mb-2">AI Assistant</div>
+                            <div class="text-gray-300 mb-3">I've generated Python code for your request: <em>"${this.escapeHtml(originalQuery)}"</em></div>
+                            
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <div class="text-sm text-gray-400">Generated Python Code</div>
+                                    <div class="code-actions">
+                                        <button class="code-action-btn" onclick="nlSandbox.editCode(this)">✏️ Edit</button>
+                                        <button class="code-action-btn" onclick="nlSandbox.executeCode(this)">▶️ Run</button>
+                                    </div>
+                                </div>
+                                <pre class="text-gray-100">${this.escapeHtml(generatedCode)}</pre>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                this.chatContainer.appendChild(messageDiv);
+                this.chatHistory.push({ 
+                    type: 'assistant', 
+                    content: `Generated code for: ${originalQuery}`,
+                    code: generatedCode,
+                    timestamp: Date.now() 
+                });
+
+                // Auto-execute the code
+                setTimeout(() => {
+                    const runBtn = messageDiv.querySelector('.code-action-btn:last-child');
+                    this.executeCode(runBtn);
+                }, 500);
+            }
+
+            async addDirectCodeExecution(code) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'assistant-message rounded-lg p-4';
+                
+                messageDiv.innerHTML = `
+                    <div class="flex items-start space-x-3">
+                        <div class="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1 min-w-0 message-content">
+                            <div class="font-medium text-emerald-400 mb-2">AI Assistant</div>
+                            <div class="text-gray-300 mb-3">Executing your Python code...</div>
+                            
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <div class="text-sm text-gray-400">Python Code [${this.executionCounter}]</div>
+                                    <div class="code-actions">
+                                        <button class="code-action-btn" onclick="nlSandbox.editCode(this)">✏️ Edit</button>
+                                        <button class="code-action-btn" onclick="nlSandbox.executeCode(this)">🔄 Re-run</button>
+                                    </div>
+                                </div>
+                                <pre class="text-gray-100">${this.escapeHtml(code)}</pre>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                this.chatContainer.appendChild(messageDiv);
+                this.chatHistory.push({ 
+                    type: 'assistant', 
+                    content: 'Direct code execution',
+                    code: code,
+                    timestamp: Date.now() 
+                });
+
+                // Execute the code
+                setTimeout(() => {
+                    this.simulateCodeExecution(messageDiv, code);
+                }, 500);
+            }
+
+            addAssistantMessage(content, isLoading = false, isError = false) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `assistant-message rounded-lg p-4 ${isError ? 'error-result' : ''}`;
+                
+                messageDiv.innerHTML = `
+                    <div class="flex items-start space-x-3">
+                        <div class="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1 min-w-0 message-content">
+                            <div class="font-medium text-emerald-400 mb-2">AI Assistant</div>
+                            <div class="text-gray-300 ${isLoading ? 'loading-animation' : ''}">${this.escapeHtml(content)}</div>
+                        </div>
+                    </div>
+                `;
+                
+                this.chatContainer.appendChild(messageDiv);
+                
+                if (!isLoading) {
+                    this.chatHistory.push({ 
+                        type: 'assistant', 
+                        content: content, 
+                        isError: isError,
+                        timestamp: Date.now() 
+                    });
+                }
+                
+                return messageDiv;
+            }
+
+            async executeCode(buttonElement) {
+                const codeBlock = buttonElement.closest('.code-block');
+                const messageDiv = buttonElement.closest('.assistant-message');
+                
+                // Add executing class
+                codeBlock.classList.add('executing');
+                
+                const code = codeBlock.querySelector('pre').textContent;
+                
+                // Simulate execution
+                await this.simulateCodeExecution(messageDiv, code);
+                
+                codeBlock.classList.remove('executing');
+            }
+
+            async simulateCodeExecution(messageDiv, code) {
+                // Check if result already exists
+                let existingResult = messageDiv.querySelector('.execution-result');
+                if (existingResult) {
+                    existingResult.remove();
+                }
+
+                // Simulate execution delay
+                await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1500));
+
+                const result = this.mockExecuteCode(code);
+                const resultDiv = document.createElement('div');
+                resultDiv.className = `execution-result ${result.isError ? 'error-result' : ''}`;
+                
+                let resultContent = '';
+                
+                if (result.isError) {
+                    resultContent = `<div class="font-medium text-red-400 mb-2">Execution Error</div>
+                                    <pre class="text-red-300">${this.escapeHtml(result.content)}</pre>`;
+                } else {
+                    resultContent = `<div class="font-medium text-orange-400 mb-2">Output [${this.executionCounter++}]:</div>`;
+                    
+                    switch (result.type) {
+                        case 'text':
+                            resultContent += `<pre class="text-gray-100">${this.escapeHtml(result.content)}</pre>`;
+                            break;
+                        case 'table':
+                            resultContent += this.createTableHTML(result.data);
+                            break;
+                        case 'chart':
+                            resultContent += this.createChartHTML(result);
+                            break;
+                        case 'heatmap':
+                            resultContent += this.createHeatmapHTML(result);
+                            break;
+                    }
+                }
+                
+                resultDiv.innerHTML = resultContent;
+                messageDiv.appendChild(resultDiv);
+                
+                // Render charts if needed
+                if (result.type === 'chart' && !result.isError) {
+                    setTimeout(() => {
+                        this.renderChart(resultDiv.querySelector('canvas'), result);
+                    }, 100);
+                }
+
+                this.scrollToBottom();
+            }
+
+            mockExecuteCode(code) {
+                try {
+                    // Handle correlation/heatmap specifically
+                    if ((code.includes('corr()') && code.includes('heatmap')) || 
+                        (code.includes('correlation') && code.includes('seaborn'))) {
+                        return this.generateHeatmapResult(code);
+                    }
+                    
+                    // Handle matplotlib/plotting
+                    if (code.includes('plt.') || code.includes('matplotlib') || code.includes('seaborn')) {
+                        return this.generateChartResult(code);
+                    }
+                    
+                    // Handle pandas operations
+                    if (code.includes('DataFrame') || code.includes('.head()') || code.includes('.describe()') || code.includes('.groupby')) {
+                        return this.generateTableResult(code);
+                    }
+                    
+                    // Handle print statements
+                    if (code.includes('print(')) {
+                        return this.handlePrintStatements(code);
+                    }
+                    
+                    // Handle data analysis
+                    if (code.includes('mean()') || code.includes('corr()') || code.includes('nunique()')) {
+                        return this.generateAnalysisResult(code);
+                    }
+                    
+                    // Default success
+                    return { 
+                        type: 'text', 
+                        content: '# Code executed successfully\n# Variables and functions are now available in the environment',
+                        isError: false 
+                    };
+                    
+                } catch (error) {
+                    return {
+                        isError: true,
+                        content: `Error: ${error.message}`
+                    };
+                }
+            }
+
+            generateChartResult(code) {
+                const chartTypes = ['line', 'bar', 'scatter'];
+                let chartType = 'line';
+                
+                if (code.includes('bar')) chartType = 'bar';
+                else if (code.includes('scatter')) chartType = 'scatter';
+                
+                return {
+                    type: 'chart',
+                    chartType: chartType,
+                    data: this.generateSampleChartData(chartType),
+                    isError: false
+                };
+            }
+
+            generateHeatmapResult(code) {
+                return {
+                    type: 'heatmap',
+                    data: this.generateSampleHeatmapData(),
+                    isError: false
+                };
+            }
+
+            generateSampleHeatmapData() {
+                // Generate correlation-like data
+                const variables = ['sepal_length', 'sepal_width', 'petal_length', 'petal_width', 'age'];
+                const data = [];
+                
+                for (let i = 0; i < variables.length; i++) {
+                    const row = [];
+                    for (let j = 0; j < variables.length; j++) {
+                        if (i === j) {
+                            row.push(1.0);
+                        } else {
+                            // Generate realistic correlation values
+                            const correlation = (Math.random() - 0.5) * 1.6;
+                            row.push(Math.max(-1, Math.min(1, correlation)));
+                        }
+                    }
+                    data.push(row);
+                }
+                
+                return {
+                    variables: variables,
+                    correlations: data
+                };
+            }
+
+            generateSampleChartData(chartType) {
+                switch (chartType) {
+                    case 'bar':
+                        return {
+                            labels: ['Product A', 'Product B', 'Product C', 'Product D', 'Product E'],
+                            datasets: [{
+                                label: 'Sales',
+                                data: [65, 59, 80, 81, 56],
+                                backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                borderWidth: 1
+                            }]
+                        };
+                    case 'scatter':
+                        return {
+                            datasets: [{
+                                label: 'Data Points',
+                                data: [
+                                    {x: 10, y: 20}, {x: 15, y: 25}, {x: 20, y: 22}, {x: 25, y: 28},
+                                    {x: 30, y: 32}, {x: 35, y: 30}, {x: 40, y: 38}, {x: 45, y: 42}
+                                ],
+                                backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                                borderColor: 'rgba(255, 99, 132, 1)'
+                            }]
+                        };
+                    default:
+                        return {
+                            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                            datasets: [{
+                                label: 'Monthly Data',
+                                data: [12, 19, 3, 5, 2, 3],
+                                borderColor: 'rgb(75, 192, 192)',
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                tension: 0.1
+                            }]
+                        };
+                }
+            }
+
+            generateTableResult(code) {
+                const sampleData = [
+                    { Name: 'Alice', Age: 25, City: 'New York', Salary: 75000 },
+                    { Name: 'Bob', Age: 30, City: 'San Francisco', Salary: 85000 },
+                    { Name: 'Charlie', Age: 35, City: 'Chicago', Salary: 65000 },
+                    { Name: 'Diana', Age: 28, City: 'Boston', Salary: 70000 },
+                    { Name: 'Eve', Age: 32, City: 'Seattle', Salary: 80000 }
+                ];
+                
+                return {
+                    type: 'table',
+                    data: sampleData,
+                    isError: false
+                };
+            }
+
+            generateAnalysisResult(code) {
+                const results = [
+                    'Mean age: 28.5 years\nMean salary: $75,000\nCorrelation coefficient: 0.75',
+                    'Statistical Summary:\n  Count: 150\n  Mean: 65.2\n  Std: 12.8\n  Min: 42.1\n  Max: 89.7',
+                    'Unique values per column:\n  Category: 5 unique\n  Status: 3 unique\n  Region: 8 unique'
+                ];
+                
+                return {
+                    type: 'text',
+                    content: results[Math.floor(Math.random() * results.length)],
+                    isError: false
+                };
+            }
+
+            handlePrintStatements(code) {
+                // Extract print content (simplified)
+                const outputs = [
+                    'Dataset shape: (150, 5)\nColumns: [\'sepal_length\', \'sepal_width\', \'petal_length\', \'petal_width\', \'species\']',
+                    'Processing complete!\nResults saved to output.',
+                    'Analysis finished successfully.'
+                ];
+                
+                return {
+                    type: 'text',
+                    content: outputs[Math.floor(Math.random() * outputs.length)],
+                    isError: false
+                };
+            }
+
+            editCode(buttonElement) {
+                const codeBlock = buttonElement.closest('.code-block');
+                const preElement = codeBlock.querySelector('pre');
+                const code = preElement.textContent;
+                
+                // Create textarea for editing
+                const textarea = document.createElement('textarea');
+                textarea.value = code;
+                textarea.className = 'w-full p-3 bg-gray-800 text-gray-100 border border-gray-600 rounded font-mono text-sm resize-none';
+                textarea.style.minHeight = '100px';
+                textarea.rows = Math.max(4, code.split('\n').length);
+                
+                // Replace pre with textarea
+                preElement.style.display = 'none';
+                preElement.parentNode.insertBefore(textarea, preElement.nextSibling);
+                
+                // Update button
+                buttonElement.textContent = '💾 Save';
+                buttonElement.onclick = () => this.saveCodeEdit(buttonElement, textarea, preElement);
+                
+                textarea.focus();
+            }
+
+            saveCodeEdit(buttonElement, textarea, preElement) {
+                const newCode = textarea.value;
+                
+                // Update the pre element
+                preElement.textContent = newCode;
+                preElement.style.display = 'block';
+                
+                // Remove textarea
+                textarea.remove();
+                
+                // Restore button
+                buttonElement.textContent = '✏️ Edit';
+                buttonElement.onclick = () => this.editCode(buttonElement);
+            }
+
+            createTableHTML(data) {
+                if (!data || data.length === 0) {
+                    return '<div class="text-gray-400">No data to display</div>';
+                }
+
+                let html = '<div class="result-table-container"><table class="result-table"><thead><tr>';
+                
+                // Headers
+                Object.keys(data[0]).forEach(key => {
+                    html += `<th>${this.escapeHtml(key)}</th>`;
+                });
+                html += '</tr></thead><tbody>';
+                
+                // Rows (limit to first 10 for display)
+                data.slice(0, 10).forEach(row => {
+                    html += '<tr>';
+                    Object.values(row).forEach(value => {
+                        html += `<td>${this.escapeHtml(String(value))}</td>`;
+                    });
+                    html += '</tr>';
+                });
+                
+                html += '</tbody></table></div>';
+                
+                if (data.length > 10) {
+                    html += `<div class="text-sm text-gray-400 mt-2">Showing 10 of ${data.length} rows</div>`;
+                }
+                
+                return html;
+            }
+
+            createHeatmapHTML(result) {
+                if (!result.data || !result.data.variables || !result.data.correlations) {
+                    return '<div class="text-gray-400">No heatmap data available</div>';
+                }
+
+                const { variables, correlations } = result.data;
+                const gridSize = variables.length;
+                
+                let html = `<div class="heatmap-container">
+                    <h4 class="text-lg font-medium text-gray-100 mb-4">Correlation Heatmap</h4>
+                    <div class="heatmap-grid" style="grid-template-columns: repeat(${gridSize + 1}, 1fr);">`;
+                
+                // Add column headers
+                html += '<div></div>'; // Empty corner cell
+                variables.forEach(variable => {
+                    html += `<div class="text-center text-sm font-medium text-gray-300 p-2">${this.escapeHtml(variable)}</div>`;
+                });
+                
+                // Add rows with row headers and correlation cells
+                correlations.forEach((row, i) => {
+                    // Row header
+                    html += `<div class="text-right text-sm font-medium text-gray-300 p-2">${this.escapeHtml(variables[i])}</div>`;
+                    
+                    // Correlation cells
+                    row.forEach(correlation => {
+                        const intensity = Math.abs(correlation);
+                        const hue = correlation >= 0 ? 0 : 240; // Red for positive, blue for negative
+                        const saturation = 70;
+                        const lightness = 50 - (intensity * 30); // Darker for stronger correlation
+                        
+                        const backgroundColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+                        const displayValue = correlation.toFixed(2);
+                        
+                        html += `<div class="heatmap-cell" style="background-color: ${backgroundColor}">${displayValue}</div>`;
+                    });
+                });
+                
+                html += `</div>
+                    <div class="heatmap-labels">
+                        <div class="heatmap-label-item">
+                            <div class="heatmap-color-box" style="background: hsl(0, 70%, 35%)"></div>
+                            <span>Strong Positive</span>
+                        </div>
+                        <div class="heatmap-label-item">
+                            <div class="heatmap-color-box" style="background: hsl(0, 70%, 50%)"></div>
+                            <span>Weak Positive</span>
+                        </div>
+                        <div class="heatmap-label-item">
+                            <div class="heatmap-color-box" style="background: hsl(240, 70%, 50%)"></div>
+                            <span>Weak Negative</span>
+                        </div>
+                        <div class="heatmap-label-item">
+                            <div class="heatmap-color-box" style="background: hsl(240, 70%, 35%)"></div>
+                            <span>Strong Negative</span>
+                        </div>
+                    </div>
+                </div>`;
+                
+                return html;
+            }
+
+            createChartHTML(result) {
+                const canvasId = 'chart_' + Date.now();
+                return `<div class="chart-container"><canvas id="${canvasId}" width="600" height="400"></canvas></div>`;
+            }
+
+            renderChart(canvas, result) {
+                if (!canvas || !window.Chart) return;
+                
+                const config = {
+                    type: result.chartType,
+                    data: result.data,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        aspectRatio: 2,
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    color: '#f9fafb'
+                                }
+                            }
+                        }
+                    }
+                };
+                
+                // Add axis configuration for non-pie charts
+                if (result.chartType !== 'pie') {
+                    config.options.scales = {
+                        x: {
+                            ticks: { color: '#f9fafb' },
+                            grid: { color: '#374151' }
+                        },
+                        y: {
+                            ticks: { color: '#f9fafb' },
+                            grid: { color: '#374151' }
+                        }
+                    };
+                }
+                
+                new Chart(canvas, config);
+            }
+
+            // Dataset management methods (similar to original sandbox)
+            toggleSidebar() {
+                this.datasetSidebar.classList.toggle('sidebar-hidden');
+            }
+
+            hideSidebar() {
+                this.datasetSidebar.classList.add('sidebar-hidden');
+            }
+
+            async handleFileUpload(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const fileExtension = file.name.split('.').pop().toLowerCase();
+                
+                try {
+                    let data;
+                    const text = await file.text();
+                    
+                    switch (fileExtension) {
+                        case 'csv':
+                            data = this.parseCSV(text);
+                            break;
+                        case 'json':
+                            data = JSON.parse(text);
+                            break;
+                        default:
+                            throw new Error('Unsupported file format');
+                    }
+
+                    const dataset = {
+                        id: Date.now(),
+                        name: file.name,
+                        type: fileExtension,
+                        size: file.size,
+                        rows: Array.isArray(data) ? data.length : 1,
+                        columns: Array.isArray(data) && data.length > 0 ? Object.keys(data[0]).length : 0,
+                        data: data,
+                        uploadDate: new Date()
+                    };
+
+                    this.datasets.push(dataset);
+                    this.renderDatasetList();
+                    this.showNotification(`Dataset "${file.name}" loaded successfully!`);
+                    
+                } catch (error) {
+                    this.showNotification(`Error loading dataset: ${error.message}`, 'error');
+                }
+
+                event.target.value = '';
+            }
+
+            parseCSV(text) {
+                const lines = text.trim().split('\n');
+                const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+                
+                return lines.slice(1).map(line => {
+                    const values = line.split(',').map(v => v.trim().replace(/"/g, ''));
+                    const row = {};
+                    headers.forEach((header, index) => {
+                        row[header] = values[index] || '';
+                    });
+                    return row;
+                });
+            }
+
+            loadSampleDatasets() {
+                const sampleDatasets = [
+                    {
+                        id: 1,
+                        name: 'iris.csv',
+                        type: 'csv',
+                        size: 4800,
+                        rows: 150,
+                        columns: 5,
+                        data: [
+                            { sepal_length: 5.1, sepal_width: 3.5, petal_length: 1.4, petal_width: 0.2, species: 'setosa' },
+                            { sepal_length: 4.9, sepal_width: 3.0, petal_length: 1.4, petal_width: 0.2, species: 'setosa' },
+                            { sepal_length: 4.7, sepal_width: 3.2, petal_length: 1.3, petal_width: 0.2, species: 'setosa' }
+                        ],
+                        uploadDate: new Date()
+                    },
+                    {
+                        id: 2,
+                        name: 'sales_data.csv',
+                        type: 'csv',
+                        size: 12400,
+                        rows: 100,
+                        columns: 4,
+                        data: [
+                            { product: 'Laptop', category: 'Electronics', sales: 45000, quarter: 'Q1' },
+                            { product: 'Phone', category: 'Electronics', sales: 32000, quarter: 'Q1' },
+                            { product: 'Tablet', category: 'Electronics', sales: 28000, quarter: 'Q1' }
+                        ],
+                        uploadDate: new Date()
+                    }
+                ];
+
+                this.datasets = sampleDatasets;
+                this.renderDatasetList();
+            }
+
+            renderDatasetList() {
+                this.datasetList.innerHTML = '';
+
+                this.datasets.forEach(dataset => {
+                    const datasetItem = document.createElement('div');
+                    datasetItem.className = 'dataset-item';
+                    datasetItem.dataset.id = dataset.id;
+
+                    datasetItem.innerHTML = `
+                        <h4>${dataset.name}</h4>
+                        <div class="dataset-meta">
+                            ${dataset.rows} rows × ${dataset.columns} cols | ${this.formatFileSize(dataset.size)}
+                        </div>
+                        <div class="dataset-actions">
+                            <button class="dataset-btn view" onclick="nlSandbox.previewDataset(${dataset.id})">👁 View</button>
+                            <button class="dataset-btn load" onclick="nlSandbox.loadDatasetToChat('${dataset.name}')">💬 Ask About</button>
+                            <button class="dataset-btn remove" onclick="nlSandbox.removeDataset(${dataset.id})">🗑 Remove</button>
+                        </div>
+                    `;
+
+                    this.datasetList.appendChild(datasetItem);
+                });
+            }
+
+            previewDataset(datasetId) {
+                const dataset = this.datasets.find(d => d.id === datasetId);
+                if (!dataset) return;
+
+                const previewData = dataset.data.slice(0, 5);
+                
+                this.previewContent.innerHTML = `
+                    <div class="mb-2">
+                        <strong>${dataset.name}</strong> - ${dataset.rows} rows × ${dataset.columns} columns
+                    </div>
+                    ${this.createTableHTML(previewData)}
+                `;
+                this.datasetPreview.classList.remove('hidden');
+            }
+
+            loadDatasetToChat(datasetName) {
+                const message = `Tell me about the ${datasetName} dataset. What insights can you find?`;
+                this.messageInput.value = message;
+                this.sendMessage();
+                this.hideSidebar();
+            }
+
+            removeDataset(datasetId) {
+                if (confirm('Are you sure you want to remove this dataset?')) {
+                    this.datasets = this.datasets.filter(d => d.id !== datasetId);
+                    this.renderDatasetList();
+                    this.datasetPreview.classList.add('hidden');
+                    this.showNotification('Dataset removed successfully');
+                }
+            }
+
+            formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            showNotification(message, type = 'success') {
+                const notification = document.createElement('div');
+                notification.className = `fixed top-4 right-4 px-4 py-2 rounded shadow-lg text-white z-50 ${
+                    type === 'error' ? 'bg-red-600' : 'bg-green-600'
+                }`;
+                notification.textContent = message;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.remove();
+                }, 3000);
+            }
+
+            clearChat() {
+                if (confirm('Are you sure you want to clear the chat history?')) {
+                    this.chatContainer.innerHTML = `
+                        <div class="bg-gray-800 border border-gray-700 rounded-lg p-4">
+                            <div class="flex items-start space-x-3">
+                                <div class="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>
+                                    </svg>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="font-medium text-emerald-400 mb-2">AI Assistant</div>
+                                    <div class="text-gray-300">
+                                        Welcome to the Natural Language Python Sandbox! Ask me anything about your data in plain English, like:
+                                        <ul class="mt-2 space-y-1 text-sm text-gray-400 list-disc list-inside">
+                                            <li>"Show me the correlation between sales and profit"</li>
+                                            <li>"Create a bar chart of monthly revenue"</li>
+                                            <li>"Filter data where age is greater than 25"</li>
+                                            <li>"Calculate the mean temperature by city"</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    this.chatHistory = [];
+                    this.executionCounter = 1;
+                    this.saveChatHistory();
+                }
+            }
+
+            scrollToBottom() {
+                setTimeout(() => {
+                    const container = this.chatContainer.parentElement;
+                    container.scrollTop = container.scrollHeight;
+                }, 100);
+            }
+
+            saveChatHistory() {
+                try {
+                    localStorage.setItem('nlSandboxChatHistory', JSON.stringify(this.chatHistory));
+                } catch (error) {
+                    console.error('Failed to save chat history:', error);
+                }
+            }
+
+            loadChatHistory() {
+                try {
+                    const saved = localStorage.getItem('nlSandboxChatHistory');
+                    if (saved) {
+                        this.chatHistory = JSON.parse(saved);
+                        // Could restore chat messages here if desired
+                    }
+                } catch (error) {
+                    console.error('Failed to load chat history:', error);
+                    this.chatHistory = [];
+                }
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        }
+
+        // Make sandbox accessible globally
+        let nlSandbox;
+
+        // Initialize sandbox when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            nlSandbox = new NaturalLanguagePythonSandbox();
+        });
+    </script>
+<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+</body>
+</html>

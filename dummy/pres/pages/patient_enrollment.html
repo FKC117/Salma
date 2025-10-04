@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Patient Enrollment - MediScript OPD</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+<script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fmediscript5763back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
+</head>
+<body class="bg-background min-h-screen">
+    <!-- Header Navigation -->
+    <header class="bg-surface shadow-medical border-b border-secondary-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo and Brand -->
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center">
+                        <svg class="w-8 h-8 text-primary" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                        </svg>
+                        <h1 class="ml-2 text-xl font-semibold text-text-primary">MediScript OPD</h1>
+                    </div>
+                </div>
+
+                <!-- Navigation Menu -->
+                <nav class="hidden md:flex space-x-8">
+                    <a href="patient_dashboard.html" class="text-text-secondary hover:text-primary transition-colors">Dashboard</a>
+                    <a href="patient_enrollment.html" class="text-primary font-medium border-b-2 border-primary pb-1">Enrollment</a>
+                    <a href="patient_profile.html" class="text-text-secondary hover:text-primary transition-colors">Profiles</a>
+                    <a href="treatment_session.html" class="text-text-secondary hover:text-primary transition-colors">Treatment</a>
+                    <a href="prescription_management.html" class="text-text-secondary hover:text-primary transition-colors">Prescriptions</a>
+                    <a href="medical_reports.html" class="text-text-secondary hover:text-primary transition-colors">Reports</a>
+                </nav>
+
+                <!-- User Profile -->
+                <div class="flex items-center space-x-4">
+                    <button class="p-2 text-text-secondary hover:text-primary transition-colors">
+                        <i class="fas fa-bell text-lg"></i>
+                    </button>
+                    <div class="flex items-center space-x-2">
+                        <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Dr. Sarah Johnson" class="w-8 h-8 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                        <span class="text-sm font-medium text-text-primary">Dr. Johnson</span>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden p-2 text-text-secondary hover:text-primary" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars text-lg"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Page Header -->
+        <div class="mb-8">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                    <h2 class="text-3xl font-semibold text-text-primary">Patient Enrollment</h2>
+                    <p class="mt-1 text-text-secondary">Register new patients with comprehensive medical information</p>
+                </div>
+                <div class="mt-4 lg:mt-0 flex flex-col sm:flex-row gap-3">
+                    <button class="btn-secondary flex items-center justify-center" onclick="checkDuplicatePatient()">
+                        <i class="fas fa-search mr-2"></i>
+                        Check Duplicate
+                    </button>
+                    <a href="patient_dashboard.html" class="btn-secondary flex items-center justify-center">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Indicator -->
+        <div class="mb-8">
+            <div class="card">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-text-primary">Enrollment Progress</h3>
+                    <span class="text-sm text-text-secondary">Auto-saved <span id="lastSaved">just now</span></span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center text-sm font-medium">1</div>
+                        <span class="ml-2 text-sm font-medium text-primary">Personal Info</span>
+                    </div>
+                    <div class="flex-1 h-1 bg-secondary-200 rounded">
+                        <div class="h-1 bg-primary rounded transition-all duration-300" style="width: 25%" id="progressBar"></div>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 bg-secondary-200 text-text-secondary rounded-full flex items-center justify-center text-sm font-medium">4</div>
+                        <span class="ml-2 text-sm text-text-secondary">Complete</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enrollment Form -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <!-- Tab Navigation -->
+            <div class="lg:col-span-1">
+                <div class="card">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4">Form Sections</h3>
+                    <nav class="space-y-2">
+                        <button class="w-full text-left p-3 rounded-md bg-primary-50 text-primary font-medium border border-primary-200 tab-button active" data-tab="personal">
+                            <i class="fas fa-user mr-2"></i>
+                            Personal Information
+                            <span class="float-right text-xs">*</span>
+                        </button>
+                        <button class="w-full text-left p-3 rounded-md text-text-secondary hover:bg-secondary-50 transition-colors tab-button" data-tab="insurance">
+                            <i class="fas fa-shield-alt mr-2"></i>
+                            Insurance Information
+                        </button>
+                        <button class="w-full text-left p-3 rounded-md text-text-secondary hover:bg-secondary-50 transition-colors tab-button" data-tab="medical">
+                            <i class="fas fa-heartbeat mr-2"></i>
+                            Medical History
+                            <span class="float-right text-xs">*</span>
+                        </button>
+                        <button class="w-full text-left p-3 rounded-md text-text-secondary hover:bg-secondary-50 transition-colors tab-button" data-tab="consent">
+                            <i class="fas fa-file-signature mr-2"></i>
+                            Consent Forms
+                            <span class="float-right text-xs">*</span>
+                        </button>
+                    </nav>
+
+                    <!-- Form Validation Summary -->
+                    <div class="mt-6 p-4 bg-warning-50 border border-warning-200 rounded-md">
+                        <h4 class="text-sm font-medium text-warning-700 mb-2">Required Fields</h4>
+                        <ul class="text-xs text-warning-600 space-y-1" id="validationSummary">
+                            <li><i class="fas fa-exclamation-circle mr-1"></i> Complete personal information</li>
+                            <li><i class="fas fa-exclamation-circle mr-1"></i> Medical history review</li>
+                            <li><i class="fas fa-exclamation-circle mr-1"></i> Consent form signatures</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Content -->
+            <div class="lg:col-span-3">
+                <!-- Personal Information Tab -->
+                <div class="tab-content active" id="personal">
+                    <div class="card">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-semibold text-text-primary">Personal Information</h3>
+                            <span class="text-sm text-error">* Required fields</span>
+                        </div>
+
+                        <form class="space-y-6">
+                            <!-- Patient Photo Upload -->
+                            <div class="flex flex-col lg:flex-row lg:items-start lg:space-x-6">
+                                <div class="mb-6 lg:mb-0">
+                                    <label class="block text-sm font-medium text-text-primary mb-2">Patient Photo</label>
+                                    <div class="flex items-center space-x-4">
+                                        <div class="w-24 h-24 bg-secondary-100 rounded-full flex items-center justify-center overflow-hidden">
+                                            <img id="patientPhoto" src alt="Patient" class="w-full h-full object-cover hidden" />
+                                            <i class="fas fa-camera text-2xl text-text-secondary" id="cameraIcon"></i>
+                                        </div>
+                                        <div>
+                                            <input type="file" id="photoUpload" accept="image/*" class="hidden" onchange="handlePhotoUpload(event)" />
+                                            <button type="button" class="btn-secondary" onclick="document.getElementById('photoUpload').click()">
+                                                <i class="fas fa-upload mr-2"></i>
+                                                Upload Photo
+                                            </button>
+                                            <p class="text-xs text-text-secondary mt-1">JPG, PNG up to 5MB</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Basic Information -->
+                                <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-text-primary mb-1">First Name *</label>
+                                        <input type="text" class="input-field" placeholder="Enter first name" required />
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-text-primary mb-1">Last Name *</label>
+                                        <input type="text" class="input-field" placeholder="Enter last name" required />
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-text-primary mb-1">Date of Birth *</label>
+                                        <input type="date" class="input-field" required />
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-text-primary mb-1">Gender *</label>
+                                        <select class="input-field" required>
+                                            <option value>Select gender</option>
+                                            <option value="male">Male</option>
+                                            <option value="female">Female</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Contact Information -->
+                            <div class="border-t border-secondary-200 pt-6">
+                                <h4 class="text-md font-semibold text-text-primary mb-4">Contact Information</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-text-primary mb-1">Phone Number *</label>
+                                        <input type="tel" class="input-field" placeholder="(555) 123-4567" required />
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-text-primary mb-1">Email Address</label>
+                                        <input type="email" class="input-field" placeholder="patient@email.com" />
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <label class="block text-sm font-medium text-text-primary mb-1">Address *</label>
+                                        <input type="text" class="input-field" placeholder="Street address" required />
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-text-primary mb-1">City *</label>
+                                        <input type="text" class="input-field" placeholder="City" required />
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-text-primary mb-1">State *</label>
+                                        <select class="input-field" required>
+                                            <option value>Select state</option>
+                                            <option value="CA">California</option>
+                                            <option value="NY">New York</option>
+                                            <option value="TX">Texas</option>
+                                            <option value="FL">Florida</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-text-primary mb-1">ZIP Code *</label>
+                                        <input type="text" class="input-field" placeholder="12345" required />
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-text-primary mb-1">Social Security Number</label>
+                                        <input type="text" class="input-field font-data" placeholder="XXX-XX-XXXX" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Emergency Contact -->
+                            <div class="border-t border-secondary-200 pt-6">
+                                <h4 class="text-md font-semibold text-text-primary mb-4">Emergency Contact</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-text-primary mb-1">Contact Name *</label>
+                                        <input type="text" class="input-field" placeholder="Emergency contact name" required />
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-text-primary mb-1">Relationship *</label>
+                                        <select class="input-field" required>
+                                            <option value>Select relationship</option>
+                                            <option value="spouse">Spouse</option>
+                                            <option value="parent">Parent</option>
+                                            <option value="child">Child</option>
+                                            <option value="sibling">Sibling</option>
+                                            <option value="friend">Friend</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-text-primary mb-1">Phone Number *</label>
+                                        <input type="tel" class="input-field" placeholder="(555) 123-4567" required />
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-text-primary mb-1">Email Address</label>
+                                        <input type="email" class="input-field" placeholder="emergency@email.com" />
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Insurance Information Tab -->
+                <div class="tab-content" id="insurance">
+                    <div class="card">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-semibold text-text-primary">Insurance Information</h3>
+                            <button class="btn-secondary" onclick="verifyInsurance()">
+                                <i class="fas fa-check-circle mr-2"></i>
+                                Verify Coverage
+                            </button>
+                        </div>
+
+                        <form class="space-y-6">
+                            <!-- Primary Insurance -->
+                            <div>
+                                <h4 class="text-md font-semibold text-text-primary mb-4">Primary Insurance</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-text-primary mb-1">Insurance Provider</label>
+                                        <select class="input-field">
+                                            <option value>Select provider</option>
+                                            <option value="aetna">Aetna</option>
+                                            <option value="bluecross">Blue Cross Blue Shield</option>
+                                            <option value="cigna">Cigna</option>
+                                            <option value="humana">Humana</option>
+                                            <option value="medicare">Medicare</option>
+                                            <option value="medicaid">Medicaid</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-text-primary mb-1">Policy Number</label>
+                                        <input type="text" class="input-field font-data" placeholder="Policy number" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-text-primary mb-1">Group Number</label>
+                                        <input type="text" class="input-field font-data" placeholder="Group number" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-text-primary mb-1">Member ID</label>
+                                        <input type="text" class="input-field font-data" placeholder="Member ID" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-text-primary mb-1">Effective Date</label>
+                                        <input type="date" class="input-field" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-text-primary mb-1">Copay Amount</label>
+                                        <input type="number" class="input-field" placeholder="0.00" step="0.01" />
+                                    </div>
+                                </div>
+
+                                <!-- Insurance Card Upload -->
+                                <div class="mt-4">
+                                    <label class="block text-sm font-medium text-text-primary mb-2">Insurance Card Images</label>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div class="border-2 border-dashed border-secondary-300 rounded-md p-6 text-center hover:border-primary transition-colors cursor-pointer" onclick="document.getElementById('frontCard').click()">
+                                            <i class="fas fa-cloud-upload-alt text-2xl text-text-secondary mb-2"></i>
+                                            <p class="text-sm text-text-secondary">Upload Front of Card</p>
+                                            <input type="file" id="frontCard" accept="image/*" class="hidden" />
+                                        </div>
+                                        <div class="border-2 border-dashed border-secondary-300 rounded-md p-6 text-center hover:border-primary transition-colors cursor-pointer" onclick="document.getElementById('backCard').click()">
+                                            <i class="fas fa-cloud-upload-alt text-2xl text-text-secondary mb-2"></i>
+                                            <p class="text-sm text-text-secondary">Upload Back of Card</p>
+                                            <input type="file" id="backCard" accept="image/*" class="hidden" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Secondary Insurance -->
+                            <div class="border-t border-secondary-200 pt-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="text-md font-semibold text-text-primary">Secondary Insurance</h4>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="mr-2" id="hasSecondaryInsurance" onchange="toggleSecondaryInsurance()" />
+                                        <span class="text-sm text-text-secondary">Has secondary insurance</span>
+                                    </label>
+                                </div>
+                                <div id="secondaryInsuranceFields" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-text-primary mb-1">Insurance Provider</label>
+                                        <select class="input-field">
+                                            <option value>Select provider</option>
+                                            <option value="aetna">Aetna</option>
+                                            <option value="bluecross">Blue Cross Blue Shield</option>
+                                            <option value="cigna">Cigna</option>
+                                            <option value="humana">Humana</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-text-primary mb-1">Policy Number</label>
+                                        <input type="text" class="input-field font-data" placeholder="Policy number" />
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Medical History Tab -->
+                <div class="tab-content" id="medical">
+                    <div class="card">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-semibold text-text-primary">Medical History</h3>
+                            <span class="text-sm text-error">* Critical for patient safety</span>
+                        </div>
+
+                        <form class="space-y-6">
+                            <!-- Allergies -->
+                            <div>
+                                <h4 class="text-md font-semibold text-text-primary mb-4">Allergies *</h4>
+                                <div class="space-y-3">
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="mr-3" id="noAllergies" onchange="toggleAllergyFields()" />
+                                        <span class="text-sm text-text-primary">No known allergies</span>
+                                    </label>
+                                    <div id="allergyFields">
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-sm font-medium text-text-primary mb-1">Drug Allergies</label>
+                                                <textarea class="input-field" rows="3" placeholder="List any drug allergies and reactions..."></textarea>
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-text-primary mb-1">Food Allergies</label>
+                                                <textarea class="input-field" rows="3" placeholder="List any food allergies and reactions..."></textarea>
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-text-primary mb-1">Environmental Allergies</label>
+                                                <textarea class="input-field" rows="3" placeholder="List any environmental allergies..."></textarea>
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-text-primary mb-1">Other Allergies</label>
+                                                <textarea class="input-field" rows="3" placeholder="List any other allergies..."></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Current Medications -->
+                            <div class="border-t border-secondary-200 pt-6">
+                                <h4 class="text-md font-semibold text-text-primary mb-4">Current Medications</h4>
+                                <div class="space-y-3">
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="mr-3" id="noMedications" onchange="toggleMedicationFields()" />
+                                        <span class="text-sm text-text-primary">Not currently taking any medications</span>
+                                    </label>
+                                    <div id="medicationFields">
+                                        <div class="space-y-4" id="medicationList">
+                                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 medication-entry">
+                                                <div>
+                                                    <label class="block text-sm font-medium text-text-primary mb-1">Medication Name</label>
+                                                    <input type="text" class="input-field" placeholder="Medication name" />
+                                                </div>
+                                                <div>
+                                                    <label class="block text-sm font-medium text-text-primary mb-1">Dosage</label>
+                                                    <input type="text" class="input-field" placeholder="e.g., 10mg" />
+                                                </div>
+                                                <div>
+                                                    <label class="block text-sm font-medium text-text-primary mb-1">Frequency</label>
+                                                    <select class="input-field">
+                                                        <option value>Select frequency</option>
+                                                        <option value="once">Once daily</option>
+                                                        <option value="twice">Twice daily</option>
+                                                        <option value="three">Three times daily</option>
+                                                        <option value="asneeded">As needed</option>
+                                                    </select>
+                                                </div>
+                                                <div class="flex items-end">
+                                                    <button type="button" class="btn-secondary w-full" onclick="removeMedication(this)">
+                                                        <i class="fas fa-trash mr-2"></i>
+                                                        Remove
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn-secondary" onclick="addMedication()">
+                                            <i class="fas fa-plus mr-2"></i>
+                                            Add Another Medication
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Medical Conditions -->
+                            <div class="border-t border-secondary-200 pt-6">
+                                <h4 class="text-md font-semibold text-text-primary mb-4">Past Medical History</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="block text-sm font-medium text-text-primary mb-2">Chronic Conditions</label>
+                                        <div class="space-y-2">
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="mr-2" />
+                                                <span class="text-sm">Diabetes</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="mr-2" />
+                                                <span class="text-sm">Hypertension</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="mr-2" />
+                                                <span class="text-sm">Heart Disease</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="mr-2" />
+                                                <span class="text-sm">Asthma</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="mr-2" />
+                                                <span class="text-sm">Cancer</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-text-primary mb-1">Other Conditions</label>
+                                        <textarea class="input-field" rows="6" placeholder="List any other medical conditions, surgeries, or hospitalizations..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Family History -->
+                            <div class="border-t border-secondary-200 pt-6">
+                                <h4 class="text-md font-semibold text-text-primary mb-4">Family Medical History</h4>
+                                <textarea class="input-field" rows="4" placeholder="List any significant family medical history (parents, siblings, grandparents)..."></textarea>
+                            </div>
+
+                            <!-- Document Upload -->
+                            <div class="border-t border-secondary-200 pt-6">
+                                <h4 class="text-md font-semibold text-text-primary mb-4">Medical Documents</h4>
+                                <div class="border-2 border-dashed border-secondary-300 rounded-md p-8 text-center hover:border-primary transition-colors cursor-pointer" onclick="document.getElementById('medicalDocs').click()">
+                                    <i class="fas fa-file-medical text-3xl text-text-secondary mb-4"></i>
+                                    <p class="text-lg text-text-primary mb-2">Upload Medical Documents</p>
+                                    <p class="text-sm text-text-secondary mb-4">Drag and drop files here or click to browse</p>
+                                    <p class="text-xs text-text-secondary">Supported formats: PDF, JPG, PNG, DICOM (Max 10MB per file)</p>
+                                    <input type="file" id="medicalDocs" multiple accept=".pdf,.jpg,.jpeg,.png,.dcm" class="hidden" />
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Consent Forms Tab -->
+                <div class="tab-content" id="consent">
+                    <div class="card">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-semibold text-text-primary">Consent Forms</h3>
+                            <span class="text-sm text-error">* Required signatures</span>
+                        </div>
+
+                        <form class="space-y-6">
+                            <!-- Treatment Consent -->
+                            <div class="border border-secondary-200 rounded-md p-6">
+                                <h4 class="text-md font-semibold text-text-primary mb-4">Treatment Consent *</h4>
+                                <div class="bg-secondary-50 p-4 rounded-md mb-4 max-h-40 overflow-y-auto">
+                                    <p class="text-sm text-text-secondary leading-relaxed">
+                                        I hereby consent to and authorize the performance of medical treatment by the physicians and staff of MediScript OPD. I understand that no guarantee has been made as to the result of treatment or examination. I acknowledge that I have been informed of the risks, benefits, and alternatives to the proposed treatment...
+                                    </p>
+                                </div>
+                                <div class="space-y-3">
+                                    <label class="flex items-start">
+                                        <input type="checkbox" class="mr-3 mt-1" required />
+                                        <span class="text-sm text-text-primary">I have read and understand the treatment consent form</span>
+                                    </label>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-text-primary mb-1">Patient Signature *</label>
+                                            <div class="border-2 border-dashed border-secondary-300 rounded-md p-4 text-center cursor-pointer hover:border-primary transition-colors" onclick="openSignaturePad('patient')">
+                                                <i class="fas fa-signature text-2xl text-text-secondary mb-2"></i>
+                                                <p class="text-sm text-text-secondary">Click to sign</p>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-text-primary mb-1">Date *</label>
+                                            <input type="date" class="input-field" value="2025-10-03" required />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- HIPAA Authorization -->
+                            <div class="border border-secondary-200 rounded-md p-6">
+                                <h4 class="text-md font-semibold text-text-primary mb-4">HIPAA Authorization *</h4>
+                                <div class="bg-secondary-50 p-4 rounded-md mb-4 max-h-40 overflow-y-auto">
+                                    <p class="text-sm text-text-secondary leading-relaxed">
+                                        I understand that my health information may be used and disclosed for treatment, payment, and healthcare operations. I have the right to review the Notice of Privacy Practices prior to signing this consent...
+                                    </p>
+                                </div>
+                                <div class="space-y-3">
+                                    <label class="flex items-start">
+                                        <input type="checkbox" class="mr-3 mt-1" required />
+                                        <span class="text-sm text-text-primary">I acknowledge receipt of the Notice of Privacy Practices</span>
+                                    </label>
+                                    <label class="flex items-start">
+                                        <input type="checkbox" class="mr-3 mt-1" />
+                                        <span class="text-sm text-text-primary">I authorize disclosure of my health information to family members</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Financial Responsibility -->
+                            <div class="border border-secondary-200 rounded-md p-6">
+                                <h4 class="text-md font-semibold text-text-primary mb-4">Financial Responsibility *</h4>
+                                <div class="bg-secondary-50 p-4 rounded-md mb-4">
+                                    <p class="text-sm text-text-secondary leading-relaxed">
+                                        I understand that I am financially responsible for all charges whether or not paid by insurance. I authorize payment of medical benefits to MediScript OPD for services rendered...
+                                    </p>
+                                </div>
+                                <label class="flex items-start">
+                                    <input type="checkbox" class="mr-3 mt-1" required />
+                                    <span class="text-sm text-text-primary">I accept financial responsibility for services provided</span>
+                                </label>
+                            </div>
+
+                            <!-- Guardian Consent (if minor) -->
+                            <div class="border border-secondary-200 rounded-md p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="text-md font-semibold text-text-primary">Guardian Consent</h4>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="mr-2" id="isMinor" onchange="toggleGuardianConsent()" />
+                                        <span class="text-sm text-text-secondary">Patient is under 18</span>
+                                    </label>
+                                </div>
+                                <div id="guardianConsentFields" class="hidden space-y-4">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-text-primary mb-1">Guardian Name *</label>
+                                            <input type="text" class="input-field" placeholder="Guardian full name" />
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-text-primary mb-1">Relationship *</label>
+                                            <select class="input-field">
+                                                <option value>Select relationship</option>
+                                                <option value="parent">Parent</option>
+                                                <option value="legal_guardian">Legal Guardian</option>
+                                                <option value="other">Other</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-text-primary mb-1">Guardian Signature *</label>
+                                            <div class="border-2 border-dashed border-secondary-300 rounded-md p-4 text-center cursor-pointer hover:border-primary transition-colors" onclick="openSignaturePad('guardian')">
+                                                <i class="fas fa-signature text-2xl text-text-secondary mb-2"></i>
+                                                <p class="text-sm text-text-secondary">Click to sign</p>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-text-primary mb-1">Date *</label>
+                                            <input type="date" class="input-field" value="2025-10-03" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="mt-8 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+            <div class="flex items-center space-x-4">
+                <button type="button" class="btn-secondary" onclick="saveDraft()">
+                    <i class="fas fa-save mr-2"></i>
+                    Save Draft
+                </button>
+                <span class="text-sm text-text-secondary">Last saved: <span id="lastSavedTime">just now</span></span>
+            </div>
+            <div class="flex space-x-3">
+                <button type="button" class="btn-secondary" onclick="cancelEnrollment()">
+                    <i class="fas fa-times mr-2"></i>
+                    Cancel
+                </button>
+                <button type="button" class="btn-primary" onclick="completeEnrollment()">
+                    <i class="fas fa-check mr-2"></i>
+                    Complete Enrollment
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Mobile Navigation Menu (Hidden by default) -->
+    <div class="md:hidden fixed inset-0 z-50 hidden" id="mobileMenu">
+        <div class="fixed inset-0 bg-black bg-opacity-50"></div>
+        <div class="fixed inset-y-0 left-0 w-64 bg-surface shadow-lg">
+            <div class="p-4">
+                <div class="flex items-center justify-between mb-8">
+                    <h2 class="text-lg font-semibold text-text-primary">Menu</h2>
+                    <button class="p-2 text-text-secondary hover:text-primary" onclick="toggleMobileMenu()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <nav class="space-y-4">
+                    <a href="patient_dashboard.html" class="block text-text-secondary hover:text-primary">Dashboard</a>
+                    <a href="patient_enrollment.html" class="block text-primary font-medium">Enrollment</a>
+                    <a href="patient_profile.html" class="block text-text-secondary hover:text-primary">Profiles</a>
+                    <a href="treatment_session.html" class="block text-text-secondary hover:text-primary">Treatment</a>
+                    <a href="prescription_management.html" class="block text-text-secondary hover:text-primary">Prescriptions</a>
+                    <a href="medical_reports.html" class="block text-text-secondary hover:text-primary">Reports</a>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signature Modal -->
+    <div class="fixed inset-0 z-50 hidden" id="signatureModal">
+        <div class="fixed inset-0 bg-black bg-opacity-50"></div>
+        <div class="fixed inset-0 flex items-center justify-center p-4">
+            <div class="bg-surface rounded-md shadow-medical-lg max-w-md w-full">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-text-primary">Digital Signature</h3>
+                        <button class="p-2 text-text-secondary hover:text-primary" onclick="closeSignaturePad()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="border border-secondary-300 rounded-md p-4 bg-secondary-50 text-center">
+                        <canvas id="signatureCanvas" width="400" height="200" class="border border-secondary-200 bg-white rounded cursor-crosshair"></canvas>
+                    </div>
+                    <div class="flex justify-between mt-4">
+                        <button class="btn-secondary" onclick="clearSignature()">
+                            <i class="fas fa-eraser mr-2"></i>
+                            Clear
+                        </button>
+                        <button class="btn-primary" onclick="saveSignature()">
+                            <i class="fas fa-check mr-2"></i>
+                            Save Signature
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab functionality
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tab buttons
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active', 'bg-primary-50', 'text-primary', 'border-primary-200');
+                button.classList.add('text-text-secondary', 'hover:bg-secondary-50');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to selected tab button
+            const activeButton = document.querySelector(`[data-tab="${tabName}"]`);
+            activeButton.classList.remove('text-text-secondary', 'hover:bg-secondary-50');
+            activeButton.classList.add('active', 'bg-primary-50', 'text-primary', 'border-primary-200');
+            
+            // Update progress bar
+            updateProgressBar(tabName);
+        }
+
+        // Add event listeners to tab buttons
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                switchTab(button.dataset.tab);
+            });
+        });
+
+        function updateProgressBar(tabName) {
+            const progressBar = document.getElementById('progressBar');
+            const progressMap = {
+                'personal': '25%',
+                'insurance': '50%',
+                'medical': '75%',
+                'consent': '100%'
+            };
+            progressBar.style.width = progressMap[tabName] || '25%';
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        function handlePhotoUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.getElementById('patientPhoto');
+                    const icon = document.getElementById('cameraIcon');
+                    img.src = e.target.result;
+                    img.classList.remove('hidden');
+                    icon.classList.add('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function toggleSecondaryInsurance() {
+            const checkbox = document.getElementById('hasSecondaryInsurance');
+            const fields = document.getElementById('secondaryInsuranceFields');
+            if (checkbox.checked) {
+                fields.classList.remove('hidden');
+                fields.classList.add('grid');
+            } else {
+                fields.classList.add('hidden');
+                fields.classList.remove('grid');
+            }
+        }
+
+        function toggleAllergyFields() {
+            const checkbox = document.getElementById('noAllergies');
+            const fields = document.getElementById('allergyFields');
+            if (checkbox.checked) {
+                fields.style.display = 'none';
+            } else {
+                fields.style.display = 'block';
+            }
+        }
+
+        function toggleMedicationFields() {
+            const checkbox = document.getElementById('noMedications');
+            const fields = document.getElementById('medicationFields');
+            if (checkbox.checked) {
+                fields.style.display = 'none';
+            } else {
+                fields.style.display = 'block';
+            }
+        }
+
+        function addMedication() {
+            const medicationList = document.getElementById('medicationList');
+            const newMedication = document.createElement('div');
+            newMedication.className = 'grid grid-cols-1 md:grid-cols-4 gap-4 medication-entry';
+            newMedication.innerHTML = `
+                <div>
+                    <label class="block text-sm font-medium text-text-primary mb-1">Medication Name</label>
+                    <input type="text" class="input-field" placeholder="Medication name">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-text-primary mb-1">Dosage</label>
+                    <input type="text" class="input-field" placeholder="e.g., 10mg">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-text-primary mb-1">Frequency</label>
+                    <select class="input-field">
+                        <option value="">Select frequency</option>
+                        <option value="once">Once daily</option>
+                        <option value="twice">Twice daily</option>
+                        <option value="three">Three times daily</option>
+                        <option value="asneeded">As needed</option>
+                    </select>
+                </div>
+                <div class="flex items-end">
+                    <button type="button" class="btn-secondary w-full" onclick="removeMedication(this)">
+                        <i class="fas fa-trash mr-2"></i>
+                        Remove
+                    </button>
+                </div>
+            `;
+            medicationList.appendChild(newMedication);
+        }
+
+        function removeMedication(button) {
+            button.closest('.medication-entry').remove();
+        }
+
+        function toggleGuardianConsent() {
+            const checkbox = document.getElementById('isMinor');
+            const fields = document.getElementById('guardianConsentFields');
+            if (checkbox.checked) {
+                fields.classList.remove('hidden');
+            } else {
+                fields.classList.add('hidden');
+            }
+        }
+
+        // Signature pad functionality
+        let currentSignatureType = '';
+        let isDrawing = false;
+        let canvas, ctx;
+
+        function openSignaturePad(type) {
+            currentSignatureType = type;
+            const modal = document.getElementById('signatureModal');
+            modal.classList.remove('hidden');
+            
+            canvas = document.getElementById('signatureCanvas');
+            ctx = canvas.getContext('2d');
+            
+            // Set up canvas for drawing
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+        }
+
+        function closeSignaturePad() {
+            document.getElementById('signatureModal').classList.add('hidden');
+        }
+
+        function startDrawing(e) {
+            isDrawing = true;
+            draw(e);
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = '#1E293B';
+            
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+        }
+
+        function stopDrawing() {
+            if (isDrawing) {
+                isDrawing = false;
+                ctx.beginPath();
+            }
+        }
+
+        function clearSignature() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function saveSignature() {
+            // In a real application, you would save the signature data
+            console.log('Signature saved for:', currentSignatureType);
+            closeSignaturePad();
+        }
+
+        function checkDuplicatePatient() {
+            // In a real application, this would check for duplicate patients
+            alert('Duplicate patient check functionality would be implemented here.');
+        }
+
+        function verifyInsurance() {
+            // In a real application, this would verify insurance coverage
+            alert('Insurance verification functionality would be implemented here.');
+        }
+
+        function saveDraft() {
+            // Auto-save functionality
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            document.getElementById('lastSavedTime').textContent = timeString;
+            document.getElementById('lastSaved').textContent = timeString;
+            
+            // In a real application, you would save the form data
+            console.log('Draft saved at:', timeString);
+        }
+
+        function cancelEnrollment() {
+            if (confirm('Are you sure you want to cancel? All unsaved changes will be lost.')) {
+                window.location.href = 'patient_dashboard.html';
+            }
+        }
+
+        function completeEnrollment() {
+            // Validate required fields
+            const requiredFields = document.querySelectorAll('input[required], select[required]');
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    isValid = false;
+                    field.classList.add('border-error');
+                } else {
+                    field.classList.remove('border-error');
+                }
+            });
+            
+            if (isValid) {
+                alert('Patient enrollment completed successfully!');
+                window.location.href = 'patient_dashboard.html';
+            } else {
+                alert('Please complete all required fields before submitting.');
+            }
+        }
+
+        // Auto-save every 30 seconds
+        setInterval(saveDraft, 30000);
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default tab
+            switchTab('personal');
+            
+            // Set current date for signature fields
+            const today = new Date().toISOString().split('T')[0];
+            document.querySelectorAll('input[type="date"]').forEach(input => {
+                if (!input.value) {
+                    input.value = today;
+                }
+            });
+        });
+    </script>
+<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Primary Colors */
+  --color-primary: #2563EB; /* blue-600 */
+  --color-primary-50: #EFF6FF; /* blue-50 */
+  --color-primary-100: #DBEAFE; /* blue-100 */
+  --color-primary-500: #3B82F6; /* blue-500 */
+  --color-primary-600: #2563EB; /* blue-600 */
+  --color-primary-700: #1D4ED8; /* blue-700 */
+  
+  /* Secondary Colors */
+  --color-secondary: #64748B; /* slate-500 */
+  --color-secondary-400: #94A3B8; /* slate-400 */
+  --color-secondary-500: #64748B; /* slate-500 */
+  --color-secondary-600: #475569; /* slate-600 */
+  
+  /* Accent Colors */
+  --color-accent: #10B981; /* emerald-500 */
+  --color-accent-400: #34D399; /* emerald-400 */
+  --color-accent-500: #10B981; /* emerald-500 */
+  --color-accent-600: #059669; /* emerald-600 */
+  
+  /* Background Colors */
+  --color-background: #0F172A; /* slate-900 */
+  --color-background-800: #1E293B; /* slate-800 */
+  --color-background-900: #0F172A; /* slate-900 */
+  
+  /* Surface Colors */
+  --color-surface: #1E293B; /* slate-800 */
+  --color-surface-700: #334155; /* slate-700 */
+  --color-surface-800: #1E293B; /* slate-800 */
+  
+  /* Text Colors */
+  --color-text-primary: #F8FAFC; /* slate-50 */
+  --color-text-secondary: #CBD5E1; /* slate-300 */
+  --color-text-muted: #94A3B8; /* slate-400 */
+  
+  /* Status Colors */
+  --color-success: #22C55E; /* green-500 */
+  --color-success-400: #4ADE80; /* green-400 */
+  --color-success-500: #22C55E; /* green-500 */
+  --color-success-600: #16A34A; /* green-600 */
+  
+  --color-warning: #F59E0B; /* amber-500 */
+  --color-warning-400: #FBBF24; /* amber-400 */
+  --color-warning-500: #F59E0B; /* amber-500 */
+  --color-warning-600: #D97706; /* amber-600 */
+  
+  --color-error: #EF4444; /* red-500 */
+  --color-error-400: #F87171; /* red-400 */
+  --color-error-500: #EF4444; /* red-500 */
+  --color-error-600: #DC2626; /* red-600 */
+  
+  /* Border Colors */
+  --color-border: #334155; /* slate-700 */
+  --color-border-light: #475569; /* slate-600 */
+}
+
+@layer base {
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--color-background);
+    color: var(--color-text-primary);
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Inter', sans-serif;
+  }
+  
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+@layer components {
+  .medical-card {
+    @apply bg-surface border border-slate-700 rounded-lg shadow-sm;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  }
+  
+  .medical-button {
+    @apply px-4 py-2 rounded-md font-medium transition-all duration-200;
+    transform: scale(1);
+  }
+  
+  .medical-button:active {
+    transform: scale(0.98);
+  }
+  
+  .medical-input {
+    @apply bg-surface border border-slate-700 rounded-md px-3 py-2 text-slate-50 placeholder-slate-400;
+    @apply focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent;
+  }
+  
+  .medical-modal {
+    backdrop-filter: blur(8px);
+    background-color: rgba(15, 23, 42, 0.8);
+  }
+  
+  .loading-skeleton {
+    @apply bg-slate-800 animate-pulse rounded;
+    background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+    background-size: 200% 100%;
+    animation: loading-shimmer 1.5s infinite;
+  }
+  
+  @keyframes loading-shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+}
+
+@layer utilities {
+  .text-clamp-sm {
+    font-size: clamp(0.875rem, 2vw, 1rem);
+  }
+  
+  .text-clamp-base {
+    font-size: clamp(1rem, 2.5vw, 1.125rem);
+  }
+  
+  .text-clamp-lg {
+    font-size: clamp(1.125rem, 3vw, 1.25rem);
+  }
+  
+  .text-clamp-xl {
+    font-size: clamp(1.25rem, 3.5vw, 1.5rem);
+  }
+  
+  .medical-transition {
+    transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .medical-transition-slow {
+    transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}

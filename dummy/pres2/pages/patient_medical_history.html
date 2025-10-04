@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Patient Medical History - OncoScript Pro</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Foncoscript9250back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
+</head>
+<body class="bg-background text-text-primary font-sans">
+    <!-- Navigation Header -->
+    <nav class="bg-surface border-b border-slate-700 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo and Brand -->
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center">
+                        <svg class="w-8 h-8 text-primary" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        <span class="ml-2 text-xl font-semibold text-text-primary">OncoScript Pro</span>
+                    </div>
+                </div>
+
+                <!-- Navigation Links -->
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="patient_dashboard.html" class="text-text-secondary hover:text-text-primary px-3 py-2 rounded-md hover:bg-surface-700 transition-colors">Dashboard</a>
+                    <a href="patient_registration.html" class="text-text-secondary hover:text-text-primary px-3 py-2 rounded-md hover:bg-surface-700 transition-colors">New Patient</a>
+                    <a href="appointment_scheduling.html" class="text-text-secondary hover:text-text-primary px-3 py-2 rounded-md hover:bg-surface-700 transition-colors">Appointments</a>
+                    <a href="prescription_generation.html" class="text-text-secondary hover:text-text-primary px-3 py-2 rounded-md hover:bg-surface-700 transition-colors">Prescriptions</a>
+                    <a href="patient_medical_history.html" class="text-primary font-medium px-3 py-2 rounded-md bg-primary/10">Medical History</a>
+                </div>
+
+                <!-- User Profile -->
+                <div class="flex items-center space-x-4">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-sm font-medium text-text-primary">Dr. Sarah Johnson</p>
+                        <p class="text-xs text-text-muted">Breast Cancer Specialist</p>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3" alt="Doctor Profile" class="w-10 h-10 rounded-full object-cover border-2 border-primary" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <!-- Header Section -->
+        <div class="mb-8">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                <div class="flex items-center space-x-4">
+                    <a href="patient_dashboard.html" class="text-text-muted hover:text-text-primary transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                    </a>
+                    <div>
+                        <h1 class="text-3xl font-bold text-text-primary">Medical History</h1>
+                        <p class="text-text-muted mt-1">Complete medical timeline for Emily Rodriguez</p>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="flex flex-wrap gap-3">
+                    <button class="medical-button bg-primary hover:bg-primary-700 text-white flex items-center space-x-2" onclick="openAddRecordModal()">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        </svg>
+                        <span>Add Record</span>
+                    </button>
+                    <button class="medical-button bg-accent hover:bg-accent-600 text-white flex items-center space-x-2" onclick="exportHistory()">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        <span>Export</span>
+                    </button>
+                    <a href="prescription_generation.html" class="medical-button bg-surface-700 hover:bg-surface-600 text-text-primary border border-slate-600 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        <span>New Prescription</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Patient Info Card -->
+        <div class="medical-card p-6 mb-6">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div class="flex items-center space-x-4">
+                    <img src="https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Patient" class="w-16 h-16 rounded-full object-cover border-2 border-primary" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                    <div>
+                        <h2 class="text-xl font-semibold text-text-primary">Emily Rodriguez</h2>
+                        <p class="text-text-muted">Patient ID: P-2025-001</p>
+                        <p class="text-text-secondary text-sm">DOB: March 15, 1978 • Age: 47</p>
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-4 text-sm">
+                    <div class="text-center">
+                        <p class="text-text-muted">Diagnosis</p>
+                        <p class="text-text-primary font-medium">Invasive Ductal Carcinoma</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-text-muted">Stage</p>
+                        <p class="text-text-primary font-medium">Stage IIA</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-text-muted">Last Visit</p>
+                        <p class="text-text-primary font-medium">Oct 1, 2025</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search and Filters -->
+        <div class="medical-card p-6 mb-6">
+            <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-text-primary">Medical Timeline</h3>
+                <div class="flex items-center space-x-2 text-sm text-text-muted">
+                    <span>Last updated: Oct 4, 2025 5:56 AM</span>
+                </div>
+            </div>
+            
+            <!-- Search Bar -->
+            <div class="relative mb-4">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                </div>
+                <input type="text" placeholder="Search medical records, procedures, medications..." class="medical-input pl-10 w-full" id="historySearch" />
+            </div>
+
+            <!-- Filter Options -->
+            <div class="flex flex-wrap gap-3">
+                <select class="medical-input text-sm" id="recordTypeFilter">
+                    <option value>All Records</option>
+                    <option value="diagnosis">Diagnosis</option>
+                    <option value="surgery">Surgery</option>
+                    <option value="treatment">Treatment</option>
+                    <option value="lab">Lab Results</option>
+                    <option value="imaging">Imaging</option>
+                    <option value="consultation">Consultation</option>
+                </select>
+                <select class="medical-input text-sm" id="dateRangeFilter">
+                    <option value>All Time</option>
+                    <option value="30">Last 30 Days</option>
+                    <option value="90">Last 3 Months</option>
+                    <option value="365">Last Year</option>
+                    <option value="custom">Custom Range</option>
+                </select>
+                <button class="medical-button bg-surface-700 hover:bg-surface-600 text-text-primary border border-slate-600 text-sm flex items-center space-x-1" onclick="applyFilters()">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                    </svg>
+                    <span>Filter</span>
+                </button>
+                <button class="medical-button bg-surface-700 hover:bg-surface-600 text-text-primary border border-slate-600 text-sm" onclick="resetFilters()">
+                    Reset
+                </button>
+            </div>
+        </div>
+
+        <!-- Timeline and Details Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Timeline Panel -->
+            <div class="lg:col-span-1">
+                <div class="medical-card p-6">
+                    <h3 class="text-lg font-semibold text-text-primary mb-6">Timeline Roadmap</h3>
+                    
+                    <!-- Timeline Container -->
+                    <div class="relative" id="timelineContainer">
+                        <!-- Timeline Line -->
+                        <div class="absolute left-6 top-0 bottom-0 w-0.5 bg-slate-600"></div>
+                        
+                        <!-- Timeline Items -->
+                        <div class="space-y-6">
+                            <!-- Timeline Item 1 - Recent -->
+                            <div class="timeline-item relative flex items-start space-x-4 cursor-pointer hover:bg-surface-700 p-3 rounded-lg transition-colors" onclick="showTimelineDetails('2025-10-01')">
+                                <div class="flex-shrink-0 w-3 h-3 bg-primary rounded-full border-2 border-background relative z-10"></div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between">
+                                        <p class="text-sm font-medium text-text-primary">Follow-up Consultation</p>
+                                        <span class="text-xs text-text-muted">Oct 1</span>
+                                    </div>
+                                    <p class="text-xs text-text-secondary mt-1">Post-treatment assessment</p>
+                                    <div class="flex items-center mt-2">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-success/20 text-success">
+                                            Completed
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Timeline Item 2 -->
+                            <div class="timeline-item relative flex items-start space-x-4 cursor-pointer hover:bg-surface-700 p-3 rounded-lg transition-colors" onclick="showTimelineDetails('2025-09-15')">
+                                <div class="flex-shrink-0 w-3 h-3 bg-warning rounded-full border-2 border-background relative z-10"></div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between">
+                                        <p class="text-sm font-medium text-text-primary">Chemotherapy Session 6</p>
+                                        <span class="text-xs text-text-muted">Sep 15</span>
+                                    </div>
+                                    <p class="text-xs text-text-secondary mt-1">AC-T protocol completion</p>
+                                    <div class="flex items-center mt-2">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-success/20 text-success">
+                                            Completed
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Timeline Item 3 -->
+                            <div class="timeline-item relative flex items-start space-x-4 cursor-pointer hover:bg-surface-700 p-3 rounded-lg transition-colors" onclick="showTimelineDetails('2025-08-20')">
+                                <div class="flex-shrink-0 w-3 h-3 bg-accent rounded-full border-2 border-background relative z-10"></div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between">
+                                        <p class="text-sm font-medium text-text-primary">Lumpectomy Surgery</p>
+                                        <span class="text-xs text-text-muted">Aug 20</span>
+                                    </div>
+                                    <p class="text-xs text-text-secondary mt-1">Breast-conserving surgery</p>
+                                    <div class="flex items-center mt-2">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-success/20 text-success">
+                                            Successful
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Timeline Item 4 -->
+                            <div class="timeline-item relative flex items-start space-x-4 cursor-pointer hover:bg-surface-700 p-3 rounded-lg transition-colors" onclick="showTimelineDetails('2025-07-10')">
+                                <div class="flex-shrink-0 w-3 h-3 bg-primary rounded-full border-2 border-background relative z-10"></div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between">
+                                        <p class="text-sm font-medium text-text-primary">Biopsy Results</p>
+                                        <span class="text-xs text-text-muted">Jul 10</span>
+                                    </div>
+                                    <p class="text-xs text-text-secondary mt-1">Pathology confirmation</p>
+                                    <div class="flex items-center mt-2">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-error/20 text-error">
+                                            Positive
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Timeline Item 5 -->
+                            <div class="timeline-item relative flex items-start space-x-4 cursor-pointer hover:bg-surface-700 p-3 rounded-lg transition-colors" onclick="showTimelineDetails('2025-06-25')">
+                                <div class="flex-shrink-0 w-3 h-3 bg-secondary rounded-full border-2 border-background relative z-10"></div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between">
+                                        <p class="text-sm font-medium text-text-primary">Initial Consultation</p>
+                                        <span class="text-xs text-text-muted">Jun 25</span>
+                                    </div>
+                                    <p class="text-xs text-text-secondary mt-1">First assessment</p>
+                                    <div class="flex items-center mt-2">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-primary/20 text-primary">
+                                            Initial
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Details Panel -->
+            <div class="lg:col-span-2">
+                <div class="medical-card" id="detailsPanel">
+                    <!-- Default View -->
+                    <div id="defaultView" class="p-6">
+                        <div class="text-center py-12">
+                            <svg class="w-16 h-16 text-text-muted mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            <h3 class="text-lg font-medium text-text-primary mb-2">Select a Timeline Event</h3>
+                            <p class="text-text-muted">Click on any timeline item to view detailed medical records and clinical notes.</p>
+                        </div>
+                    </div>
+
+                    <!-- Detail Views (Hidden by default) -->
+                    <div id="detailView-2025-10-01" class="detail-view hidden p-6">
+                        <div class="border-b border-slate-700 pb-4 mb-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-xl font-semibold text-text-primary">Follow-up Consultation</h3>
+                                    <p class="text-text-muted">October 1, 2025 • 2:00 PM</p>
+                                </div>
+                                <span class="inline-flex px-3 py-1 text-sm font-semibold rounded-full bg-success/20 text-success">
+                                    Completed
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Clinical Notes -->
+                            <div>
+                                <h4 class="text-lg font-medium text-text-primary mb-3">Clinical Notes</h4>
+                                <div class="space-y-3">
+                                    <div class="medical-card p-4">
+                                        <h5 class="font-medium text-text-primary mb-2">Assessment</h5>
+                                        <p class="text-text-secondary text-sm">Patient shows excellent recovery progress post-chemotherapy. No signs of recurrence detected. Surgical site healing well with minimal scarring.</p>
+                                    </div>
+                                    <div class="medical-card p-4">
+                                        <h5 class="font-medium text-text-primary mb-2">Recommendations</h5>
+                                        <ul class="text-text-secondary text-sm space-y-1">
+                                            <li>• Continue hormone therapy as prescribed</li>
+                                            <li>• Schedule next follow-up in 3 months</li>
+                                            <li>• Annual mammography recommended</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Biometric Data -->
+                            <div>
+                                <h4 class="text-lg font-medium text-text-primary mb-3">Biometric Data</h4>
+                                <div class="space-y-3">
+                                    <div class="medical-card p-4">
+                                        <div class="grid grid-cols-2 gap-4 text-sm">
+                                            <div>
+                                                <p class="text-text-muted">Weight</p>
+                                                <p class="text-text-primary font-medium">142 lbs</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-text-muted">Height</p>
+                                                <p class="text-text-primary font-medium">5'6"</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-text-muted">BMI</p>
+                                                <p class="text-text-primary font-medium">22.9</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-text-muted">Blood Pressure</p>
+                                                <p class="text-text-primary font-medium">118/76</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Attachments -->
+                        <div class="mt-6">
+                            <h4 class="text-lg font-medium text-text-primary mb-3">Attachments</h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div class="medical-card p-4 flex items-center space-x-3">
+                                    <svg class="w-8 h-8 text-error" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                                    </svg>
+                                    <div>
+                                        <p class="text-text-primary font-medium text-sm">Lab Results</p>
+                                        <p class="text-text-muted text-xs">PDF • 245 KB</p>
+                                    </div>
+                                </div>
+                                <div class="medical-card p-4 flex items-center space-x-3">
+                                    <svg class="w-8 h-8 text-primary" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                                    </svg>
+                                    <div>
+                                        <p class="text-text-primary font-medium text-sm">Imaging Report</p>
+                                        <p class="text-text-muted text-xs">PDF • 1.2 MB</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional detail views for other timeline items would be similar -->
+                    <div id="detailView-2025-09-15" class="detail-view hidden p-6">
+                        <div class="border-b border-slate-700 pb-4 mb-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-xl font-semibold text-text-primary">Chemotherapy Session 6</h3>
+                                    <p class="text-text-muted">September 15, 2025 • 10:00 AM</p>
+                                </div>
+                                <span class="inline-flex px-3 py-1 text-sm font-semibold rounded-full bg-success/20 text-success">
+                                    Completed
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="space-y-6">
+                            <div class="medical-card p-4">
+                                <h4 class="font-medium text-text-primary mb-3">Treatment Protocol</h4>
+                                <p class="text-text-secondary text-sm mb-3">AC-T Protocol - Final session of Taxol (Paclitaxel) administration</p>
+                                <div class="grid grid-cols-2 gap-4 text-sm">
+                                    <div>
+                                        <p class="text-text-muted">Medication</p>
+                                        <p class="text-text-primary font-medium">Paclitaxel 175mg/m²</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-text-muted">Duration</p>
+                                        <p class="text-text-primary font-medium">3 hours</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="medical-card p-4">
+                                <h4 class="font-medium text-text-primary mb-3">Side Effects Monitoring</h4>
+                                <ul class="text-text-secondary text-sm space-y-1">
+                                    <li>• Mild fatigue reported</li>
+                                    <li>• No neuropathy symptoms</li>
+                                    <li>• Nausea well controlled with antiemetics</li>
+                                    <li>• Blood counts within normal range</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Record Modal -->
+    <div id="addRecordModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 medical-modal">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="medical-card max-w-2xl w-full max-h-screen overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-semibold text-text-primary">Add Medical Record</h3>
+                        <button onclick="closeAddRecordModal()" class="text-text-muted hover:text-text-primary">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <form class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-text-primary mb-2">Record Type</label>
+                                <select class="medical-input w-full">
+                                    <option>Consultation</option>
+                                    <option>Surgery</option>
+                                    <option>Treatment</option>
+                                    <option>Lab Results</option>
+                                    <option>Imaging</option>
+                                    <option>Follow-up</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-text-primary mb-2">Date</label>
+                                <input type="date" class="medical-input w-full" value="2025-10-04" />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2">Title</label>
+                            <input type="text" class="medical-input w-full" placeholder="Enter record title" />
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2">Clinical Notes</label>
+                            <textarea class="medical-input w-full h-32" placeholder="Enter detailed clinical notes..."></textarea>
+                        </div>
+
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-text-primary mb-2">Weight (lbs)</label>
+                                <input type="number" class="medical-input w-full" placeholder="142" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-text-primary mb-2">Height</label>
+                                <input type="text" class="medical-input w-full" placeholder="5'6&quot;" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-text-primary mb-2">Blood Pressure</label>
+                                <input type="text" class="medical-input w-full" placeholder="120/80" />
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-text-primary mb-2">Temperature (°F)</label>
+                                <input type="number" class="medical-input w-full" placeholder="98.6" />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2">Attachments</label>
+                            <div class="border-2 border-dashed border-slate-600 rounded-lg p-6 text-center">
+                                <svg class="w-12 h-12 text-text-muted mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                </svg>
+                                <p class="text-text-muted">Drop files here or click to upload</p>
+                                <input type="file" class="hidden" multiple accept=".pdf,.jpg,.png,.doc,.docx" />
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end space-x-3">
+                            <button type="button" onclick="closeAddRecordModal()" class="medical-button bg-surface-700 hover:bg-surface-600 text-text-primary border border-slate-600">
+                                Cancel
+                            </button>
+                            <button type="submit" class="medical-button bg-primary hover:bg-primary-700 text-white">
+                                Save Record
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Navigation Menu -->
+    <div class="md:hidden fixed bottom-0 left-0 right-0 bg-surface border-t border-slate-700 z-50">
+        <div class="grid grid-cols-5 gap-1 p-2">
+            <a href="patient_dashboard.html" class="flex flex-col items-center py-2 px-1 text-text-muted">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+                </svg>
+                <span class="text-xs mt-1">Dashboard</span>
+            </a>
+            <a href="patient_registration.html" class="flex flex-col items-center py-2 px-1 text-text-muted">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                </svg>
+                <span class="text-xs mt-1">New</span>
+            </a>
+            <a href="appointment_scheduling.html" class="flex flex-col items-center py-2 px-1 text-text-muted">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                <span class="text-xs mt-1">Calendar</span>
+            </a>
+            <a href="prescription_generation.html" class="flex flex-col items-center py-2 px-1 text-text-muted">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                <span class="text-xs mt-1">Rx</span>
+            </a>
+            <a href="patient_medical_history.html" class="flex flex-col items-center py-2 px-1 text-primary">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                <span class="text-xs mt-1">History</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Timeline interaction functionality
+        function showTimelineDetails(dateId) {
+            // Hide all detail views
+            const detailViews = document.querySelectorAll('.detail-view');
+            detailViews.forEach(view => view.classList.add('hidden'));
+            
+            // Hide default view
+            document.getElementById('defaultView').classList.add('hidden');
+            
+            // Show selected detail view
+            const targetView = document.getElementById(`detailView-${dateId}`);
+            if (targetView) {
+                targetView.classList.remove('hidden');
+            }
+            
+            // Update timeline item active state
+            const timelineItems = document.querySelectorAll('.timeline-item');
+            timelineItems.forEach(item => item.classList.remove('bg-surface-700'));
+            event.currentTarget.classList.add('bg-surface-700');
+        }
+
+        // Modal functionality
+        function openAddRecordModal() {
+            document.getElementById('addRecordModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeAddRecordModal() {
+            document.getElementById('addRecordModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Search functionality
+        document.getElementById('historySearch').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const timelineItems = document.querySelectorAll('.timeline-item');
+            
+            timelineItems.forEach(item => {
+                const title = item.querySelector('.font-medium').textContent.toLowerCase();
+                const description = item.querySelector('.text-text-secondary').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+
+        // Filter functionality
+        function applyFilters() {
+            const recordType = document.getElementById('recordTypeFilter').value;
+            const dateRange = document.getElementById('dateRangeFilter').value;
+            
+            // Implementation for filtering timeline items
+            console.log('Applying filters:', { recordType, dateRange });
+        }
+
+        function resetFilters() {
+            document.getElementById('recordTypeFilter').value = '';
+            document.getElementById('dateRangeFilter').value = '';
+            document.getElementById('historySearch').value = '';
+            
+            // Show all timeline items
+            const timelineItems = document.querySelectorAll('.timeline-item');
+            timelineItems.forEach(item => item.style.display = '');
+        }
+
+        // Export functionality
+        function exportHistory() {
+            // Implementation for exporting medical history
+            alert('Medical history export functionality would be implemented here');
+        }
+
+        // Auto-save search state
+        const searchInput = document.getElementById('historySearch');
+        searchInput.value = localStorage.getItem('historySearchTerm') || '';
+        
+        searchInput.addEventListener('input', function() {
+            localStorage.setItem('historySearchTerm', this.value);
+        });
+
+        // Close modal on outside click
+        document.getElementById('addRecordModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeAddRecordModal();
+            }
+        });
+
+        // File upload handling
+        document.querySelector('input[type="file"]').addEventListener('change', function(e) {
+            const files = Array.from(e.target.files);
+            console.log('Files selected:', files.map(f => f.name));
+        });
+    </script>
+<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+</body>
+</html>

@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Medical Reports - MediScript OPD</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+<script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fmediscript5763back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
+</head>
+<body class="bg-background min-h-screen">
+    <!-- Header Navigation -->
+    <header class="bg-surface shadow-medical border-b border-secondary-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo and Brand -->
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center">
+                        <svg class="w-8 h-8 text-primary" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                        </svg>
+                        <h1 class="ml-2 text-xl font-semibold text-text-primary">MediScript OPD</h1>
+                    </div>
+                </div>
+
+                <!-- Navigation Menu -->
+                <nav class="hidden md:flex space-x-8">
+                    <a href="patient_dashboard.html" class="text-text-secondary hover:text-primary transition-colors">Dashboard</a>
+                    <a href="patient_enrollment.html" class="text-text-secondary hover:text-primary transition-colors">Enrollment</a>
+                    <a href="patient_profile.html" class="text-text-secondary hover:text-primary transition-colors">Profiles</a>
+                    <a href="treatment_session.html" class="text-text-secondary hover:text-primary transition-colors">Treatment</a>
+                    <a href="prescription_management.html" class="text-text-secondary hover:text-primary transition-colors">Prescriptions</a>
+                    <a href="medical_reports.html" class="text-primary font-medium border-b-2 border-primary pb-1">Reports</a>
+                </nav>
+
+                <!-- User Profile -->
+                <div class="flex items-center space-x-4">
+                    <button class="p-2 text-text-secondary hover:text-primary transition-colors">
+                        <i class="fas fa-bell text-lg"></i>
+                    </button>
+                    <div class="flex items-center space-x-2">
+                        <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Dr. Sarah Johnson" class="w-8 h-8 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                        <span class="text-sm font-medium text-text-primary">Dr. Johnson</span>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden p-2 text-text-secondary hover:text-primary" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars text-lg"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Page Header -->
+        <div class="mb-8">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                    <h2 class="text-3xl font-semibold text-text-primary">Medical Reports</h2>
+                    <p class="mt-1 text-text-secondary">Generate, customize, and manage clinical documents and certificates</p>
+                </div>
+                <div class="mt-4 lg:mt-0 flex flex-col sm:flex-row gap-3">
+                    <button class="btn-secondary flex items-center justify-center" onclick="showBatchGeneration()">
+                        <i class="fas fa-layer-group mr-2"></i>
+                        Batch Generation
+                    </button>
+                    <button class="btn-primary flex items-center justify-center" onclick="createCustomTemplate()">
+                        <i class="fas fa-plus mr-2"></i>
+                        Create Custom Template
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="card">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-primary-50">
+                        <i class="fas fa-file-medical text-primary text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-text-secondary">Reports Generated</p>
+                        <p class="text-2xl font-semibold text-text-primary">342</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-accent-50">
+                        <i class="fas fa-certificate text-accent text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-text-secondary">Certificates Issued</p>
+                        <p class="text-2xl font-semibold text-text-primary">89</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-warning-50">
+                        <i class="fas fa-clock text-warning text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-text-secondary">Pending Reports</p>
+                        <p class="text-2xl font-semibold text-text-primary">12</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-error-50">
+                        <i class="fas fa-share-alt text-error text-xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-text-secondary">Shared Today</p>
+                        <p class="text-2xl font-semibold text-text-primary">7</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Report Templates Section -->
+            <div class="lg:col-span-2">
+                <div class="card">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-semibold text-text-primary">Report Templates</h3>
+                        <div class="flex items-center space-x-2">
+                            <button class="p-2 text-text-secondary hover:text-primary transition-colors" onclick="toggleGridView()">
+                                <i class="fas fa-th-large"></i>
+                            </button>
+                            <button class="p-2 text-text-secondary hover:text-primary transition-colors" onclick="toggleListView()">
+                                <i class="fas fa-list"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Template Categories -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="templateGrid">
+                        <!-- Medical Certificates -->
+                        <div class="border border-secondary-200 rounded-md p-4 hover:shadow-medical-lg transition-all cursor-pointer" onclick="selectTemplate('medical-certificate')">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-16 h-20 bg-primary-50 rounded-md flex items-center justify-center">
+                                    <i class="fas fa-certificate text-primary text-2xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-semibold text-text-primary mb-2">Medical Certificates</h4>
+                                    <p class="text-sm text-text-secondary mb-3">Fitness certificates, sick leave, and medical clearance documents</p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs text-accent font-medium">5 Templates</span>
+                                        <button class="text-primary hover:text-primary-700">
+                                            <i class="fas fa-arrow-right"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Discharge Summaries -->
+                        <div class="border border-secondary-200 rounded-md p-4 hover:shadow-medical-lg transition-all cursor-pointer" onclick="selectTemplate('discharge-summary')">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-16 h-20 bg-accent-50 rounded-md flex items-center justify-center">
+                                    <i class="fas fa-file-medical-alt text-accent text-2xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-semibold text-text-primary mb-2">Discharge Summaries</h4>
+                                    <p class="text-sm text-text-secondary mb-3">Comprehensive treatment summaries and discharge instructions</p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs text-accent font-medium">3 Templates</span>
+                                        <button class="text-primary hover:text-primary-700">
+                                            <i class="fas fa-arrow-right"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Referral Letters -->
+                        <div class="border border-secondary-200 rounded-md p-4 hover:shadow-medical-lg transition-all cursor-pointer" onclick="selectTemplate('referral-letter')">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-16 h-20 bg-warning-50 rounded-md flex items-center justify-center">
+                                    <i class="fas fa-share-square text-warning text-2xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-semibold text-text-primary mb-2">Referral Letters</h4>
+                                    <p class="text-sm text-text-secondary mb-3">Specialist referrals and consultation requests</p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs text-accent font-medium">4 Templates</span>
+                                        <button class="text-primary hover:text-primary-700">
+                                            <i class="fas fa-arrow-right"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Lab Reports -->
+                        <div class="border border-secondary-200 rounded-md p-4 hover:shadow-medical-lg transition-all cursor-pointer" onclick="selectTemplate('lab-report')">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-16 h-20 bg-error-50 rounded-md flex items-center justify-center">
+                                    <i class="fas fa-vial text-error text-2xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-semibold text-text-primary mb-2">Lab Reports</h4>
+                                    <p class="text-sm text-text-secondary mb-3">Laboratory test results and diagnostic reports</p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs text-accent font-medium">6 Templates</span>
+                                        <button class="text-primary hover:text-primary-700">
+                                            <i class="fas fa-arrow-right"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Treatment Summaries -->
+                        <div class="border border-secondary-200 rounded-md p-4 hover:shadow-medical-lg transition-all cursor-pointer" onclick="selectTemplate('treatment-summary')">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-16 h-20 bg-secondary-100 rounded-md flex items-center justify-center">
+                                    <i class="fas fa-stethoscope text-secondary text-2xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-semibold text-text-primary mb-2">Treatment Summaries</h4>
+                                    <p class="text-sm text-text-secondary mb-3">Detailed treatment plans and progress reports</p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs text-accent font-medium">7 Templates</span>
+                                        <button class="text-primary hover:text-primary-700">
+                                            <i class="fas fa-arrow-right"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Custom Templates -->
+                        <div class="border border-secondary-200 rounded-md p-4 hover:shadow-medical-lg transition-all cursor-pointer border-dashed" onclick="createCustomTemplate()">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-16 h-20 bg-secondary-50 rounded-md flex items-center justify-center">
+                                    <i class="fas fa-plus text-secondary text-2xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-semibold text-text-primary mb-2">Custom Templates</h4>
+                                    <p class="text-sm text-text-secondary mb-3">Create personalized report templates for your practice</p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs text-secondary font-medium">Create New</span>
+                                        <button class="text-primary hover:text-primary-700">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Patient Selection for Report -->
+                    <div class="mt-8 pt-6 border-t border-secondary-200">
+                        <h4 class="font-semibold text-text-primary mb-4">Select Patient for Report</h4>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-search text-text-secondary"></i>
+                            </div>
+                            <input type="text" class="input-field pl-10 pr-4" placeholder="Search patient by name, ID, or phone number..." id="patientSearchReport" />
+                        </div>
+                        
+                        <!-- Recent Patients -->
+                        <div class="mt-4">
+                            <h5 class="text-sm font-medium text-text-secondary mb-3">Recent Patients</h5>
+                            <div class="space-y-2">
+                                <div class="flex items-center justify-between p-3 bg-secondary-50 rounded-md hover:bg-secondary-100 cursor-pointer transition-colors" onclick="selectPatientForReport('P-2024-001')">
+                                    <div class="flex items-center space-x-3">
+                                        <img src="https://images.pexels.com/photos/5327585/pexels-photo-5327585.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Emily Rodriguez" class="w-8 h-8 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                                        <div>
+                                            <p class="text-sm font-medium text-text-primary">Emily Rodriguez</p>
+                                            <p class="text-xs text-text-secondary">P-2024-001</p>
+                                        </div>
+                                    </div>
+                                    <button class="text-primary hover:text-primary-700">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                </div>
+
+                                <div class="flex items-center justify-between p-3 bg-secondary-50 rounded-md hover:bg-secondary-100 cursor-pointer transition-colors" onclick="selectPatientForReport('P-2024-002')">
+                                    <div class="flex items-center space-x-3">
+                                        <img src="https://images.pixabay.com/photos/2017/08/01/01/33/beanie-2562646_1280.jpg" alt="Michael Chen" class="w-8 h-8 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                                        <div>
+                                            <p class="text-sm font-medium text-text-primary">Michael Chen</p>
+                                            <p class="text-xs text-text-secondary">P-2024-002</p>
+                                        </div>
+                                    </div>
+                                    <button class="text-primary hover:text-primary-700">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="space-y-6">
+                <!-- Document History -->
+                <div class="card">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4">Recent Documents</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 bg-secondary-50 rounded-md">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-primary-50 rounded-md flex items-center justify-center">
+                                    <i class="fas fa-certificate text-primary text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-text-primary">Medical Certificate</p>
+                                    <p class="text-xs text-text-secondary">Emily Rodriguez - Oct 01</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-1">
+                                <button class="p-1 text-text-secondary hover:text-primary">
+                                    <i class="fas fa-download text-xs"></i>
+                                </button>
+                                <button class="p-1 text-text-secondary hover:text-primary">
+                                    <i class="fas fa-share text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 bg-secondary-50 rounded-md">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-accent-50 rounded-md flex items-center justify-center">
+                                    <i class="fas fa-file-medical-alt text-accent text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-text-primary">Discharge Summary</p>
+                                    <p class="text-xs text-text-secondary">Michael Chen - Sep 30</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-1">
+                                <button class="p-1 text-text-secondary hover:text-primary">
+                                    <i class="fas fa-download text-xs"></i>
+                                </button>
+                                <button class="p-1 text-text-secondary hover:text-primary">
+                                    <i class="fas fa-share text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 bg-secondary-50 rounded-md">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-warning-50 rounded-md flex items-center justify-center">
+                                    <i class="fas fa-share-square text-warning text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-text-primary">Referral Letter</p>
+                                    <p class="text-xs text-text-secondary">Sarah Williams - Sep 28</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-1">
+                                <button class="p-1 text-text-secondary hover:text-primary">
+                                    <i class="fas fa-download text-xs"></i>
+                                </button>
+                                <button class="p-1 text-text-secondary hover:text-primary">
+                                    <i class="fas fa-share text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="w-full mt-4 text-sm text-primary hover:text-primary-700 font-medium">
+                        View All Documents
+                    </button>
+                </div>
+
+                <!-- Pending Reports -->
+                <div class="card">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4">Pending Reports</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 border border-warning-200 bg-warning-50 rounded-md">
+                            <div>
+                                <p class="text-sm font-medium text-text-primary">Lab Report - John Doe</p>
+                                <p class="text-xs text-text-secondary">Due: Oct 03, 2025</p>
+                            </div>
+                            <span class="status-warning">Pending</span>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 border border-error-200 bg-error-50 rounded-md">
+                            <div>
+                                <p class="text-sm font-medium text-text-primary">Medical Certificate - Jane Smith</p>
+                                <p class="text-xs text-text-secondary">Due: Oct 02, 2025</p>
+                            </div>
+                            <span class="status-error">Overdue</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4">Quick Actions</h3>
+                    <div class="space-y-2">
+                        <button class="w-full btn-secondary flex items-center justify-center" onclick="generateQuickCertificate()">
+                            <i class="fas fa-certificate mr-2"></i>
+                            Quick Medical Certificate
+                        </button>
+                        <button class="w-full btn-secondary flex items-center justify-center" onclick="createReferralLetter()">
+                            <i class="fas fa-share-square mr-2"></i>
+                            Create Referral Letter
+                        </button>
+                        <button class="w-full btn-secondary flex items-center justify-center" onclick="viewTemplateLibrary()">
+                            <i class="fas fa-folder mr-2"></i>
+                            Template Library
+                        </button>
+                        <button class="w-full btn-secondary flex items-center justify-center" onclick="complianceCheck()">
+                            <i class="fas fa-shield-alt mr-2"></i>
+                            Compliance Check
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sharing Options -->
+                <div class="card">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4">Secure Sharing</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-text-secondary">Email Encryption</span>
+                            <div class="flex items-center">
+                                <input type="checkbox" checked class="mr-2" />
+                                <span class="text-xs text-accent">Enabled</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-text-secondary">Digital Signature</span>
+                            <div class="flex items-center">
+                                <input type="checkbox" checked class="mr-2" />
+                                <span class="text-xs text-accent">Enabled</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-text-secondary">Audit Trail</span>
+                            <div class="flex items-center">
+                                <input type="checkbox" checked class="mr-2" />
+                                <span class="text-xs text-accent">Enabled</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="w-full mt-4 btn-primary">
+                        <i class="fas fa-cog mr-2"></i>
+                        Security Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Document Editor Modal -->
+    <div class="fixed inset-0 z-50 hidden" id="documentEditorModal">
+        <div class="fixed inset-0 bg-black bg-opacity-50"></div>
+        <div class="fixed inset-4 bg-surface rounded-lg shadow-medical-lg overflow-hidden">
+            <div class="flex h-full">
+                <!-- Editor Toolbar -->
+                <div class="w-64 bg-secondary-50 border-r border-secondary-200 p-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-semibold text-text-primary">Document Editor</h3>
+                        <button class="p-2 text-text-secondary hover:text-primary" onclick="closeDocumentEditor()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Template Info -->
+                    <div class="mb-6">
+                        <div class="p-3 bg-surface rounded-md border border-secondary-200">
+                            <h4 class="font-medium text-text-primary mb-1">Medical Certificate</h4>
+                            <p class="text-xs text-text-secondary">Standard fitness certificate template</p>
+                        </div>
+                    </div>
+
+                    <!-- Patient Info -->
+                    <div class="mb-6">
+                        <h4 class="font-medium text-text-primary mb-2">Patient Information</h4>
+                        <div class="space-y-2">
+                            <div class="text-sm">
+                                <span class="text-text-secondary">Name:</span>
+                                <span class="text-text-primary ml-1">Emily Rodriguez</span>
+                            </div>
+                            <div class="text-sm">
+                                <span class="text-text-secondary">ID:</span>
+                                <span class="text-text-primary ml-1">P-2024-001</span>
+                            </div>
+                            <div class="text-sm">
+                                <span class="text-text-secondary">Age:</span>
+                                <span class="text-text-primary ml-1">32 years</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Formatting Tools -->
+                    <div class="mb-6">
+                        <h4 class="font-medium text-text-primary mb-2">Formatting</h4>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button class="p-2 text-sm border border-secondary-300 rounded hover:bg-secondary-100">
+                                <i class="fas fa-bold"></i>
+                            </button>
+                            <button class="p-2 text-sm border border-secondary-300 rounded hover:bg-secondary-100">
+                                <i class="fas fa-italic"></i>
+                            </button>
+                            <button class="p-2 text-sm border border-secondary-300 rounded hover:bg-secondary-100">
+                                <i class="fas fa-underline"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="space-y-2">
+                        <button class="w-full btn-primary">
+                            <i class="fas fa-save mr-2"></i>
+                            Save Document
+                        </button>
+                        <button class="w-full btn-secondary">
+                            <i class="fas fa-print mr-2"></i>
+                            Print Preview
+                        </button>
+                        <button class="w-full btn-secondary">
+                            <i class="fas fa-share mr-2"></i>
+                            Send Securely
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Document Preview -->
+                <div class="flex-1 p-6 overflow-y-auto">
+                    <div class="max-w-2xl mx-auto bg-white shadow-medical p-8 rounded-md">
+                        <!-- Document Header -->
+                        <div class="text-center mb-8">
+                            <div class="w-16 h-16 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-user-md text-primary text-2xl"></i>
+                            </div>
+                            <h1 class="text-2xl font-semibold text-text-primary">MediScript OPD</h1>
+                            <p class="text-text-secondary">123 Medical Center Drive, Healthcare City, HC 12345</p>
+                            <p class="text-text-secondary">Phone: (555) 123-4567 | Email: info@mediscript.com</p>
+                        </div>
+
+                        <!-- Document Title -->
+                        <div class="text-center mb-8">
+                            <h2 class="text-xl font-semibold text-text-primary border-b-2 border-primary inline-block pb-1">
+                                MEDICAL FITNESS CERTIFICATE
+                            </h2>
+                        </div>
+
+                        <!-- Document Content -->
+                        <div class="space-y-4 text-text-primary">
+                            <p>This is to certify that <strong>Ms. Emily Rodriguez</strong>, aged <strong>32 years</strong>, bearing Patient ID <strong>P-2024-001</strong>, has been examined by me on <strong>October 03, 2025</strong>.</p>
+                            
+                            <p>Based on the clinical examination and available medical records, I hereby certify that the above-mentioned person is:</p>
+                            
+                            <div class="ml-8">
+                                <p>☑ Medically fit for employment</p>
+                                <p>☐ Medically unfit for employment</p>
+                                <p>☐ Temporarily unfit (specify duration): ___________</p>
+                            </div>
+                            
+                            <div class="mt-6">
+                                <p><strong>Clinical Findings:</strong></p>
+                                <div class="ml-4 mt-2 p-3 bg-secondary-50 rounded-md min-h-20">
+                                    <p class="text-text-secondary italic">No significant abnormalities detected. Vital signs within normal limits.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-6">
+                                <p><strong>Recommendations:</strong></p>
+                                <div class="ml-4 mt-2 p-3 bg-secondary-50 rounded-md min-h-20">
+                                    <p class="text-text-secondary italic">Regular health check-ups recommended.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Signature Section -->
+                        <div class="mt-12 flex justify-between items-end">
+                            <div>
+                                <p class="text-sm text-text-secondary">Date: October 03, 2025</p>
+                                <p class="text-sm text-text-secondary">Certificate No: MC-2025-001</p>
+                            </div>
+                            <div class="text-center">
+                                <div class="w-32 h-16 border-b border-text-secondary mb-2"></div>
+                                <p class="text-sm font-medium text-text-primary">Dr. Sarah Johnson</p>
+                                <p class="text-xs text-text-secondary">Medical License: MD-12345</p>
+                                <p class="text-xs text-text-secondary">Digital Signature Applied</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Navigation Menu -->
+    <div class="md:hidden fixed inset-0 z-50 hidden" id="mobileMenu">
+        <div class="fixed inset-0 bg-black bg-opacity-50"></div>
+        <div class="fixed inset-y-0 left-0 w-64 bg-surface shadow-lg">
+            <div class="p-4">
+                <div class="flex items-center justify-between mb-8">
+                    <h2 class="text-lg font-semibold text-text-primary">Menu</h2>
+                    <button class="p-2 text-text-secondary hover:text-primary" onclick="toggleMobileMenu()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <nav class="space-y-4">
+                    <a href="patient_dashboard.html" class="block text-text-secondary hover:text-primary">Dashboard</a>
+                    <a href="patient_enrollment.html" class="block text-text-secondary hover:text-primary">Enrollment</a>
+                    <a href="patient_profile.html" class="block text-text-secondary hover:text-primary">Profiles</a>
+                    <a href="treatment_session.html" class="block text-text-secondary hover:text-primary">Treatment</a>
+                    <a href="prescription_management.html" class="block text-text-secondary hover:text-primary">Prescriptions</a>
+                    <a href="medical_reports.html" class="block text-primary font-medium">Reports</a>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        function selectTemplate(templateType) {
+            console.log('Selected template:', templateType);
+            // Show document editor modal
+            document.getElementById('documentEditorModal').classList.remove('hidden');
+        }
+
+        function closeDocumentEditor() {
+            document.getElementById('documentEditorModal').classList.add('hidden');
+        }
+
+        function selectPatientForReport(patientId) {
+            console.log('Selected patient:', patientId);
+            // In a real application, this would populate patient data
+        }
+
+        function createCustomTemplate() {
+            console.log('Creating custom template');
+            // In a real application, this would open template creation interface
+        }
+
+        function showBatchGeneration() {
+            console.log('Showing batch generation');
+            // In a real application, this would show batch generation interface
+        }
+
+        function toggleGridView() {
+            document.getElementById('templateGrid').className = 'grid grid-cols-1 md:grid-cols-2 gap-6';
+        }
+
+        function toggleListView() {
+            document.getElementById('templateGrid').className = 'space-y-4';
+        }
+
+        function generateQuickCertificate() {
+            selectTemplate('medical-certificate');
+        }
+
+        function createReferralLetter() {
+            selectTemplate('referral-letter');
+        }
+
+        function viewTemplateLibrary() {
+            console.log('Opening template library');
+        }
+
+        function complianceCheck() {
+            console.log('Running compliance check');
+        }
+
+        // Search functionality
+        document.getElementById('patientSearchReport').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            console.log('Searching for patient:', searchTerm);
+        });
+    </script>
+<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+</body>
+</html>

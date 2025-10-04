@@ -77,7 +77,7 @@ class LLMProcessor:
         self.output_token_cost = getattr(settings, 'TOKEN_COST_PER_OUTPUT', 0.0015)
         
         # Context management
-        self.max_context_messages = 10
+        self.max_context_messages = 5  # Reduced to prevent context overflow
         self.context_cache_timeout = 3600  # 1 hour
         
         # Initialize the appropriate model based on settings and environment

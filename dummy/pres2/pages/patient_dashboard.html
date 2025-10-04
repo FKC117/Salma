@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Patient Dashboard - OncoScript Pro</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Foncoscript9250back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
+</head>
+<body class="bg-background text-text-primary font-sans">
+    <!-- Navigation Header -->
+    <nav class="bg-surface border-b border-slate-700 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo and Brand -->
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center">
+                        <svg class="w-8 h-8 text-primary" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        <span class="ml-2 text-xl font-semibold text-text-primary">OncoScript Pro</span>
+                    </div>
+                </div>
+
+                <!-- Navigation Links -->
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="patient_dashboard.html" class="text-primary font-medium px-3 py-2 rounded-md bg-primary/10">Dashboard</a>
+                    <a href="analytics_dashboard.html" class="text-text-secondary hover:text-text-primary px-3 py-2 rounded-md hover:bg-surface-700 transition-colors">Analytics</a>
+                    <a href="patient_registration.html" class="text-text-secondary hover:text-text-primary px-3 py-2 rounded-md hover:bg-surface-700 transition-colors">New Patient</a>
+                    <a href="appointment_scheduling.html" class="text-text-secondary hover:text-text-primary px-3 py-2 rounded-md hover:bg-surface-700 transition-colors">Appointments</a>
+                </div>
+
+                <!-- User Profile -->
+                <div class="flex items-center space-x-4">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-sm font-medium text-text-primary">Dr. Sarah Johnson</p>
+                        <p class="text-xs text-text-muted">Breast Cancer Specialist</p>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3" alt="Doctor Profile" class="w-10 h-10 rounded-full object-cover border-2 border-primary" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <!-- Header Section -->
+        <div class="mb-8">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                <div>
+                    <h1 class="text-3xl font-bold text-text-primary">Patient Dashboard</h1>
+                    <p class="text-text-muted mt-1">Manage your breast cancer patients and practice operations</p>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="flex flex-wrap gap-3">
+                    <a href="patient_registration.html" class="medical-button bg-primary hover:bg-primary-700 text-white flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        </svg>
+                        <span>New Patient</span>
+                    </a>
+                    <a href="appointment_scheduling.html" class="medical-button bg-surface-700 hover:bg-surface-600 text-text-primary border border-slate-600 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        <span>Calendar</span>
+                    </a>
+                    <a href="analytics_dashboard.html" class="medical-button bg-accent hover:bg-accent-600 text-white flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                        <span>Analytics</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <!-- Main Patient Section -->
+            <div class="lg:col-span-3 space-y-6">
+                <!-- Search and Filters -->
+                <div class="medical-card p-6">
+                    <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-6">
+                        <h2 class="text-xl font-semibold text-text-primary">Patient Management</h2>
+                        <div class="flex items-center space-x-2 text-sm text-text-muted">
+                            <span>Last updated: Oct 4, 2025 5:54 AM</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Search Bar -->
+                    <div class="relative mb-4">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                        </div>
+                        <input type="text" placeholder="Search patients by name, ID, or condition..." class="medical-input pl-10 w-full" id="patientSearch" />
+                    </div>
+
+                    <!-- Filter Options -->
+                    <div class="flex flex-wrap gap-3 mb-6">
+                        <select class="medical-input text-sm">
+                            <option>All Patients</option>
+                            <option>Active Treatment</option>
+                            <option>Post-Surgery</option>
+                            <option>Follow-up</option>
+                            <option>Consultation</option>
+                        </select>
+                        <select class="medical-input text-sm">
+                            <option>All Appointments</option>
+                            <option>Today</option>
+                            <option>This Week</option>
+                            <option>Overdue</option>
+                        </select>
+                        <button class="medical-button bg-surface-700 hover:bg-surface-600 text-text-primary border border-slate-600 text-sm flex items-center space-x-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                            </svg>
+                            <span>Filter</span>
+                        </button>
+                        <button class="medical-button bg-surface-700 hover:bg-surface-600 text-text-primary border border-slate-600 text-sm">
+                            Reset
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Patient List -->
+                <div class="medical-card">
+                    <div class="p-6 border-b border-slate-700">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-text-primary">Active Patients</h3>
+                            <span class="text-sm text-text-muted">247 total patients</span>
+                        </div>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-surface-700">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">Patient</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">Last Visit</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">Next Appointment</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-700">
+                                <!-- Patient Row 1 -->
+                                <tr class="hover:bg-surface-700 transition-colors">
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center">
+                                            <img src="https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Patient" class="w-10 h-10 rounded-full object-cover mr-4" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                                            <div>
+                                                <div class="text-sm font-medium text-text-primary">Emily Rodriguez</div>
+                                                <div class="text-sm text-text-muted">ID: P-2025-001</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-text-secondary">Oct 1, 2025</td>
+                                    <td class="px-6 py-4 text-sm text-text-secondary">Oct 8, 2025 2:00 PM</td>
+                                    <td class="px-6 py-4">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-warning/20 text-warning">
+                                            Active Treatment
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex space-x-2">
+                                            <a href="patient_medical_history.html" class="text-primary hover:text-primary-400 transition-colors" title="View History">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                                </svg>
+                                            </a>
+                                            <a href="appointment_scheduling.html" class="text-accent hover:text-accent-400 transition-colors" title="Schedule">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                </svg>
+                                            </a>
+                                            <a href="analytics_dashboard.html" class="text-success hover:text-success-400 transition-colors" title="Analytics">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                                </svg>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Patient Row 2 -->
+                                <tr class="hover:bg-surface-700 transition-colors">
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center">
+                                            <img src="https://images.pixabay.com/photo/2017/08/01/01/33/beanie-2562646_1280.jpg" alt="Patient" class="w-10 h-10 rounded-full object-cover mr-4" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                                            <div>
+                                                <div class="text-sm font-medium text-text-primary">Sarah Thompson</div>
+                                                <div class="text-sm text-text-muted">ID: P-2025-002</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-text-secondary">Sep 28, 2025</td>
+                                    <td class="px-6 py-4 text-sm text-text-secondary">Oct 5, 2025 10:30 AM</td>
+                                    <td class="px-6 py-4">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-success/20 text-success">
+                                            Post-Surgery
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex space-x-2">
+                                            <a href="patient_medical_history.html" class="text-primary hover:text-primary-400 transition-colors" title="View History">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                                </svg>
+                                            </a>
+                                            <a href="appointment_scheduling.html" class="text-accent hover:text-accent-400 transition-colors" title="Schedule">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                </svg>
+                                            </a>
+                                            <a href="analytics_dashboard.html" class="text-success hover:text-success-400 transition-colors" title="Analytics">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                                </svg>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Patient Row 3 -->
+                                <tr class="hover:bg-surface-700 transition-colors">
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center">
+                                            <img src="https://images.unsplash.com/photo-1494790108755-2616c96c8e8e?q=80&w=2787&auto=format&fit=crop&ixlib=rb-4.0.3" alt="Patient" class="w-10 h-10 rounded-full object-cover mr-4" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                                            <div>
+                                                <div class="text-sm font-medium text-text-primary">Maria Garcia</div>
+                                                <div class="text-sm text-text-muted">ID: P-2025-003</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-text-secondary">Oct 2, 2025</td>
+                                    <td class="px-6 py-4 text-sm text-text-secondary">Oct 9, 2025 3:15 PM</td>
+                                    <td class="px-6 py-4">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-primary/20 text-primary">
+                                            Follow-up
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex space-x-2">
+                                            <a href="patient_medical_history.html" class="text-primary hover:text-primary-400 transition-colors" title="View History">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                                </svg>
+                                            </a>
+                                            <a href="appointment_scheduling.html" class="text-accent hover:text-accent-400 transition-colors" title="Schedule">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                </svg>
+                                            </a>
+                                            <a href="analytics_dashboard.html" class="text-success hover:text-success-400 transition-colors" title="Analytics">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                                </svg>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Patient Row 4 -->
+                                <tr class="hover:bg-surface-700 transition-colors">
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center">
+                                            <img src="https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Patient" class="w-10 h-10 rounded-full object-cover mr-4" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                                            <div>
+                                                <div class="text-sm font-medium text-text-primary">Jennifer Lee</div>
+                                                <div class="text-sm text-text-muted">ID: P-2025-004</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-text-secondary">Sep 30, 2025</td>
+                                    <td class="px-6 py-4 text-sm text-error">Overdue</td>
+                                    <td class="px-6 py-4">
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-error/20 text-error">
+                                            Urgent
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex space-x-2">
+                                            <a href="patient_medical_history.html" class="text-primary hover:text-primary-400 transition-colors" title="View History">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                                </svg>
+                                            </a>
+                                            <a href="appointment_scheduling.html" class="text-accent hover:text-accent-400 transition-colors" title="Schedule">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                </svg>
+                                            </a>
+                                            <a href="analytics_dashboard.html" class="text-success hover:text-success-400 transition-colors" title="Analytics">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                                </svg>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="px-6 py-4 border-t border-slate-700 flex items-center justify-between">
+                        <div class="text-sm text-text-muted">
+                            Showing 1 to 4 of 247 patients
+                        </div>
+                        <div class="flex space-x-2">
+                            <button class="medical-button bg-surface-700 hover:bg-surface-600 text-text-primary border border-slate-600 text-sm px-3 py-1">
+                                Previous
+                            </button>
+                            <button class="medical-button bg-primary hover:bg-primary-700 text-white text-sm px-3 py-1">
+                                1
+                            </button>
+                            <button class="medical-button bg-surface-700 hover:bg-surface-600 text-text-primary border border-slate-600 text-sm px-3 py-1">
+                                2
+                            </button>
+                            <button class="medical-button bg-surface-700 hover:bg-surface-600 text-text-primary border border-slate-600 text-sm px-3 py-1">
+                                Next
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar Panel -->
+            <div class="lg:col-span-1 space-y-6">
+                <!-- Today's Appointments -->
+                <div class="medical-card p-6">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4">Today's Schedule</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-3 bg-surface-700 rounded-lg">
+                            <div>
+                                <p class="text-sm font-medium text-text-primary">Sarah Thompson</p>
+                                <p class="text-xs text-text-muted">10:30 AM - Follow-up</p>
+                            </div>
+                            <span class="w-3 h-3 bg-success rounded-full"></span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-surface-700 rounded-lg">
+                            <div>
+                                <p class="text-sm font-medium text-text-primary">Emily Rodriguez</p>
+                                <p class="text-xs text-text-muted">2:00 PM - Treatment</p>
+                            </div>
+                            <span class="w-3 h-3 bg-warning rounded-full"></span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-surface-700 rounded-lg">
+                            <div>
+                                <p class="text-sm font-medium text-text-primary">Maria Garcia</p>
+                                <p class="text-xs text-text-muted">3:15 PM - Consultation</p>
+                            </div>
+                            <span class="w-3 h-3 bg-primary rounded-full"></span>
+                        </div>
+                    </div>
+                    <a href="appointment_scheduling.html" class="block mt-4 text-center text-primary hover:text-primary-400 text-sm font-medium">
+                        View Full Calendar
+                    </a>
+                </div>
+
+                <!-- Practice Statistics -->
+                <div class="medical-card p-6">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4">Practice Overview</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-text-muted text-sm">Total Patients</span>
+                            <span class="text-text-primary font-semibold">247</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-text-muted text-sm">Active Treatments</span>
+                            <span class="text-warning font-semibold">18</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-text-muted text-sm">This Week</span>
+                            <span class="text-accent font-semibold">32</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-text-muted text-sm">Pending Tasks</span>
+                            <span class="text-error font-semibold">5</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Urgent Tasks -->
+                <div class="medical-card p-6">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4">Urgent Tasks</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-start space-x-3 p-3 bg-error/10 border border-error/20 rounded-lg">
+                            <svg class="w-5 h-5 text-error mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                            </svg>
+                            <div>
+                                <p class="text-sm font-medium text-text-primary">Overdue Appointment</p>
+                                <p class="text-xs text-text-muted">Jennifer Lee - Contact needed</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3 p-3 bg-warning/10 border border-warning/20 rounded-lg">
+                            <svg class="w-5 h-5 text-warning mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                            </svg>
+                            <div>
+                                <p class="text-sm font-medium text-text-primary">Lab Results</p>
+                                <p class="text-xs text-text-muted">3 results pending review</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Navigation Menu (Hidden by default) -->
+    <div class="md:hidden fixed bottom-0 left-0 right-0 bg-surface border-t border-slate-700 z-50">
+        <div class="grid grid-cols-4 gap-1 p-2">
+            <a href="patient_dashboard.html" class="flex flex-col items-center py-2 px-1 text-primary">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+                </svg>
+                <span class="text-xs mt-1">Dashboard</span>
+            </a>
+            <a href="analytics_dashboard.html" class="flex flex-col items-center py-2 px-1 text-text-muted">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                </svg>
+                <span class="text-xs mt-1">Analytics</span>
+            </a>
+            <a href="patient_registration.html" class="flex flex-col items-center py-2 px-1 text-text-muted">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                </svg>
+                <span class="text-xs mt-1">New</span>
+            </a>
+            <a href="appointment_scheduling.html" class="flex flex-col items-center py-2 px-1 text-text-muted">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                <span class="text-xs mt-1">Calendar</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Search functionality
+        document.getElementById('patientSearch').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('tbody tr');
+            
+            rows.forEach(row => {
+                const patientName = row.querySelector('td:first-child .text-sm.font-medium').textContent.toLowerCase();
+                const patientId = row.querySelector('td:first-child .text-text-muted').textContent.toLowerCase();
+                
+                if (patientName.includes(searchTerm) || patientId.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+        // Auto-save search state
+        const searchInput = document.getElementById('patientSearch');
+        searchInput.value = localStorage.getItem('patientSearchTerm') || '';
+        
+        searchInput.addEventListener('input', function() {
+            localStorage.setItem('patientSearchTerm', this.value);
+        });
+    </script>
+<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+</body>
+</html>

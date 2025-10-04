@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Treatment Session - MediScript OPD</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+<script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fmediscript5763back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
+</head>
+<body class="bg-background min-h-screen">
+    <!-- Header Navigation -->
+    <header class="bg-surface shadow-medical border-b border-secondary-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo and Brand -->
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center">
+                        <svg class="w-8 h-8 text-primary" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                        </svg>
+                        <h1 class="ml-2 text-xl font-semibold text-text-primary">MediScript OPD</h1>
+                    </div>
+                </div>
+
+                <!-- Navigation Menu -->
+                <nav class="hidden md:flex space-x-8">
+                    <a href="patient_dashboard.html" class="text-text-secondary hover:text-primary transition-colors">Dashboard</a>
+                    <a href="patient_enrollment.html" class="text-text-secondary hover:text-primary transition-colors">Enrollment</a>
+                    <a href="patient_profile.html" class="text-text-secondary hover:text-primary transition-colors">Profiles</a>
+                    <a href="treatment_session.html" class="text-primary font-medium border-b-2 border-primary pb-1">Treatment</a>
+                    <a href="prescription_management.html" class="text-text-secondary hover:text-primary transition-colors">Prescriptions</a>
+                    <a href="medical_reports.html" class="text-text-secondary hover:text-primary transition-colors">Reports</a>
+                </nav>
+
+                <!-- User Profile -->
+                <div class="flex items-center space-x-4">
+                    <button class="p-2 text-text-secondary hover:text-primary transition-colors">
+                        <i class="fas fa-bell text-lg"></i>
+                    </button>
+                    <div class="flex items-center space-x-2">
+                        <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Dr. Sarah Johnson" class="w-8 h-8 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                        <span class="text-sm font-medium text-text-primary">Dr. Johnson</span>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden p-2 text-text-secondary hover:text-primary" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars text-lg"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Session Header -->
+        <div class="mb-8">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                    <h2 class="text-3xl font-semibold text-text-primary">Treatment Session</h2>
+                    <p class="mt-1 text-text-secondary">Document patient visit and clinical observations</p>
+                </div>
+                <div class="mt-4 lg:mt-0 flex flex-col sm:flex-row gap-3">
+                    <button class="btn-secondary flex items-center justify-center" onclick="toggleVoiceRecording()">
+                        <i class="fas fa-microphone mr-2" id="voiceIcon"></i>
+                        <span id="voiceText">Voice Recording</span>
+                    </button>
+                    <button class="btn-secondary flex items-center justify-center" onclick="loadTemplate()">
+                        <i class="fas fa-file-medical mr-2"></i>
+                        Load Template
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Patient Info Banner -->
+        <div class="card mb-8 bg-primary-50 border-primary-200">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div class="flex items-center space-x-4">
+                    <img src="https://images.pexels.com/photos/5327585/pexels-photo-5327585.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Emily Rodriguez" class="w-16 h-16 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                    <div>
+                        <h3 class="text-xl font-semibold text-text-primary">Emily Rodriguez</h3>
+                        <p class="text-text-secondary">Patient ID: P-2024-001 | Age: 34 | Female</p>
+                        <p class="text-sm text-text-secondary">Last Visit: Sep 15, 2025 | Cardiology</p>
+                    </div>
+                </div>
+                <div class="mt-4 md:mt-0 text-right">
+                    <p class="text-sm text-text-secondary">Session Started</p>
+                    <p class="text-lg font-semibold text-text-primary" id="sessionTime">Oct 03, 2025 - 3:33 PM</p>
+                    <span class="status-success">Active Session</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Treatment Documentation Form -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Chief Complaint -->
+                <div class="card">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4">Chief Complaint</h3>
+                    <textarea class="input-field h-24 resize-none" placeholder="Patient's primary concern or reason for visit..." id="chiefComplaint"></textarea>
+                    <div class="mt-2 flex items-center text-sm text-text-secondary">
+                        <i class="fas fa-clock mr-1"></i>
+                        <span>Auto-saved at <span id="autoSaveTime">3:33 PM</span></span>
+                    </div>
+                </div>
+
+                <!-- History of Present Illness -->
+                <div class="card">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4">History of Present Illness</h3>
+                    <textarea class="input-field h-32 resize-none" placeholder="Detailed description of current symptoms, onset, duration, severity, associated factors..." id="presentIllness"></textarea>
+                    <div class="mt-3 flex flex-wrap gap-2">
+                        <button class="px-3 py-1 text-xs bg-secondary-100 text-secondary-700 rounded-full hover:bg-secondary-200 transition-colors" onclick="insertTemplate('onset')">
+                            Onset Template
+                        </button>
+                        <button class="px-3 py-1 text-xs bg-secondary-100 text-secondary-700 rounded-full hover:bg-secondary-200 transition-colors" onclick="insertTemplate('pain')">
+                            Pain Assessment
+                        </button>
+                        <button class="px-3 py-1 text-xs bg-secondary-100 text-secondary-700 rounded-full hover:bg-secondary-200 transition-colors" onclick="insertTemplate('symptoms')">
+                            Common Symptoms
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Vital Signs -->
+                <div class="card">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4">Vital Signs</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-text-secondary mb-1">Blood Pressure</label>
+                            <div class="flex items-center space-x-2">
+                                <input type="number" class="input-field w-20" placeholder="120" id="systolic" />
+                                <span class="text-text-secondary">/</span>
+                                <input type="number" class="input-field w-20" placeholder="80" id="diastolic" />
+                                <span class="text-sm text-text-secondary">mmHg</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-text-secondary mb-1">Temperature</label>
+                            <div class="flex items-center space-x-2">
+                                <input type="number" step="0.1" class="input-field" placeholder="98.6" id="temperature" />
+                                <span class="text-sm text-text-secondary">°F</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-text-secondary mb-1">Pulse Rate</label>
+                            <div class="flex items-center space-x-2">
+                                <input type="number" class="input-field" placeholder="72" id="pulse" />
+                                <span class="text-sm text-text-secondary">bpm</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-text-secondary mb-1">Weight</label>
+                            <div class="flex items-center space-x-2">
+                                <input type="number" step="0.1" class="input-field" placeholder="150" id="weight" />
+                                <span class="text-sm text-text-secondary">lbs</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-text-secondary mb-1">Oxygen Saturation</label>
+                            <div class="flex items-center space-x-2">
+                                <input type="number" class="input-field" placeholder="98" id="oxygen" />
+                                <span class="text-sm text-text-secondary">%</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-text-secondary mb-1">Respiratory Rate</label>
+                            <div class="flex items-center space-x-2">
+                                <input type="number" class="input-field" placeholder="16" id="respiratory" />
+                                <span class="text-sm text-text-secondary">rpm</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Physical Examination -->
+                <div class="card">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4">Physical Examination</h3>
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <h4 class="font-medium text-text-primary mb-2">General Appearance</h4>
+                                <div class="space-y-2">
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="mr-2 text-primary focus:ring-primary" />
+                                        <span class="text-sm">Alert and oriented</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="mr-2 text-primary focus:ring-primary" />
+                                        <span class="text-sm">No acute distress</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="mr-2 text-primary focus:ring-primary" />
+                                        <span class="text-sm">Well-developed</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-text-primary mb-2">Cardiovascular</h4>
+                                <div class="space-y-2">
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="mr-2 text-primary focus:ring-primary" />
+                                        <span class="text-sm">Regular rate and rhythm</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="mr-2 text-primary focus:ring-primary" />
+                                        <span class="text-sm">No murmurs</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="mr-2 text-primary focus:ring-primary" />
+                                        <span class="text-sm">No peripheral edema</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-text-primary mb-2">Respiratory</h4>
+                                <div class="space-y-2">
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="mr-2 text-primary focus:ring-primary" />
+                                        <span class="text-sm">Clear to auscultation</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="mr-2 text-primary focus:ring-primary" />
+                                        <span class="text-sm">No wheezing</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="mr-2 text-primary focus:ring-primary" />
+                                        <span class="text-sm">No shortness of breath</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-text-primary mb-2">Neurological</h4>
+                                <div class="space-y-2">
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="mr-2 text-primary focus:ring-primary" />
+                                        <span class="text-sm">Cranial nerves intact</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="mr-2 text-primary focus:ring-primary" />
+                                        <span class="text-sm">Normal reflexes</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="mr-2 text-primary focus:ring-primary" />
+                                        <span class="text-sm">No focal deficits</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-text-secondary mb-1">Additional Examination Notes</label>
+                            <textarea class="input-field h-20 resize-none" placeholder="Additional physical examination findings..." id="examNotes"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Assessment and Plan -->
+                <div class="card">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4">Assessment and Plan</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-text-secondary mb-1">Primary Diagnosis</label>
+                            <div class="flex items-center space-x-2">
+                                <input type="text" class="input-field flex-1" placeholder="Search diagnosis..." id="diagnosisSearch" />
+                                <button class="btn-secondary" onclick="searchICD()">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                            <div class="mt-2">
+                                <span class="text-xs text-text-secondary">ICD-10 Code: </span>
+                                <span class="text-xs font-data text-primary" id="icdCode">M79.3</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-text-secondary mb-1">Treatment Plan</label>
+                            <textarea class="input-field h-24 resize-none" placeholder="Treatment recommendations, medications, follow-up instructions..." id="treatmentPlan"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-text-secondary mb-1">Follow-up Instructions</label>
+                            <textarea class="input-field h-20 resize-none" placeholder="Patient instructions, lifestyle modifications, when to return..." id="followupInstructions"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <button class="btn-primary flex items-center justify-center" onclick="saveSession()">
+                        <i class="fas fa-save mr-2"></i>
+                        Save Session
+                    </button>
+                    <a href="prescription_management.html" class="btn-secondary flex items-center justify-center">
+                        <i class="fas fa-prescription-bottle-alt mr-2"></i>
+                        Generate Prescription
+                    </a>
+                    <button class="btn-secondary flex items-center justify-center" onclick="scheduleFollowup()">
+                        <i class="fas fa-calendar-plus mr-2"></i>
+                        Schedule Follow-up
+                    </button>
+                    <button class="btn-secondary flex items-center justify-center" onclick="printSummary()">
+                        <i class="fas fa-print mr-2"></i>
+                        Print Summary
+                    </button>
+                </div>
+            </div>
+
+            <!-- Patient Reference Panel -->
+            <div class="space-y-6">
+                <!-- Medical History -->
+                <div class="card">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4">Medical History</h3>
+                    <div class="space-y-3">
+                        <div class="p-3 bg-secondary-50 rounded-md">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium text-text-primary">Hypertension</span>
+                                <span class="text-xs text-text-secondary">2020</span>
+                            </div>
+                            <p class="text-xs text-text-secondary mt-1">Controlled with medication</p>
+                        </div>
+                        <div class="p-3 bg-secondary-50 rounded-md">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium text-text-primary">Type 2 Diabetes</span>
+                                <span class="text-xs text-text-secondary">2018</span>
+                            </div>
+                            <p class="text-xs text-text-secondary mt-1">Well-controlled with diet and exercise</p>
+                        </div>
+                        <div class="p-3 bg-secondary-50 rounded-md">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium text-text-primary">Appendectomy</span>
+                                <span class="text-xs text-text-secondary">2015</span>
+                            </div>
+                            <p class="text-xs text-text-secondary mt-1">Uncomplicated recovery</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Current Medications -->
+                <div class="card">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4">Current Medications</h3>
+                    <div class="space-y-3">
+                        <div class="p-3 bg-accent-50 rounded-md border border-accent-200">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium text-text-primary">Lisinopril</span>
+                                <span class="text-xs text-accent-600 font-medium">Active</span>
+                            </div>
+                            <p class="text-xs text-text-secondary mt-1">10mg daily - For hypertension</p>
+                        </div>
+                        <div class="p-3 bg-accent-50 rounded-md border border-accent-200">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium text-text-primary">Metformin</span>
+                                <span class="text-xs text-accent-600 font-medium">Active</span>
+                            </div>
+                            <p class="text-xs text-text-secondary mt-1">500mg twice daily - For diabetes</p>
+                        </div>
+                        <div class="p-3 bg-warning-50 rounded-md border border-warning-200">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium text-text-primary">Aspirin</span>
+                                <span class="text-xs text-warning-600 font-medium">As needed</span>
+                            </div>
+                            <p class="text-xs text-text-secondary mt-1">81mg daily - Cardioprotective</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Allergies -->
+                <div class="card">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4">Allergies</h3>
+                    <div class="space-y-3">
+                        <div class="p-3 bg-error-50 rounded-md border border-error-200">
+                            <div class="flex items-center">
+                                <i class="fas fa-exclamation-triangle text-error mr-2"></i>
+                                <div>
+                                    <span class="text-sm font-medium text-text-primary">Penicillin</span>
+                                    <p class="text-xs text-text-secondary">Severe rash, swelling</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-3 bg-warning-50 rounded-md border border-warning-200">
+                            <div class="flex items-center">
+                                <i class="fas fa-exclamation-circle text-warning mr-2"></i>
+                                <div>
+                                    <span class="text-sm font-medium text-text-primary">Shellfish</span>
+                                    <p class="text-xs text-text-secondary">Mild digestive upset</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Lab Results -->
+                <div class="card">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4">Recent Lab Results</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-text-secondary">HbA1c</span>
+                            <span class="text-sm font-medium text-text-primary">6.8%</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-text-secondary">Total Cholesterol</span>
+                            <span class="text-sm font-medium text-text-primary">185 mg/dL</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-text-secondary">Creatinine</span>
+                            <span class="text-sm font-medium text-text-primary">0.9 mg/dL</span>
+                        </div>
+                        <div class="text-xs text-text-secondary mt-2">
+                            Last updated: Sep 20, 2025
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card">
+                    <h3 class="text-lg font-semibold text-text-primary mb-4">Quick Actions</h3>
+                    <div class="space-y-2">
+                        <a href="patient_profile.html" class="w-full btn-secondary flex items-center justify-center">
+                            <i class="fas fa-user mr-2"></i>
+                            View Full Profile
+                        </a>
+                        <a href="medical_reports.html" class="w-full btn-secondary flex items-center justify-center">
+                            <i class="fas fa-file-medical mr-2"></i>
+                            Previous Reports
+                        </a>
+                        <button class="w-full btn-secondary flex items-center justify-center" onclick="orderLabTests()">
+                            <i class="fas fa-vial mr-2"></i>
+                            Order Lab Tests
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Mobile Navigation Menu (Hidden by default) -->
+    <div class="md:hidden fixed inset-0 z-50 hidden" id="mobileMenu">
+        <div class="fixed inset-0 bg-black bg-opacity-50"></div>
+        <div class="fixed inset-y-0 left-0 w-64 bg-surface shadow-lg">
+            <div class="p-4">
+                <div class="flex items-center justify-between mb-8">
+                    <h2 class="text-lg font-semibold text-text-primary">Menu</h2>
+                    <button class="p-2 text-text-secondary hover:text-primary" onclick="toggleMobileMenu()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <nav class="space-y-4">
+                    <a href="patient_dashboard.html" class="block text-text-secondary hover:text-primary">Dashboard</a>
+                    <a href="patient_enrollment.html" class="block text-text-secondary hover:text-primary">Enrollment</a>
+                    <a href="patient_profile.html" class="block text-text-secondary hover:text-primary">Profiles</a>
+                    <a href="treatment_session.html" class="block text-primary font-medium">Treatment</a>
+                    <a href="prescription_management.html" class="block text-text-secondary hover:text-primary">Prescriptions</a>
+                    <a href="medical_reports.html" class="block text-text-secondary hover:text-primary">Reports</a>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- Voice Recording Modal -->
+    <div class="fixed inset-0 z-50 hidden" id="voiceModal">
+        <div class="fixed inset-0 bg-black bg-opacity-50"></div>
+        <div class="fixed inset-0 flex items-center justify-center p-4">
+            <div class="bg-surface rounded-lg p-6 w-full max-w-md">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-error-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-microphone text-error text-2xl" id="recordingIcon"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-text-primary mb-2">Voice Recording</h3>
+                    <p class="text-text-secondary mb-4" id="recordingStatus">Click to start recording...</p>
+                    <div class="flex justify-center space-x-3">
+                        <button class="btn-primary" onclick="startRecording()" id="recordBtn">
+                            <i class="fas fa-play mr-2"></i>
+                            Start
+                        </button>
+                        <button class="btn-secondary" onclick="stopRecording()" id="stopBtn" disabled>
+                            <i class="fas fa-stop mr-2"></i>
+                            Stop
+                        </button>
+                        <button class="btn-secondary" onclick="closeVoiceModal()">
+                            <i class="fas fa-times mr-2"></i>
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isRecording = false;
+        let autoSaveInterval;
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        function toggleVoiceRecording() {
+            const modal = document.getElementById('voiceModal');
+            modal.classList.remove('hidden');
+        }
+
+        function closeVoiceModal() {
+            const modal = document.getElementById('voiceModal');
+            modal.classList.add('hidden');
+            if (isRecording) {
+                stopRecording();
+            }
+        }
+
+        function startRecording() {
+            isRecording = true;
+            document.getElementById('recordBtn').disabled = true;
+            document.getElementById('stopBtn').disabled = false;
+            document.getElementById('recordingStatus').textContent = 'Recording... Speak now';
+            document.getElementById('recordingIcon').className = 'fas fa-microphone text-error text-2xl animate-pulse';
+            
+            // Simulate voice recording
+            setTimeout(() => {
+                if (isRecording) {
+                    document.getElementById('recordingStatus').textContent = 'Processing speech...';
+                }
+            }, 3000);
+        }
+
+        function stopRecording() {
+            isRecording = false;
+            document.getElementById('recordBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+            document.getElementById('recordingStatus').textContent = 'Recording stopped. Text inserted.';
+            document.getElementById('recordingIcon').className = 'fas fa-microphone text-error text-2xl';
+            
+            // Simulate inserting transcribed text
+            const activeField = document.activeElement;
+            if (activeField.tagName === 'TEXTAREA') {
+                activeField.value += 'Patient reports chest pain that started this morning, described as sharp and localized to the left side. ';
+            }
+        }
+
+        function loadTemplate() {
+            const templates = {
+                'chest_pain': 'Patient presents with chest pain. Onset: [TIME]. Character: [SHARP/DULL/CRUSHING]. Location: [SUBSTERNAL/LEFT/RIGHT]. Radiation: [ARM/JAW/BACK]. Duration: [MINUTES/HOURS]. Aggravating factors: [EXERTION/REST]. Relieving factors: [REST/MEDICATION].',
+                'headache': 'Patient reports headache. Onset: [GRADUAL/SUDDEN]. Location: [FRONTAL/TEMPORAL/OCCIPITAL]. Quality: [THROBBING/SHARP/DULL]. Severity: [1-10 SCALE]. Associated symptoms: [NAUSEA/VOMITING/PHOTOPHOBIA].',
+                'fever': 'Patient presents with fever. Temperature: [VALUE]°F. Onset: [TIME]. Associated symptoms: [CHILLS/SWEATS/MALAISE]. Recent travel: [YES/NO]. Sick contacts: [YES/NO].'
+            };
+            
+            const template = templates['chest_pain']; // Default template
+            document.getElementById('presentIllness').value = template;
+            updateAutoSaveTime();
+        }
+
+        function insertTemplate(type) {
+            const templates = {
+                'onset': 'Onset: [GRADUAL/SUDDEN] over [TIME PERIOD]. ',
+                'pain': 'Pain scale: [1-10]. Character: [SHARP/DULL/ACHING/BURNING]. ',
+                'symptoms': 'Associated symptoms: [NAUSEA/VOMITING/DIZZINESS/FATIGUE]. '
+            };
+            
+            const textarea = document.getElementById('presentIllness');
+            const template = templates[type] || '';
+            textarea.value += template;
+            textarea.focus();
+            updateAutoSaveTime();
+        }
+
+        function searchICD() {
+            const searchTerm = document.getElementById('diagnosisSearch').value;
+            // Simulate ICD code lookup
+            const icdCodes = {
+                'chest pain': 'R06.02',
+                'headache': 'R51',
+                'fever': 'R50.9',
+                'hypertension': 'I10',
+                'diabetes': 'E11.9'
+            };
+            
+            const code = icdCodes[searchTerm.toLowerCase()] || 'M79.3';
+            document.getElementById('icdCode').textContent = code;
+        }
+
+        function saveSession() {
+            // Simulate saving session
+            updateAutoSaveTime();
+            
+            // Show success message
+            const originalText = event.target.innerHTML;
+            event.target.innerHTML = '<i class="fas fa-check mr-2"></i>Saved!';
+            event.target.classList.add('bg-accent', 'text-white');
+            
+            setTimeout(() => {
+                event.target.innerHTML = originalText;
+                event.target.classList.remove('bg-accent', 'text-white');
+            }, 2000);
+        }
+
+        function scheduleFollowup() {
+            alert('Follow-up appointment scheduling would open here');
+        }
+
+        function printSummary() {
+            window.print();
+        }
+
+        function orderLabTests() {
+            alert('Lab test ordering interface would open here');
+        }
+
+        function updateAutoSaveTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { 
+                hour: 'numeric', 
+                minute: '2-digit',
+                hour12: true 
+            });
+            document.getElementById('autoSaveTime').textContent = timeString;
+        }
+
+        // Auto-save functionality
+        function startAutoSave() {
+            autoSaveInterval = setInterval(() => {
+                updateAutoSaveTime();
+            }, 30000); // Auto-save every 30 seconds
+        }
+
+        // Initialize auto-save when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            startAutoSave();
+            
+            // Add event listeners for auto-save on input
+            const textareas = document.querySelectorAll('textarea');
+            const inputs = document.querySelectorAll('input');
+            
+            [...textareas, ...inputs].forEach(element => {
+                element.addEventListener('input', () => {
+                    clearTimeout(element.autoSaveTimeout);
+                    element.autoSaveTimeout = setTimeout(updateAutoSaveTime, 2000);
+                });
+            });
+        });
+
+        // Update session time every minute
+        setInterval(() => {
+            const now = new Date();
+            const dateString = now.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: '2-digit' 
+            });
+            const timeString = now.toLocaleTimeString('en-US', { 
+                hour: 'numeric', 
+                minute: '2-digit',
+                hour12: true 
+            });
+            document.getElementById('sessionTime').textContent = `${dateString} - ${timeString}`;
+        }, 60000);
+    </script>
+<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+</body>
+</html>

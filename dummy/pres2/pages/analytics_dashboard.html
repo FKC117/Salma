@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Analytics Dashboard - OncoScript Pro</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Foncoscript9250back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
+</head>
+<body class="bg-background text-text-primary font-sans">
+    <!-- Navigation Header -->
+    <nav class="bg-surface border-b border-slate-700 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo and Brand -->
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center">
+                        <svg class="w-8 h-8 text-primary" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        <span class="ml-2 text-xl font-semibold text-text-primary">OncoScript Pro</span>
+                    </div>
+                </div>
+
+                <!-- Navigation Links -->
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="patient_dashboard.html" class="text-text-secondary hover:text-text-primary px-3 py-2 rounded-md hover:bg-surface-700 transition-colors">Dashboard</a>
+                    <a href="analytics_dashboard.html" class="text-primary font-medium px-3 py-2 rounded-md bg-primary/10">Analytics</a>
+                    <a href="patient_registration.html" class="text-text-secondary hover:text-text-primary px-3 py-2 rounded-md hover:bg-surface-700 transition-colors">New Patient</a>
+                    <a href="appointment_scheduling.html" class="text-text-secondary hover:text-text-primary px-3 py-2 rounded-md hover:bg-surface-700 transition-colors">Appointments</a>
+                </div>
+
+                <!-- User Profile -->
+                <div class="flex items-center space-x-4">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-sm font-medium text-text-primary">Dr. Sarah Johnson</p>
+                        <p class="text-xs text-text-muted">Breast Cancer Specialist</p>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3" alt="Doctor Profile" class="w-10 h-10 rounded-full object-cover border-2 border-primary" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <!-- Header Section -->
+        <div class="mb-8">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                <div>
+                    <h1 class="text-3xl font-bold text-text-primary">Analytics Dashboard</h1>
+                    <p class="text-text-muted mt-1">Comprehensive surgical practice analytics and performance insights</p>
+                </div>
+                
+                <!-- Export Actions -->
+                <div class="flex flex-wrap gap-3">
+                    <button id="exportCsvBtn" class="medical-button bg-success hover:bg-success-600 text-white flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        <span>Export CSV</span>
+                    </button>
+                    <button class="medical-button bg-surface-700 hover:bg-surface-600 text-text-primary border border-slate-600 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                        </svg>
+                        <span>Generate Report</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Templates Section -->
+        <div class="mb-8">
+            <div class="medical-card p-6">
+                <h2 class="text-xl font-semibold text-text-primary mb-6">Analytics Templates</h2>
+                
+                <!-- Template Selector -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <button onclick="loadTemplate('performance')" class="template-btn active bg-primary/20 border-primary text-primary" data-template="performance">
+                        <div class="flex items-center space-x-3">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                            <div class="text-left">
+                                <h3 class="font-semibold">Performance Metrics</h3>
+                                <p class="text-sm opacity-75">Success rates & KPIs</p>
+                            </div>
+                        </div>
+                    </button>
+
+                    <button onclick="loadTemplate('patient')" class="template-btn hover:bg-accent/20 hover:border-accent hover:text-accent" data-template="patient">
+                        <div class="flex items-center space-x-3">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/>
+                            </svg>
+                            <div class="text-left">
+                                <h3 class="font-semibold">Patient Analytics</h3>
+                                <p class="text-sm opacity-75">Demographics & trends</p>
+                            </div>
+                        </div>
+                    </button>
+
+                    <button onclick="loadTemplate('revenue')" class="template-btn hover:bg-warning/20 hover:border-warning hover:text-warning" data-template="revenue">
+                        <div class="flex items-center space-x-3">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+                            </svg>
+                            <div class="text-left">
+                                <h3 class="font-semibold">Revenue Analytics</h3>
+                                <p class="text-sm opacity-75">Financial performance</p>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advanced Filters Section -->
+        <div class="mb-8">
+            <div class="medical-card p-6">
+                <h2 class="text-xl font-semibold text-text-primary mb-6">Advanced Filters</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Date Range Filter -->
+                    <div>
+                        <label class="block text-sm font-medium text-text-primary mb-2">Date Range</label>
+                        <select id="dateRangeFilter" class="medical-input text-sm w-full">
+                            <option value="7d">Last 7 days</option>
+                            <option value="30d" selected>Last 30 days</option>
+                            <option value="90d">Last 90 days</option>
+                            <option value="1y">Last year</option>
+                            <option value="custom">Custom range</option>
+                        </select>
+                    </div>
+
+                    <!-- Patient Demographics Filter -->
+                    <div>
+                        <label class="block text-sm font-medium text-text-primary mb-2">Age Group</label>
+                        <select id="ageFilter" class="medical-input text-sm w-full">
+                            <option value="all">All ages</option>
+                            <option value="18-35">18-35 years</option>
+                            <option value="36-50">36-50 years</option>
+                            <option value="51-65">51-65 years</option>
+                            <option value="65+">65+ years</option>
+                        </select>
+                    </div>
+
+                    <!-- Procedure Type Filter -->
+                    <div>
+                        <label class="block text-sm font-medium text-text-primary mb-2">Procedure Type</label>
+                        <select id="procedureFilter" class="medical-input text-sm w-full">
+                            <option value="all">All procedures</option>
+                            <option value="lumpectomy">Lumpectomy</option>
+                            <option value="mastectomy">Mastectomy</option>
+                            <option value="reconstruction">Reconstruction</option>
+                            <option value="biopsy">Biopsy</option>
+                        </select>
+                    </div>
+
+                    <!-- Treatment Outcome Filter -->
+                    <div>
+                        <label class="block text-sm font-medium text-text-primary mb-2">Treatment Status</label>
+                        <select id="statusFilter" class="medical-input text-sm w-full">
+                            <option value="all">All statuses</option>
+                            <option value="active">Active Treatment</option>
+                            <option value="completed">Treatment Completed</option>
+                            <option value="followup">Follow-up</option>
+                            <option value="remission">Remission</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Filter Actions -->
+                <div class="flex flex-wrap gap-3 mt-6">
+                    <button id="applyFiltersBtn" class="medical-button bg-primary hover:bg-primary-700 text-white flex items-center space-x-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+                        </svg>
+                        <span>Apply Filters</span>
+                    </button>
+                    <button id="clearFiltersBtn" class="medical-button bg-surface-700 hover:bg-surface-600 text-text-primary border border-slate-600">
+                        Clear All
+                    </button>
+                    <button id="saveTemplateBtn" class="medical-button bg-accent hover:bg-accent-600 text-white flex items-center space-x-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12"/>
+                        </svg>
+                        <span>Save as Template</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Performance Indicators -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="medical-card p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-text-muted text-sm">Total Patients</p>
+                        <p class="text-2xl font-bold text-text-primary" id="totalPatients">247</p>
+                        <p class="text-success text-sm">+12% from last month</p>
+                    </div>
+                    <div class="bg-primary/20 p-3 rounded-lg">
+                        <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="medical-card p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-text-muted text-sm">Success Rate</p>
+                        <p class="text-2xl font-bold text-text-primary" id="successRate">94.2%</p>
+                        <p class="text-success text-sm">+2.1% from last month</p>
+                    </div>
+                    <div class="bg-success/20 p-3 rounded-lg">
+                        <svg class="w-8 h-8 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="medical-card p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-text-muted text-sm">Monthly Revenue</p>
+                        <p class="text-2xl font-bold text-text-primary" id="monthlyRevenue">$184.5K</p>
+                        <p class="text-warning text-sm">-5.3% from last month</p>
+                    </div>
+                    <div class="bg-warning/20 p-3 rounded-lg">
+                        <svg class="w-8 h-8 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="medical-card p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-text-muted text-sm">Avg. Wait Time</p>
+                        <p class="text-2xl font-bold text-text-primary" id="avgWaitTime">18 min</p>
+                        <p class="text-error text-sm">+3 min from last month</p>
+                    </div>
+                    <div class="bg-accent/20 p-3 rounded-lg">
+                        <svg class="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts and Visualizations -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- Patient Volume Trends Chart -->
+            <div class="medical-card p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-semibold text-text-primary">Patient Volume Trends</h3>
+                    <div class="flex space-x-2">
+                        <button class="text-xs bg-primary/20 text-primary px-3 py-1 rounded-full">Weekly</button>
+                        <button class="text-xs text-text-muted hover:text-text-primary px-3 py-1 rounded-full">Monthly</button>
+                    </div>
+                </div>
+                <div class="relative h-80">
+                    <canvas id="patientVolumeChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Treatment Success Rates -->
+            <div class="medical-card p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-semibold text-text-primary">Treatment Success Rates</h3>
+                    <div class="flex space-x-2">
+                        <button class="text-xs bg-success/20 text-success px-3 py-1 rounded-full">By Procedure</button>
+                        <button class="text-xs text-text-muted hover:text-text-primary px-3 py-1 rounded-full">By Age Group</button>
+                    </div>
+                </div>
+                <div class="relative h-80">
+                    <canvas id="successRateChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Analytics Table -->
+        <div class="medical-card mb-8">
+            <div class="p-6 border-b border-slate-700">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-text-primary">Detailed Analytics</h3>
+                    <div class="flex space-x-3">
+                        <button id="exportTableBtn" class="medical-button bg-surface-700 hover:bg-surface-600 text-text-primary border border-slate-600 text-sm flex items-center space-x-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            <span>Export Table</span>
+                        </button>
+                        <select class="medical-input text-sm">
+                            <option>Show 10 rows</option>
+                            <option>Show 25 rows</option>
+                            <option>Show 50 rows</option>
+                            <option>Show all</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full" id="analyticsTable">
+                    <thead class="bg-surface-700">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">Patient ID</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">Age Group</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">Procedure</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">Treatment Date</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">Outcome</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">Follow-up Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-700" id="analyticsTableBody">
+                        <tr class="hover:bg-surface-700 transition-colors">
+                            <td class="px-6 py-4 text-sm text-text-primary">P-2025-001</td>
+                            <td class="px-6 py-4 text-sm text-text-secondary">36-50</td>
+                            <td class="px-6 py-4 text-sm text-text-secondary">Lumpectomy</td>
+                            <td class="px-6 py-4 text-sm text-text-secondary">Sep 15, 2025</td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-success/20 text-success">
+                                    Successful
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-text-secondary">Scheduled</td>
+                            <td class="px-6 py-4 text-sm text-text-secondary">$8,450</td>
+                        </tr>
+                        <tr class="hover:bg-surface-700 transition-colors">
+                            <td class="px-6 py-4 text-sm text-text-primary">P-2025-002</td>
+                            <td class="px-6 py-4 text-sm text-text-secondary">51-65</td>
+                            <td class="px-6 py-4 text-sm text-text-secondary">Mastectomy</td>
+                            <td class="px-6 py-4 text-sm text-text-secondary">Sep 20, 2025</td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-success/20 text-success">
+                                    Successful
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-text-secondary">Complete</td>
+                            <td class="px-6 py-4 text-sm text-text-secondary">$12,750</td>
+                        </tr>
+                        <tr class="hover:bg-surface-700 transition-colors">
+                            <td class="px-6 py-4 text-sm text-text-primary">P-2025-003</td>
+                            <td class="px-6 py-4 text-sm text-text-secondary">18-35</td>
+                            <td class="px-6 py-4 text-sm text-text-secondary">Biopsy</td>
+                            <td class="px-6 py-4 text-sm text-text-secondary">Sep 25, 2025</td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-warning/20 text-warning">
+                                    Under Review
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-text-secondary">Pending</td>
+                            <td class="px-6 py-4 text-sm text-text-secondary">$2,200</td>
+                        </tr>
+                        <tr class="hover:bg-surface-700 transition-colors">
+                            <td class="px-6 py-4 text-sm text-text-primary">P-2025-004</td>
+                            <td class="px-6 py-4 text-sm text-text-secondary">65+</td>
+                            <td class="px-6 py-4 text-sm text-text-secondary">Reconstruction</td>
+                            <td class="px-6 py-4 text-sm text-text-secondary">Oct 1, 2025</td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-success/20 text-success">
+                                    Successful
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-text-secondary">In Progress</td>
+                            <td class="px-6 py-4 text-sm text-text-secondary">$15,890</td>
+                        </tr>
+                        <tr class="hover:bg-surface-700 transition-colors">
+                            <td class="px-6 py-4 text-sm text-text-primary">P-2025-005</td>
+                            <td class="px-6 py-4 text-sm text-text-secondary">36-50</td>
+                            <td class="px-6 py-4 text-sm text-text-secondary">Lumpectomy</td>
+                            <td class="px-6 py-4 text-sm text-text-secondary">Oct 3, 2025</td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-error/20 text-error">
+                                    Complications
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-text-secondary">Urgent</td>
+                            <td class="px-6 py-4 text-sm text-text-secondary">$9,120</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="px-6 py-4 border-t border-slate-700 flex items-center justify-between">
+                <div class="text-sm text-text-muted">
+                    Showing 1 to 5 of 247 records
+                </div>
+                <div class="flex space-x-2">
+                    <button class="medical-button bg-surface-700 hover:bg-surface-600 text-text-primary border border-slate-600 text-sm px-3 py-1">
+                        Previous
+                    </button>
+                    <button class="medical-button bg-primary hover:bg-primary-700 text-white text-sm px-3 py-1">
+                        1
+                    </button>
+                    <button class="medical-button bg-surface-700 hover:bg-surface-600 text-text-primary border border-slate-600 text-sm px-3 py-1">
+                        2
+                    </button>
+                    <button class="medical-button bg-surface-700 hover:bg-surface-600 text-text-primary border border-slate-600 text-sm px-3 py-1">
+                        Next
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Custom Dashboard Creation -->
+        <div class="medical-card p-6">
+            <h3 class="text-lg font-semibold text-text-primary mb-4">Custom Dashboard Builder</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-text-primary mb-2">Dashboard Name</label>
+                    <input type="text" placeholder="Enter dashboard name..." class="medical-input w-full" id="customDashboardName" />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-text-primary mb-2">Chart Type</label>
+                    <select class="medical-input w-full" id="customChartType">
+                        <option value="line">Line Chart</option>
+                        <option value="bar">Bar Chart</option>
+                        <option value="pie">Pie Chart</option>
+                        <option value="doughnut">Doughnut Chart</option>
+                        <option value="area">Area Chart</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-text-primary mb-2">Data Focus</label>
+                    <select class="medical-input w-full" id="customDataFocus">
+                        <option value="patients">Patient Data</option>
+                        <option value="procedures">Procedure Data</option>
+                        <option value="outcomes">Outcome Data</option>
+                        <option value="revenue">Revenue Data</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mt-4">
+                <button class="medical-button bg-accent hover:bg-accent-600 text-white flex items-center space-x-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                    </svg>
+                    <span>Create Custom Dashboard</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Navigation Menu -->
+    <div class="md:hidden fixed bottom-0 left-0 right-0 bg-surface border-t border-slate-700 z-50">
+        <div class="grid grid-cols-4 gap-1 p-2">
+            <a href="patient_dashboard.html" class="flex flex-col items-center py-2 px-1 text-text-muted">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+                </svg>
+                <span class="text-xs mt-1">Dashboard</span>
+            </a>
+            <a href="analytics_dashboard.html" class="flex flex-col items-center py-2 px-1 text-primary">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                </svg>
+                <span class="text-xs mt-1">Analytics</span>
+            </a>
+            <a href="appointment_scheduling.html" class="flex flex-col items-center py-2 px-1 text-text-muted">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                <span class="text-xs mt-1">Calendar</span>
+            </a>
+            <a href="prescription_generation.html" class="flex flex-col items-center py-2 px-1 text-text-muted">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                <span class="text-xs mt-1">Rx</span>
+            </a>
+        </div>
+    </div>
+
+    <style>
+        .template-btn {
+            @apply p-4 border-2 border-slate-600 rounded-lg transition-all duration-200 cursor-pointer;
+        }
+        .template-btn.active {
+            @apply border-primary bg-primary/20 text-primary;
+        }
+        .template-btn:hover:not(.active) {
+            @apply border-slate-500;
+        }
+    </style>
+
+    <script>
+        // Initialize Charts
+        let patientVolumeChart, successRateChart;
+
+        // Sample data for charts
+        const chartData = {
+            performance: {
+                patientVolume: {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                    data: [45, 52, 38, 61]
+                },
+                successRates: {
+                    labels: ['Lumpectomy', 'Mastectomy', 'Reconstruction', 'Biopsy'],
+                    data: [96, 94, 91, 98]
+                }
+            },
+            patient: {
+                patientVolume: {
+                    labels: ['18-35', '36-50', '51-65', '65+'],
+                    data: [28, 45, 89, 85]
+                },
+                successRates: {
+                    labels: ['18-35', '36-50', '51-65', '65+'],
+                    data: [97, 95, 92, 89]
+                }
+            },
+            revenue: {
+                patientVolume: {
+                    labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+                    data: [145000, 162000, 184000, 198000]
+                },
+                successRates: {
+                    labels: ['Outpatient', 'Inpatient', 'Follow-up', 'Emergency'],
+                    data: [45, 30, 20, 5]
+                }
+            }
+        };
+
+        // Initialize charts on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTemplate('performance');
+        });
+
+        // Template switching functionality
+        function loadTemplate(templateType) {
+            // Update active template button
+            document.querySelectorAll('.template-btn').forEach(btn => {
+                btn.classList.remove('active', 'bg-primary/20', 'border-primary', 'text-primary');
+                if (btn.dataset.template === templateType) {
+                    btn.classList.add('active', 'bg-primary/20', 'border-primary', 'text-primary');
+                }
+            });
+
+            // Update chart data based on template
+            const data = chartData[templateType];
+            updateCharts(data);
+            
+            // Update KPIs based on template
+            updateKPIs(templateType);
+        }
+
+        // Update charts with new data
+        function updateCharts(data) {
+            // Destroy existing charts
+            if (patientVolumeChart) patientVolumeChart.destroy();
+            if (successRateChart) successRateChart.destroy();
+
+            // Patient Volume Chart
+            const patientCtx = document.getElementById('patientVolumeChart').getContext('2d');
+            patientVolumeChart = new Chart(patientCtx, {
+                type: 'line',
+                data: {
+                    labels: data.patientVolume.labels,
+                    datasets: [{
+                        label: 'Patient Volume',
+                        data: data.patientVolume.data,
+                        borderColor: 'rgb(34, 197, 94)',
+                        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'rgba(241, 245, 249, 0.8)'
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: 'rgba(241, 245, 249, 0.6)'
+                            },
+                            grid: {
+                                color: 'rgba(241, 245, 249, 0.1)'
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                color: 'rgba(241, 245, 249, 0.6)'
+                            },
+                            grid: {
+                                color: 'rgba(241, 245, 249, 0.1)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Success Rate Chart
+            const successCtx = document.getElementById('successRateChart').getContext('2d');
+            successRateChart = new Chart(successCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: data.successRates.labels,
+                    datasets: [{
+                        data: data.successRates.data,
+                        backgroundColor: [
+                            'rgb(34, 197, 94)',
+                            'rgb(59, 130, 246)',
+                            'rgb(251, 191, 36)',
+                            'rgb(239, 68, 68)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: 'rgba(241, 245, 249, 0.8)',
+                                padding: 20
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update KPIs based on template
+        function updateKPIs(templateType) {
+            const kpiData = {
+                performance: {
+                    totalPatients: '247',
+                    successRate: '94.2%',
+                    monthlyRevenue: '$184.5K',
+                    avgWaitTime: '18 min'
+                },
+                patient: {
+                    totalPatients: '247',
+                    successRate: '93.1%',
+                    monthlyRevenue: '$175.2K',
+                    avgWaitTime: '22 min'
+                },
+                revenue: {
+                    totalPatients: '247',
+                    successRate: '95.8%',
+                    monthlyRevenue: '$198.7K',
+                    avgWaitTime: '15 min'
+                }
+            };
+
+            const data = kpiData[templateType];
+            document.getElementById('totalPatients').textContent = data.totalPatients;
+            document.getElementById('successRate').textContent = data.successRate;
+            document.getElementById('monthlyRevenue').textContent = data.monthlyRevenue;
+            document.getElementById('avgWaitTime').textContent = data.avgWaitTime;
+        }
+
+        // CSV Export functionality
+        function exportToCSV(data, filename) {
+            let csv = '';
+            const rows = Array.from(document.querySelectorAll('#analyticsTable tr'));
+            
+            rows.forEach(row => {
+                const cols = Array.from(row.querySelectorAll('th, td'));
+                const rowData = cols.map(col => {
+                    let text = col.textContent.trim();
+                    // Handle special cases for status badges
+                    if (col.querySelector('.rounded-full')) {
+                        text = col.querySelector('.rounded-full').textContent.trim();
+                    }
+                    return `"${text.replace(/"/g, '""')}"`;
+                }).join(',');
+                csv += rowData + '\n';
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Event Listeners
+        document.getElementById('exportCsvBtn').addEventListener('click', function() {
+            const currentDate = new Date().toISOString().split('T')[0];
+            exportToCSV(null, `analytics-dashboard-${currentDate}.csv`);
+        });
+
+        document.getElementById('exportTableBtn').addEventListener('click', function() {
+            const currentDate = new Date().toISOString().split('T')[0];
+            exportToCSV(null, `detailed-analytics-${currentDate}.csv`);
+        });
+
+        document.getElementById('applyFiltersBtn').addEventListener('click', function() {
+            // Simulate filter application
+            const dateRange = document.getElementById('dateRangeFilter').value;
+            const ageGroup = document.getElementById('ageFilter').value;
+            const procedure = document.getElementById('procedureFilter').value;
+            const status = document.getElementById('statusFilter').value;
+            
+            console.log('Filters applied:', { dateRange, ageGroup, procedure, status });
+            
+            // Show loading state
+            this.innerHTML = '<svg class="animate-spin w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Applying...';
+            
+            setTimeout(() => {
+                this.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg><span>Apply Filters</span>';
+                
+                // Show success message
+                const successMsg = document.createElement('div');
+                successMsg.className = 'fixed top-4 right-4 bg-success text-white px-6 py-3 rounded-lg shadow-lg z-50';
+                successMsg.textContent = 'Filters applied successfully!';
+                document.body.appendChild(successMsg);
+                
+                setTimeout(() => {
+                    document.body.removeChild(successMsg);
+                }, 3000);
+            }, 2000);
+        });
+
+        document.getElementById('clearFiltersBtn').addEventListener('click', function() {
+            document.getElementById('dateRangeFilter').value = '30d';
+            document.getElementById('ageFilter').value = 'all';
+            document.getElementById('procedureFilter').value = 'all';
+            document.getElementById('statusFilter').value = 'all';
+        });
+
+        document.getElementById('saveTemplateBtn').addEventListener('click', function() {
+            const templateName = prompt('Enter template name:');
+            if (templateName) {
+                // Simulate save
+                const successMsg = document.createElement('div');
+                successMsg.className = 'fixed top-4 right-4 bg-accent text-white px-6 py-3 rounded-lg shadow-lg z-50';
+                successMsg.textContent = `Template "${templateName}" saved successfully!`;
+                document.body.appendChild(successMsg);
+                
+                setTimeout(() => {
+                    document.body.removeChild(successMsg);
+                }, 3000);
+            }
+        });
+    </script>
+<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+</body>
+</html>
