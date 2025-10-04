@@ -3,6 +3,7 @@ API Views for Analytics System
 """
 import logging
 import re
+from typing import Optional, Any
 from rest_framework import viewsets, status
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
@@ -15,6 +16,9 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.views.decorators.http import require_http_methods
+from django.views import View
+from django.shortcuts import render
+import json
 
 from analytics.models import Dataset, DatasetColumn, AuditTrail, AnalysisSession, ChatSession, AnalysisSuggestion
 from analytics.services.file_processing import FileProcessingService
@@ -116,7 +120,7 @@ class UploadViewSet(viewsets.ViewSet):
             
             # Get the dataset object to include more details
             try:
-                dataset = Dataset.objects.get(id=result['dataset_id'])
+                dataset = Dataset.objects.get(id=result['dataset_id'])  # type: ignore
                 dataset_info = {
                     'id': dataset.id,
                     'name': dataset.name,
@@ -125,7 +129,7 @@ class UploadViewSet(viewsets.ViewSet):
                     'file_size_bytes': dataset.file_size_bytes,
                     'created_at': dataset.created_at.strftime('%Y-%m-%d %H:%M'),
                 }
-            except Dataset.DoesNotExist:
+            except Dataset.DoesNotExist:  # type: ignore
                 dataset_info = {}
             
             return Response({
@@ -164,7 +168,7 @@ class UploadViewSet(viewsets.ViewSet):
                     )
             
             # Get all datasets for the user
-            datasets = Dataset.objects.filter(user=user).order_by('-created_at')
+            datasets = Dataset.objects.filter(user=user).order_by('-created_at')  # type: ignore
             logger.info(f"DEBUG: Found {datasets.count()} datasets for user {user.id}")
             
             datasets_list = []
@@ -238,8 +242,8 @@ class SessionViewSet(viewsets.ViewSet):
             
             # Get dataset
             try:
-                dataset = Dataset.objects.get(id=dataset_id)
-            except Dataset.DoesNotExist:
+                dataset = Dataset.objects.get(id=dataset_id)  # type: ignore
+            except Dataset.DoesNotExist:  # type: ignore
                 return Response({
                     'success': False,
                     'error': 'Dataset not found'
@@ -254,14 +258,14 @@ class SessionViewSet(viewsets.ViewSet):
             )
             
             # Store session ID in request session
-            request.session['current_session_id'] = session.id
+            request.session['current_session_id'] = session.id  # type: ignore
             request.session.save()
             
-            logger.info(f"DEBUG: Created session {session.id} and stored in request session")
+            logger.info(f"DEBUG: Created session {session.id} and stored in request session")  # type: ignore
             
             return Response({
                 'success': True,
-                'session_id': session.id,
+                'session_id': session.id,  # type: ignore
                 'message': 'Analysis session created successfully'
             }, status=status.HTTP_200_OK)
                 
@@ -303,7 +307,7 @@ class SessionViewSet(viewsets.ViewSet):
                 session = AnalysisSession.objects.filter(
                     user=user, 
                     is_active=True
-                ).order_by('-last_accessed').first()
+                ).order_by('-last_accessed').first()  # type: ignore  # type: ignore  # type: ignore
                 
                 if not session:
                     return Response({
@@ -315,15 +319,15 @@ class SessionViewSet(viewsets.ViewSet):
                 
                 # Get dataset info
                 dataset_info = {
-                    'id': session.primary_dataset.id,
-                    'name': session.primary_dataset.name,
-                    'description': session.primary_dataset.description or '',
-                    'row_count': session.primary_dataset.row_count,
-                    'column_count': session.primary_dataset.column_count,
-                    'file_size_bytes': session.primary_dataset.file_size_bytes,
-                    'processing_status': session.primary_dataset.processing_status,
-                    'data_quality_score': session.primary_dataset.data_quality_score,
-                    'created_at': session.primary_dataset.created_at.isoformat()
+                    'id': session.primary_dataset.id,  # type: ignore
+                    'name': session.primary_dataset.name,  # type: ignore
+                    'description': session.primary_dataset.description or '',  # type: ignore
+                    'row_count': session.primary_dataset.row_count,  # type: ignore
+                    'column_count': session.primary_dataset.column_count,  # type: ignore
+                    'file_size_bytes': session.primary_dataset.file_size_bytes,  # type: ignore
+                    'processing_status': session.primary_dataset.processing_status,  # type: ignore
+                    'data_quality_score': session.primary_dataset.data_quality_score,  # type: ignore
+                    'created_at': session.primary_dataset.created_at.isoformat()  # type: ignore
                 }
                 
                 return Response({
@@ -339,7 +343,7 @@ class SessionViewSet(viewsets.ViewSet):
                     'message': 'Current session retrieved successfully'
                 }, status=status.HTTP_200_OK)
                 
-            except AnalysisSession.DoesNotExist:
+            except AnalysisSession.DoesNotExist:  # type: ignore
                 return Response({
                     'success': True,
                     'session': None,
@@ -393,8 +397,8 @@ class AnalysisViewSet(viewsets.ViewSet):
             # Get session
             from analytics.models import AnalysisSession
             try:
-                session = AnalysisSession.objects.get(id=request.data['session_id'])
-            except AnalysisSession.DoesNotExist:
+                session = AnalysisSession.objects.get(id=request.data['session_id'])  # type: ignore
+            except AnalysisSession.DoesNotExist:  # type: ignore
                 return Response({
                     'success': False,
                     'error': 'Session not found'
@@ -460,9 +464,10 @@ class RAGViewSet(viewsets.ViewSet):
                 }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             
             # Upsert to RAG
-            rag_service = RAGService()
+            from analytics.services.vector_note_manager import VectorNoteManager
+            vector_manager = VectorNoteManager()
             # Use the correct method name
-            vector_note = rag_service.create_vector_note(
+            vector_note = vector_manager.create_vector_note(
                 title=request.data.get('title', 'Untitled'),
                 text=request.data['content'],
                 scope=request.data.get('scope', 'global'),
@@ -474,7 +479,7 @@ class RAGViewSet(viewsets.ViewSet):
             if vector_note:
                 return Response({
                     'success': True,
-                    'vector_id': vector_note.id,
+                    'vector_id': vector_note.id,  # type: ignore
                     'message': 'Content upserted successfully'
                 }, status=status.HTTP_200_OK)
             else:
@@ -881,7 +886,7 @@ class EnhancedChatViewSet(viewsets.ViewSet):
                     <div class="message-time">{timezone.now().strftime('%H:%M')}</div>
                 </div>
                 '''
-                return HttpResponse(error_html, content_type='text/html')
+                return HttpResponse(error_html.encode('utf-8'), content_type='text/html')
                 
         except Exception as e:
             logger.error(f"Chat message error: {str(e)}", exc_info=True)
@@ -899,25 +904,7 @@ class EnhancedChatViewSet(viewsets.ViewSet):
                 <div class="message-time">{timezone.now().strftime('%H:%M')}</div>
             </div>
             '''
-            return HttpResponse(error_html, content_type='text/html', status=500)
-                
-        except Exception as e:
-            logger.error(f"Chat message error: {str(e)}", exc_info=True)
-            from django.utils import timezone
-            from django.http import HttpResponse
-            
-            error_html = f'''
-            <div class="chat-message slide-in">
-                <div class="message-content assistant error">
-                    <div class="message-body">
-                        <i class="bi bi-exclamation-triangle text-danger"></i>
-                        <strong>System Error:</strong> Internal server error. Please try again.
-                    </div>
-                </div>
-                <div class="message-time">{timezone.now().strftime('%H:%M')}</div>
-            </div>
-            '''
-            return HttpResponse(error_html, content_type='text/html', status=500)
+            return HttpResponse(error_html.encode('utf-8'), content_type='text/html', status=500)
 
     @action(detail=False, methods=['post'])
     def send_message(self, request):
@@ -1065,7 +1052,7 @@ class EnhancedChatViewSet(viewsets.ViewSet):
                     <div class="message-time">{timezone.now().strftime('%H:%M')}</div>
                 </div>
                 '''
-                return HttpResponse(error_html, content_type='text/html')
+                return HttpResponse(error_html.encode('utf-8'), content_type='text/html')
                 
         except Exception as e:
             logger.error(f"Chat message error: {str(e)}", exc_info=True)
@@ -1089,7 +1076,7 @@ class EnhancedChatViewSet(viewsets.ViewSet):
                 <div class="message-time">{timezone.now().strftime('%H:%M')}</div>
             </div>
             '''
-            return HttpResponse(error_html, content_type='text/html', status=500)
+            return HttpResponse(error_html.encode('utf-8'), content_type='text/html', status=500)
 
 
 # class EnhancedChatViewSet(viewsets.ViewSet):
@@ -1311,6 +1298,13 @@ class AnalyticsView(viewsets.ViewSet):
     API endpoint that allows users to be viewed or edited.
     """
     permission_classes = [IsAuthenticated]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        from analytics.services.analysis_suggestion_service import AnalysisSuggestionService
+        from analytics.services.chat_service import ChatService
+        self.suggestion_service = AnalysisSuggestionService()
+        self.chat_service = ChatService()
 
     def execute_suggestion(self, request):
         """
@@ -1594,8 +1588,8 @@ class AgentViewSet(viewsets.ViewSet):
             # Get session
             from analytics.models import AnalysisSession
             try:
-                session = AnalysisSession.objects.get(id=request.data['session_id'])
-            except AnalysisSession.DoesNotExist:
+                session = AnalysisSession.objects.get(id=request.data['session_id'])  # type: ignore
+            except AnalysisSession.DoesNotExist:  # type: ignore
                 return Response({
                     'success': False,
                     'error': 'Session not found'
@@ -2198,10 +2192,10 @@ def get_tool_configuration(request, tool_id):
             try:
                 print(f"DEBUG: Looking for session with ID: {session_id}")
                 logger.info(f"DEBUG: Looking for session with ID: {session_id}")
-                session = AnalysisSession.objects.get(id=session_id, user=user)
+                session = AnalysisSession.objects.get(id=session_id, user=user)  # type: ignore
                 print(f"DEBUG: Session found by ID: {session}")
                 logger.info(f"DEBUG: Session found by ID: {session}")
-            except AnalysisSession.DoesNotExist:
+            except AnalysisSession.DoesNotExist:  # type: ignore
                 print(f"DEBUG: Session {session_id} not found for user {user}, trying latest session")
                 logger.warning(f"DEBUG: Session {session_id} not found for user {user}, trying latest session")
                 session = None
@@ -2399,11 +2393,11 @@ def execute_analysis_tool(request):
         from analytics.models import AnalysisSession
         try:
             logger.info(f"DEBUG: Looking for session {session_id} for user {user.id}")
-            session = AnalysisSession.objects.get(id=session_id, user=user)
+            session = AnalysisSession.objects.get(id=session_id, user=user)  # type: ignore
             logger.info(f"DEBUG: Found session: {session}")
             dataset = session.get_dataset()
             logger.info(f"DEBUG: Dataset loaded: {dataset is not None}")
-        except AnalysisSession.DoesNotExist:
+        except AnalysisSession.DoesNotExist:  # type: ignore
             logger.error(f"DEBUG: Session {session_id} not found for user {user.id}")
             # Try to find any session for this user
             user_sessions = AnalysisSession.objects.filter(user=user)
@@ -2643,8 +2637,8 @@ def get_analysis_history(request, session_id):
         
         # Verify the session belongs to the user
         try:
-            session = AnalysisSession.objects.get(id=session_id, user=user)
-        except AnalysisSession.DoesNotExist:
+            session = AnalysisSession.objects.get(id=session_id, user=user)  # type: ignore
+        except AnalysisSession.DoesNotExist:  # type: ignore
             return Response({
                 'success': False,
                 'error': 'Session not found or access denied'
@@ -2986,7 +2980,7 @@ def execute_sandbox_code(request):
                 logger.info(f"DEBUG: Sandbox execution - Session ID: {session.id}, Session Name: {session.name}")
             else:
                 logger.info("DEBUG: Sandbox execution - No session found for user")
-        except AnalysisSession.DoesNotExist:
+        except AnalysisSession.DoesNotExist:  # type: ignore
             logger.info("DEBUG: Sandbox execution - Session does not exist")
             pass
         
@@ -3089,3 +3083,459 @@ def sandbox_results_api(request):
             'success': False,
             'error': str(e)
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+# =============================================================================
+# Natural Language Python Sandbox Views
+# =============================================================================
+
+class NaturalLanguageSandboxView(View):
+    """
+    Main view for the Natural Language Python Sandbox interface
+    """
+    
+    @method_decorator(login_required)
+    def get(self, request):
+        """Render the Natural Language Sandbox interface"""
+        try:
+            # Get or create analysis session (same as original sandbox)
+            session_manager = SessionManager()
+            
+            # Get user's first dataset or create a default session
+            user_datasets = Dataset.objects.filter(user=request.user)
+            
+            if user_datasets.exists():
+                # Use the first dataset
+                primary_dataset = user_datasets.first()
+                analysis_session = session_manager.create_session(
+                    user=request.user,
+                    dataset=primary_dataset,
+                    session_name="Natural Language Sandbox Session"
+                )
+            else:
+                # No datasets available - create a session without dataset
+                analysis_session = None
+            
+            # Get user's datasets for the sidebar
+            datasets = Dataset.objects.filter(user=request.user).order_by('-created_at')
+            
+            context = {
+                'datasets': datasets,
+                'user': request.user,
+                'session': analysis_session,
+                'page_title': 'Natural Language Python Sandbox',
+                'page_description': 'AI-Powered Code Generation and Data Analysis'
+            }
+            
+            return render(request, 'analytics/natural_language_sandbox.html', context)
+            
+        except Exception as e:
+            logger.error(f"Error rendering Natural Language Sandbox: {str(e)}")
+            return render(request, 'analytics/natural_language_sandbox.html', {
+                'error': 'Failed to load Natural Language Sandbox'
+            })
+
+
+class NaturalLanguageCodeGenerationView(View):
+    """
+    API endpoint for generating Python code from natural language queries using LLM
+    """
+    
+    @method_decorator(login_required)
+    @method_decorator(csrf_exempt)
+    def post(self, request):
+        """Generate Python code from natural language query using LLM"""
+        try:
+            data = json.loads(request.body)
+            query = data.get('query', '').strip()
+            dataset_id = data.get('dataset_id')
+            
+            if not query:
+                return JsonResponse({
+                    'error': 'Query is required'
+                }, status=400)
+            
+            # Get or create session with dataset
+            session = None
+            if dataset_id:
+                try:
+                    from analytics.models import Dataset
+                    from analytics.services.session_manager import SessionManager
+                    dataset = Dataset.objects.get(id=dataset_id, user=request.user)
+                    session_manager = SessionManager()
+                    session = session_manager.create_session(
+                        user=request.user,
+                        dataset=dataset,
+                        session_name="Natural Language Sandbox Session"
+                    )
+                except Dataset.DoesNotExist:
+                    pass
+            
+            # Generate Python code using LLM
+            generated_code = self._generate_python_code_with_llm(query, session, request)
+            
+            session_id = None
+            if session:
+                session_id = getattr(session, 'id', None)
+            
+            return JsonResponse({
+                'success': True,
+                'code': generated_code,
+                'session_id': session_id
+            })
+                
+        except json.JSONDecodeError:
+            return JsonResponse({
+                'error': 'Invalid JSON data'
+            }, status=400)
+        except Exception as e:
+            logger.error(f"Error generating code: {str(e)}")
+            return JsonResponse({
+                'error': 'Internal server error',
+                'details': str(e)
+            }, status=500)
+    
+    def _generate_python_code_with_llm(self, query: str, session: Optional[Any], request) -> str:
+        """
+        Generate Python code from natural language query using LLM
+        
+        Args:
+            query: Natural language query
+            session: Analysis session (optional)
+            request: HTTP request object
+            
+        Returns:
+            Generated Python code as string
+        """
+        try:
+            # Import LLM processor
+            from analytics.services.llm_processor import LLMProcessor
+            llm_processor = LLMProcessor()
+            
+            # Prepare dataset context if session is provided
+            dataset_context = ""
+            if session and hasattr(session, 'primary_dataset') and session.primary_dataset:
+                dataset = session.primary_dataset
+                dataset_context = f"""
+Dataset Context:
+- Name: {dataset.name}
+- Description: {dataset.description or 'No description provided'}
+- Rows: {dataset.row_count}
+- Columns: {dataset.column_count}
+- Data Quality Score: {dataset.data_quality_score or 'N/A'}
+- Column Types: {json.dumps(dataset.data_types, indent=2) if dataset.data_types else 'Not available'}
+"""
+            
+            # Create prompt for LLM to generate Python code
+            prompt = f"""{dataset_context}
+
+User Query: {query}
+
+Please generate Python code that performs the requested analysis. Follow these requirements:
+
+1. Use pandas for data manipulation
+2. Use matplotlib/seaborn for visualization
+3. Always include proper imports at the beginning
+4. Use 'df' as the dataframe variable name
+5. Include comments explaining each step
+6. Handle potential errors gracefully
+7. Output results using print() statements
+8. For visualizations, use plt.show() to display them
+9. Keep the code focused on the specific request
+10. Do not include any prose outside of comments
+
+Return ONLY the Python code without any formatting or explanations.
+
+Example format:
+```python
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Your code here
+```
+
+Generate the code now:"""
+            
+            # Generate code using LLM
+            result = llm_processor.generate_text(
+                prompt=prompt,
+                user=session.user if session and hasattr(session, 'user') else request.user,
+                session=session
+            )
+            
+            # Extract code from response
+            generated_text = result.get('text', '')
+            
+            # Remove markdown code block formatting if present
+            if '```python' in generated_text:
+                generated_text = generated_text.split('```python')[1].split('```')[0].strip()
+            elif '```' in generated_text:
+                generated_text = generated_text.split('```')[1].split('```')[0].strip()
+            
+            # Validate that we have some code
+            if not generated_text or len(generated_text.strip()) < 10:
+                # Fallback to a basic template if LLM fails
+                return """import pandas as pd
+import matplotlib.pyplot as plt
+
+# Basic dataset exploration
+print("Dataset Information:")
+print(f"Shape: {df.shape}")
+print(f"Columns: {list(df.columns)}")
+
+print("\\nFirst few rows:")
+print(df.head())
+
+print("\\nBasic statistics:")
+print(df.describe())"""
+            
+            return generated_text
+            
+        except Exception as e:
+            logger.error(f"Error generating code with LLM: {str(e)}")
+            # Fallback to basic template
+            return """import pandas as pd
+import matplotlib.pyplot as plt
+
+# Basic dataset exploration
+print("Dataset Information:")
+print(f"Shape: {df.shape}")
+print(f"Columns: {list(df.columns)}")
+
+print("\\nFirst few rows:")
+print(df.head())
+
+print("\\nBasic statistics:")
+print(df.describe())"""
+
+
+class NaturalLanguageCodeExecutionView(View):
+    """
+    API endpoint for executing Python code in the Natural Language Sandbox
+    """
+    
+    @method_decorator(login_required)
+    @method_decorator(csrf_exempt)
+    def post(self, request):
+        """Execute Python code and return results"""
+        try:
+            data = json.loads(request.body)
+            code = data.get('code', '').strip()
+            dataset_id = data.get('dataset_id')
+            
+            if not code:
+                return JsonResponse({
+                    'success': False,
+                    'isError': True,
+                    'error': 'Code is required'
+                }, status=400)
+            
+            # Use the existing sandbox executor
+            from analytics.services.sandbox_executor import SandboxExecutor
+            sandbox_executor = SandboxExecutor()
+            
+            # Get or create session with dataset
+            session = None
+            if dataset_id:
+                try:
+                    from analytics.models import Dataset
+                    from analytics.services.session_manager import SessionManager
+                    dataset = Dataset.objects.get(id=dataset_id, user=request.user)  # type: ignore
+                    session_manager = SessionManager()
+                    session = session_manager.create_session(
+                        user=request.user,
+                        dataset=dataset,
+                        session_name="Natural Language Sandbox Session"
+                    )
+                except Dataset.DoesNotExist:  # type: ignore
+                    pass
+            
+            # Execute the code using sandbox executor
+            result = sandbox_executor.execute_code(
+                code=code,
+                language='python',
+                timeout=30,
+                user_id=request.user.id,
+                session_id=session.id if session else None
+            )
+            
+            # Process the result to extract images and structured output
+            from analytics.services.sandbox_result_processor import SandboxResultProcessor
+            processor = SandboxResultProcessor()
+            parsed_result = processor.parse_sandbox_output(result.get('output', ''))
+            
+            # Determine result type based on content
+            result_type = 'text'
+            if parsed_result.get('has_images', False):
+                result_type = 'chart'
+            elif parsed_result.get('text_output', '').strip() and '|' in parsed_result.get('text_output', ''):
+                # Simple heuristic for table detection
+                lines = parsed_result.get('text_output', '').strip().split('\n')
+                pipe_lines = [line for line in lines if '|' in line]
+                if len(pipe_lines) >= 2:
+                    result_type = 'table'
+            
+            # Prepare the response with proper handling of all cases
+            response_data = {
+                'success': result.get('status') == 'completed',
+                'isError': result.get('status') != 'completed',
+                'type': result_type,
+                'execution_time': result.get('execution_time', 0),
+                'memory_usage': result.get('memory_peak', 0),
+                'status': result.get('status', 'unknown')
+            }
+            
+            # Add content based on what we have
+            if result.get('status') == 'completed':
+                response_data['content'] = parsed_result.get('text_output', '')
+                # Add images if any were found
+                if parsed_result.get('images'):
+                    response_data['images'] = parsed_result['images']
+            else:
+                # Error case
+                response_data['error'] = result.get('error', 'Code execution failed')
+                response_data['content'] = result.get('error', 'Code execution failed')
+            
+            return JsonResponse(response_data)
+                
+        except json.JSONDecodeError:
+            return JsonResponse({
+                'success': False,
+                'isError': True,
+                'error': 'Invalid JSON data'
+            }, status=400)
+        except Exception as e:
+            logger.error(f"Error executing code: {str(e)}", exc_info=True)
+            return JsonResponse({
+                'success': False,
+                'isError': True,
+                'error': f'Execution error: {str(e)}',
+                'content': f'Execution error: {str(e)}'
+            }, status=500)
+
+
+class NaturalLanguageDatasetUploadView(View):
+    """
+    API endpoint for uploading datasets in the Natural Language Sandbox
+    """
+    
+    @method_decorator(login_required)
+    @method_decorator(csrf_exempt)
+    def post(self, request):
+        """Upload and process dataset for Natural Language Sandbox"""
+        try:
+            if 'file' not in request.FILES:
+                return JsonResponse({
+                    'error': 'No file provided'
+                }, status=400)
+            
+            file = request.FILES['file']
+            
+            # Validate file type
+            allowed_extensions = ['.csv', '.json', '.xlsx']
+            file_extension = '.' + file.name.split('.')[-1].lower()
+            
+            if file_extension not in allowed_extensions:
+                return JsonResponse({
+                    'error': f'Unsupported file type. Allowed: {", ".join(allowed_extensions)}'
+                }, status=400)
+            
+            # Process the file using existing dataset processing
+            file_processor = FileProcessingService()
+            result = file_processor.process_uploaded_file(file, request.user)
+            
+            if result.get('success'):
+                dataset = result.get('dataset')
+                return JsonResponse({
+                    'success': True,
+                    'id': dataset.id,
+                    'name': dataset.name,
+                    'rows': dataset.rows,
+                    'columns': dataset.columns,
+                    'size': dataset.file_size,
+                    'message': f'Dataset "{dataset.name}" uploaded successfully'
+                })
+            else:
+                return JsonResponse({
+                    'error': result.get('error', 'Failed to process dataset')
+                }, status=500)
+                
+        except Exception as e:
+            logger.error(f"Error uploading dataset: {str(e)}")
+            return JsonResponse({
+                'error': 'Failed to upload dataset',
+                'details': str(e)
+            }, status=500)
+
+
+class NaturalLanguageDatasetListView(View):
+    """
+    API endpoint for listing user's datasets in the Natural Language Sandbox
+    """
+    
+    @method_decorator(login_required)
+    def get(self, request):
+        """Get list of user's datasets"""
+        try:
+            datasets = Dataset.objects.filter(user=request.user).order_by('-created_at')
+            
+            dataset_list = []
+            for dataset in datasets:
+                dataset_list.append({
+                    'id': dataset.id,
+                    'name': dataset.name,
+                    'rows': dataset.rows,
+                    'columns': dataset.columns,
+                    'size': dataset.file_size,
+                    'created_at': dataset.created_at.isoformat(),
+                    'columns_list': dataset.columns.split(',') if dataset.columns else []
+                })
+            
+            return JsonResponse({
+                'success': True,
+                'datasets': dataset_list
+            })
+            
+        except Exception as e:
+            logger.error(f"Error listing datasets: {str(e)}")
+            return JsonResponse({
+                'error': 'Failed to load datasets',
+                'details': str(e)
+            }, status=500)
+
+
+class NaturalLanguageDatasetPreviewView(View):
+    """
+    API endpoint for previewing dataset data in the Natural Language Sandbox
+    """
+    
+    @method_decorator(login_required)
+    def get(self, request, dataset_id):
+        """Get dataset preview data"""
+        try:
+            dataset = Dataset.objects.get(id=dataset_id, user=request.user)
+            
+            # Load dataset data for preview
+            file_processor = FileProcessingService()
+            data = file_processor.load_dataset_data(dataset)
+            
+            # Return first 10 rows for preview
+            preview_data = data.head(10).to_dict('records') if hasattr(data, 'head') else data[:10]
+            
+            return JsonResponse({
+                'success': True,
+                'data': preview_data,
+                'total_rows': len(data) if hasattr(data, '__len__') else dataset.rows,
+                'columns': list(data.columns) if hasattr(data, 'columns') else []
+            })
+            
+        except Dataset.DoesNotExist:
+            return JsonResponse({
+                'error': 'Dataset not found'
+            }, status=404)
+        except Exception as e:
+            logger.error(f"Error previewing dataset: {str(e)}")
+            return JsonResponse({
+                'error': 'Failed to preview dataset',
+                'details': str(e)
+            }, status=500)

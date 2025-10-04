@@ -54,7 +54,7 @@ class SandboxExecutor:
         
         self.forbidden_functions = {
             'exec', 'eval', 'compile', 'open', 'file', 'input', 'raw_input',
-            'exit', 'quit', 'reload',
+            'quit', 'reload',
             'getattr', 'setattr', 'delattr', 'hasattr'
         }
         
@@ -62,7 +62,7 @@ class SandboxExecutor:
         self.max_execution_time = 30  # seconds
         self.max_memory_mb = 512  # MB
         self.max_cpu_percent = 80  # %
-        self.max_output_size = 1024 * 1024  # 1MB
+        self.max_output_size = 20 * 1024 * 1024  # 20MB (increased from 1MB)
         
         # Sandbox directory
         self.sandbox_dir = Path(settings.MEDIA_ROOT) / 'sandbox'

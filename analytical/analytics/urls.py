@@ -26,6 +26,7 @@ urlpatterns = [
     path('', lambda request: redirect('login'), name='home'),
     path('dashboard/', views.dashboard_view, name='dashboard'),
     path('sandbox/', sandbox_views.SandboxView.as_view(), name='sandbox'),
+    path('natural-language-sandbox/', views.NaturalLanguageSandboxView.as_view(), name='natural_language_sandbox'),
     path('upload-form/', views.upload_form_view, name='upload_form'),
     path('register/', views.register_view, name='register'),
     path('my-datasets/', views.my_datasets_view, name='my_datasets'),
@@ -68,6 +69,13 @@ urlpatterns = [
     path('api/tools/configure/<str:tool_id>/', views.get_tool_configuration, name='get_tool_configuration'),
     path('api/tools/execute/', views.execute_analysis_tool, name='execute_analysis_tool'),
     path('api/sandbox/execute/', views.execute_sandbox_code, name='execute_sandbox_code'),
+    
+    # Natural Language Sandbox API endpoints
+    path('api/nl-sandbox/generate/', views.NaturalLanguageCodeGenerationView.as_view(), name='nl_sandbox_generate'),
+    path('api/nl-sandbox/execute/', views.NaturalLanguageCodeExecutionView.as_view(), name='nl_sandbox_execute'),
+    path('api/nl-sandbox/upload/', views.NaturalLanguageDatasetUploadView.as_view(), name='nl_sandbox_upload'),
+    path('api/nl-sandbox/datasets/', views.NaturalLanguageDatasetListView.as_view(), name='nl_sandbox_datasets'),
+    path('api/nl-sandbox/datasets/<int:dataset_id>/preview/', views.NaturalLanguageDatasetPreviewView.as_view(), name='nl_sandbox_preview'),
     
     # API endpoints (must come last to avoid conflicts)
     path('api/', include(router.urls)),

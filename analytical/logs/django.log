@@ -3516,3 +3516,827 @@ INFO 2025-10-03 21:50:29,240 basehttp 6708 8896 "GET /api/health/ HTTP/1.1" 200 
 INFO 2025-10-03 21:50:29,442 basehttp 6708 8896 "GET /sandbox/ HTTP/1.1" 200 42266
 INFO 2025-10-03 21:50:29,762 basehttp 6708 8896 "GET /api/datasets/ HTTP/1.1" 200 1762
 INFO 2025-10-04 18:25:00,335 autoreload 19356 21284 Watching for file changes with StatReloader
+INFO 2025-10-04 18:35:15,531 basehttp 19356 25056 "GET / HTTP/1.1" 302 0
+INFO 2025-10-04 18:35:15,916 basehttp 19356 7404 "GET /accounts/login/ HTTP/1.1" 200 30903
+INFO 2025-10-04 18:35:16,093 basehttp 19356 25056 "GET /static/analytics/js/main.js HTTP/1.1" 304 0
+INFO 2025-10-04 18:35:16,095 basehttp 19356 7404 "GET /static/analytics/js/htmx-config.js HTTP/1.1" 304 0
+INFO 2025-10-04 18:35:19,875 basehttp 19356 7404 "POST /accounts/login/ HTTP/1.1" 302 0
+INFO 2025-10-04 18:35:19,919 basehttp 19356 7404 "GET /dashboard/ HTTP/1.1" 200 237785
+INFO 2025-10-04 18:35:20,008 basehttp 19356 7404 "GET /static/analytics/css/chat-formatting.css HTTP/1.1" 304 0
+INFO 2025-10-04 18:35:20,955 basehttp 19356 25056 "GET /api/datasets/ HTTP/1.1" 200 1762
+WARNING 2025-10-04 18:35:21,833 log 19356 7404 Not Found: /favicon.ico
+INFO 2025-10-04 18:35:21,836 basehttp 19356 7404 - Broken pipe from ('127.0.0.1', 54535)
+INFO 2025-10-04 18:35:22,072 basehttp 19356 4868 "GET /api/tools/list/ HTTP/1.1" 200 10194
+INFO 2025-10-04 18:35:22,078 basehttp 19356 26204 "GET /api/sessions/250/history/ HTTP/1.1" 200 244070
+INFO 2025-10-04 18:35:22,125 basehttp 19356 23708 "GET /api/sessions/current/ HTTP/1.1" 200 604
+INFO 2025-10-04 18:35:22,202 basehttp 19356 17232 "GET /api/sessions/current/ HTTP/1.1" 200 604
+INFO 2025-10-04 18:35:39,929 basehttp 19356 26204 "GET /api/tools/configure/descriptive_stats/ HTTP/1.1" 200 3707
+INFO 2025-10-04 18:35:48,216 basehttp 19356 26204 "POST /api/tools/execute/ HTTP/1.1" 200 362141
+INFO 2025-10-04 18:35:50,240 basehttp 19356 26204 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 18:36:20,275 basehttp 19356 26204 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 18:36:44,061 basehttp 19356 26204 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-04 18:36:47,915 basehttp 19356 26204 "POST /api/sessions/create/ HTTP/1.1" 200 88
+INFO 2025-10-04 18:36:48,057 basehttp 19356 26204 "GET /api/sessions/252/history/ HTTP/1.1" 200 427
+INFO 2025-10-04 18:36:48,416 basehttp 19356 4868 "GET /api/tools/configure/descriptive_stats/ HTTP/1.1" 200 10641
+INFO 2025-10-04 18:36:50,293 basehttp 19356 26204 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 18:36:51,622 basehttp 19356 26204 "GET /dashboard/ HTTP/1.1" 200 237785
+WARNING 2025-10-04 18:36:52,187 log 19356 26204 Not Found: /favicon.ico
+INFO 2025-10-04 18:36:52,189 basehttp 19356 26204 - Broken pipe from ('127.0.0.1', 54551)
+INFO 2025-10-04 18:36:52,242 basehttp 19356 4868 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-04 18:36:52,294 basehttp 19356 23708 "GET /api/sessions/current/ HTTP/1.1" 200 571
+INFO 2025-10-04 18:36:52,376 basehttp 19356 25056 "GET /api/sessions/current/ HTTP/1.1" 200 571
+INFO 2025-10-04 18:36:52,385 basehttp 19356 17232 "GET /api/tools/list/ HTTP/1.1" 200 10194
+INFO 2025-10-04 18:36:52,407 basehttp 19356 4868 "GET /api/sessions/252/history/ HTTP/1.1" 200 427
+INFO 2025-10-04 18:36:57,101 basehttp 19356 4868 "GET /api/sessions/252/history/ HTTP/1.1" 200 427
+INFO 2025-10-04 18:37:00,618 basehttp 19356 4868 "GET /api/tools/configure/descriptive_stats/ HTTP/1.1" 200 10641
+INFO 2025-10-04 18:37:22,279 basehttp 19356 17232 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 18:37:28,098 basehttp 19356 4868 "POST /api/tools/execute/ HTTP/1.1" 200 2084152
+INFO 2025-10-04 18:37:52,277 basehttp 19356 4868 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 18:38:22,285 basehttp 19356 4868 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 18:38:52,280 basehttp 19356 4868 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 18:39:22,288 basehttp 19356 4868 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 18:39:52,345 basehttp 19356 4868 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 18:40:22,353 basehttp 19356 4868 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 18:40:52,386 basehttp 19356 4868 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 18:41:22,539 basehttp 19356 2700 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 18:41:36,758 basehttp 19356 4868 "POST /api/ai/interpret-analysis/ HTTP/1.1" 200 10550
+INFO 2025-10-04 18:41:45,857 basehttp 19356 2700 "POST /api/ai/interpret-analysis/ HTTP/1.1" 200 8995
+INFO 2025-10-04 18:41:52,412 basehttp 19356 4868 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 18:42:22,529 basehttp 19356 4868 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 18:42:52,462 basehttp 19356 4868 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 18:43:22,463 basehttp 19356 4868 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 18:43:52,469 basehttp 19356 4868 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 18:44:22,467 basehttp 19356 4868 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 18:44:52,580 basehttp 19356 4868 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 18:45:22,779 basehttp 19356 4868 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 18:45:52,591 basehttp 19356 4868 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 18:46:01,083 basehttp 19356 4868 "GET /dashboard/ HTTP/1.1" 200 237785
+WARNING 2025-10-04 18:46:01,853 log 19356 4868 Not Found: /favicon.ico
+INFO 2025-10-04 18:46:01,859 basehttp 19356 4868 - Broken pipe from ('127.0.0.1', 54552)
+INFO 2025-10-04 18:46:03,099 basehttp 19356 9380 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-04 18:46:03,159 basehttp 19356 11648 "GET /api/tools/list/ HTTP/1.1" 200 10194
+INFO 2025-10-04 18:46:03,179 basehttp 19356 20716 "GET /api/sessions/current/ HTTP/1.1" 200 571
+INFO 2025-10-04 18:46:03,303 basehttp 19356 17424 "GET /api/sessions/current/ HTTP/1.1" 200 571
+INFO 2025-10-04 18:46:03,448 basehttp 19356 11932 "GET /api/sessions/252/history/ HTTP/1.1" 200 1910608
+INFO 2025-10-04 18:46:10,356 basehttp 19356 11932 "GET /dashboard/ HTTP/1.1" 200 237785
+INFO 2025-10-04 18:46:10,781 basehttp 19356 11932 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-04 18:46:10,785 basehttp 19356 11648 "GET /api/sessions/current/ HTTP/1.1" 200 571
+INFO 2025-10-04 18:46:10,845 basehttp 19356 20716 "GET /api/tools/list/ HTTP/1.1" 200 10194
+INFO 2025-10-04 18:46:11,017 basehttp 19356 17424 "GET /api/sessions/current/ HTTP/1.1" 200 571
+INFO 2025-10-04 18:46:11,081 basehttp 19356 9380 "GET /api/sessions/252/history/ HTTP/1.1" 200 1910608
+INFO 2025-10-04 18:46:14,257 basehttp 19356 11932 "GET /api/tools/configure/correlation_analysis/ HTTP/1.1" 200 10675
+INFO 2025-10-04 18:46:27,708 basehttp 19356 9380 "POST /api/tools/execute/ HTTP/1.1" 200 700510
+INFO 2025-10-04 18:46:40,686 basehttp 19356 9380 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 18:46:51,459 basehttp 19356 11932 "POST /api/ai/interpret-analysis/ HTTP/1.1" 200 6901
+INFO 2025-10-04 18:47:10,694 basehttp 19356 9380 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 18:47:40,696 basehttp 19356 11932 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 18:48:10,711 basehttp 19356 9380 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 18:48:40,715 basehttp 19356 11932 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 18:49:10,726 basehttp 19356 9380 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 18:49:24,715 basehttp 19356 11932 "GET /api/tools/configure/regression_analysis/ HTTP/1.1" 200 17029
+ERROR 2025-10-04 18:49:38,601 log 19356 9380 Internal Server Error: /api/tools/execute/
+ERROR 2025-10-04 18:49:38,601 basehttp 19356 9380 "POST /api/tools/execute/ HTTP/1.1" 500 227
+INFO 2025-10-04 18:49:40,730 basehttp 19356 11932 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 18:50:10,737 basehttp 19356 9380 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 18:50:40,739 basehttp 19356 11932 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 18:50:53,696 basehttp 19356 9380 - Broken pipe from ('127.0.0.1', 54930)
+INFO 2025-10-04 18:50:57,992 basehttp 19356 11932 "GET /dashboard/ HTTP/1.1" 200 237785
+INFO 2025-10-04 18:50:59,114 basehttp 19356 11932 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-04 18:50:59,416 basehttp 19356 11932 "GET /api/sessions/current/ HTTP/1.1" 200 571
+INFO 2025-10-04 18:50:59,840 basehttp 19356 25256 "GET /api/tools/list/ HTTP/1.1" 200 10194
+INFO 2025-10-04 18:50:59,923 basehttp 19356 2976 "GET /api/sessions/current/ HTTP/1.1" 200 571
+INFO 2025-10-04 18:50:59,982 basehttp 19356 3568 "GET /api/sessions/252/history/ HTTP/1.1" 200 1910608
+INFO 2025-10-04 18:51:02,319 basehttp 19356 11932 "GET /api/tools/configure/regression_analysis/ HTTP/1.1" 200 17029
+ERROR 2025-10-04 18:51:08,127 log 19356 3568 Internal Server Error: /api/tools/execute/
+ERROR 2025-10-04 18:51:08,130 basehttp 19356 3568 "POST /api/tools/execute/ HTTP/1.1" 500 227
+ERROR 2025-10-04 18:51:28,315 log 19356 11932 Internal Server Error: /api/tools/execute/
+ERROR 2025-10-04 18:51:28,320 basehttp 19356 11932 "POST /api/tools/execute/ HTTP/1.1" 500 227
+INFO 2025-10-04 18:51:28,827 basehttp 19356 3568 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 18:51:29,829 autoreload 19356 21284 F:\analytical\analytical\analytics\urls.py changed, reloading.
+INFO 2025-10-04 18:51:37,773 autoreload 12964 16524 Watching for file changes with StatReloader
+INFO 2025-10-04 18:52:31,092 autoreload 12964 16524 F:\analytical\analytical\analytics\urls.py changed, reloading.
+INFO 2025-10-04 18:52:35,822 autoreload 18424 19532 Watching for file changes with StatReloader
+INFO 2025-10-04 18:53:15,650 autoreload 18424 19532 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 18:53:20,303 autoreload 24580 26220 Watching for file changes with StatReloader
+INFO 2025-10-04 18:55:36,249 autoreload 24580 26220 F:\analytical\analytical\analytics\views\__init__.py changed, reloading.
+INFO 2025-10-04 18:55:48,123 autoreload 22704 5368 Watching for file changes with StatReloader
+INFO 2025-10-04 19:17:41,438 autoreload 24272 17084 Watching for file changes with StatReloader
+INFO 2025-10-04 19:17:54,676 basehttp 24272 1560 "GET /sandbox/ HTTP/1.1" 200 42266
+INFO 2025-10-04 19:17:55,107 basehttp 24272 1560 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-04 19:18:25,092 basehttp 24272 1560 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 19:18:55,086 basehttp 24272 1560 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 19:19:25,091 basehttp 24272 1560 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 19:19:53,970 basehttp 24272 1560 "GET /sandbox/ HTTP/1.1" 200 42495
+INFO 2025-10-04 19:19:54,742 basehttp 24272 1560 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-04 19:19:58,101 basehttp 24272 1560 "GET /natural-language-sandbox/ HTTP/1.1" 200 69765
+INFO 2025-10-04 19:19:58,508 basehttp 24272 1560 "GET /api/datasets/ HTTP/1.1" 200 1762
+WARNING 2025-10-04 19:20:06,550 log 24272 1560 Not Found: /api/datasets/upload/
+WARNING 2025-10-04 19:20:06,550 basehttp 24272 1560 "POST /api/datasets/upload/ HTTP/1.1" 404 18668
+INFO 2025-10-04 19:20:28,482 basehttp 24272 1560 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 19:20:58,512 basehttp 24272 1560 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 19:21:28,525 basehttp 24272 1560 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 19:21:58,531 basehttp 24272 1560 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 19:22:29,054 basehttp 24272 1560 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 19:22:39,783 autoreload 24272 17084 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 19:22:47,798 autoreload 3860 11000 Watching for file changes with StatReloader
+INFO 2025-10-04 19:23:29,288 basehttp 3860 25524 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 19:23:59,059 basehttp 3860 25524 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 19:24:29,062 basehttp 3860 25524 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 19:24:59,060 basehttp 3860 25524 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 19:24:59,178 autoreload 3860 11000 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 19:25:01,328 autoreload 3108 24020 Watching for file changes with StatReloader
+INFO 2025-10-04 19:25:16,825 autoreload 3108 24020 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 19:25:20,750 autoreload 26020 24728 Watching for file changes with StatReloader
+INFO 2025-10-04 19:26:11,742 basehttp 26020 23860 "GET /natural-language-sandbox/ HTTP/1.1" 200 72150
+INFO 2025-10-04 19:26:12,083 basehttp 26020 23860 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-04 19:26:42,077 basehttp 26020 23860 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 19:27:12,092 basehttp 26020 23860 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 19:27:42,087 basehttp 26020 23860 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 19:28:12,097 basehttp 26020 23860 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 19:28:18,496 basehttp 26020 10532 "GET /natural-language-sandbox/ HTTP/1.1" 302 0
+INFO 2025-10-04 19:28:18,527 basehttp 26020 10532 "GET /accounts/login/?next=/natural-language-sandbox/ HTTP/1.1" 200 31132
+INFO 2025-10-04 19:28:23,269 basehttp 26020 23860 "GET /natural-language-sandbox/ HTTP/1.1" 200 72430
+INFO 2025-10-04 19:28:23,872 basehttp 26020 23860 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-04 19:28:45,719 basehttp 26020 23860 "GET /natural-language-sandbox/ HTTP/1.1" 200 72545
+INFO 2025-10-04 19:28:46,993 basehttp 26020 12508 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-04 19:29:16,437 basehttp 26020 12508 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 19:29:29,676 basehttp 26020 23860 "GET /natural-language-sandbox/ HTTP/1.1" 200 72556
+INFO 2025-10-04 19:29:30,306 basehttp 26020 12508 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-04 19:29:36,533 basehttp 26020 23860 "GET /natural-language-sandbox/ HTTP/1.1" 200 72672
+INFO 2025-10-04 19:29:37,113 basehttp 26020 12508 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-04 19:30:07,061 basehttp 26020 12508 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 19:30:12,309 basehttp 26020 23860 "GET /natural-language-sandbox/ HTTP/1.1" 200 72672
+INFO 2025-10-04 19:30:12,871 basehttp 26020 12508 "GET /api/datasets/ HTTP/1.1" 200 1762
+ERROR 2025-10-04 19:30:35,537 log 26020 23860 Internal Server Error: /api/nl-sandbox/generate/
+ERROR 2025-10-04 19:30:35,538 basehttp 26020 23860 "POST /api/nl-sandbox/generate/ HTTP/1.1" 500 117
+INFO 2025-10-04 19:30:43,006 basehttp 26020 12508 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 19:31:12,840 basehttp 26020 12508 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 19:31:42,855 basehttp 26020 12508 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 19:32:12,866 basehttp 26020 12508 "GET /api/health/ HTTP/1.1" 200 89
+ERROR 2025-10-04 19:32:25,144 log 26020 23860 Internal Server Error: /api/nl-sandbox/generate/
+ERROR 2025-10-04 19:32:25,153 basehttp 26020 23860 "POST /api/nl-sandbox/generate/ HTTP/1.1" 500 117
+INFO 2025-10-04 19:32:42,877 basehttp 26020 12508 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 19:32:52,809 autoreload 26020 24728 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 19:33:03,731 autoreload 13228 4260 Watching for file changes with StatReloader
+INFO 2025-10-04 19:33:06,067 autoreload 13228 4260 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 19:33:08,325 autoreload 24540 25388 Watching for file changes with StatReloader
+INFO 2025-10-04 19:33:34,602 basehttp 24540 25448 "GET /natural-language-sandbox/ HTTP/1.1" 200 72764
+INFO 2025-10-04 19:33:35,271 basehttp 24540 22032 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-04 19:33:35,451 basehttp 24540 1132 "GET /accounts/login/?next=/natural-language-sandbox/ HTTP/1.1" 200 31132
+INFO 2025-10-04 19:34:05,094 basehttp 24540 22032 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 19:34:22,675 basehttp 24540 25448 "GET /natural-language-sandbox/ HTTP/1.1" 200 73045
+INFO 2025-10-04 19:34:23,566 basehttp 24540 22032 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-04 19:34:53,063 autoreload 24540 25388 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 19:34:53,592 basehttp 24540 22032 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 19:34:57,387 autoreload 15120 12268 Watching for file changes with StatReloader
+INFO 2025-10-04 19:35:23,697 basehttp 15120 19444 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 19:35:34,424 basehttp 15120 19444 "GET /natural-language-sandbox/ HTTP/1.1" 200 73045
+INFO 2025-10-04 19:35:34,983 basehttp 15120 19444 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-04 19:35:43,958 basehttp 15120 19444 "GET /dashboard/ HTTP/1.1" 200 238014
+INFO 2025-10-04 19:35:44,438 basehttp 15120 19444 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-04 19:35:44,500 basehttp 15120 19444 "GET /api/sessions/current/ HTTP/1.1" 200 621
+INFO 2025-10-04 19:35:44,629 basehttp 15120 19444 "GET /api/sessions/current/ HTTP/1.1" 200 621
+INFO 2025-10-04 19:35:44,826 basehttp 15120 24904 "GET /api/tools/list/ HTTP/1.1" 200 10194
+INFO 2025-10-04 19:35:45,179 basehttp 15120 16000 "GET /api/sessions/252/history/ HTTP/1.1" 200 1910608
+INFO 2025-10-04 19:35:55,541 basehttp 15120 16000 "GET /natural-language-sandbox/ HTTP/1.1" 200 73045
+INFO 2025-10-04 19:35:56,500 basehttp 15120 16000 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-04 19:36:19,738 basehttp 15120 16000 "GET /natural-language-sandbox/ HTTP/1.1" 200 73045
+INFO 2025-10-04 19:36:20,061 basehttp 15120 16000 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-04 19:36:50,025 basehttp 15120 19444 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 19:36:52,552 basehttp 15120 16000 "POST /api/nl-sandbox/generate/ HTTP/1.1" 200 64
+WARNING 2025-10-04 19:36:53,069 log 15120 16000 Bad Request: /api/nl-sandbox/execute/
+WARNING 2025-10-04 19:36:53,073 basehttp 15120 16000 "POST /api/nl-sandbox/execute/ HTTP/1.1" 400 29
+WARNING 2025-10-04 19:37:00,061 log 15120 16000 Bad Request: /api/nl-sandbox/execute/
+WARNING 2025-10-04 19:37:00,061 basehttp 15120 16000 "POST /api/nl-sandbox/execute/ HTTP/1.1" 400 29
+INFO 2025-10-04 19:37:20,045 basehttp 15120 16000 "GET /api/health/ HTTP/1.1" 200 89
+WARNING 2025-10-04 19:37:38,391 log 15120 16000 Bad Request: /api/nl-sandbox/execute/
+WARNING 2025-10-04 19:37:38,391 basehttp 15120 16000 "POST /api/nl-sandbox/execute/ HTTP/1.1" 400 29
+INFO 2025-10-04 19:37:50,061 basehttp 15120 16000 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 19:38:20,063 basehttp 15120 16000 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 19:38:33,145 autoreload 15120 12268 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 19:38:40,423 autoreload 9336 20116 Watching for file changes with StatReloader
+INFO 2025-10-04 19:39:13,042 autoreload 9336 20116 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 19:39:19,186 autoreload 15472 18588 Watching for file changes with StatReloader
+INFO 2025-10-04 19:40:13,822 autoreload 15472 18588 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 19:40:15,852 autoreload 26056 14148 Watching for file changes with StatReloader
+INFO 2025-10-04 19:42:46,108 basehttp 26056 18968 "GET /natural-language-sandbox/ HTTP/1.1" 200 73045
+INFO 2025-10-04 19:42:46,565 basehttp 26056 11252 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-04 19:43:16,450 basehttp 26056 11252 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 19:43:41,977 basehttp 26056 18968 "POST /api/nl-sandbox/generate/ HTTP/1.1" 200 64
+WARNING 2025-10-04 19:43:42,490 log 26056 11252 Bad Request: /api/nl-sandbox/execute/
+WARNING 2025-10-04 19:43:42,496 basehttp 26056 11252 "POST /api/nl-sandbox/execute/ HTTP/1.1" 400 29
+INFO 2025-10-04 19:43:46,455 basehttp 26056 11252 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 20:33:22,104 autoreload 15796 20608 Watching for file changes with StatReloader
+INFO 2025-10-04 20:40:58,021 autoreload 23532 21344 Watching for file changes with StatReloader
+INFO 2025-10-04 20:42:13,310 autoreload 23532 21344 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 20:42:21,973 autoreload 20120 8396 Watching for file changes with StatReloader
+INFO 2025-10-04 20:42:43,391 basehttp 20120 16516 "GET /natural-language-sandbox/ HTTP/1.1" 200 73201
+INFO 2025-10-04 20:42:44,317 basehttp 20120 16516 "GET /api/datasets/ HTTP/1.1" 200 1762
+WARNING 2025-10-04 20:42:44,569 log 20120 16516 Not Found: /favicon.ico
+INFO 2025-10-04 20:42:44,573 basehttp 20120 16516 - Broken pipe from ('127.0.0.1', 55966)
+INFO 2025-10-04 20:42:44,613 basehttp 20120 20992 "GET /accounts/login/?next=/natural-language-sandbox/ HTTP/1.1" 200 31132
+INFO 2025-10-04 20:43:14,356 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 20:43:22,476 basehttp 20120 25064 "POST /api/nl-sandbox/generate/ HTTP/1.1" 200 357
+INFO 2025-10-04 20:43:30,435 basehttp 20120 25064 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 1256
+INFO 2025-10-04 20:43:36,691 basehttp 20120 24808 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 1256
+INFO 2025-10-04 20:43:44,201 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 20:44:15,315 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 20:44:44,227 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 20:45:14,260 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 20:45:44,833 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 20:45:51,039 basehttp 20120 25064 "POST /api/nl-sandbox/generate/ HTTP/1.1" 200 357
+INFO 2025-10-04 20:45:56,360 basehttp 20120 25064 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 1256
+INFO 2025-10-04 20:46:14,821 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 20:46:18,612 basehttp 20120 25064 "GET /natural-language-sandbox/ HTTP/1.1" 200 73906
+INFO 2025-10-04 20:46:19,029 basehttp 20120 25064 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-04 20:46:49,016 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 20:46:55,236 basehttp 20120 25064 "POST /api/nl-sandbox/generate/ HTTP/1.1" 200 357
+INFO 2025-10-04 20:46:58,723 basehttp 20120 25064 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 977
+INFO 2025-10-04 20:47:19,036 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 20:47:49,470 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 20:48:19,720 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 20:48:50,054 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 20:49:20,546 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 20:49:49,285 autoreload 26416 14272 Watching for file changes with StatReloader
+INFO 2025-10-04 20:49:50,775 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 20:50:21,071 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 20:50:40,755 basehttp 20120 25064 "GET /natural-language-sandbox/ HTTP/1.1" 200 73906
+INFO 2025-10-04 20:50:41,391 basehttp 20120 25064 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-04 20:50:52,020 basehttp 20120 25064 "POST /api/nl-sandbox/generate/ HTTP/1.1" 200 357
+INFO 2025-10-04 20:50:56,304 basehttp 20120 25064 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 977
+INFO 2025-10-04 20:51:11,863 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 20:51:42,014 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 20:52:12,590 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 20:52:43,040 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 20:53:13,592 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 20:53:43,960 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 20:54:14,259 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 20:54:44,561 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 20:55:14,889 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 20:55:45,239 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 20:56:15,568 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 20:56:46,138 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 20:57:16,775 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 20:57:47,263 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 20:58:17,874 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 20:58:47,889 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 20:59:18,805 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 20:59:49,339 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 21:00:20,058 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 21:00:50,771 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 21:01:21,409 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 21:01:51,944 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 21:02:22,920 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 21:02:53,232 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 21:03:24,183 basehttp 20120 25064 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 21:11:22,596 basehttp 20120 2828 - Broken pipe from ('127.0.0.1', 54333)
+INFO 2025-10-04 21:11:43,856 basehttp 20120 17212 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 21:12:14,054 basehttp 20120 17212 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 21:12:33,491 autoreload 26416 14272 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:12:33,907 autoreload 20120 8396 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:12:36,641 autoreload 2200 13688 Watching for file changes with StatReloader
+INFO 2025-10-04 21:12:36,880 autoreload 17036 6948 Watching for file changes with StatReloader
+INFO 2025-10-04 21:13:04,561 autoreload 2200 13688 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:13:04,807 autoreload 17036 6948 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:13:07,557 autoreload 26388 7376 Watching for file changes with StatReloader
+INFO 2025-10-04 21:13:07,871 autoreload 1480 23252 Watching for file changes with StatReloader
+INFO 2025-10-04 21:13:36,261 autoreload 1480 23252 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:13:36,300 autoreload 26388 7376 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:13:41,013 autoreload 11248 20236 Watching for file changes with StatReloader
+INFO 2025-10-04 21:13:41,062 autoreload 23508 24384 Watching for file changes with StatReloader
+INFO 2025-10-04 21:14:34,192 autoreload 23508 24384 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:14:35,480 autoreload 11248 20236 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:14:37,884 autoreload 18968 24964 Watching for file changes with StatReloader
+INFO 2025-10-04 21:14:38,626 autoreload 7140 11708 Watching for file changes with StatReloader
+INFO 2025-10-04 21:15:06,090 autoreload 18968 24964 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:15:06,989 autoreload 7140 11708 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:15:09,088 autoreload 5332 3560 Watching for file changes with StatReloader
+INFO 2025-10-04 21:15:10,276 autoreload 24408 17264 Watching for file changes with StatReloader
+INFO 2025-10-04 21:15:35,532 autoreload 24408 17264 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:15:35,806 autoreload 5332 3560 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:15:39,548 autoreload 22428 17224 Watching for file changes with StatReloader
+INFO 2025-10-04 21:15:39,703 autoreload 5784 2332 Watching for file changes with StatReloader
+INFO 2025-10-04 21:16:24,949 autoreload 24400 18412 Watching for file changes with StatReloader
+INFO 2025-10-04 21:17:00,078 autoreload 5784 2332 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:17:00,273 autoreload 24400 18412 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:17:00,371 autoreload 22428 17224 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:17:03,852 autoreload 9844 9188 Watching for file changes with StatReloader
+INFO 2025-10-04 21:17:04,021 autoreload 16244 8624 Watching for file changes with StatReloader
+INFO 2025-10-04 21:17:04,095 autoreload 17436 4296 Watching for file changes with StatReloader
+INFO 2025-10-04 21:17:31,321 autoreload 9844 9188 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:17:31,386 autoreload 17436 4296 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:17:31,459 autoreload 16244 8624 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:17:35,797 autoreload 17956 17068 Watching for file changes with StatReloader
+INFO 2025-10-04 21:17:35,840 autoreload 21456 21976 Watching for file changes with StatReloader
+INFO 2025-10-04 21:17:35,947 autoreload 6392 25464 Watching for file changes with StatReloader
+INFO 2025-10-04 21:18:09,431 autoreload 17956 17068 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:18:09,566 autoreload 6392 25464 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:18:09,932 autoreload 21456 21976 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:18:13,802 autoreload 9376 15540 Watching for file changes with StatReloader
+INFO 2025-10-04 21:18:13,894 autoreload 3680 16440 Watching for file changes with StatReloader
+INFO 2025-10-04 21:18:14,282 autoreload 20572 1132 Watching for file changes with StatReloader
+INFO 2025-10-04 21:18:51,601 basehttp 9376 4324 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 21:19:08,527 autoreload 9376 15540 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:19:09,228 autoreload 3680 16440 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:19:09,617 autoreload 20572 1132 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:19:11,451 autoreload 17220 20544 Watching for file changes with StatReloader
+INFO 2025-10-04 21:19:12,315 autoreload 6800 25812 Watching for file changes with StatReloader
+INFO 2025-10-04 21:19:12,710 autoreload 25308 25944 Watching for file changes with StatReloader
+INFO 2025-10-04 21:19:27,574 basehttp 17220 25384 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 21:19:53,071 basehttp 17220 25384 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 21:20:23,723 basehttp 17220 25384 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 21:20:54,666 basehttp 17220 25384 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 21:21:24,684 basehttp 17220 25384 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 21:21:54,919 basehttp 17220 25384 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 21:22:12,073 autoreload 25308 25944 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:22:12,107 autoreload 6800 25812 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:22:12,522 autoreload 17220 20544 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:22:15,897 autoreload 22428 25808 Watching for file changes with StatReloader
+INFO 2025-10-04 21:22:15,901 autoreload 22972 11088 Watching for file changes with StatReloader
+INFO 2025-10-04 21:22:16,531 autoreload 1584 14932 Watching for file changes with StatReloader
+INFO 2025-10-04 21:31:53,526 autoreload 1584 14932 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:31:54,364 autoreload 22972 11088 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:31:54,369 autoreload 22428 25808 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:31:54,941 autoreload 10732 18640 Watching for file changes with StatReloader
+INFO 2025-10-04 21:31:55,894 autoreload 12832 4308 Watching for file changes with StatReloader
+INFO 2025-10-04 21:31:55,911 autoreload 9008 24064 Watching for file changes with StatReloader
+INFO 2025-10-04 21:32:24,291 autoreload 12832 4308 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:32:24,351 autoreload 9008 24064 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:32:24,393 autoreload 10732 18640 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:32:25,897 autoreload 3472 17068 Watching for file changes with StatReloader
+INFO 2025-10-04 21:32:25,912 autoreload 24940 10784 Watching for file changes with StatReloader
+INFO 2025-10-04 21:32:25,972 autoreload 7512 3340 Watching for file changes with StatReloader
+INFO 2025-10-04 21:32:33,008 autoreload 3472 17068 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:32:33,022 autoreload 24940 10784 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:32:33,054 autoreload 7512 3340 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:32:36,788 autoreload 17144 14908 Watching for file changes with StatReloader
+INFO 2025-10-04 21:32:36,789 autoreload 21268 26372 Watching for file changes with StatReloader
+INFO 2025-10-04 21:32:36,873 autoreload 12044 22572 Watching for file changes with StatReloader
+INFO 2025-10-04 21:32:45,742 autoreload 21268 26372 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:32:45,783 autoreload 17144 14908 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:32:45,810 autoreload 12044 22572 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:32:50,524 autoreload 1776 10968 Watching for file changes with StatReloader
+INFO 2025-10-04 21:32:50,556 autoreload 8860 18068 Watching for file changes with StatReloader
+INFO 2025-10-04 21:32:50,718 autoreload 8448 13076 Watching for file changes with StatReloader
+INFO 2025-10-04 21:33:16,291 autoreload 1776 10968 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:33:16,474 autoreload 8860 18068 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:33:16,494 autoreload 8448 13076 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:33:18,099 autoreload 3748 18008 Watching for file changes with StatReloader
+INFO 2025-10-04 21:33:18,207 autoreload 16140 1768 Watching for file changes with StatReloader
+INFO 2025-10-04 21:33:18,218 autoreload 10464 15200 Watching for file changes with StatReloader
+INFO 2025-10-04 21:33:43,834 autoreload 3748 18008 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:33:43,978 autoreload 10464 15200 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:33:44,113 autoreload 16140 1768 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:33:46,058 autoreload 8444 12936 Watching for file changes with StatReloader
+INFO 2025-10-04 21:33:46,298 autoreload 23656 17628 Watching for file changes with StatReloader
+INFO 2025-10-04 21:33:46,358 autoreload 16436 19468 Watching for file changes with StatReloader
+INFO 2025-10-04 21:33:53,618 autoreload 8444 12936 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:33:53,641 autoreload 23656 17628 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:33:53,860 autoreload 16436 19468 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:33:55,937 autoreload 22220 21000 Watching for file changes with StatReloader
+INFO 2025-10-04 21:33:55,938 autoreload 4436 7496 Watching for file changes with StatReloader
+INFO 2025-10-04 21:33:56,155 autoreload 23348 14032 Watching for file changes with StatReloader
+INFO 2025-10-04 21:34:05,754 autoreload 22220 21000 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:34:05,843 autoreload 4436 7496 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:34:05,988 autoreload 23348 14032 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:34:08,365 autoreload 16192 3204 Watching for file changes with StatReloader
+INFO 2025-10-04 21:34:08,378 autoreload 26376 25168 Watching for file changes with StatReloader
+INFO 2025-10-04 21:34:08,585 autoreload 19368 25224 Watching for file changes with StatReloader
+INFO 2025-10-04 21:34:23,952 autoreload 26376 25168 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:34:23,955 autoreload 16192 3204 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:34:24,063 autoreload 19368 25224 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:34:25,386 autoreload 11572 22256 Watching for file changes with StatReloader
+INFO 2025-10-04 21:34:25,390 autoreload 13340 15732 Watching for file changes with StatReloader
+INFO 2025-10-04 21:34:25,510 autoreload 15860 26564 Watching for file changes with StatReloader
+INFO 2025-10-04 21:34:30,524 autoreload 11572 22256 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:34:30,527 autoreload 13340 15732 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:34:30,574 autoreload 15860 26564 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:34:32,832 autoreload 24780 11356 Watching for file changes with StatReloader
+INFO 2025-10-04 21:34:32,847 autoreload 17644 20288 Watching for file changes with StatReloader
+INFO 2025-10-04 21:34:33,015 autoreload 1856 8376 Watching for file changes with StatReloader
+INFO 2025-10-04 21:34:35,062 autoreload 24780 11356 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:34:35,081 autoreload 17644 20288 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:34:35,182 autoreload 1856 8376 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:34:37,664 autoreload 8084 12388 Watching for file changes with StatReloader
+INFO 2025-10-04 21:34:37,695 autoreload 12984 7992 Watching for file changes with StatReloader
+INFO 2025-10-04 21:34:37,814 autoreload 6856 17816 Watching for file changes with StatReloader
+INFO 2025-10-04 21:35:06,522 autoreload 6856 17816 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:35:06,580 autoreload 8084 12388 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:35:06,683 autoreload 12984 7992 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:35:09,626 autoreload 22492 12928 Watching for file changes with StatReloader
+INFO 2025-10-04 21:35:09,697 autoreload 24568 19272 Watching for file changes with StatReloader
+INFO 2025-10-04 21:35:14,423 autoreload 22492 12928 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:35:14,515 autoreload 24568 19272 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:35:15,549 autoreload 15680 19336 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:35:16,760 autoreload 15592 14604 Watching for file changes with StatReloader
+INFO 2025-10-04 21:35:16,781 autoreload 14492 25880 Watching for file changes with StatReloader
+INFO 2025-10-04 21:35:17,500 autoreload 23616 22084 Watching for file changes with StatReloader
+INFO 2025-10-04 21:35:28,582 autoreload 15592 14604 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:35:28,610 autoreload 14492 25880 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:35:29,047 autoreload 23616 22084 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:35:30,943 autoreload 20356 21400 Watching for file changes with StatReloader
+INFO 2025-10-04 21:35:30,947 autoreload 14332 8072 Watching for file changes with StatReloader
+INFO 2025-10-04 21:35:31,251 autoreload 12936 19808 Watching for file changes with StatReloader
+INFO 2025-10-04 21:35:34,527 autoreload 12936 19808 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:35:35,328 autoreload 20356 21400 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:35:35,372 autoreload 14332 8072 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:35:36,130 autoreload 8272 8640 Watching for file changes with StatReloader
+INFO 2025-10-04 21:35:37,104 autoreload 6440 15696 Watching for file changes with StatReloader
+INFO 2025-10-04 21:35:37,144 autoreload 4308 19460 Watching for file changes with StatReloader
+INFO 2025-10-04 21:36:57,271 autoreload 6440 15696 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:36:57,382 autoreload 4308 19460 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:36:57,446 autoreload 8272 8640 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:36:59,207 autoreload 16860 3616 Watching for file changes with StatReloader
+INFO 2025-10-04 21:36:59,272 autoreload 2428 15840 Watching for file changes with StatReloader
+INFO 2025-10-04 21:36:59,311 autoreload 1828 23728 Watching for file changes with StatReloader
+INFO 2025-10-04 21:37:05,406 autoreload 16860 3616 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:37:05,463 autoreload 2428 15840 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:37:05,504 autoreload 1828 23728 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:37:07,852 autoreload 4320 8364 Watching for file changes with StatReloader
+INFO 2025-10-04 21:37:07,873 autoreload 9844 21196 Watching for file changes with StatReloader
+INFO 2025-10-04 21:37:07,974 autoreload 26156 21300 Watching for file changes with StatReloader
+INFO 2025-10-04 21:37:16,212 autoreload 4320 8364 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:37:16,223 autoreload 9844 21196 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:37:16,251 autoreload 26156 21300 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:37:18,447 autoreload 22056 12052 Watching for file changes with StatReloader
+INFO 2025-10-04 21:37:18,467 autoreload 19020 7092 Watching for file changes with StatReloader
+INFO 2025-10-04 21:37:18,540 autoreload 24340 24904 Watching for file changes with StatReloader
+INFO 2025-10-04 21:37:30,112 autoreload 24340 24904 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:37:30,136 autoreload 22056 12052 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:37:31,251 autoreload 19020 7092 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:37:32,694 autoreload 25700 20392 Watching for file changes with StatReloader
+INFO 2025-10-04 21:37:32,694 autoreload 9128 17424 Watching for file changes with StatReloader
+INFO 2025-10-04 21:37:32,980 autoreload 22692 22440 Watching for file changes with StatReloader
+INFO 2025-10-04 21:37:51,144 autoreload 22692 22440 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:37:51,976 autoreload 9128 17424 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:37:52,054 autoreload 25700 20392 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:37:54,046 autoreload 15644 3040 Watching for file changes with StatReloader
+INFO 2025-10-04 21:37:54,554 autoreload 3452 20356 Watching for file changes with StatReloader
+INFO 2025-10-04 21:37:54,598 autoreload 13084 14332 Watching for file changes with StatReloader
+INFO 2025-10-04 21:38:10,483 autoreload 3452 20356 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:38:10,527 autoreload 13084 14332 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:38:11,175 autoreload 15644 3040 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:38:12,932 autoreload 2056 11720 Watching for file changes with StatReloader
+INFO 2025-10-04 21:38:12,957 autoreload 11348 5400 Watching for file changes with StatReloader
+INFO 2025-10-04 21:38:13,473 autoreload 5764 2868 Watching for file changes with StatReloader
+INFO 2025-10-04 21:40:22,088 autoreload 3152 3484 Watching for file changes with StatReloader
+INFO 2025-10-04 21:40:51,882 autoreload 5764 2868 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:40:52,015 autoreload 11348 5400 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:40:52,197 autoreload 2056 11720 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:40:52,714 autoreload 3152 3484 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:40:54,967 autoreload 18568 18120 Watching for file changes with StatReloader
+INFO 2025-10-04 21:40:55,003 autoreload 26132 16500 Watching for file changes with StatReloader
+INFO 2025-10-04 21:40:55,196 autoreload 24500 9424 Watching for file changes with StatReloader
+INFO 2025-10-04 21:41:08,904 autoreload 26132 16500 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:41:09,006 autoreload 24500 9424 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:41:09,893 autoreload 13456 10632 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:41:10,026 autoreload 18568 18120 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:41:10,625 autoreload 9532 10020 Watching for file changes with StatReloader
+INFO 2025-10-04 21:41:10,626 autoreload 18540 17964 Watching for file changes with StatReloader
+INFO 2025-10-04 21:41:11,743 autoreload 22148 18696 Watching for file changes with StatReloader
+INFO 2025-10-04 21:41:11,936 autoreload 7948 5728 Watching for file changes with StatReloader
+INFO 2025-10-04 21:44:13,131 autoreload 21088 1588 Watching for file changes with StatReloader
+INFO 2025-10-04 21:45:08,842 autoreload 7948 5728 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:45:09,081 autoreload 22148 18696 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:45:09,361 autoreload 9532 10020 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:45:09,408 autoreload 18540 17964 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:45:09,561 autoreload 21088 1588 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:45:11,274 autoreload 1348 24264 Watching for file changes with StatReloader
+INFO 2025-10-04 21:45:11,583 autoreload 21492 23032 Watching for file changes with StatReloader
+INFO 2025-10-04 21:45:11,920 autoreload 7968 4528 Watching for file changes with StatReloader
+INFO 2025-10-04 21:45:11,958 autoreload 7124 6852 Watching for file changes with StatReloader
+INFO 2025-10-04 21:45:12,115 autoreload 1156 8608 Watching for file changes with StatReloader
+INFO 2025-10-04 21:45:52,436 basehttp 7124 22716 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 21:46:22,644 basehttp 7124 22716 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 21:46:35,975 autoreload 1348 24264 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:46:36,177 autoreload 21492 23032 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:46:36,363 autoreload 7968 4528 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:46:36,531 autoreload 1156 8608 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:46:36,880 autoreload 7124 6852 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 21:46:41,647 autoreload 8180 8444 Watching for file changes with StatReloader
+INFO 2025-10-04 21:46:41,871 autoreload 23360 16480 Watching for file changes with StatReloader
+INFO 2025-10-04 21:46:42,011 autoreload 15240 24528 Watching for file changes with StatReloader
+INFO 2025-10-04 21:46:42,095 autoreload 6692 22780 Watching for file changes with StatReloader
+INFO 2025-10-04 21:46:42,451 autoreload 4628 15868 Watching for file changes with StatReloader
+INFO 2025-10-04 21:48:57,040 basehttp 8180 3560 "GET /natural-language-sandbox/ HTTP/1.1" 200 73906
+INFO 2025-10-04 21:48:57,911 basehttp 8180 6212 "GET /accounts/login/?next=/natural-language-sandbox/ HTTP/1.1" 200 31132
+INFO 2025-10-04 21:48:58,027 basehttp 8180 8908 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-04 21:49:10,020 basehttp 8180 3560 "POST /api/nl-sandbox/generate/ HTTP/1.1" 200 2134
+INFO 2025-10-04 21:49:10,655 basehttp 8180 8908 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 120
+INFO 2025-10-04 21:49:15,744 basehttp 8180 3560 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 120
+INFO 2025-10-04 21:49:27,653 basehttp 8180 8908 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 21:49:57,665 basehttp 8180 8908 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 21:50:29,657 basehttp 8180 8908 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 21:51:00,416 basehttp 8180 8908 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 21:51:31,140 basehttp 8180 8908 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 21:52:01,783 basehttp 8180 8908 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 21:52:32,648 basehttp 8180 8908 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 21:53:03,554 basehttp 8180 8908 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 21:53:34,468 basehttp 8180 8908 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 21:54:05,539 basehttp 8180 8908 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 21:54:35,691 basehttp 8180 8908 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 21:55:05,785 basehttp 8180 8908 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 21:55:37,246 autoreload 9396 7900 Watching for file changes with StatReloader
+INFO 2025-10-04 21:55:37,441 basehttp 8180 8908 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 21:55:41,511 basehttp 8180 14460 "GET /admin/ HTTP/1.1" 302 0
+INFO 2025-10-04 21:55:41,784 basehttp 8180 14460 "GET /admin/login/?next=/admin/ HTTP/1.1" 200 4195
+INFO 2025-10-04 21:55:41,926 basehttp 8180 14460 "GET /static/admin/css/base.css HTTP/1.1" 200 21207
+INFO 2025-10-04 21:55:41,955 basehttp 8180 14460 "GET /static/admin/css/responsive.css HTTP/1.1" 200 18533
+INFO 2025-10-04 21:55:41,965 basehttp 8180 15992 "GET /static/admin/css/dark_mode.css HTTP/1.1" 200 2929
+INFO 2025-10-04 21:55:41,969 basehttp 8180 17700 "GET /static/admin/js/theme.js HTTP/1.1" 200 1943
+INFO 2025-10-04 21:55:41,974 basehttp 8180 24804 "GET /static/admin/css/login.css HTTP/1.1" 200 958
+INFO 2025-10-04 21:55:41,977 basehttp 8180 22148 "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 200 2694
+INFO 2025-10-04 21:55:41,977 basehttp 8180 18696 "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 200 3063
+WARNING 2025-10-04 21:55:42,136 log 8180 18696 Not Found: /favicon.ico
+WARNING 2025-10-04 21:55:42,142 basehttp 8180 18696 "GET /favicon.ico HTTP/1.1" 404 11672
+INFO 2025-10-04 21:55:49,063 basehttp 8180 14460 "POST /admin/login/?next=/admin/ HTTP/1.1" 302 0
+INFO 2025-10-04 21:55:49,200 basehttp 8180 14460 "GET /admin/ HTTP/1.1" 200 16309
+INFO 2025-10-04 21:55:49,267 basehttp 8180 18696 "GET /static/admin/css/dashboard.css HTTP/1.1" 200 441
+INFO 2025-10-04 21:55:49,304 basehttp 8180 18696 "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 200 331
+INFO 2025-10-04 21:55:49,306 basehttp 8180 15992 "GET /static/admin/img/icon-changelink.svg HTTP/1.1" 200 380
+INFO 2025-10-04 21:55:49,309 basehttp 8180 22148 "GET /static/admin/img/icon-viewlink.svg HTTP/1.1" 200 581
+INFO 2025-10-04 21:55:57,480 basehttp 8180 14460 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 66200
+INFO 2025-10-04 21:55:57,573 basehttp 8180 18696 "GET /static/admin/css/changelists.css HTTP/1.1" 200 6566
+INFO 2025-10-04 21:55:57,584 basehttp 8180 17700 "GET /static/admin/js/jquery.init.js HTTP/1.1" 200 347
+INFO 2025-10-04 21:55:57,609 basehttp 8180 24804 "GET /static/admin/js/core.js HTTP/1.1" 200 5682
+INFO 2025-10-04 21:55:57,616 basehttp 8180 14460 "GET /static/admin/js/admin/RelatedObjectLookups.js HTTP/1.1" 200 8943
+INFO 2025-10-04 21:55:57,651 basehttp 8180 17700 "GET /static/admin/js/urlify.js HTTP/1.1" 200 7887
+INFO 2025-10-04 21:55:57,662 basehttp 8180 18696 "GET /static/admin/js/actions.js HTTP/1.1" 200 7872
+INFO 2025-10-04 21:55:57,664 basehttp 8180 24804 "GET /static/admin/js/prepopulate.js HTTP/1.1" 200 1531
+INFO 2025-10-04 21:55:57,739 basehttp 8180 17700 "GET /static/admin/js/filters.js HTTP/1.1" 200 978
+INFO 2025-10-04 21:55:57,765 basehttp 8180 22148 "GET /static/admin/js/vendor/jquery/jquery.js HTTP/1.1" 200 292458
+INFO 2025-10-04 21:55:57,806 basehttp 8180 14460 "GET /static/admin/js/vendor/xregexp/xregexp.js HTTP/1.1" 200 232381
+INFO 2025-10-04 21:55:57,898 basehttp 8180 15992 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-04 21:55:57,922 basehttp 8180 22148 "GET /static/admin/img/search.svg HTTP/1.1" 200 458
+INFO 2025-10-04 21:55:57,961 basehttp 8180 22148 "GET /static/admin/img/tooltag-add.svg HTTP/1.1" 200 331
+INFO 2025-10-04 21:55:57,994 basehttp 8180 18696 "GET /static/admin/img/sorting-icons.svg HTTP/1.1" 200 1097
+WARNING 2025-10-04 21:55:58,310 log 8180 22148 Not Found: /favicon.ico
+WARNING 2025-10-04 21:55:58,311 basehttp 8180 22148 "GET /favicon.ico HTTP/1.1" 404 11672
+INFO 2025-10-04 21:56:04,841 basehttp 8180 22148 "GET /admin/analytics/sandboxexecution/258/change/ HTTP/1.1" 200 54245
+INFO 2025-10-04 21:56:04,917 basehttp 8180 22148 "GET /static/admin/css/forms.css HTTP/1.1" 200 9047
+INFO 2025-10-04 21:56:04,944 basehttp 8180 17700 "GET /static/admin/js/change_form.js HTTP/1.1" 200 606
+INFO 2025-10-04 21:56:04,946 basehttp 8180 24804 "GET /static/admin/js/prepopulate_init.js HTTP/1.1" 200 586
+INFO 2025-10-04 21:56:04,963 basehttp 8180 22148 "GET /static/admin/css/widgets.css HTTP/1.1" 200 11900
+INFO 2025-10-04 21:56:05,184 basehttp 8180 18696 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+WARNING 2025-10-04 21:56:05,276 log 8180 22148 Not Found: /favicon.ico
+WARNING 2025-10-04 21:56:05,278 basehttp 8180 22148 "GET /favicon.ico HTTP/1.1" 404 11672
+INFO 2025-10-04 21:56:09,191 basehttp 8180 8908 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 21:56:39,700 basehttp 8180 8908 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 21:57:09,705 basehttp 8180 8908 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 21:57:31,157 autoreload 4628 15868 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-04 21:57:31,319 autoreload 8180 8444 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-04 21:57:31,616 autoreload 6692 22780 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-04 21:57:31,633 autoreload 15240 24528 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-04 21:57:32,159 autoreload 23360 16480 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-04 21:57:32,260 autoreload 9396 7900 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-04 21:57:36,897 autoreload 21608 9984 Watching for file changes with StatReloader
+INFO 2025-10-04 21:57:37,388 autoreload 8124 15620 Watching for file changes with StatReloader
+INFO 2025-10-04 21:57:37,504 autoreload 13940 23788 Watching for file changes with StatReloader
+INFO 2025-10-04 21:57:38,014 autoreload 11556 17424 Watching for file changes with StatReloader
+INFO 2025-10-04 21:57:38,021 autoreload 25900 11112 Watching for file changes with StatReloader
+INFO 2025-10-04 21:57:39,635 autoreload 9096 23708 Watching for file changes with StatReloader
+INFO 2025-10-04 21:58:10,042 basehttp 8124 26580 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 21:58:10,688 basehttp 8124 13920 "POST /api/nl-sandbox/generate/ HTTP/1.1" 200 1812
+INFO 2025-10-04 21:58:16,659 basehttp 8124 26580 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 467
+INFO 2025-10-04 21:58:24,069 basehttp 8124 2900 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 66203
+INFO 2025-10-04 21:58:24,157 basehttp 8124 2900 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+WARNING 2025-10-04 21:58:24,459 log 8124 9780 Not Found: /favicon.ico
+WARNING 2025-10-04 21:58:24,460 basehttp 8124 9780 "GET /favicon.ico HTTP/1.1" 404 11672
+INFO 2025-10-04 21:58:27,491 basehttp 8124 2900 "GET /admin/analytics/sandboxexecution/259/change/ HTTP/1.1" 200 54577
+INFO 2025-10-04 21:58:27,549 basehttp 8124 9780 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-04 21:58:39,207 basehttp 8124 13920 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 467
+INFO 2025-10-04 21:58:39,840 basehttp 8124 26580 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 21:59:06,136 basehttp 8124 2900 "GET /admin/analytics/sandboxresult/ HTTP/1.1" 200 97429
+INFO 2025-10-04 21:59:06,206 basehttp 8124 9780 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+WARNING 2025-10-04 21:59:06,364 log 8124 9780 Not Found: /favicon.ico
+WARNING 2025-10-04 21:59:06,371 basehttp 8124 9780 "GET /favicon.ico HTTP/1.1" 404 11672
+INFO 2025-10-04 21:59:10,806 basehttp 8124 26580 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 21:59:40,996 basehttp 8124 26580 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:00:08,430 basehttp 8124 13920 "POST /api/nl-sandbox/generate/ HTTP/1.1" 200 1546
+INFO 2025-10-04 22:00:11,008 basehttp 8124 13920 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:00:13,206 basehttp 8124 26580 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 496
+INFO 2025-10-04 22:00:21,111 basehttp 8124 2900 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 66210
+INFO 2025-10-04 22:00:21,176 basehttp 8124 9780 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+WARNING 2025-10-04 22:00:21,300 log 8124 9780 Not Found: /favicon.ico
+WARNING 2025-10-04 22:00:21,303 basehttp 8124 9780 "GET /favicon.ico HTTP/1.1" 404 11672
+INFO 2025-10-04 22:00:24,783 basehttp 8124 2900 "GET /admin/analytics/sandboxexecution/261/change/ HTTP/1.1" 200 54635
+INFO 2025-10-04 22:00:24,827 basehttp 8124 9780 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-04 22:00:33,281 basehttp 8124 2900 "GET /admin/analytics/sandboxresult/ HTTP/1.1" 200 98387
+INFO 2025-10-04 22:00:33,341 basehttp 8124 9780 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+WARNING 2025-10-04 22:00:33,460 log 8124 9780 Not Found: /favicon.ico
+WARNING 2025-10-04 22:00:33,461 basehttp 8124 9780 "GET /favicon.ico HTTP/1.1" 404 11672
+INFO 2025-10-04 22:00:41,002 basehttp 8124 26580 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:01:11,004 basehttp 8124 26580 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:01:41,002 basehttp 8124 26580 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:02:11,218 basehttp 8124 26580 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:02:41,802 basehttp 8124 26580 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:03:12,758 basehttp 8124 26580 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:03:43,527 basehttp 8124 26580 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:04:14,111 basehttp 8124 26580 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:04:50,810 basehttp 8124 26580 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:04:53,289 autoreload 25900 11112 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 22:04:53,747 autoreload 13940 23788 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 22:04:53,855 autoreload 21608 9984 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 22:04:54,390 autoreload 11556 17424 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 22:04:54,432 autoreload 9096 23708 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 22:04:54,447 autoreload 8124 15620 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 22:05:01,315 autoreload 18836 17068 Watching for file changes with StatReloader
+INFO 2025-10-04 22:05:01,362 autoreload 20164 17336 Watching for file changes with StatReloader
+INFO 2025-10-04 22:05:01,743 autoreload 25436 2292 Watching for file changes with StatReloader
+INFO 2025-10-04 22:05:01,814 autoreload 16588 16460 Watching for file changes with StatReloader
+INFO 2025-10-04 22:05:01,945 autoreload 23556 20648 Watching for file changes with StatReloader
+INFO 2025-10-04 22:05:05,349 autoreload 18368 16936 Watching for file changes with StatReloader
+INFO 2025-10-04 22:06:02,684 basehttp 20164 16996 "GET /natural-language-sandbox/ HTTP/1.1" 200 73906
+INFO 2025-10-04 22:06:03,715 basehttp 20164 16996 "GET /api/datasets/ HTTP/1.1" 200 1762
+WARNING 2025-10-04 22:06:03,914 log 20164 16996 Not Found: /favicon.ico
+INFO 2025-10-04 22:06:03,924 basehttp 20164 16996 - Broken pipe from ('127.0.0.1', 49491)
+INFO 2025-10-04 22:06:04,080 basehttp 20164 9008 "GET /accounts/login/?next=/natural-language-sandbox/ HTTP/1.1" 200 31132
+INFO 2025-10-04 22:06:16,570 basehttp 20164 10132 "POST /api/nl-sandbox/generate/ HTTP/1.1" 200 1576
+INFO 2025-10-04 22:06:29,368 basehttp 20164 10132 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 527
+INFO 2025-10-04 22:06:33,530 basehttp 20164 10132 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:06:37,598 basehttp 20164 23928 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 527
+INFO 2025-10-04 22:07:13,017 basehttp 20164 10132 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:07:16,854 autoreload 18836 17068 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 22:07:17,180 autoreload 18368 16936 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 22:07:17,366 autoreload 25436 2292 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 22:07:17,487 autoreload 23556 20648 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 22:07:17,788 autoreload 16588 16460 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 22:07:18,288 autoreload 20164 17336 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 22:07:25,720 autoreload 9312 5196 Watching for file changes with StatReloader
+INFO 2025-10-04 22:07:25,804 autoreload 25392 18068 Watching for file changes with StatReloader
+INFO 2025-10-04 22:07:26,003 autoreload 13452 9768 Watching for file changes with StatReloader
+INFO 2025-10-04 22:07:26,252 autoreload 24020 25468 Watching for file changes with StatReloader
+INFO 2025-10-04 22:07:26,513 autoreload 20464 3152 Watching for file changes with StatReloader
+INFO 2025-10-04 22:07:30,267 autoreload 24540 11968 Watching for file changes with StatReloader
+INFO 2025-10-04 22:08:30,490 basehttp 25392 6392 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:09:11,204 basehttp 25392 6392 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:09:13,488 basehttp 25392 6392 "GET /natural-language-sandbox/ HTTP/1.1" 200 76117
+INFO 2025-10-04 22:09:14,376 basehttp 25392 6392 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-04 22:09:33,327 basehttp 25392 6392 "POST /api/nl-sandbox/generate/ HTTP/1.1" 200 1445
+INFO 2025-10-04 22:09:44,224 basehttp 25392 23840 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:09:49,547 basehttp 25392 6392 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 712033
+INFO 2025-10-04 22:10:07,864 autoreload 15036 5168 Watching for file changes with StatReloader
+INFO 2025-10-04 22:10:14,033 basehttp 25392 6392 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:10:32,511 autoreload 1180 12168 Watching for file changes with StatReloader
+INFO 2025-10-04 22:10:44,068 basehttp 25392 23840 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:10:45,046 basehttp 25392 6392 "POST /api/nl-sandbox/generate/ HTTP/1.1" 200 2612
+INFO 2025-10-04 22:11:15,050 basehttp 25392 16112 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:11:15,804 basehttp 25392 6392 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 126
+INFO 2025-10-04 22:11:41,360 basehttp 25392 23840 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 126
+INFO 2025-10-04 22:11:44,300 basehttp 25392 23840 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:11:52,420 basehttp 25392 6392 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 126
+INFO 2025-10-04 22:11:57,994 autoreload 24020 25468 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-04 22:11:58,146 autoreload 24540 11968 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-04 22:11:58,795 autoreload 13452 9768 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-04 22:11:58,847 autoreload 25392 18068 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-04 22:11:58,995 autoreload 15036 5168 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-04 22:11:59,251 autoreload 20464 3152 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-04 22:11:59,364 autoreload 1180 12168 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-04 22:11:59,524 autoreload 9312 5196 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-04 22:12:13,377 autoreload 10140 4072 Watching for file changes with StatReloader
+INFO 2025-10-04 22:12:13,481 autoreload 13992 21364 Watching for file changes with StatReloader
+INFO 2025-10-04 22:12:13,561 autoreload 13032 24528 Watching for file changes with StatReloader
+INFO 2025-10-04 22:12:13,601 autoreload 11992 22968 Watching for file changes with StatReloader
+INFO 2025-10-04 22:12:13,630 autoreload 13592 22036 Watching for file changes with StatReloader
+INFO 2025-10-04 22:12:13,717 autoreload 17936 16248 Watching for file changes with StatReloader
+INFO 2025-10-04 22:12:13,752 autoreload 1660 23504 Watching for file changes with StatReloader
+INFO 2025-10-04 22:12:13,760 autoreload 21060 9288 Watching for file changes with StatReloader
+INFO 2025-10-04 22:12:30,783 autoreload 11252 4528 Watching for file changes with StatReloader
+INFO 2025-10-04 22:13:04,000 autoreload 2828 3284 Watching for file changes with StatReloader
+INFO 2025-10-04 22:13:36,168 autoreload 17840 24004 Watching for file changes with StatReloader
+INFO 2025-10-04 22:13:54,839 basehttp 21060 24252 "GET /natural-language-sandbox/ HTTP/1.1" 200 76117
+INFO 2025-10-04 22:13:56,156 basehttp 21060 2768 "GET /accounts/login/?next=/natural-language-sandbox/ HTTP/1.1" 200 31132
+INFO 2025-10-04 22:13:56,331 basehttp 21060 24168 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-04 22:14:17,495 basehttp 21060 24252 "POST /api/nl-sandbox/generate/ HTTP/1.1" 200 2153
+INFO 2025-10-04 22:14:25,427 basehttp 21060 24252 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:14:46,641 basehttp 21060 3152 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 66165
+INFO 2025-10-04 22:14:46,740 basehttp 21060 3152 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+WARNING 2025-10-04 22:14:47,174 log 21060 21520 Not Found: /favicon.ico
+WARNING 2025-10-04 22:14:47,211 basehttp 21060 21520 "GET /favicon.ico HTTP/1.1" 404 11672
+INFO 2025-10-04 22:14:48,156 basehttp 21060 24168 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 126
+INFO 2025-10-04 22:14:55,217 basehttp 21060 3152 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 66168
+INFO 2025-10-04 22:14:55,311 basehttp 21060 21520 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-04 22:14:55,447 basehttp 21060 24168 "GET /api/health/ HTTP/1.1" 200 89
+WARNING 2025-10-04 22:14:55,636 log 21060 21520 Not Found: /favicon.ico
+WARNING 2025-10-04 22:14:55,639 basehttp 21060 21520 "GET /favicon.ico HTTP/1.1" 404 11672
+INFO 2025-10-04 22:15:03,793 basehttp 21060 3152 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 66168
+INFO 2025-10-04 22:15:03,867 basehttp 21060 21520 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+WARNING 2025-10-04 22:15:04,047 log 21060 21520 Not Found: /favicon.ico
+WARNING 2025-10-04 22:15:04,049 basehttp 21060 21520 "GET /favicon.ico HTTP/1.1" 404 11672
+INFO 2025-10-04 22:15:06,467 basehttp 21060 24252 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 126
+INFO 2025-10-04 22:15:25,458 basehttp 21060 24168 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:15:55,462 basehttp 21060 24168 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:16:25,467 basehttp 21060 24168 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:16:34,244 basehttp 21060 24252 "GET /natural-language-sandbox/ HTTP/1.1" 200 76118
+INFO 2025-10-04 22:16:34,918 basehttp 21060 24168 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-04 22:16:47,979 basehttp 21060 3152 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 66171
+INFO 2025-10-04 22:16:48,049 basehttp 21060 21520 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+WARNING 2025-10-04 22:16:48,241 log 21060 21520 Not Found: /favicon.ico
+WARNING 2025-10-04 22:16:48,243 basehttp 21060 21520 "GET /favicon.ico HTTP/1.1" 404 11672
+INFO 2025-10-04 22:16:51,186 basehttp 21060 3152 "GET /admin/analytics/sandboxexecution/269/change/ HTTP/1.1" 200 394123
+INFO 2025-10-04 22:16:51,297 basehttp 21060 21520 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-04 22:17:04,426 basehttp 21060 24252 "POST /api/nl-sandbox/generate/ HTTP/1.1" 200 2167
+INFO 2025-10-04 22:17:04,886 basehttp 21060 24168 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:17:08,971 basehttp 21060 24168 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 514
+INFO 2025-10-04 22:17:28,480 basehttp 21060 3152 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 66147
+INFO 2025-10-04 22:17:28,548 basehttp 21060 21520 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+WARNING 2025-10-04 22:17:28,676 log 21060 21520 Not Found: /favicon.ico
+WARNING 2025-10-04 22:17:28,679 basehttp 21060 21520 "GET /favicon.ico HTTP/1.1" 404 11672
+INFO 2025-10-04 22:17:33,393 basehttp 21060 3152 "GET /admin/analytics/sandboxexecution/ HTTP/1.1" 200 66147
+INFO 2025-10-04 22:17:33,452 basehttp 21060 21520 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-04 22:17:34,828 basehttp 21060 3152 "GET /admin/analytics/sandboxresult/ HTTP/1.1" 200 103229
+INFO 2025-10-04 22:17:34,881 basehttp 21060 21520 "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+INFO 2025-10-04 22:17:34,921 basehttp 21060 24168 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:17:49,657 basehttp 21060 24252 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 512
+INFO 2025-10-04 22:18:04,918 basehttp 21060 24168 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:18:26,684 basehttp 21060 24252 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 513
+INFO 2025-10-04 22:18:34,927 basehttp 21060 24168 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:19:04,976 basehttp 21060 24168 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:19:35,469 basehttp 21060 24168 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:20:05,983 basehttp 21060 24168 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:20:23,022 basehttp 21060 24252 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 513
+INFO 2025-10-04 22:20:35,997 basehttp 21060 24168 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:20:41,039 basehttp 21060 23140 "GET /natural-language-sandbox/ HTTP/1.1" 200 76118
+INFO 2025-10-04 22:20:41,126 basehttp 21060 23140 "GET /static/analytics/js/htmx-config.js HTTP/1.1" 200 6223
+INFO 2025-10-04 22:20:41,129 basehttp 21060 15408 "GET /static/analytics/js/main.js HTTP/1.1" 200 18510
+INFO 2025-10-04 22:20:41,707 basehttp 21060 15408 "GET /api/datasets/ HTTP/1.1" 200 1762
+WARNING 2025-10-04 22:20:41,826 log 21060 15408 Not Found: /favicon.ico
+WARNING 2025-10-04 22:20:41,827 basehttp 21060 15408 "GET /favicon.ico HTTP/1.1" 404 11672
+INFO 2025-10-04 22:21:06,657 basehttp 21060 23140 "POST /api/nl-sandbox/generate/ HTTP/1.1" 200 4504
+INFO 2025-10-04 22:21:11,560 basehttp 21060 23140 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:21:15,979 basehttp 21060 15408 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 577497
+INFO 2025-10-04 22:21:41,560 basehttp 21060 15408 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:22:11,568 basehttp 21060 15408 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:22:41,568 basehttp 21060 15408 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:23:11,571 basehttp 21060 15408 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:23:41,578 basehttp 21060 15408 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:24:11,590 basehttp 21060 15408 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:24:41,592 basehttp 21060 15408 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:25:11,922 basehttp 21060 15408 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:25:41,927 basehttp 21060 15408 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:25:55,176 basehttp 21060 15408 "GET /sandbox/ HTTP/1.1" 200 42495
+INFO 2025-10-04 22:25:55,297 basehttp 21060 15408 "GET /static/analytics/js/htmx-config.js HTTP/1.1" 200 6223
+INFO 2025-10-04 22:25:55,816 basehttp 21060 26264 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-04 22:25:56,706 basehttp 21060 26264 "GET /natural-language-sandbox/ HTTP/1.1" 200 76118
+INFO 2025-10-04 22:25:57,029 basehttp 21060 26264 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-04 22:25:57,132 basehttp 21060 8696 "GET /accounts/login/?next=/natural-language-sandbox/ HTTP/1.1" 200 31132
+INFO 2025-10-04 22:26:27,016 basehttp 21060 26264 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:26:57,018 basehttp 21060 26264 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:27:27,020 basehttp 21060 26264 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:27:57,035 basehttp 21060 26264 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:28:27,088 basehttp 21060 26264 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:28:57,089 basehttp 21060 26264 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:29:27,092 basehttp 21060 26264 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:29:57,111 basehttp 21060 26264 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:30:05,559 basehttp 21060 26264 "POST /api/nl-sandbox/generate/ HTTP/1.1" 200 2027
+INFO 2025-10-04 22:30:08,624 basehttp 21060 26264 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 514
+INFO 2025-10-04 22:30:27,111 basehttp 21060 26264 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:30:57,197 basehttp 21060 17336 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:30:57,707 basehttp 21060 26264 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 513
+INFO 2025-10-04 22:31:03,417 basehttp 21060 26264 "GET /natural-language-sandbox/ HTTP/1.1" 200 76118
+INFO 2025-10-04 22:31:03,543 basehttp 21060 26264 "GET /static/analytics/js/htmx-config.js HTTP/1.1" 200 6223
+INFO 2025-10-04 22:31:03,545 basehttp 21060 26264 - Broken pipe from ('127.0.0.1', 63582)
+INFO 2025-10-04 22:31:03,547 basehttp 21060 17336 - Broken pipe from ('127.0.0.1', 50811)
+INFO 2025-10-04 22:31:03,895 basehttp 21060 16444 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-04 22:31:33,760 basehttp 21060 16444 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:31:53,942 basehttp 21060 16444 "GET /natural-language-sandbox/ HTTP/1.1" 200 76118
+INFO 2025-10-04 22:31:54,269 basehttp 21060 16444 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-04 22:32:03,899 basehttp 21060 16444 "GET /natural-language-sandbox/ HTTP/1.1" 200 76118
+INFO 2025-10-04 22:32:04,225 basehttp 21060 16444 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-04 22:32:15,398 basehttp 21060 16444 "POST /api/nl-sandbox/generate/ HTTP/1.1" 200 1362
+INFO 2025-10-04 22:32:18,472 basehttp 21060 16444 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 654
+INFO 2025-10-04 22:32:34,218 basehttp 21060 16444 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:32:50,486 basehttp 21060 16444 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 654
+INFO 2025-10-04 22:33:04,236 basehttp 21060 16444 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:33:34,236 basehttp 21060 16444 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:34:04,240 basehttp 21060 16444 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:34:17,420 basehttp 21060 16444 "POST /api/nl-sandbox/generate/ HTTP/1.1" 200 3999
+INFO 2025-10-04 22:34:30,079 basehttp 21060 16444 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 821816
+INFO 2025-10-04 22:34:34,229 basehttp 21060 16444 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:34:54,816 autoreload 21060 9288 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 22:34:54,897 autoreload 17840 24004 F:\analytical\analytical\analytics\views.py changed, reloading.
+INFO 2025-10-04 22:34:57,447 autoreload 21808 19444 Watching for file changes with StatReloader
+INFO 2025-10-04 22:34:59,676 autoreload 20332 25612 Watching for file changes with StatReloader
+INFO 2025-10-04 22:35:01,435 autoreload 23436 16680 Watching for file changes with StatReloader
+INFO 2025-10-04 22:35:22,284 basehttp 20332 19244 "GET /natural-language-sandbox/ HTTP/1.1" 200 79861
+INFO 2025-10-04 22:35:23,706 basehttp 20332 1936 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-04 22:35:45,866 basehttp 20332 19244 "POST /api/nl-sandbox/generate/ HTTP/1.1" 200 3413
+INFO 2025-10-04 22:35:53,561 basehttp 20332 19244 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:36:17,666 basehttp 20332 1936 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 241
+INFO 2025-10-04 22:36:23,566 basehttp 20332 1936 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:36:53,570 basehttp 20332 1936 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:37:00,800 autoreload 20332 25612 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-04 22:37:00,888 autoreload 21808 19444 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-04 22:37:00,975 autoreload 23436 16680 F:\analytical\analytical\analytics\services\sandbox_executor.py changed, reloading.
+INFO 2025-10-04 22:37:04,890 autoreload 6744 26032 Watching for file changes with StatReloader
+INFO 2025-10-04 22:37:04,897 autoreload 20136 23108 Watching for file changes with StatReloader
+INFO 2025-10-04 22:37:07,855 autoreload 23032 17304 Watching for file changes with StatReloader
+INFO 2025-10-04 22:37:10,478 autoreload 9176 2380 Watching for file changes with StatReloader
+INFO 2025-10-04 22:37:23,744 basehttp 20136 14648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:37:53,607 basehttp 20136 14648 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:38:16,521 basehttp 20136 14648 "GET /natural-language-sandbox/ HTTP/1.1" 200 79861
+INFO 2025-10-04 22:38:17,031 basehttp 20136 14648 "GET /api/datasets/ HTTP/1.1" 200 1762
+INFO 2025-10-04 22:38:45,650 basehttp 20136 14648 "POST /api/nl-sandbox/generate/ HTTP/1.1" 200 2797
+INFO 2025-10-04 22:38:47,110 basehttp 20136 26360 "GET /api/health/ HTTP/1.1" 200 89
+INFO 2025-10-04 22:38:53,856 basehttp 20136 14648 "POST /api/nl-sandbox/execute/ HTTP/1.1" 200 681748
+INFO 2025-10-04 22:39:17,016 basehttp 20136 14648 "GET /api/health/ HTTP/1.1" 200 89

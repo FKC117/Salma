@@ -1,0 +1,1338 @@
+{% extends "analytics/base.html" %}
+{% load static %}
+
+{% block title %}Natural Language Python Sandbox{% endblock %}
+
+{% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+/* Natural Language Sandbox Styles */
+.natural-sandbox-container {
+    height: calc(100vh - var(--cursor-header-height));
+    margin-top: var(--cursor-header-height);
+    overflow: hidden;
+}
+
+.toolbar {
+    background: #1f2937;
+    border-bottom: 1px solid #374151;
+    padding: 0.5rem 1rem;
+}
+
+.dataset-sidebar {
+    width: 20rem;
+    background: #1f2937;
+    border-right: 1px solid #374151;
+    transition: all 0.3s;
+    flex-shrink: 0;
+}
+
+.chat-container {
+    flex: 1;
+    overflow: hidden;
+    min-width: 0;
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    min-height: 0;
+    max-height: calc(100vh - var(--cursor-header-height) - 220px); /* Increased space for toolbar and input area */
+}
+
+.input-area {
+    border-top: 2px solid #58a6ff; /* More visible border for debugging */
+    background: #1f2937;
+    padding: 1rem;
+    padding-bottom: 1.5rem; /* Extra bottom padding */
+    flex-shrink: 0;
+    min-height: 140px; /* Increased minimum height for input area */
+    position: relative;
+    z-index: 10; /* Ensure it's on top */
+    margin-bottom: 10px; /* Small margin from bottom edge */
+}
+
+.message-content {
+    min-width: 0;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
+
+.code-block {
+    background: #111827;
+    border: 1px solid #374151;
+    border-radius: 6px;
+    padding: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    position: relative;
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.execution-result {
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 6px;
+    padding: 12px;
+    margin-top: 8px;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.result-table-container {
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: 400px;
+    border-radius: 6px;
+}
+
+.result-table {
+    background: #1f2937;
+    border-collapse: collapse;
+    border-radius: 6px;
+    overflow: hidden;
+    width: 100%;
+    min-width: 400px;
+}
+
+.result-table th {
+    background: #374151;
+    color: #f9fafb;
+    padding: 8px 12px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid #4b5563;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.result-table td {
+    background: #1f2937;
+    color: #e5e7eb;
+    padding: 8px 12px;
+    border-bottom: 1px solid #374151;
+    max-width: 200px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.result-table tbody tr:hover {
+    background: #374151;
+}
+
+.heatmap-container {
+    background: #1f2937;
+    border-radius: 6px;
+    padding: 16px;
+    overflow: auto;
+    max-width: 100%;
+    max-height: 600px;
+}
+
+.heatmap-grid {
+    display: grid;
+    gap: 2px;
+    width: fit-content;
+    margin: 0 auto;
+    min-width: 300px;
+    max-width: 100%;
+}
+
+.heatmap-cell {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 4px;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    min-width: 35px;
+}
+
+.chart-container {
+    max-width: 100%;
+    max-height: 500px;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.chart-container canvas {
+    max-width: 100% !important;
+    max-height: 100% !important;
+    height: auto !important;
+    width: auto !important;
+}
+
+.loading-animation::after {
+    content: '';
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 2px solid #10b981;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+    margin-left: 8px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.error-result {
+    background: #7f1d1d;
+    color: #fca5a5;
+    border-left: 4px solid #dc2626;
+}
+
+.sidebar-hidden {
+    margin-left: -20rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .heatmap-cell {
+        width: 30px;
+        height: 30px;
+        font-size: 10px;
+        min-width: 25px;
+    }
+    
+    .chart-container {
+        max-height: 300px;
+    }
+    
+    .result-table th,
+    .result-table td {
+        padding: 6px 8px;
+        font-size: 14px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="natural-sandbox-container">
+    <!-- Natural Language Sandbox Toolbar -->
+    <div class="toolbar">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+                <div class="d-flex align-items-center me-3">
+                    <div class="w-8 h-8 bg-success rounded d-flex align-items-center justify-content-center me-2">
+                        <i class="fas fa-comments text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="h5 mb-0 text-light">Natural Language Python Sandbox</h1>
+                        <small class="text-muted">AI-Powered Code Generation</small>
+                    </div>
+                </div>
+                
+                <div class="d-flex align-items-center border-start border-secondary ps-3">
+                    <div class="me-3">
+                        <select id="dataset-selector" class="form-control form-control-sm" style="width: auto; max-width: 200px;">
+                            <option value="">Select Dataset</option>
+                            {% for dataset in datasets %}
+                            <option value="{{ dataset.id }}">{{ dataset.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button id="clearChatBtn" class="btn btn-danger btn-sm me-2">
+                        Clear Chat
+                    </button>
+                    <button id="toggleSidebarBtn" class="btn btn-purple btn-sm">
+                        📊 Datasets
+                    </button>
+                </div>
+            </div>
+            
+            <div class="d-flex align-items-center text-muted">
+                <div class="w-2 h-2 bg-success rounded-circle me-2"></div>
+                <span>AI Assistant Ready</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Layout Container -->
+    <div class="d-flex h-100 overflow-hidden">
+        <!-- Dataset Sidebar -->
+        <div id="datasetSidebar" class="dataset-sidebar d-flex flex-column">
+            <!-- Sidebar Header -->
+            <div class="px-3 py-2 border-bottom border-secondary">
+                <div class="d-flex align-items-center justify-content-between">
+                    <h2 class="h6 mb-0 text-light">📊 Datasets</h2>
+                    <button id="closeSidebarBtn" class="btn btn-sm text-muted">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dataset Upload -->
+            <div class="px-3 py-2 border-bottom border-secondary">
+                <button id="uploadDatasetBtn" class="btn btn-primary btn-sm w-100">
+                    📁 Load Dataset
+                </button>
+                <input type="file" id="datasetFileInput" accept=".csv,.json,.xlsx" class="d-none" />
+            </div>
+
+            <!-- Dataset List -->
+            <div class="flex-fill overflow-auto">
+                <div class="px-3 py-2">
+                    <h3 class="small text-muted mb-2">Available Datasets</h3>
+                    <div id="datasetList" class="space-y-2">
+                        <!-- Datasets will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dataset Preview -->
+            <div id="datasetPreview" class="px-3 py-2 border-top border-secondary max-h-80 overflow-auto d-none">
+                <h3 class="small text-muted mb-2">Dataset Preview</h3>
+                <div id="previewContent" class="small overflow-hidden"></div>
+            </div>
+        </div>
+
+        <!-- Chat Interface Container -->
+        <div class="chat-container d-flex flex-column">
+            <!-- Chat Messages Container -->
+            <div class="chat-messages">
+                <div id="chatContainer" class="space-y-4">
+                    <!-- Welcome message -->
+                    <div class="bg-dark border border-secondary rounded p-3">
+                        <div class="d-flex align-items-start">
+                            <div class="w-8 h-8 bg-success rounded-circle d-flex align-items-center justify-content-center me-3 flex-shrink-0">
+                                <i class="fas fa-sparkles text-white"></i>
+                            </div>
+                            <div class="flex-fill">
+                                <div class="fw-medium text-success mb-2">AI Assistant</div>
+                                <div class="text-light">
+                                    Welcome to the Natural Language Python Sandbox! Ask me anything about your data in plain English, like:
+                                    <ul class="mt-2 small text-muted">
+                                        <li>"Show me the correlation between sales and profit"</li>
+                                        <li>"Create a bar chart of monthly revenue"</li>
+                                        <li>"Filter data where age is greater than 25"</li>
+                                        <li>"Calculate the mean temperature by city"</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="input-area">
+                <div class="d-flex align-items-end">
+                    <div class="flex-fill me-3">
+                        <div class="small text-success mb-2">💬 User Input Area - Type your message below:</div>
+                        <textarea id="messageInput" placeholder="Ask me anything about your data in natural language, or write Python code directly..." class="form-control bg-dark text-light border-secondary" rows="3" style="resize: none;"></textarea>
+                        <div id="inputDetection" class="small text-muted mt-1 d-none">
+                            <span id="detectionText"></span>
+                        </div>
+                    </div>
+                    <button id="sendBtn" class="btn btn-success">
+                        <span id="btnText">Ask</span>
+                        <i class="fas fa-paper-plane ms-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Make session ID available globally (same as original sandbox)
+window.currentSessionId = {% if session %}{{ session.id }}{% else %}null{% endif %};
+
+// Natural Language Python Sandbox JavaScript
+class NaturalLanguagePythonSandbox {
+    constructor() {
+        this.chatContainer = document.getElementById('chatContainer');
+        this.messageInput = document.getElementById('messageInput');
+        this.sendBtn = document.getElementById('sendBtn');
+        this.btnText = document.getElementById('btnText');
+        this.clearChatBtn = document.getElementById('clearChatBtn');
+        this.inputDetection = document.getElementById('inputDetection');
+        this.detectionText = document.getElementById('detectionText');
+        
+        // Dataset management
+        this.datasetSelector = document.getElementById('dataset-selector');
+        this.toggleSidebarBtn = document.getElementById('toggleSidebarBtn');
+        this.closeSidebarBtn = document.getElementById('closeSidebarBtn');
+        this.uploadDatasetBtn = document.getElementById('uploadDatasetBtn');
+        this.datasetFileInput = document.getElementById('datasetFileInput');
+        this.datasetSidebar = document.getElementById('datasetSidebar');
+        this.datasetList = document.getElementById('datasetList');
+        this.datasetPreview = document.getElementById('datasetPreview');
+        this.previewContent = document.getElementById('previewContent');
+        
+        this.datasets = [];
+        this.selectedDataset = null;
+        this.chatHistory = [];
+        this.executionCounter = 1;
+        
+        this.initializeEventListeners();
+        this.loadSampleDatasets();
+        this.loadChatHistory();
+    }
+
+    initializeEventListeners() {
+        // Chat functionality
+        this.sendBtn.addEventListener('click', () => this.sendMessage());
+        this.messageInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                this.sendMessage();
+            }
+        });
+        
+        this.messageInput.addEventListener('input', () => {
+            this.detectInputType();
+            this.autoResize();
+        });
+        
+        this.clearChatBtn.addEventListener('click', () => this.clearChat());
+        
+        // Dataset management
+        this.datasetSelector.addEventListener('change', (e) => this.loadDataset(e.target.value));
+        this.toggleSidebarBtn.addEventListener('click', () => this.toggleSidebar());
+        this.closeSidebarBtn.addEventListener('click', () => this.hideSidebar());
+        this.uploadDatasetBtn.addEventListener('click', () => this.datasetFileInput.click());
+        this.datasetFileInput.addEventListener('change', (e) => this.handleFileUpload(e));
+    }
+
+    autoResize() {
+        this.messageInput.style.height = 'auto';
+        this.messageInput.style.height = Math.min(this.messageInput.scrollHeight, 120) + 'px';
+    }
+
+    detectInputType() {
+        const input = this.messageInput.value.trim();
+        
+        if (!input) {
+            this.inputDetection.classList.add('d-none');
+            this.btnText.textContent = 'Ask';
+            return;
+        }
+
+        // Detect if it's likely natural language or code
+        const codeIndicators = [
+            'import ', 'def ', 'class ', 'for ', 'while ', 'if ', 
+            'print(', 'plt.', 'df.', 'np.', '=', 'return ',
+            '#', 'pandas', 'matplotlib', 'numpy'
+        ];
+        
+        const hasCodeIndicators = codeIndicators.some(indicator => 
+            input.toLowerCase().includes(indicator.toLowerCase())
+        );
+        
+        const isQuestion = input.includes('?') || 
+            input.toLowerCase().startsWith('show me') ||
+            input.toLowerCase().startsWith('what is') ||
+            input.toLowerCase().startsWith('how to') ||
+            input.toLowerCase().startsWith('create a') ||
+            input.toLowerCase().startsWith('generate') ||
+            input.toLowerCase().startsWith('analyze') ||
+            input.toLowerCase().startsWith('calculate') ||
+            input.toLowerCase().startsWith('find') ||
+            input.toLowerCase().startsWith('filter');
+
+        this.inputDetection.classList.remove('d-none');
+        
+        if (hasCodeIndicators && !isQuestion) {
+            this.detectionText.textContent = '🐍 Direct Python code detected';
+            this.btnText.textContent = 'Run';
+        } else {
+            this.detectionText.textContent = '💬 Natural language query detected';
+            this.btnText.textContent = 'Ask';
+        }
+    }
+
+    async sendMessage() {
+        const message = this.messageInput.value.trim();
+        if (!message) return;
+
+        // Add user message
+        this.addUserMessage(message);
+        
+        // Clear input
+        this.messageInput.value = '';
+        this.inputDetection.classList.add('d-none');
+        this.autoResize();
+        this.detectInputType();
+        
+        // Determine if it's a natural language query or direct code
+        const isDirectCode = this.btnText.textContent === 'Run';
+        
+        if (isDirectCode) {
+            await this.executeDirectCode(message);
+        } else {
+            await this.processNaturalLanguageQuery(message);
+        }
+        
+        this.saveChatHistory();
+        this.scrollToBottom();
+    }
+
+    addUserMessage(message) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'bg-dark border border-secondary rounded p-3 mb-3';
+        
+        messageDiv.innerHTML = `
+            <div class="d-flex align-items-start">
+                <div class="w-8 h-8 bg-primary rounded-circle d-flex align-items-center justify-content-center me-3 flex-shrink-0">
+                    <i class="fas fa-user text-white"></i>
+                </div>
+                <div class="flex-fill message-content">
+                    <div class="fw-medium text-primary mb-2">You</div>
+                    <div class="text-light" style="white-space: pre-wrap;">${this.escapeHtml(message)}</div>
+                </div>
+            </div>
+        `;
+        
+        this.chatContainer.appendChild(messageDiv);
+        this.chatHistory.push({ type: 'user', content: message, timestamp: Date.now() });
+    }
+
+    async processNaturalLanguageQuery(query) {
+        // Add loading message
+        const loadingDiv = this.addAssistantMessage('Processing your request...', true);
+        
+        try {
+            // Call Django backend for natural language processing (same as original sandbox)
+            const response = await fetch('/api/nl-sandbox/generate/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': this.getCSRFToken()
+                },
+                body: JSON.stringify({
+                    query: query,
+                    dataset_id: this.selectedDataset?.id || null,
+                    session_id: window.currentSessionId || null
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to generate code');
+            }
+
+            const data = await response.json();
+            
+            // Remove loading message
+            loadingDiv.remove();
+            
+            // Add assistant response with generated code
+            await this.addCodeGenerationResponse(query, data.code);
+            
+        } catch (error) {
+            loadingDiv.remove();
+            this.addAssistantMessage(`I encountered an error processing your request: ${error.message}`, false, true);
+        }
+    }
+
+    async executeDirectCode(code) {
+        // Add assistant response indicating direct execution
+        const assistantDiv = this.addAssistantMessage('Executing your Python code...', true);
+        
+        try {
+            // Call Django backend for code execution (same as original sandbox)
+            const response = await fetch('/api/nl-sandbox/execute/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': this.getCSRFToken()
+                },
+                body: JSON.stringify({
+                    code: code,
+                    dataset_id: this.selectedDataset?.id || null,
+                    session_id: window.currentSessionId || null
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to execute code');
+            }
+
+            const data = await response.json();
+            
+            // Remove loading message
+            assistantDiv.remove();
+            
+            // Execute code and show results
+            await this.addDirectCodeExecution(code, data);
+            
+        } catch (error) {
+            assistantDiv.remove();
+            this.addAssistantMessage(`Execution error: ${error.message}`, false, true);
+        }
+    }
+
+    addAssistantMessage(content, isLoading = false, isError = false) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `bg-dark border border-secondary rounded p-3 mb-3 ${isError ? 'error-result' : ''}`;
+        
+        messageDiv.innerHTML = `
+            <div class="d-flex align-items-start">
+                <div class="w-8 h-8 bg-success rounded-circle d-flex align-items-center justify-content-center me-3 flex-shrink-0">
+                    <i class="fas fa-sparkles text-white"></i>
+                </div>
+                <div class="flex-fill message-content">
+                    <div class="fw-medium text-success mb-2">AI Assistant</div>
+                    <div class="text-light ${isLoading ? 'loading-animation' : ''}">${this.escapeHtml(content)}</div>
+                </div>
+            </div>
+        `;
+        
+        this.chatContainer.appendChild(messageDiv);
+        
+        if (!isLoading) {
+            this.chatHistory.push({ 
+                type: 'assistant', 
+                content: content, 
+                isError: isError,
+                timestamp: Date.now() 
+            });
+        }
+        
+        return messageDiv;
+    }
+
+    async addCodeGenerationResponse(originalQuery, generatedCode) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'bg-dark border border-secondary rounded p-3 mb-3';
+        
+        messageDiv.innerHTML = `
+            <div class="d-flex align-items-start">
+                <div class="w-8 h-8 bg-success rounded-circle d-flex align-items-center justify-content-center me-3 flex-shrink-0">
+                    <i class="fas fa-sparkles text-white"></i>
+                </div>
+                <div class="flex-fill message-content">
+                    <div class="fw-medium text-success mb-2">AI Assistant</div>
+                    <div class="text-light mb-3">I've generated Python code for your request: <em>"${this.escapeHtml(originalQuery)}"</em></div>
+                    
+                    <div class="code-block">
+                        <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom border-secondary">
+                            <div class="small text-muted">Generated Python Code</div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-outline-secondary" onclick="nlSandbox.editCode(this)">✏️ Edit</button>
+                                <button class="btn btn-sm btn-outline-success" onclick="nlSandbox.executeCode(this)">▶️ Run</button>
+                            </div>
+                        </div>
+                        <pre class="text-light mb-0">${this.escapeHtml(generatedCode)}</pre>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        this.chatContainer.appendChild(messageDiv);
+        this.chatHistory.push({ 
+            type: 'assistant', 
+            content: `Generated code for: ${originalQuery}`,
+            code: generatedCode,
+            timestamp: Date.now() 
+        });
+
+        // Auto-execute the code
+        setTimeout(() => {
+            const runBtn = messageDiv.querySelector('.btn-outline-success');
+            this.executeCode(runBtn);
+        }, 500);
+    }
+
+    async addDirectCodeExecution(code, executionResult) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'bg-dark border border-secondary rounded p-3 mb-3';
+        
+        messageDiv.innerHTML = `
+            <div class="d-flex align-items-start">
+                <div class="w-8 h-8 bg-success rounded-circle d-flex align-items-center justify-content-center me-3 flex-shrink-0">
+                    <i class="fas fa-sparkles text-white"></i>
+                </div>
+                <div class="flex-fill message-content">
+                    <div class="fw-medium text-success mb-2">AI Assistant</div>
+                    <div class="text-light mb-3">Executing your Python code...</div>
+                    
+                    <div class="code-block">
+                        <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom border-secondary">
+                            <div class="small text-muted">Python Code [${this.executionCounter}]</div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-outline-secondary" onclick="nlSandbox.editCode(this)">✏️ Edit</button>
+                                <button class="btn btn-sm btn-outline-success" onclick="nlSandbox.executeCode(this)">🔄 Re-run</button>
+                            </div>
+                        </div>
+                        <pre class="text-light mb-0">${this.escapeHtml(code)}</pre>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        this.chatContainer.appendChild(messageDiv);
+        this.chatHistory.push({ 
+            type: 'assistant', 
+            content: 'Direct code execution',
+            code: code,
+            timestamp: Date.now() 
+        });
+
+        // Show execution result
+        setTimeout(() => {
+            this.showExecutionResult(messageDiv, executionResult);
+        }, 500);
+    }
+
+    showExecutionResult(messageDiv, result) {
+        const resultDiv = document.createElement('div');
+        resultDiv.className = `execution-result ${result.isError ? 'error-result' : ''}`;
+        
+        let resultContent = '';
+        
+        if (result.isError) {
+            resultContent = `<div class="fw-medium text-danger mb-2">Execution Error</div>
+                            <pre class="text-danger">${this.escapeHtml(result.content || result.error || 'Unknown error occurred')}</pre>`;
+        } else {
+            // Always show the output header
+            resultContent = `<div class="fw-medium text-warning mb-2">Output [${this.executionCounter++}]:</div>`;
+            
+            // Handle different result formats
+            let textContent = '';
+            let images = [];
+            
+            // Check if we have images in the result
+            if (result.images && Array.isArray(result.images) && result.images.length > 0) {
+                images = result.images;
+            }
+            
+            // Get text content from various possible sources
+            if (result.content) {
+                textContent = result.content;
+            } else if (result.text_output) {
+                textContent = result.text_output;
+            } else if (result.output) {
+                textContent = result.output;
+            }
+            
+            // Display images if any
+            if (images.length > 0) {
+                images.forEach((imageData, index) => {
+                    // Handle both base64 data and file paths
+                    let imageSrc = '';
+                    if (imageData.startsWith('data:image')) {
+                        imageSrc = imageData;
+                    } else if (imageData.startsWith('__SANDBOX_IMAGE_BASE64__')) {
+                        // Extract base64 data from our custom marker
+                        imageSrc = imageData.replace('__SANDBOX_IMAGE_BASE64__', '');
+                    } else {
+                        // Assume it's already a valid data URL
+                        imageSrc = imageData;
+                    }
+                    
+                    resultContent += `
+                        <div class="mb-3 text-center">
+                            <img src="${imageSrc}" class="img-fluid rounded border" alt="Chart ${index + 1}" style="max-width: 100%; height: auto;">
+                            <div class="small text-muted mt-1">Chart ${index + 1}</div>
+                        </div>
+                    `;
+                });
+            }
+            
+            // Display text content if any
+            if (textContent && textContent.trim() !== '') {
+                // Check if content looks like it contains table data
+                if (this.isTableData(textContent)) {
+                    resultContent += this.createTableFromText(textContent);
+                } else {
+                    // Display as text with proper formatting
+                    resultContent += `<pre class="text-light bg-dark p-3 rounded" style="white-space: pre-wrap; word-break: break-word;">${this.escapeHtml(textContent)}</pre>`;
+                }
+            } else if (images.length === 0) {
+                // If no text and no images, show a message
+                resultContent += `<div class="text-muted">Execution completed successfully (no output generated)</div>`;
+            }
+        }
+        
+        resultDiv.innerHTML = resultContent;
+        messageDiv.appendChild(resultDiv);
+        this.scrollToBottom();
+    }
+
+    isTableData(content) {
+        // Simple heuristic to detect table-like data
+        if (!content || typeof content !== 'string') return false;
+        
+        const lines = content.split('\n').filter(line => line.trim() !== '');
+        if (lines.length < 2) return false;
+        
+        // Look for lines with pipe separators
+        const pipeLines = lines.filter(line => line.includes('|'));
+        if (pipeLines.length < 2) return false;
+        
+        // Check if we have consistent column counts
+        const columnCounts = pipeLines.map(line => line.split('|').length);
+        const firstCount = columnCounts[0];
+        return columnCounts.every(count => count === firstCount);
+    }
+
+    createTableFromText(content) {
+        // Simple table parsing from text with pipe separators
+        const lines = content.split('\n').filter(line => line.trim() !== '');
+        if (lines.length < 2) return `<pre class="text-light">${this.escapeHtml(content)}</pre>`;
+        
+        // Find header line (line with | characters)
+        let headerIndex = -1;
+        for (let i = 0; i < lines.length; i++) {
+            if (lines[i].includes('|') && lines[i].split('|').length > 2) {
+                headerIndex = i;
+                break;
+            }
+        }
+        
+        if (headerIndex === -1) return `<pre class="text-light">${this.escapeHtml(content)}</pre>`;
+        
+        // Parse header
+        const headers = lines[headerIndex].split('|').map(h => h.trim()).filter(h => h);
+        
+        // Parse data rows
+        const dataRows = [];
+        for (let i = headerIndex + 1; i < lines.length; i++) {
+            if (lines[i].includes('|')) {
+                const row = lines[i].split('|').map(cell => cell.trim()).filter(cell => cell);
+                if (row.length === headers.length) {
+                    dataRows.push(row);
+                }
+            }
+        }
+        
+        if (dataRows.length === 0) return `<pre class="text-light">${this.escapeHtml(content)}</pre>`;
+        
+        // Create HTML table
+        let html = '<div class="result-table-container"><table class="result-table"><thead><tr>';
+        
+        // Headers
+        headers.forEach(header => {
+            html += `<th>${this.escapeHtml(header)}</th>`;
+        });
+        
+        html += '</tr></thead><tbody>';
+        
+        // Data rows
+        dataRows.forEach(row => {
+            html += '<tr>';
+            row.forEach(cell => {
+                // Try to detect numeric values for right alignment
+                const isNumeric = !isNaN(parseFloat(cell)) && isFinite(cell);
+                const alignmentClass = isNumeric ? 'text-end' : '';
+                html += `<td class="${alignmentClass}">${this.escapeHtml(cell)}</td>`;
+            });
+            html += '</tr>';
+        });
+        
+        html += '</tbody></table></div>';
+        
+        return html;
+    }
+
+    // Dataset management methods
+    toggleSidebar() {
+        this.datasetSidebar.classList.toggle('sidebar-hidden');
+    }
+
+    hideSidebar() {
+        this.datasetSidebar.classList.add('sidebar-hidden');
+    }
+
+    async handleFileUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            const response = await fetch('/api/datasets/upload/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': this.getCSRFToken()
+                },
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to upload dataset');
+            }
+
+            const data = await response.json();
+            this.datasets.push(data);
+            this.renderDatasetList();
+            this.showNotification(`Dataset "${file.name}" loaded successfully!`);
+            
+        } catch (error) {
+            this.showNotification(`Error loading dataset: ${error.message}`, 'error');
+        }
+
+        event.target.value = '';
+    }
+
+    loadSampleDatasets() {
+        // Load datasets from Django backend
+        fetch('/api/datasets/')
+            .then(response => response.json())
+            .then(data => {
+                this.datasets = data.datasets || data; // Handle both formats
+                this.renderDatasetList();
+                this.populateDatasetSelector();
+            })
+            .catch(error => {
+                console.error('Failed to load datasets:', error);
+            });
+    }
+
+    populateDatasetSelector() {
+        // Clear existing options except the first one
+        this.datasetSelector.innerHTML = '<option value="">Select Dataset</option>';
+        
+        // Add datasets to selector
+        this.datasets.forEach(dataset => {
+            const option = document.createElement('option');
+            option.value = dataset.id;
+            option.textContent = dataset.name;
+            this.datasetSelector.appendChild(option);
+        });
+    }
+
+    loadDataset(datasetId) {
+        if (!datasetId) {
+            this.selectedDataset = null;
+            return;
+        }
+
+        // Find dataset in the loaded datasets
+        const dataset = this.datasets.find(d => d.id == datasetId);
+        if (dataset) {
+            this.selectedDataset = dataset;
+            this.showNotification(`Dataset "${dataset.name}" loaded successfully!`);
+            
+            // Update the dataset selector to show the selected dataset
+            this.datasetSelector.value = datasetId;
+        } else {
+            this.showNotification('Dataset not found', 'error');
+        }
+    }
+
+    renderDatasetList() {
+        this.datasetList.innerHTML = '';
+
+        this.datasets.forEach(dataset => {
+            const datasetItem = document.createElement('div');
+            datasetItem.className = 'bg-secondary border border-secondary rounded p-2 mb-2';
+            datasetItem.dataset.id = dataset.id;
+
+            datasetItem.innerHTML = `
+                <h6 class="mb-1">${dataset.name}</h6>
+                <div class="small text-muted mb-2">
+                    ${dataset.rows} rows × ${dataset.columns} cols | ${this.formatFileSize(dataset.size)}
+                </div>
+                <div class="d-flex gap-1">
+                    <button class="btn btn-sm btn-success" onclick="nlSandbox.previewDataset(${dataset.id})">👁 View</button>
+                    <button class="btn btn-sm btn-primary" onclick="nlSandbox.loadDatasetToChat('${dataset.name}')">💬 Ask About</button>
+                    <button class="btn btn-sm btn-danger" onclick="nlSandbox.removeDataset(${dataset.id})">🗑 Remove</button>
+                </div>
+            `;
+
+            this.datasetList.appendChild(datasetItem);
+        });
+    }
+
+    previewDataset(datasetId) {
+        const dataset = this.datasets.find(d => d.id === datasetId);
+        if (!dataset) return;
+
+        const previewData = dataset.data.slice(0, 5);
+        
+        this.previewContent.innerHTML = `
+            <div class="mb-2">
+                <strong>${dataset.name}</strong> - ${dataset.rows} rows × ${dataset.columns} columns
+            </div>
+            ${this.createTableHTML(previewData)}
+        `;
+        this.datasetPreview.classList.remove('d-none');
+    }
+
+    loadDatasetToChat(datasetName) {
+        const message = `Tell me about the ${datasetName} dataset. What insights can you find?`;
+        this.messageInput.value = message;
+        this.sendMessage();
+        this.hideSidebar();
+    }
+
+    removeDataset(datasetId) {
+        if (confirm('Are you sure you want to remove this dataset?')) {
+            this.datasets = this.datasets.filter(d => d.id !== datasetId);
+            this.renderDatasetList();
+            this.datasetPreview.classList.add('d-none');
+            this.showNotification('Dataset removed successfully');
+        }
+    }
+
+    createTableHTML(data) {
+        if (!data || data.length === 0) {
+            return '<div class="text-muted">No data to display</div>';
+        }
+
+        let html = '<div class="result-table-container"><table class="result-table"><thead><tr>';
+        
+        // Headers
+        Object.keys(data[0]).forEach(key => {
+            html += `<th>${this.escapeHtml(key)}</th>`;
+        });
+        html += '</tr></thead><tbody>';
+        
+        // Rows (limit to first 10 for display)
+        data.slice(0, 10).forEach(row => {
+            html += '<tr>';
+            Object.values(row).forEach(value => {
+                html += `<td>${this.escapeHtml(String(value))}</td>`;
+            });
+            html += '</tr>';
+        });
+        
+        html += '</tbody></table></div>';
+        
+        if (data.length > 10) {
+            html += `<div class="small text-muted mt-2">Showing 10 of ${data.length} rows</div>`;
+        }
+        
+        return html;
+    }
+
+    createHeatmapHTML(result) {
+        if (!result.data || !result.data.variables || !result.data.correlations) {
+            return '<div class="text-muted">No heatmap data available</div>';
+        }
+
+        const { variables, correlations } = result.data;
+        const gridSize = variables.length;
+        
+        let html = `<div class="heatmap-container">
+            <h5 class="mb-3 text-light">Correlation Heatmap</h5>
+            <div class="heatmap-grid" style="grid-template-columns: repeat(${gridSize + 1}, 1fr);">`;
+        
+        // Add column headers
+        html += '<div></div>'; // Empty corner cell
+        variables.forEach(variable => {
+            html += `<div class="text-center small fw-medium text-light p-2">${this.escapeHtml(variable)}</div>`;
+        });
+        
+        // Add rows with row headers and correlation cells
+        correlations.forEach((row, i) => {
+            // Row header
+            html += `<div class="text-end small fw-medium text-light p-2">${this.escapeHtml(variables[i])}</div>`;
+            
+            // Correlation cells
+            row.forEach(correlation => {
+                const intensity = Math.abs(correlation);
+                const hue = correlation >= 0 ? 0 : 240; // Red for positive, blue for negative
+                const saturation = 70;
+                const lightness = 50 - (intensity * 30); // Darker for stronger correlation
+                
+                const backgroundColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+                const displayValue = correlation.toFixed(2);
+                
+                html += `<div class="heatmap-cell" style="background-color: ${backgroundColor}">${displayValue}</div>`;
+            });
+        });
+        
+        html += `</div>
+            <div class="d-flex align-items-center gap-3 mt-3 text-muted small flex-wrap">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="heatmap-color-box" style="background: hsl(0, 70%, 35%); width: 16px; height: 16px; border-radius: 2px;"></div>
+                    <span>Strong Positive</span>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <div class="heatmap-color-box" style="background: hsl(0, 70%, 50%); width: 16px; height: 16px; border-radius: 2px;"></div>
+                    <span>Weak Positive</span>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <div class="heatmap-color-box" style="background: hsl(240, 70%, 50%); width: 16px; height: 16px; border-radius: 2px;"></div>
+                    <span>Weak Negative</span>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <div class="heatmap-color-box" style="background: hsl(240, 70%, 35%); width: 16px; height: 16px; border-radius: 2px;"></div>
+                    <span>Strong Negative</span>
+                </div>
+            </div>
+        </div>`;
+        
+        return html;
+    }
+
+    createChartHTML(result) {
+        const canvasId = 'chart_' + Date.now();
+        return `<div class="chart-container"><canvas id="${canvasId}" width="600" height="400"></canvas></div>`;
+    }
+
+    renderChart(canvas, result) {
+        if (!canvas || !window.Chart) return;
+        
+        const config = {
+            type: result.chartType,
+            data: result.data,
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                aspectRatio: 2,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#f9fafb'
+                        }
+                    }
+                }
+            }
+        };
+        
+        // Add axis configuration for non-pie charts
+        if (result.chartType !== 'pie') {
+            config.options.scales = {
+                x: {
+                    ticks: { color: '#f9fafb' },
+                    grid: { color: '#374151' }
+                },
+                y: {
+                    ticks: { color: '#f9fafb' },
+                    grid: { color: '#374151' }
+                }
+            };
+        }
+        
+        new Chart(canvas, config);
+    }
+
+    editCode(buttonElement) {
+        const codeBlock = buttonElement.closest('.code-block');
+        const preElement = codeBlock.querySelector('pre');
+        const code = preElement.textContent;
+        
+        // Create textarea for editing
+        const textarea = document.createElement('textarea');
+        textarea.value = code;
+        textarea.className = 'form-control bg-dark text-light border-secondary font-monospace small';
+        textarea.style.minHeight = '100px';
+        textarea.rows = Math.max(4, code.split('\n').length);
+        
+        // Replace pre with textarea
+        preElement.style.display = 'none';
+        preElement.parentNode.insertBefore(textarea, preElement.nextSibling);
+        
+        // Update button
+        buttonElement.textContent = '💾 Save';
+        buttonElement.onclick = () => this.saveCodeEdit(buttonElement, textarea, preElement);
+        
+        textarea.focus();
+    }
+
+    saveCodeEdit(buttonElement, textarea, preElement) {
+        const newCode = textarea.value;
+        
+        // Update the pre element
+        preElement.textContent = newCode;
+        preElement.style.display = 'block';
+        
+        // Remove textarea
+        textarea.remove();
+        
+        // Restore button
+        buttonElement.textContent = '✏️ Edit';
+        buttonElement.onclick = () => this.editCode(buttonElement);
+    }
+
+    // Enhanced error handling for code execution
+    async executeCode(buttonElement) {
+        const codeBlock = buttonElement.closest('.code-block');
+        const messageDiv = buttonElement.closest('.bg-dark');
+        
+        // Add executing class for visual feedback
+        codeBlock.classList.add('executing');
+        
+        const code = codeBlock.querySelector('pre').textContent;
+        
+        try {
+            // Show loading indicator
+            const loadingIndicator = document.createElement('div');
+            loadingIndicator.className = 'text-info mt-2';
+            loadingIndicator.innerHTML = '<div class="d-flex align-items-center"><div class="spinner-border spinner-border-sm me-2" role="status"></div><span>Executing code...</span></div>';
+            const resultContainer = document.createElement('div');
+            resultContainer.className = 'execution-result';
+            resultContainer.appendChild(loadingIndicator);
+            messageDiv.appendChild(resultContainer);
+            
+            // Call Django backend for code execution
+            const response = await fetch('/api/nl-sandbox/execute/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': this.getCSRFToken()
+                },
+                body: JSON.stringify({
+                    code: code,
+                    dataset_id: this.selectedDataset?.id || null,
+                    session_id: window.currentSessionId || null
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            
+            // Remove loading indicator
+            resultContainer.remove();
+            
+            // Show execution result with enhanced error handling
+            this.showExecutionResult(messageDiv, data);
+            
+        } catch (error) {
+            // Remove loading indicator
+            if (messageDiv.querySelector('.execution-result')) {
+                messageDiv.querySelector('.execution-result').remove();
+            }
+            
+            // Show error result
+            this.showExecutionResult(messageDiv, {
+                isError: true,
+                content: `Execution failed: ${error.message}`,
+                error: error.message
+            });
+        }
+        
+        codeBlock.classList.remove('executing');
+    }
+
+    clearChat() {
+        if (confirm('Are you sure you want to clear the chat history?')) {
+            this.chatContainer.innerHTML = `
+                <div class="bg-dark border border-secondary rounded p-3">
+                    <div class="d-flex align-items-start">
+                        <div class="w-8 h-8 bg-success rounded-circle d-flex align-items-center justify-content-center me-3 flex-shrink-0">
+                            <i class="fas fa-sparkles text-white"></i>
+                        </div>
+                        <div class="flex-fill">
+                            <div class="fw-medium text-success mb-2">AI Assistant</div>
+                            <div class="text-light">
+                                Welcome to the Natural Language Python Sandbox! Ask me anything about your data in plain English, like:
+                                <ul class="mt-2 small text-muted">
+                                    <li>"Show me the correlation between sales and profit"</li>
+                                    <li>"Create a bar chart of monthly revenue"</li>
+                                    <li>"Filter data where age is greater than 25"</li>
+                                    <li>"Calculate the mean temperature by city"</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            this.chatHistory = [];
+            this.executionCounter = 1;
+            this.saveChatHistory();
+        }
+    }
+
+    scrollToBottom() {
+        setTimeout(() => {
+            const container = this.chatContainer.parentElement;
+            container.scrollTop = container.scrollHeight;
+        }, 100);
+    }
+
+    saveChatHistory() {
+        try {
+            localStorage.setItem('nlSandboxChatHistory', JSON.stringify(this.chatHistory));
+        } catch (error) {
+            console.error('Failed to save chat history:', error);
+        }
+    }
+
+    loadChatHistory() {
+        try {
+            const saved = localStorage.getItem('nlSandboxChatHistory');
+            if (saved) {
+                this.chatHistory = JSON.parse(saved);
+                // Could restore chat messages here if desired
+            }
+        } catch (error) {
+            console.error('Failed to load chat history:', error);
+            this.chatHistory = [];
+        }
+    }
+
+    showNotification(message, type = 'success') {
+        const notification = document.createElement('div');
+        notification.className = `position-fixed top-0 end-0 p-3 rounded shadow text-white z-3 ${
+            type === 'error' ? 'bg-danger' : 'bg-success'
+        }`;
+        notification.textContent = message;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 30000);
+    }
+
+    formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    getCSRFToken() {
+        // Try to get CSRF token from multiple sources
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
+                         document.querySelector('input[name=csrfmiddlewaretoken]')?.value ||
+                         document.cookie.split(';').find(c => c.trim().startsWith('csrftoken='))?.split('=')[1];
+        return csrfToken;
+    }
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+}
+
+// Make sandbox accessible globally
+let nlSandbox;
+
+// Initialize sandbox when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    // Add CSRF token input to the document if it doesn't exist
+    if (!document.querySelector('[name=csrfmiddlewaretoken]')) {
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrfmiddlewaretoken';
+        csrfInput.value = document.querySelector('meta[name=csrf-token]')?.content || 
+                         document.cookie.split(';').find(c => c.trim().startsWith('csrftoken='))?.split('=')[1] ||
+                         '';
+        document.body.appendChild(csrfInput);
+    }
+    
+    nlSandbox = new NaturalLanguagePythonSandbox();
+});
+</script>
+{% endblock %}
