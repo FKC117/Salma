@@ -343,7 +343,7 @@ MATPLOTLIB_BACKEND = 'Agg'  # NON-NEGOTIABLE - Use Agg backend for matplotlib
 
 # Google AI API Configuration (No .env - Direct Configuration)
 # All configuration is directly in settings.py as per project requirements
-GOOGLE_AI_API_KEY = 'AIzaSyDKU6cZTFq-PyuNsedFSEQLavmXpVM1Oc4'
+GOOGLE_AI_API_KEY = ''
 GOOGLE_AI_MODEL = 'gemini-flash-latest'
 GOOGLE_AI_GENERATION_CONFIG = {
     'temperature': 0.7,
